@@ -1,0 +1,8 @@
+﻿---
+Role: |
+  sitecore\ISC2 Tech Admin
+MemberOf:
+  Role: |
+    sitecore\Developer
+  Role: |
+    sitecore\ISC2 Web Admin

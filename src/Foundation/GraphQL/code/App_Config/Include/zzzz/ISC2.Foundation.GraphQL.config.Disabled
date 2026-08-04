@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<configuration xmlns:patch="http://www.sitecore.net/xmlconfig/" xmlns:role="http://www.sitecore.net/xmlconfig/role/">
+  <sitecore>
+    <api>
+      <GraphQL>
+        <!-- the defaults section contains config templates that can be reused elsewhere using 'ref' -->
+        <defaults>
+          <content>
+            <schemaProviders>
+              <edgeContent type="Sitecore.Services.GraphQL.EdgeSchema.EdgeSchemaProvider, Sitecore.Services.GraphQL.EdgeSchema">
+                <!-- 
+                                    Define the GraphQL root object for the schema (queries, mutations, and subscriptions)
+                                    You may use `resolve=true` to activate dependency injection on root fields.
+                                    All root fields must inherit from FieldType (EventStreamFieldType for subscriptions)
+                                    Fields may optionally implement IContentSchemaRootFieldType to get a Database instance (automatic property is expected)
+                                -->
+                <queries hint="raw:AddQuery">
+                  <query name="votingToken" type="ISC2.Foundation.GraphQL.Queries.VotingTokenQuery, ISC2.Foundation.GraphQL" />
+                </queries>
+              </edgeContent>
+            </schemaProviders>
+            <fieldTypeMappings>
+              <standardTypeMapping type="Sitecore.Services.GraphQL.Content.TemplateGeneration.FieldTypeToGraphQLTypeMapper, Sitecore.Services.GraphQL.Content">
+                <typeMapping hint="raw:AddTypeMapping">
+                  <!-- Sets the proper mapping for Multiroot Treelist field type. -->
+                  <map type="Sitecore.Services.GraphQL.Content.TemplateGeneration.FieldMapping.MultilistFieldTypeFactory, Sitecore.Services.GraphQL.Content" field="Multiroot Treelist" />
+                </typeMapping>
+              </standardTypeMapping>
+            </fieldTypeMappings>
+          </content>
+        </defaults>
+      </GraphQL>
+    </api>
+  </sitecore>
+</configuration>

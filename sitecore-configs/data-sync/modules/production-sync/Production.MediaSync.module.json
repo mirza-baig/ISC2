@@ -1,0 +1,19 @@
+{
+  "namespace": "Production.MediaSync",
+  "items": {
+    "includes": [
+      {
+        "name": "site-media",
+        "path": "/sitecore/media library/Project/ISC2/Main",
+        "scope": "DescendantsOnly",
+        "allowedPushOperations": "CreateAndUpdate",
+        "rules": [
+          {
+            "path": "/Sitemaps",
+            "scope": "Ignored"
+          }
+        ]
+      }
+    ]
+  }
+}

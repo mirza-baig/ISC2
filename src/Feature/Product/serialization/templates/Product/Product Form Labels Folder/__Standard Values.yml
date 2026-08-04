@@ -1,0 +1,35 @@
+﻿---
+ID: "55032ebc-be62-4f79-bb39-ce09314ecabe"
+Parent: "60b2d800-8ca2-4557-912a-4b23d4df04cb"
+Template: "60b2d800-8ca2-4557-912a-4b23d4df04cb"
+Path: /sitecore/templates/Feature/Product/Product Form Labels Folder/__Standard Values
+SharedFields:
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: "{A8229B3C-31CB-41D0-8EF4-A1743C34238A}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240625T164010Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "ff752c2e-c6c6-4503-a7a7-5ac8b1b0b896"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240625T164036Z

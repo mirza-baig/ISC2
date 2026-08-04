@@ -1,0 +1,41 @@
+﻿---
+ID: "126d651a-a0c0-4de0-99e6-576e102c538d"
+Parent: "d998ba6a-8d3d-4215-b0ca-56f8f89cf642"
+Template: "d998ba6a-8d3d-4215-b0ca-56f8f89cf642"
+Path: /sitecore/templates/Feature/Shared Components/Content Component/Content Card/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: apps/32x32/newspaper.png
+- ID: "78f2d832-4e35-4516-9e99-1c7c758e02b5"
+  Hint: gradientOverlay
+  Value: 1
+- ID: "dbbbeca1-21c7-4906-9dd2-493c1efa59a2"
+  Hint: __Shared revision
+  Value: "dd98cbb4-9a09-446d-9eb4-bfd2f0b41931"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230606T135032Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "1ede5ba3-d4c0-44b8-b0f4-f06662287434"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\vnagulapalli@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20251124T124046Z

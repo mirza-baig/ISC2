@@ -1,0 +1,23 @@
+﻿---
+ID: "9760f143-dcad-48d2-9ad2-7acd277ebece"
+Parent: "baa6f5b1-4198-4aeb-99c5-8da0d7c3a654"
+Template: "eb2ffab4-a451-4b13-bd03-d99c0829a39a"
+Path: /sitecore/templates/Branches/Project/ISC2/Site Search Page/$name
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230501T044036Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "c2d74b60-ded2-4d04-83cb-dad2bee80ade"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230501T044036Z

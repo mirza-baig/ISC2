@@ -1,0 +1,81 @@
+﻿---
+ID: "75707f5a-5baa-4d1a-8a5a-6f12f63f5877"
+Parent: "995cb092-fb68-4f2f-9c27-5dd5ba0335e6"
+Template: "995cb092-fb68-4f2f-9c27-5dd5ba0335e6"
+Path: /sitecore/templates/Feature/Shared Components/Popups/Product Scheduled Modal Popup/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240930T204758Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "7a3e27e2-4daa-43ca-ba39-3a4f2101fd08"
+      Hint: description
+      Value: 
+    - ID: "87dca41e-12fe-4c7d-97f7-dc0d0f799060"
+      Hint: heading
+      Value: Your options were set up successfully
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "bec5e4a5-16fe-4e2f-a39c-5588de24885f"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20241204T153824Z
+  - Version: 2
+    Fields:
+    - ID: "0d2d5439-06ce-4121-9393-ead96b492581"
+      Hint: isAllocatedLabel
+      Value: This allocation has already been redeemed.
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240930T204758Z
+    - ID: "461d5ae1-1210-472d-8a10-b4acc7825741"
+      Hint: isExpiredLabel
+      Value: The window to allocate this product has expired.
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5ba18fda-7dad-45ec-906f-4a0eed611dd5"
+      Hint: unsuccessDescription
+      Value: You might want to contact your manager.
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "7a3e27e2-4daa-43ca-ba39-3a4f2101fd08"
+      Hint: description
+      Value: 
+    - ID: "87dca41e-12fe-4c7d-97f7-dc0d0f799060"
+      Hint: heading
+      Value: Your options were set up successfully
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "511f2248-765e-4edd-a2f6-011c9991763c"
+    - ID: "a22496d0-8dc8-43fc-8ba4-2adcf8b9ddbb"
+      Hint: isCancelledLabel
+      Value: The allocation for this product is no longer associated with your account.
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "bcdcb632-5a23-4563-8c0c-b060ddc4b25e"
+      Hint: errorHeading
+      Value: Your product cannot be redeemed.
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250226T160300Z

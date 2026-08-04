@@ -1,0 +1,38 @@
+﻿---
+ID: "2b81c85a-3d4b-44bf-b4c3-9ad2ca8425c0"
+Parent: "aaf1cff5-1e93-40d4-b7ae-8253d2f746c4"
+Template: "aaf1cff5-1e93-40d4-b7ae-8253d2f746c4"
+Path: /sitecore/templates/Feature/Accordion/Rich Text Accordion/__Standard Values
+SharedFields:
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: "{A08A80AF-8A55-4D8B-A760-46CE8DC07FC3}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230428T192141Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "56108596-1836-4210-aeef-2bde54a4e730"
+      Hint: title
+      Value: $name
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "67a42941-c1d2-43f6-8ddb-0e8591780bfc"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20241002T162110Z

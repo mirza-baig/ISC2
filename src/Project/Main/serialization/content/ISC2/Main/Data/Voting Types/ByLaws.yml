@@ -1,0 +1,37 @@
+﻿---
+ID: "a406a3eb-4cd1-4161-ba0a-b982f6120a85"
+Parent: "8f6998c4-200a-4404-bd66-88eb058fcabd"
+Template: "0b8258a9-bf88-4f37-b722-985f0eff6865"
+Path: /sitecore/content/ISC2/Main/Data/Voting Types/ByLaws
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230720T052158Z
+    - ID: "3ed0e821-f3dd-4e8e-8ee1-d8b2a026e0db"
+      Hint: RedirectUrl
+      Value: "https://www.directvote.net/ISC2BL/login.aspx"
+    - ID: "43638ef2-e5a2-4bbc-92fb-05d171450115"
+      Hint: SharedKey
+      Value: RbmR9KLJ2R4
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\satish
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\satish
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "048f1abd-f647-46ff-88df-1cea58fe516f"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\satish
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230720T053211Z

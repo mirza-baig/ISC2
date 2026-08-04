@@ -1,0 +1,53 @@
+{
+  "namespace": "Project.Main",
+  "references": [
+    "Feature.Header"
+  ],
+  "items": {
+    "includes": [
+      {
+        "name": "api",
+        "path": "/sitecore/system/Settings/Services/API Keys"
+      },
+      {
+        "name": "sxaPresentation",
+        "path": "/sitecore/content/ISC2/Main/Presentation"
+      },
+      {
+        "name": "templates",
+        "path": "/sitecore/templates/Project/ISC2"
+      },
+      {
+        "name": "Branches",
+        "path": "/sitecore/templates/Branches/Project"
+      },
+      {
+        "name": "renderings",
+        "path": "/sitecore/layout/Renderings/Project/ISC2"
+      },
+      {
+        "name": "settings",
+        "path": "/sitecore/system/Settings/Buckets/Item Buckets Settings"
+      },
+      {
+        "name": "placeholderSettings",
+        "path": "/sitecore/layout/Placeholder Settings/Project"
+      },
+      {
+        "name": "layouts",
+        "path": "/sitecore/layout/Layouts/Project"
+      },
+      {
+        "name": "workflow",
+        "path": "/sitecore/system/Workflows/ISC2 Standard Workflow",
+        "allowedPushOperations": "createOnly",
+        "scope": "itemAndDescendants"
+      },
+      {
+        "name": "profilePreferences",
+        "path": "/sitecore/content/ISC2/Main/Data/My Account/Profile Preferences",
+        "scope": "singleItem"
+      }
+    ]
+  }
+}

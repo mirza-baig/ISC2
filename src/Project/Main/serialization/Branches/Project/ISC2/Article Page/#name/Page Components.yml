@@ -1,0 +1,23 @@
+﻿---
+ID: "6d1a426d-b5e1-48e4-9d4d-8fd39cf6db94"
+Parent: "3820e6d0-2751-4fa9-97e5-0ad40f01a3f5"
+Template: "9acffd78-ef6b-4021-b24d-16c06b22909c"
+Path: /sitecore/templates/Branches/Project/ISC2/Article Page/$name/Page Components
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230420T030403Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "43ec177a-0429-416f-ae4e-48fb06d4606c"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\rshah
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230420T030403Z

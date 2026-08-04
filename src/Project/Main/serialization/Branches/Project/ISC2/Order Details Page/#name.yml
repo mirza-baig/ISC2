@@ -1,0 +1,39 @@
+﻿---
+ID: "c78b8153-8b14-4e0d-9ed5-ceba10936e2b"
+Parent: "7620d2c6-1254-4a4d-82ac-e186eab78f9a"
+Template: "40fb4eb8-b216-4c5c-90c3-2cce6316f326"
+Path: /sitecore/templates/Branches/Project/ISC2/Order Details Page/$name
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "04bf00db-f5fb-41f7-8ab7-22408372a981"
+      Hint: __Final Renderings
+      Value: |
+        <r xmlns:p="p" xmlns:s="s"
+          p:p="1">
+          <d
+            id="{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}">
+            <r
+              uid="{E686DA5A-04FF-4F21-8957-912E97614B51}"
+              s:ds="local:/Data/Contact Info"
+              s:id="{55C92CD8-A175-431C-AAD5-729E3A791113}"
+              s:par="GridParameters&amp;FieldNames&amp;Styles&amp;DynamicPlaceholderId=1"
+              s:ph="main-content"
+              s:ccb="Clear on publish" />
+          </d>
+        </r>
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240905T160507Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "484deb63-f189-43ca-964f-2acd7c464c0a"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240905T170455Z

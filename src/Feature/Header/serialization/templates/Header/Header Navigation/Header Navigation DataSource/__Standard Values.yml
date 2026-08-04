@@ -1,0 +1,43 @@
+﻿---
+ID: "6e163945-6ebb-4610-ba2e-224eb5b863d5"
+Parent: "49800ca9-6b86-425d-8a7c-1e69ce934d65"
+Template: "49800ca9-6b86-425d-8a7c-1e69ce934d65"
+Path: /sitecore/templates/Feature/Header/Header Navigation/Header Navigation DataSource/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/elements_hierarchy.png
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {C51BB972-01DB-46C6-916E-90F9765D6365}
+    {1F750B85-37F3-4E9C-AB88-7F185EAA403F}
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230419T144747Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "a0bbb5f1-a2da-44db-aa95-1798a0ded379"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d3d7e593-1876-4dcf-b4fe-c1b8ef145272"
+      Hint: skipToContentButtonLabel
+      Value: Skip to main content
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250226T143956Z

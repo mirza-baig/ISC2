@@ -1,0 +1,19 @@
+{
+    "namespace": "Feature.PageScripts",   
+    "items": {
+      "includes": [
+        {
+          "name": "templates",
+          "path": "/sitecore/templates/Feature/PageScripts"
+        },
+        {
+          "name": "renderings",
+          "path": "/sitecore/layout/renderings/Feature/PageScripts"
+        },
+        {
+          "name": "placeholdersettings",
+          "path": "/sitecore/layout/Placeholder Settings/Feature/PageScripts"
+        }       
+      ]
+    }
+  }

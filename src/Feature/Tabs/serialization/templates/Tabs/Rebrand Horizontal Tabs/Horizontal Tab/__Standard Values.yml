@@ -1,0 +1,43 @@
+﻿---
+ID: "4a9c5156-a939-4e65-8d62-b08d4008c02c"
+Parent: "7a9a60d0-ba4d-4e07-9b5d-4b4ac50f5874"
+Template: "7a9a60d0-ba4d-4e07-9b5d-4b4ac50f5874"
+Path: /sitecore/templates/Feature/Tabs/Rebrand Horizontal Tabs/Horizontal Tab/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/arrow_right.png
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {6C0EA144-674F-4C26-902D-2A391FB40406}
+    {C5FFDF5C-FE78-449C-A6AB-F995BCCF45C4}
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230516T083709Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "3cc27d7a-351b-4eea-bbd8-4cfc59ad01e3"
+    - ID: "ad60b479-bee9-456d-aff7-9915c90ad836"
+      Hint: tabName
+      Value: $name
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230802T133652Z

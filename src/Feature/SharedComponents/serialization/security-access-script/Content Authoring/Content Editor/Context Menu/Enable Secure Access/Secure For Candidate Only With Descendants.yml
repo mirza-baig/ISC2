@@ -1,0 +1,81 @@
+﻿---
+ID: "e682687b-ee3b-45c1-8833-c447820ea914"
+Parent: "7d0e3ac7-5d9a-4f1b-93b5-751a7a468aa9"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Content Authoring/Content Editor/Context Menu/Enable Secure Access/Secure For Candidate Only With Descendants
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    $selectedItem = Get-Item -Path "."
+    
+    $allTemplate =  Get-ChildItem -path "/sitecore/templates/Project/ISC2/Custom Pages" -Recurse | Where-Object { $_.TemplateName -eq 'Template' }  | Foreach {"$($_.Name)"}
+    
+    ##| Where-Object { $_.TemplateName -eq 'Article' } | ForEach-Object { $_.Paths.FullPath }
+    
+    if($allTemplate -contains $selectedItem.TemplateName)
+    {
+        if($selectedItem.Fields["candidateOnly"] -ne $null)
+        {
+            $selectedItem.Editing.BeginEdit()
+            $selectedItem.Fields["candidateOnly"].Value = "1";
+            $selectedItem.Editing.EndEdit()
+            
+            
+            $childPages = Get-ChildItem -path "."
+            
+            foreach($page in $childPages)
+            {
+                if($allTemplate -contains $page.TemplateName)
+                {
+                    if($page.Fields["candidateOnly"] -ne $null)
+                    {
+                        $page.Editing.BeginEdit()
+                        $page.Fields["candidateOnly"].Value = "1";
+                        $page.Editing.EndEdit()
+                    }
+        
+                }
+        
+            }
+        }
+        else
+        {
+            Show-Alert -Title "Item do not have Candidate fields on it."
+            Close-Window
+        }
+    
+        Show-Alert -Title "Operation completed."
+        Close-Window
+    }
+    else
+    {
+        Show-Alert -Title "In valid item selected for the operation."
+        Close-Window
+    }
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240611T115408Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "ccb58e52-f5cc-481d-a6d1-5c8a39963fe6"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240611T134740Z

@@ -1,0 +1,38 @@
+﻿---
+ID: "525f2325-5646-41f6-89cb-bf27a5dacc1f"
+Parent: "8d7a2910-4593-4c94-9acc-a1ff3bce0316"
+Template: "8d7a2910-4593-4c94-9acc-a1ff3bce0316"
+Path: /sitecore/templates/Feature/ArticleAuthor/Article Author/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "0d28dbd7-a894-4438-b425-968184953305"
+      Hint: authorImage
+      Value: |
+        <image mediaid="{790332BF-CD2E-40C5-8477-AFF5AB481D15}" />
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230914T092657Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "aeadde72-a9c9-406c-923f-eef4eb921b57"
+    - ID: "b51f4e45-cd77-49c5-952f-ffdf37887c16"
+      Hint: authorName
+      Value: (ISC)² Management
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230914T092915Z

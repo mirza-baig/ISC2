@@ -1,0 +1,37 @@
+﻿---
+ID: "21ea6150-f3e2-48b7-b084-4256aa2f9012"
+Parent: "91556636-52eb-41c0-ba03-704ce3243ee0"
+Template: "91556636-52eb-41c0-ba03-704ce3243ee0"
+Path: /sitecore/templates/Feature/Test Feature Component/Test Feature Component/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Applications/32x32/gear_ok.png
+- ID: "dbbbeca1-21c7-4906-9dd2-493c1efa59a2"
+  Hint: __Shared revision
+  Value: "cb8d973e-fc3b-4997-a50a-ef815d932c43"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20260708T152108Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\gfeola@isc2.org
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "f8cbe34f-5fd6-463b-ac48-0ec16db430ce"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\gfeola@isc2.org
+    - ID: "d3d1d019-e531-4c14-9d37-3a1511ad7870"
+      Hint: Headline
+      Value: "Test Component is Enabled!"
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260708T152108Z

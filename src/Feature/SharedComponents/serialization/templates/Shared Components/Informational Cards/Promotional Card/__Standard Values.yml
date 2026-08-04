@@ -1,0 +1,42 @@
+﻿---
+ID: "cd3ae24b-abd0-463b-a579-d57ac0dca976"
+Parent: "c22592e8-1b63-46b8-9e53-d02e405810f1"
+Template: "c22592e8-1b63-46b8-9e53-d02e405810f1"
+Path: /sitecore/templates/Feature/Shared Components/Informational Cards/Promotional Card/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240522T153738Z
+    - ID: "4286b8bf-a60a-4a65-bb98-5fc47675ab13"
+      Hint: headingSize
+      Value: "{F5AD72F4-70F5-43AF-8370-2BD609140A8C}"
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "85d1653e-8e97-4ce1-9ad3-f895382da3a0"
+      Hint: description
+      Value: |
+        <p><span>For a limited time, save {discountPillPercentage} when you register for 90-day access.</span></p>
+        <h5><span>*{discountPillPercentage} is the maximum offer. Discounts cannot be combined.</span></h5>
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "b74ff243-8692-4a40-b5f5-e68fa26ac9cf"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "cc4f29e2-e140-4f0d-a6c1-0d2c6e74b22e"
+      Hint: heading
+      Value: "Save {discountPillPercentage} on 90-Day {productType}*"
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240823T204801Z

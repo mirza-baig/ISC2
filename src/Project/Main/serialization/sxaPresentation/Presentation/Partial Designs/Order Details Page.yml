@@ -1,0 +1,133 @@
+﻿---
+ID: "768c7bbf-c716-4f3c-bea7-80ed80378432"
+Parent: "0a6c5af7-5fdf-49c5-8e3b-f910333be388"
+Template: "fd2059fd-6043-4dfe-8c04-e2437ce87634"
+Path: /sitecore/content/ISC2/Main/Presentation/Partial Designs/Order Details Page
+SharedFields:
+- ID: "55faae90-3bba-4f7f-96fe-13c3f40055ff"
+  Hint: Signature
+  Value: "order-details-page"
+- ID: "c7c26117-dbb1-42b2-ab5e-f7223845cca3"
+  Hint: __Thumbnail
+  Value: |
+    <image mediaid="{52A0209B-7538-43E5-82C4-8287455D349C}" />
+- ID: "f1a1fe9e-a60c-4ddb-a3a0-bb5b29fe732e"
+  Hint: __Renderings
+  Value: |
+    <r xmlns:p="p" xmlns:s="s"
+      p:p="1">
+      <d
+        id="{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}"
+        s:l="{FAB46B54-E80C-4CC7-9959-E0AED8A5F55C}">
+        <r
+          uid="{B6AAF701-A07E-4999-AD89-28C0E29EBCAB}"
+          p:before="*"
+          s:ds="query:$site/Data/Alerts Folder/Error Banner"
+          s:id="{4EE8C273-C330-4EA3-888D-A8EE24252C57}"
+          s:par="CSSStyles"
+          s:ph="alert-notification" />
+        <r
+          uid="{97D1E7E3-810C-46EF-926B-0C1238446B77}"
+          p:after="r[@uid='{B6AAF701-A07E-4999-AD89-28C0E29EBCAB}']"
+          s:ds=""
+          s:id="{5AF94248-612E-413A-90B4-CA200E73C823}"
+          s:par=""
+          s:ph="header"
+          s:ccb="Clear on publish" />
+        <r
+          uid="{56053CD6-397C-49F6-8A1C-8E0C54D4406B}"
+          p:after="r[@uid='{97D1E7E3-810C-46EF-926B-0C1238446B77}']"
+          s:ds="query:$site/Data/Cart/Cart Header"
+          s:id="{26EAACD9-BBBF-45F5-BE6F-09B1EF98DE91}"
+          s:par=""
+          s:ph="/header/container-header-navigation-{97D1E7E3-810C-46EF-926B-0C1238446B77}-0"
+          s:ccb="Clear on publish" />
+        <r
+          uid="{69A85A4B-322D-4056-9689-1F0796176DB6}"
+          p:after="r[@uid='{56053CD6-397C-49F6-8A1C-8E0C54D4406B}']"
+          s:ds="query:$site/Data/Cart/Cart Footer"
+          s:id="{4EFF0ABE-1B10-47EE-8D57-8B22C4ACCA38}"
+          s:par=""
+          s:ph="footer"
+          s:ccb="Clear on publish" />
+        <r
+          uid="{B5BEB2FE-7B4B-432E-B9F2-9BE8BCC986E2}"
+          p:after="r[@uid='{69A85A4B-322D-4056-9689-1F0796176DB6}']"
+          s:ds="query:$site/Data/Page Scripts/Cart Page Body Style"
+          s:id="{413AA56B-92A3-49CF-BE00-289C3693E3EA}"
+          s:par=""
+          s:ph="body-scripts"
+          s:ccb="Clear on publish" />
+        <r
+          uid="{4C905199-78F6-42C3-98D9-CB5A240D85CA}"
+          p:after="r[@uid='{B5BEB2FE-7B4B-432E-B9F2-9BE8BCC986E2}']"
+          s:ds="query:$site/Data/Cart/Order Details"
+          s:id="{0DDD6607-14A4-4D4E-B2BC-5E5F05BF761B}"
+          s:par=""
+          s:ph="main-content-top"
+          s:ccb="Clear on publish" />
+        <r
+          uid="{2CF6DBAB-C73C-4671-A84A-1B7D884AA515}"
+          p:after="*[1=2]"
+          s:ds="query:$site/Data/Cart/Order Summary - Checkout"
+          s:id="{D84F512E-E2AF-4F9D-AA22-7C438D837C02}"
+          s:par=""
+          s:ph="/main-content-top/order-details-order-summary-{4C905199-78F6-42C3-98D9-CB5A240D85CA}-0"
+          s:ccb="Clear on publish" />
+      </d>
+      <d
+        id="{0B4A31C9-712D-4578-A396-2DDC0F34B63A}"
+        p:after="*[1=2]"
+        s:l="{FAB46B54-E80C-4CC7-9959-E0AED8A5F55C}">
+        <r
+          uid="{97D1E7E3-810C-46EF-926B-0C1238446B77}"
+          s:ds=""
+          s:id="{5AF94248-612E-413A-90B4-CA200E73C823}"
+          s:par=""
+          s:ph="header"
+          s:ccb="Clear on publish" />
+        <r
+          uid="{56053CD6-397C-49F6-8A1C-8E0C54D4406B}"
+          s:ds="query:$site/Data/Cart/Cart Header"
+          s:id="{26EAACD9-BBBF-45F5-BE6F-09B1EF98DE91}"
+          s:par=""
+          s:ph="/header/container-header-navigation-{97D1E7E3-810C-46EF-926B-0C1238446B77}-0"
+          s:ccb="Clear on publish" />
+        <r
+          uid="{69A85A4B-322D-4056-9689-1F0796176DB6}"
+          s:ds="query:$site/Data/Cart/Cart Footer"
+          s:id="{4EFF0ABE-1B10-47EE-8D57-8B22C4ACCA38}"
+          s:par=""
+          s:ph="footer"
+          s:ccb="Clear on publish" />
+        <r
+          uid="{B5BEB2FE-7B4B-432E-B9F2-9BE8BCC986E2}"
+          s:ds="query:$site/Data/Page Scripts/Cart Page Body Style"
+          s:id="{413AA56B-92A3-49CF-BE00-289C3693E3EA}"
+          s:par=""
+          s:ph="body-scripts"
+          s:ccb="Clear on publish" />
+      </d>
+    </r>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240808T201809Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "37d09e51-5fb4-4bea-b184-ae74752909da"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20241111T164151Z

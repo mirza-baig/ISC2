@@ -1,0 +1,42 @@
+﻿---
+ID: "5594e4eb-dfbc-436b-a892-a6f3968e4187"
+Parent: "bc273adf-087f-4d90-a458-d149a6057fdd"
+Template: "bc273adf-087f-4d90-a458-d149a6057fdd"
+Path: /sitecore/templates/Project/ISC2/Custom Pages/My Account Page/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/user_monitor.png
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: "{D2F8378F-C01A-4CEA-9EF3-9C9FF5DB332C}"
+- ID: "19d72261-a546-4dfd-8b41-ae3649322ee0"
+  Hint: nonMembersOnly
+  Value: 1
+- ID: "7e6c5fb8-1607-4173-9f9b-ca0e71148f97"
+  Hint: candidateOnly
+  Value: 1
+- ID: "8331dc35-41e5-41f0-bbf3-2b02b6c71c42"
+  Hint: membersOnly
+  Value: 1
+- ID: "d1041e33-ecbf-448f-a6f9-1befb144f7fa"
+  Hint: associateOnly
+  Value: 1
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240717T210623Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "5c82926e-b2d8-470f-b64e-c306354f6351"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240930T195637Z

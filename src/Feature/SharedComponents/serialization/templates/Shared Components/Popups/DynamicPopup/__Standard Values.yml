@@ -1,0 +1,31 @@
+﻿---
+ID: "667a3af0-bb0e-44dd-8a4c-e459fd15c294"
+Parent: "b485cf48-74a8-4f75-b388-a438f42e7f7d"
+Template: "b485cf48-74a8-4f75-b388-a438f42e7f7d"
+Path: /sitecore/templates/Feature/Shared Components/Popups/DynamicPopup/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240930T204758Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "974e048d-5281-4450-b2c0-2234e31abca3"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\vnagulapalli@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250722T125536Z

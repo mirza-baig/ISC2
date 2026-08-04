@@ -1,0 +1,34 @@
+﻿---
+ID: "46346692-77dc-4700-a81e-07cf4b879341"
+Parent: "79049e1f-29a9-4ea9-a15c-bf7df64b86d4"
+Template: "4716bfe8-f5b9-468b-a78d-46b9cae2f94d"
+Path: /sitecore/templates/Branches/Feature/Shared Components/Horizontal Tab Container/$name
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "04f4bf96-3c84-4aae-8d43-af1a37855a8c"
+      Hint: heading
+      Value: $name
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230809T125021Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\pyewale
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\pyewale
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "07efb7d8-1f22-45a4-a470-a4e822ca453f"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\pyewale
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230809T125038Z

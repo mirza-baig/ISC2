@@ -1,0 +1,74 @@
+﻿---
+ID: "7d27e4a7-728a-4f7f-9ba2-c92b854c0259"
+Parent: "6779e655-b29e-43f8-b38d-16b4e3326f77"
+Template: "6779e655-b29e-43f8-b38d-16b4e3326f77"
+Path: /sitecore/templates/Feature/Cart/Checkout/__Standard Values
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 400
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "000c7455-7bd7-42b8-ae31-3de4fa7e2117"
+      Hint: alertIcon
+      Value: |
+        <image mediaid="{BB092C54-7C23-4A2E-BC7A-57DB4D5DC7A1}" />
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240814T202751Z
+    - ID: "297c821d-fdd6-48c7-9168-c1e48c0166e8"
+      Hint: stepTwoLabelsTooltipsAndMore
+      Value: stepTitle=Payment%20Information&stepHeadline=Payment%20Options&stripeRadioButtonLabel=Stripe%20payment&paypalRadioButtonLabel=PayPal%20payment&previousStepCtaLabel=Back&productsNotAvailableModalHeading=There%20are%20products%20in%20your%20Cart%20that%20are%20no%20longer%20available&productsNotAvailableModalDescription=To%20continue%20with%20your%20purchase%2C%20please%20update%20your%20Cart%20by%20removing%20them.&productsNotAvailableModalButtonLabel=Update%20to%20continue&freeOrderLabel=Current%20order%20is%20free.%20No%20payment%20information%20is%20required.
+    - ID: "3a191f50-e7fb-4806-9ce7-3fae25e3ed5e"
+      Hint: stepOneLabelsTooltipsAndMore
+      Value: pageHeadline=Checkout&stepTitle=Personal%20Information&firstNameLabel=First%20Name&firstNameTooltip=First%20name.&lastNameLabel=Last%20Name&lastNameTooltip=Last%20name.&companyNameLabel=Company%20Name&addressLineOneLabel=Address%201&addressLineOneTooltip=Address%20line%20one.&addressLineTwoLabel=Address%20%28line%202%29&countryLabel=Country&countryTooltip=Country.&stateLabel=State&stateTooltip=State.&cityLabel=City&cityTooltip=City.&zipCodeLabel=Zip%20Code&zipCodeTooltip=Zip%20code.&emailAddressLabel=Email%20Address&emailAddressTooltip=Email%20address.&phoneNumberLabel=Your%20phone%20number&nextStepCtaLabel=Next%20Step&shippingAddressCheckboxLabel=Shipping%20Address%20is%20the%20same%20as%20Billing%20Address&shippingAddressLineOneLabel=Address%201&shippingAddressLineOneTooltip=Address%20line%20one.&shippingAddressLineTwoLabel=Address%20%28line%202%29&shippingCountryLabel=Country&shippingCountryTooltip=Country.&shippingStateLabel=State&shippingStateTooltip=State.&shippingCityLabel=City&shippingCityTooltip=City.&shippingZipCodeLabel=Zip%20Code&shippingZipCodeTooltip=Zip%20code.&emailFormatErrorMessage=%7Bfield%7D%20must%20be%20an%20email&requiredFieldNotice=Required&requiredErrorMessage=%7Bfield%7D%20is%20required&billingAddressTitle=Billing%20Address&mailingAddressTitle=Mailing%20Address&incorrectPostalCodeMessage=Incorrect%20Zip%20Code%20Format
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "618e8d1d-a1e0-4860-a7a0-ed1b2205f781"
+      Hint: bottomNotice
+      Value: |
+        <h3>Important information:</h3>
+        <p><span>ISC2 has been issued an attestation of compliance from a qualified security assessor (QSA) from the Payment Card Industry (PCI). Our payment operations are validated to follow best practices to increase controls around cardholder data to reduce credit card fraud. "Interested in purchasing this course on behalf of someone by check or wire, and/or want to learn about team discounts?</span></p>
+        <p><span>Enrollment will be granted to the account associated with the email you are currently logged in with when making the purchase.</span></p>
+        <p><span>If you have questions or would like to purchase by check or wire please contact:<br />
+        EMEA: Email:&nbsp;info-emea@isc2.org&nbsp;or call Phone: <a href="#">+44 (0)203.960.7800</a><br />
+        APAC: Email:&nbsp;isc2asia@isc2.org&nbsp;or call Phone: <a href="#">+852.5803.5662</a><br />
+        Americas: Email:&nbsp;training@isc2.org&nbsp;or call Phone <a href="#">+1-866-331-ISC2 (4722) ext. 2</a></span></p>
+    - ID: "8bf22ba1-5455-449a-b333-fbae4651d2e4"
+      Hint: confirmPurchaseCta
+      Value: |
+        <link text="Confirm purchase" anchor="" linktype="internal" class="" title="Confirm purchase" target="" querystring="" id="{D63C6697-7E62-4727-9A33-1C041C17D458}" />
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "03f51ba2-26f2-45c8-ad8d-fd90685a8668"
+    - ID: "8d8d6030-aec1-4a48-a080-d88d2b2d32ab"
+      Hint: errorLabels
+      Value: title=An%20error%20occurred&subTitle=You%20might%20want%20to%20check%20the%20information%20you%20entered&tryAgainListTitle=PLEASE%20TRY%20AGAIN
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "cc7a7947-6fee-4d0e-adc0-572fac64fec3"
+      Hint: termsAndConditionsLabel
+      Value: |
+        <span>I agree to the&nbsp;<a rel="noopener noreferrer" href="https://enroll.isc2.org/catalog?pagename=terms-and-conditions" target="_blank">Terms and Conditions</a>&nbsp;of this sale.*</span>
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250328T023559Z
+    - ID: "f8d398c4-44cc-4fe8-b526-9c2584af4c82"
+      Hint: tryAgainList
+      Value: |
+        <ul>
+            <li><span>Attempt clearing your cache</span></li>
+            <li><span>Different browsers</span></li>
+            <li><span>Different networks</span></li>
+        </ul>

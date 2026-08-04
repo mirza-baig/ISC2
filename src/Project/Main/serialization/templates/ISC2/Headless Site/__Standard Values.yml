@@ -1,0 +1,36 @@
+﻿---
+ID: "04dee9ee-2816-4428-9e0b-f7a035168725"
+Parent: "6b65dbb7-c331-4e21-8f45-9df4391763c4"
+Template: "6b65dbb7-c331-4e21-8f45-9df4391763c4"
+Path: /sitecore/templates/Project/ISC2/Headless Site/__Standard Values
+SharedFields:
+- ID: "11aba1f9-8338-4d89-b067-d7268bebe9c9"
+  Hint: globalFallbackImage
+  Value: |
+    <image mediaid="{1A59D9B7-62BE-4DFE-8A9C-7A8F4B121A10}" />
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230405T013400Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "8a1d6ebd-f8eb-434a-8870-37773adc183f"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250204T144226Z

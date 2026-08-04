@@ -1,0 +1,27 @@
+﻿---
+ID: "7150fc8c-bc92-4df7-98c1-c044bb9b8beb"
+Parent: "675084c1-18c4-4bee-9b4a-e5b8cdcaae7c"
+Template: "d62c48f1-6afe-4447-87b7-24188b64b892"
+Path: /sitecore/templates/Branches/Feature/Shared Components/Insights Featured Tab/$name
+SharedFields:
+- ID: "5533eaf3-07a8-486e-9a3b-bbff8b597c4b"
+  Hint: featuredCard
+  Value: 
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230621T232950Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "f749b393-ac12-4396-98df-21e7b924e4ee"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230621T233305Z

@@ -1,0 +1,23 @@
+﻿---
+ID: "fe8a21f9-b95a-41b8-aa5c-bf5337548bc7"
+Parent: "37e958e1-83b7-43d6-8582-d3cd9f422f26"
+Template: "c5ffdf5c-fe78-449c-a6ab-f995bccf45c4"
+Path: /sitecore/templates/Branches/Feature/Shared Components/Slider Container Without Description/$name
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230606T104406Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "afef10ec-5544-4411-b20c-41abfc59161d"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230606T104406Z

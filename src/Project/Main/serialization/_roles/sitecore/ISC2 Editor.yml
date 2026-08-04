@@ -1,0 +1,8 @@
+﻿---
+Role: |
+  sitecore\ISC2 Editor
+MemberOf:
+  Role: |
+    sitecore\Author
+  Role: |
+    sitecore\Sitecore Client Publishing

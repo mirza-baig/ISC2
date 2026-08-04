@@ -1,0 +1,43 @@
+﻿---
+ID: "b867b4bb-c14f-4c6d-92f9-b7fb4ba9b5d8"
+Parent: "0e963e95-6924-41c6-a653-00fd14da0205"
+Template: "0e963e95-6924-41c6-a653-00fd14da0205"
+Path: /sitecore/templates/Feature/Shared Components/Popups/Currency Popup/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240620T171342Z
+    - ID: "38e0f810-1e5a-4aa4-b30f-d59b74cfef03"
+      Hint: bannerText
+      Value: "Enhance your experience by selecting your preferred currency. Since you're in {country}, would you like to switch to {pendingCurrency}?"
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "7e719026-0367-4ad8-92b5-366ad0b21e66"
+      Hint: enabled
+      Value: 1
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "ff486803-4c49-40d2-b0ef-852c09495cf0"
+    - ID: "a7c91a99-3064-4b2a-bb1d-447265332303"
+      Hint: confirmButtonText
+      Value: Yes
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240620T171446Z
+    - ID: "e11510e1-5608-4bf6-b9eb-b8d81fda278b"
+      Hint: revertButtonText
+      Value: No

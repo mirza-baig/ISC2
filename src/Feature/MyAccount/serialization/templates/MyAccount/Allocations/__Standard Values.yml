@@ -1,0 +1,45 @@
+﻿---
+ID: "548b9ef3-ff48-44a3-8f16-43f7e295e978"
+Parent: "1d1fac99-84ba-49bf-bd5c-7ea7c5c73ca8"
+Template: "1d1fac99-84ba-49bf-bd5c-7ea7c5c73ca8"
+Path: /sitecore/templates/Feature/MyAccount/Allocations/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "1032b61c-c162-4610-b967-2f1b84941291"
+      Hint: allocationDetailsCta
+      Value: |
+        <link text="Allocation Details" anchor="" linktype="internal" class="" title="Allocation details" target="" querystring="" id="{CA73FD99-C33C-4136-AA92-12A966CA8AC3}" />
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240925T165832Z
+    - ID: "404ee59c-ba64-4885-9bd1-6761a84bbb70"
+      Hint: isCompactComponent
+      Value: 1
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "557cf4cc-da88-45b3-be6b-916d79643379"
+      Hint: seeAllLink
+      Value: |
+        <link text="See All Allocations" anchor="" linktype="internal" class="" title="See all allocations" target="" querystring="" id="{2871E337-23D6-4B40-B9DB-B814D61D4A7C}" />
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "618ad244-1597-4a44-9d17-79845a12cfe1"
+      Hint: labelsTitlesAndMore
+      Value: title=Latest%20Allocations&orderLabel=Order&dateLabel=Date&allocationNumberLabel=%7BallocatedNumber%7D%20of%20%7BavailableNumber%7D&allocatedLabel=Allocated&expiredFlagLabel=Expired&completeAllocationBeforeLabel=Complete%20allocation%20before%20%7BexpiryDate%7D&allocatedProductsExpiryMessage=You%20can%20see%20your%20allocated%20products%20until%20%7BexpiryDate%7D&noAllocationsLabel=There%20are%20no%20allocations%20found&allocationConsentCheckboxLabel=I%2C%20as%20an%20authorized%20representative%2C%20agree%20to%20and%20accept%20the%20Allocation%20%7BconsentTermsAndConditionsLink%7D%20on%20behalf%20of%20my%20company.&consentTermsAndConditionsLinkLabel=Terms%20and%20Conditions
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "ad5e16c5-087e-423d-9d13-976886e3dc95"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250314T180406Z

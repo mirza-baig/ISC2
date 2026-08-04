@@ -1,0 +1,48 @@
+{
+  "namespace": "Feature.SharedComponents",
+  "references": [
+    "Feature.Tabs"
+  ],
+  "items": {
+    "includes": [
+      {
+        "name": "templates",
+        "path": "/sitecore/templates/Feature/Shared Components"
+      },
+      {
+        "name": "branch-templates",
+        "path": "/sitecore/templates/Branches/Feature/Shared Components"
+      },
+      {
+        "name": "renderings",
+        "path": "/sitecore/layout/Renderings/Feature/Shared Components"
+      },
+      {
+        "name": "media",
+        "path": "/sitecore/media library/Feature/Shared Components"
+      },
+      {
+        "name": "rich-text-snippets",
+        "path": "/sitecore/system/Settings/Html Editor Profiles/Rich Text Full/Snippets",
+        "database": "core"
+      },
+      {
+        "name": "security-access-script",
+        "path": "/sitecore/system/Modules/PowerShell/Script Library/SPE/Content Authoring"
+      },
+      {
+        "name": "utility-scripts",
+        "path": "/sitecore/system/Modules/PowerShell/Script Library/Utility"
+      },
+      {
+        "name": "rich-text-profile-minimum",
+        "path": "/sitecore/system/Settings/Html Editor Profiles/Rich Text Minimum",
+        "database": "core"
+      },
+      {
+        "name": "placeholder-settings",
+        "path": "/sitecore/layout/Placeholder Settings/Feature/Shared Components"
+      }
+    ]
+  }
+}

@@ -1,0 +1,48 @@
+﻿---
+ID: "d4174762-4907-414f-b0a0-a0fc3a9abd00"
+Parent: "4d69c080-fd87-4e36-a0bb-41f9563e6d6e"
+Template: "4d69c080-fd87-4e36-a0bb-41f9563e6d6e"
+Path: /sitecore/templates/Feature/MyAccount/My Account Folder/__Standard Values
+SharedFields:
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {1D1FAC99-84BA-49BF-BD5C-7EA7C5C73CA8}
+    {16C7961E-91DE-4E3C-A8B0-B932E83D43C1}
+    {D4AB8748-3BE5-4026-876A-BB6B4827B173}
+    {8C5EFBF6-8093-4E31-97AE-56C238E2348B}
+    {9E306B84-063A-40D4-B75C-FD0F03FD0B96}
+    {7B8D2328-07A7-4449-92FB-9996DDEA3B92}
+    {6E474B6D-39FF-4AD7-8749-1E6DFC3BF0D0}
+    {6A61A0FA-C8B0-4246-80C4-DE7ACB0ECB39}
+    {981F1CD4-3504-4EE2-9A2E-A0FA2ED3F4A7}
+    {2BF9EEF7-ABE9-42ED-9F76-3F7D6C6B8103}
+    {0545474C-A0CE-4718-954F-42772AE2BC6E}
+    {6B350D25-7150-4AEB-878B-A665C1EDEB9F}
+    {AB98F798-312D-45E1-9BAE-362C0433EE7F}
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240625T164010Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "31c233a5-65c5-4201-8245-f1fb9b144150"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\mjamal@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250402T151303Z

@@ -1,0 +1,94 @@
+﻿---
+ID: "6eb1b67c-a6b4-4135-b3f5-1781201562ac"
+Parent: "0a6c5af7-5fdf-49c5-8e3b-f910333be388"
+Template: "fd2059fd-6043-4dfe-8c04-e2437ce87634"
+Path: /sitecore/content/ISC2/Main/Presentation/Partial Designs/Header
+SharedFields:
+- ID: "55faae90-3bba-4f7f-96fe-13c3f40055ff"
+  Hint: Signature
+  Value: header
+- ID: "c7c26117-dbb1-42b2-ab5e-f7223845cca3"
+  Hint: __Thumbnail
+  Value: |
+    <image mediaid="{66AEDED7-C54F-4A95-AE0B-12D8730ED571}" />
+- ID: "f1a1fe9e-a60c-4ddb-a3a0-bb5b29fe732e"
+  Hint: __Renderings
+  Value: |
+    <r xmlns:p="p" xmlns:s="s"
+      p:p="1">
+      <d
+        id="{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}"
+        s:l="{FAB46B54-E80C-4CC7-9959-E0AED8A5F55C}">
+        <r
+          uid="{35A3FB72-BB51-449D-885C-C82602BBA5BE}"
+          p:before="*"
+          s:ds="query:$site/Data/Alerts Folder/Buyer Context Banner"
+          s:id="{6C6F0F34-4C54-479D-8FDA-75DAA5DA73C8}"
+          s:par=""
+          s:ph="alert-notification" />
+        <r
+          uid="{B62E67F4-9031-45AB-B054-471952648035}"
+          p:after="r[@uid='{35A3FB72-BB51-449D-885C-C82602BBA5BE}']"
+          s:ds="query:$site/Data/Alerts Folder/Error Banner"
+          s:id="{4EE8C273-C330-4EA3-888D-A8EE24252C57}"
+          s:par="CSSStyles"
+          s:ph="alert-notification" />
+        <r
+          uid="{56053CD6-397C-49F6-8A1C-8E0C54D4406B}"
+          p:after="r[@uid='{B62E67F4-9031-45AB-B054-471952648035}']"
+          s:ds="{76CA464D-CCA9-4E1C-B902-FC702C7C09A1}"
+          s:id="{66BB26C5-EFFA-471E-AB39-87F02FAEF54A}"
+          s:par=""
+          s:ph="/header/container-header-navigation-{97D1E7E3-810C-46EF-926B-0C1238446B77}-0"
+          s:ccb="Clear on publish" />
+        <r
+          uid="{0FA6B18C-7DFD-4AAB-A6A3-C1BBD09F81FA}"
+          p:after="r[@uid='{56053CD6-397C-49F6-8A1C-8E0C54D4406B}']"
+          s:ds="{251744C7-656A-4D93-A6C8-E3474A3C06E1}"
+          s:id="{4DBA030F-88E0-45E8-984E-77A136DD811C}"
+          s:par=""
+          s:ph="/header/container-top-right-header-{97D1E7E3-810C-46EF-926B-0C1238446B77}-0"
+          s:ccb="Clear on publish" />
+        <r
+          uid="{81AC2B0B-4FC5-4CC1-9176-86ACA440CD81}"
+          p:after="r[@uid='{0FA6B18C-7DFD-4AAB-A6A3-C1BBD09F81FA}']"
+          s:ds="query:$site/Data/Cart/Mini Cart"
+          s:id="{0E66EEA0-CC7F-4377-B04E-39D2DD5E4C25}"
+          s:par=""
+          s:ph="/header/container-top-right-header-{97D1E7E3-810C-46EF-926B-0C1238446B77}-0"
+          s:ccb="Clear on publish" />
+        <r
+          uid="{97D1E7E3-810C-46EF-926B-0C1238446B77}"
+          p:after="*[1=2]"
+          s:ds=""
+          s:id="{5AF94248-612E-413A-90B4-CA200E73C823}"
+          s:par=""
+          s:ph="header"
+          s:ccb="Clear on publish" />
+      </d>
+    </r>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "001dd393-96c5-490b-924a-b0f25cd9efd8"
+      Hint: __Lock
+      Value: <r />
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230419T140203Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "78b7d5df-ccd4-48fc-b858-77e3ce058310"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20241128T171430Z

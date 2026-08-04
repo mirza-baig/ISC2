@@ -1,0 +1,18 @@
+export const LOCALSTORAGE_KEYS = {
+  ACCESS_TOKEN: 'authorization-isc2',
+  BANNERS: 'banners-isc2',
+  REFRESH_TOKEN: 'refresh-token-isc2',
+  ANONYMOUS_ID: 'anonymous-id-isc2',
+  ACTIVE_CART_ID: 'active-cart-id-isc2',
+  CURRENCIES: 'currencies-isc2',
+  USER_SESSION: 'user-session-isc2',
+  USER_CURRENCY: 'user-currency-isc2',
+  USER_COUNTRY: 'user-country-isc2',
+  GEOLOCATION_COUNTRY: 'geolocation-country-isc2',
+  CURRENCY_OVERRIDE: 'currency-override-isc2',
+  ALLOCATION_CONSENT: 'allocation-consent-isc2',
+  ORDER_NUMBER: 'order-number-isc2',
+  ORDER_ERROR: 'order-error-isc2',
+  STRIPE_RETURN_CART_ID: 'stripe-return-cart-id-isc2',
+  ALLOCATION_FILTERS: 'allocation-filters-isc2',
+};

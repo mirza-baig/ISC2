@@ -1,0 +1,51 @@
+﻿---
+ID: "bd91ffaf-34f4-477d-8b80-fe84a3db5a6c"
+Parent: "d2fc331c-dbcc-4f4f-8183-4583682206f7"
+Template: "d2fc331c-dbcc-4f4f-8183-4583682206f7"
+Path: /sitecore/templates/Feature/Masthead/_articleMasthead/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/document_header.png
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "003544be-937c-4c61-9ed6-3bd71fc15e4f"
+      Hint: rssFeedLabel
+      Value: Subscribe to RSS feed
+    - ID: "1094ca84-09d9-49a5-ba2d-ba87bb733eb8"
+      Hint: shareButtonLabel
+      Value: Toggle Sharing Options
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230418T075245Z
+    - ID: "3e52e101-d78a-4de9-9cd4-00c2811301d8"
+      Hint: articleHeading
+      Value: $name
+    - ID: "5892e32f-6ba6-4cc1-a0c7-c2038d64f499"
+      Hint: shareOnXLabel
+      Value: Share this article on X
+    - ID: "6b1bcdfb-e4f9-4392-bd05-6635d7b63a9f"
+      Hint: shareOnLinkedinLabel
+      Value: Share this article on LinkedIn
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "655857c8-ded0-4513-b710-7d9ae719a062"
+    - ID: "a7d107f8-96b5-48dc-b8d0-cdecdad2c14c"
+      Hint: Show in RSS Feed
+      Value: 1
+    - ID: "a8d63c36-a09d-4a9d-af53-95121a2f6c44"
+      Hint: shareOnFacebookLabel
+      Value: Share this article on Facebook
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\pdubey@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250707T154259Z
+    - ID: "e9bd2882-8381-4b39-892a-ca0f181908b1"
+      Hint: shareOnEmailLabel
+      Value: Share this article in an email

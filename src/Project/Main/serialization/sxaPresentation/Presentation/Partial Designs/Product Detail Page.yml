@@ -1,0 +1,86 @@
+﻿---
+ID: "12f1e1c4-a99d-40cd-adda-e20ba773e0ac"
+Parent: "0a6c5af7-5fdf-49c5-8e3b-f910333be388"
+Template: "fd2059fd-6043-4dfe-8c04-e2437ce87634"
+Path: /sitecore/content/ISC2/Main/Presentation/Partial Designs/Product Detail Page
+SharedFields:
+- ID: "55faae90-3bba-4f7f-96fe-13c3f40055ff"
+  Hint: Signature
+  Value: "product-detail-page"
+- ID: "c7c26117-dbb1-42b2-ab5e-f7223845cca3"
+  Hint: __Thumbnail
+  Value: |
+    <image mediaid="{9DC2A06F-A276-4546-9B93-BF13CA0E2C8B}" />
+- ID: "f1a1fe9e-a60c-4ddb-a3a0-bb5b29fe732e"
+  Hint: __Renderings
+  Value: |
+    <r xmlns:p="p" xmlns:s="s"
+      p:p="1">
+      <d
+        id="{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}"
+        s:l="{FAB46B54-E80C-4CC7-9959-E0AED8A5F55C}">
+        <r
+          uid="{6A54E8D1-A2FB-4F90-8C12-0F6B45FA7CB5}"
+          p:before="*"
+          s:ds=""
+          s:id="{2F790558-47BB-43A6-9B97-6B8EDC1E733F}"
+          s:par=""
+          s:ph="main-content-top"
+          s:ccb="Clear on publish" />
+        <r
+          uid="{32759670-DE16-4E63-9FB9-8F059EBA70D5}"
+          p:after="r[@uid='{6A54E8D1-A2FB-4F90-8C12-0F6B45FA7CB5}']"
+          s:id="{D616AAB6-8E04-4FB8-ADB3-DAD184A8645F}"
+          s:par="CacheClearingBehavior=Clear+on+publish"
+          s:ph="main-content-top" />
+        <r
+          uid="{20A4B708-B173-42BC-B749-55235482D20F}"
+          p:after="r[@uid='{32759670-DE16-4E63-9FB9-8F059EBA70D5}']"
+          s:ds=""
+          s:id="{2CA4105F-6C29-4758-A83D-2A40014F6BD7}"
+          s:par=""
+          s:ph="/main-content-top/product-detail-right-column-{32759670-DE16-4E63-9FB9-8F059EBA70D5}-0"
+          s:ccb="Clear on publish" />
+        <r
+          uid="{6D980B06-842B-43FB-9349-7EC8970A10C2}"
+          p:after="r[@uid='{20A4B708-B173-42BC-B749-55235482D20F}']"
+          s:ds="query:$site/Data/Popups Folder/Currency Popup"
+          s:id="{F7DFD113-1D62-458D-A420-D184277DB9B1}"
+          s:par=""
+          s:ph="alert-notification"
+          s:ccb="Clear on publish" />
+        <r
+          uid="{B03DAA16-8DEC-4B2B-B090-659543C15FBD}"
+          p:after="*[1=2]"
+          s:ds="query:$site/Data/Informational Cards/Discount Card"
+          s:id="{DB0FA3D6-2CD7-4A7B-95E5-EFC1AEBD9335}"
+          s:par=""
+          s:ph="/main-content-top/product-detail-right-column-{32759670-DE16-4E63-9FB9-8F059EBA70D5}-0"
+          s:ccb="Clear on publish" />
+      </d>
+    </r>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "001dd393-96c5-490b-924a-b0f25cd9efd8"
+      Hint: __Lock
+      Value: <r />
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240531T222933Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "e930c9d9-f9ea-4d15-b5d9-ec837da53489"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250107T182142Z

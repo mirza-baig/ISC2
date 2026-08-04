@@ -1,0 +1,23 @@
+{
+  "namespace": "Feature.MyAccount",
+  "items": {
+    "includes": [
+      {
+        "name": "templates",
+        "path": "/sitecore/templates/Feature/MyAccount"
+      },
+      {
+        "name": "renderings",
+        "path": "/sitecore/layout/renderings/Feature/MyAccount"
+      },
+      {
+        "name": "placeholdersettings",
+        "path": "/sitecore/layout/Placeholder Settings/Feature/MyAccount"
+      },
+      {
+        "name": "media",
+        "path": "/sitecore/media library/Feature/MyAccount"
+      }
+    ]
+  }
+}

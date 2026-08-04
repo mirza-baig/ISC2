@@ -1,0 +1,69 @@
+﻿---
+ID: "7e5e51cc-2f97-4fd6-8523-b01d9fb02f80"
+Parent: "4c649177-168e-41a6-b005-540a7935b4da"
+Template: "dd22f1b3-bd87-4db2-9e7d-f7a496888d43"
+Path: /sitecore/system/Modules/PowerShell/Script Library/Utility/Publishing And Unpublishing
+SharedFields:
+- ID: "b1a94ff0-6897-47c0-9c51-aa6acb80b1f0"
+  Hint: Script
+  Value: |
+    # Set variables
+    $itemPath = "master:\sitecore\content\ISC2\Main\Home"
+    $sourceDb = Get-Database "master"
+    $targetDb = Get-Database "experienceedge"
+    # Get the item
+    $item = Get-Item -Path $itemPath
+    if (-not $item) {
+        Write-Host "❌ Item not found at $itemPath"
+        return
+    }
+    # Prepare parameters
+    $targets = @($targetDb)  
+    $languages = @([Sitecore.Globalization.Language]::Parse("en"))
+    # Invoke the publishing job
+    $job = [Sitecore.Publishing.PublishManager]::PublishItem(
+        $item,
+        $targets,
+        $languages,
+        $true,   # deep
+        $true    # compareRevisions
+    )
+    Write-Host "⏳ Publishing in progress..."
+    [Sitecore.Publishing.PublishManager]::WaitFor(
+        $job,
+    600000,
+    20    
+    )
+    Write-Host "✅ Publish process completed successfully."
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 200
+- ID: "dbbbeca1-21c7-4906-9dd2-493c1efa59a2"
+  Hint: __Shared revision
+  Value: "9132ad67-32df-4d42-8776-b0cea59f69b4"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20250704T125202Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\vnagulapalli@isc2.org
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\vnagulapalli@isc2.org
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "259b63da-c58b-412e-9123-40c4389c1ad4"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\vnagulapalli@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250731T193734Z

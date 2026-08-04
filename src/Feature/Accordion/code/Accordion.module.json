@@ -1,0 +1,24 @@
+{
+  "namespace": "Feature.Accordion",
+  "items": {
+    "includes": [
+      {
+        "name": "templates",
+        "path": "/sitecore/templates/Feature/Accordion"
+      },
+      {
+        "name": "renderings",
+        "path": "/sitecore/layout/renderings/Feature/Accordion"
+      },
+      {
+        "name": "media",
+        "path": "/sitecore/media library/Feature/Accordion",
+        "allowedPushOperations": "CreateOnly"
+      },
+      {
+        "name": "placeholdersettings",
+        "path": "/sitecore/layout/Placeholder Settings/Feature/Accordion"
+      }
+    ]
+  }
+}

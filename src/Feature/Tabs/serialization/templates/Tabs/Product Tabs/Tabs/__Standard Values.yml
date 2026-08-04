@@ -1,0 +1,38 @@
+﻿---
+ID: "4650e274-0544-450f-b62b-fb577b2a8803"
+Parent: "2d1d514d-4b49-4daf-9576-944e11d76a2e"
+Template: "2d1d514d-4b49-4daf-9576-944e11d76a2e"
+Path: /sitecore/templates/Feature/Tabs/Product Tabs/Tabs/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/keyboard_key_p.png
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230509T115214Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "f0f1bef6-fd7a-4a38-b46c-b30e33005b5a"
+    - ID: "a87f1ce7-7c18-40cb-9a94-2190b0140d7b"
+      Hint: tabHeading
+      Value: $name
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230509T121923Z

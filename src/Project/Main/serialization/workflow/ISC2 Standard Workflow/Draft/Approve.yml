@@ -1,0 +1,42 @@
+﻿---
+ID: "7fbd93a5-16b3-448a-bcd3-5b3c3d60acb0"
+Parent: "19d11eba-3b80-46e3-b9eb-e32f8ec69fb0"
+Template: "cb01f9fc-c187-46b3-ab0b-97a8468d8303"
+Path: /sitecore/system/Workflows/ISC2 Standard Workflow/Draft/Approve
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Applications/32x32/nav_right_green.png
+- ID: "dcbebc58-6124-4100-a248-fc717d6c78d5"
+  Hint: Next state
+  Value: "{1247BD4C-661E-4F34-9073-D72512D8495E}"
+- ID: "dec8d2d5-e3cf-48b6-a653-8e69e2716641"
+  Hint: __Security
+  Value: |
+    ar|sitecore\ISC2 Web Admin|pd|+item:delete|+item:admin|+workflowState:delete|+item:write|+item:read|^*|+workflowState:write|+item:rename|+item:create|+workflowCommand:execute|pe|+item:delete|+item:admin|+workflowState:delete|+item:write|+item:read|^*|+workflowState:write|+item:rename|+item:create|+workflowCommand:execute|ar|sitecore\ISC2 Author|pd|+item:delete|+item:admin|+workflowState:delete|+item:write|+item:read|^*|+workflowState:write|+item:rename|+item:create|+workflowCommand:execute|pe|+item:delete|+item:admin|+workflowState:delete|+item:write|+item:read|^*|+workflowState:write|+item:rename|+item:create|+workflowCommand:execute|
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240319T190943Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\pdubey
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\pdubey
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "cb2a0909-bbb8-4e7e-84c3-3b011d4be3a6"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240705T200717Z

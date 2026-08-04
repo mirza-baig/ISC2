@@ -1,0 +1,75 @@
+﻿---
+ID: "ce42d7ef-ba57-4138-9bcd-4d54662330fc"
+Parent: "fbd3dc07-032e-46db-b33e-8d08469cbec2"
+Template: "fbd3dc07-032e-46db-b33e-8d08469cbec2"
+Path: /sitecore/templates/Project/ISC2/Custom Pages/ArticlePage/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/notebook.png
+- ID: "a4f985d9-98b3-4b52-aaaf-4344f6e747c6"
+  Hint: __Workflow
+  Value: "{68F795DE-E368-471F-92D8-07F08E74423F}"
+- ID: "c56fd3f5-e34b-4f88-b339-61f842fb6e81"
+  Hint: thumbnailImage
+  Value: |
+    <image mediaid="{848AEF12-D61D-4352-A6DA-D22548850444}" />
+- ID: "c9283d9e-7c29-4419-9c28-5a5c8ff53e84"
+  Hint: __Bucketable
+  Value: 
+- ID: "ca9b9f52-4fb0-4f87-a79f-24dea62cda65"
+  Hint: __Default workflow
+  Value: "{68F795DE-E368-471F-92D8-07F08E74423F}"
+- ID: "f1a1fe9e-a60c-4ddb-a3a0-bb5b29fe732e"
+  Hint: __Renderings
+  Value: |
+    <r xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <d
+        id="{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}"
+        l="{FAB46B54-E80C-4CC7-9959-E0AED8A5F55C}">
+        <r
+          ds=""
+          id="{26A8E036-C8DF-4C58-B75C-E03B64DD1491}"
+          par=""
+          ph="main-content"
+          uid="{DF22160F-397A-4715-B54C-D6619F656077}"
+          ccb="Clear on publish" />
+        <r
+          id="{BA971CD1-39A4-429C-BECA-741891E226EB}"
+          par="CacheClearingBehavior=Clear%20on%20publish"
+          ph="main-content"
+          uid="{AF3A3802-FA5B-49C4-868F-BBBF5C489094}" />
+      </d>
+    </r>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "001dd393-96c5-490b-924a-b0f25cd9efd8"
+      Hint: __Lock
+      Value: <r />
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230414T080521Z
+    - ID: "3e431de1-525e-47a3-b6b0-1ccbec3a8c98"
+      Hint: __Workflow state
+      Value: 
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "035d19b9-520a-4539-80da-cf2cdf77b2ee"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\fcastro@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240808T201307Z

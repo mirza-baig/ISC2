@@ -1,0 +1,46 @@
+﻿---
+ID: "ffa4325b-8473-4c01-9d9b-092849af5b16"
+Parent: "13659a23-7359-4810-a3b5-2b094452230c"
+Template: "13659a23-7359-4810-a3b5-2b094452230c"
+Path: /sitecore/templates/Project/ISC2/Custom Pages/HubPage/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: 
+- ID: "f1a1fe9e-a60c-4ddb-a3a0-bb5b29fe732e"
+  Hint: __Renderings
+  Value: |
+    <r xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <d
+        id="{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}"
+        l="{FAB46B54-E80C-4CC7-9959-E0AED8A5F55C}">
+        <r
+          ds="{1F7A621F-F509-401D-9207-2A57CE1A7742}"
+          id="{7C93D4B5-0EF0-43A7-861F-3B2EF86EB4E8}"
+          par=""
+          ph="main-content"
+          uid="{6A96ECE5-6E4F-4D05-BF50-0E3F6B1F5696}"
+          ccb="Clear on publish" />
+      </d>
+    </r>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230501T032709Z
+    - ID: "3e431de1-525e-47a3-b6b0-1ccbec3a8c98"
+      Hint: __Workflow state
+      Value: "{1247BD4C-661E-4F34-9073-D72512D8495E}"
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "5bf36edf-32a3-41f3-ade5-babb0c499949"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240927T171206Z

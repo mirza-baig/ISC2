@@ -1,0 +1,43 @@
+﻿---
+ID: "773778d8-5ba5-4ebd-8ae3-53569d64f794"
+Parent: "d64d3589-197f-4875-8a65-05332770c682"
+Template: "d64d3589-197f-4875-8a65-05332770c682"
+Path: /sitecore/templates/Feature/VotingRedirector/Voting Banner/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20250623T140635Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\pdubey@isc2.org
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\pdubey@isc2.org
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "36b3be50-8ece-4d36-b328-f968bae99376"
+    - ID: "8e9c4339-c6fb-4429-9c94-cca649e6108b"
+      Hint: enabled
+      Value: 1
+    - ID: "a4f0321c-f2a2-4d1d-b7b1-72f9dbd6e3e8"
+      Hint: backGroundColor
+      Value: #468145
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\pdubey@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250625T165926Z
+    - ID: "db7609c8-12e1-4158-bc29-0f82b0fb535f"
+      Hint: isClosable
+      Value: 
+    - ID: "fac0e88e-b2c9-4a9d-876c-6893154c82dd"
+      Hint: fontColor
+      Value: #FFFFFF

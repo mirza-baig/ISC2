@@ -1,0 +1,51 @@
+﻿---
+ID: "89715ed9-4445-4aeb-9c48-82b100daecc8"
+Parent: "803d9082-bf0c-4383-b0f4-2354a00e2cea"
+Template: "f1828a2c-7e5d-4bbd-98ca-320474871548"
+Path: /sitecore/media library/Feature/MyAccount/Default Profile Picture
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: "-/media/89715ED944454AEB9C4882B100DAECC8.ashx?h=16&thn=1&w=16"
+- ID: "40e50ed9-ba07-4702-992e-a912738d32dc"
+  Hint: Blob
+  BlobID: "e3851439-df7a-40da-93c7-17377697b6c4"
+  Value: PHN2ZyB3aWR0aD0iNzAiIGhlaWdodD0iNzAiIHZpZXdCb3g9IjAgMCA3MCA3MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcwIiBoZWlnaHQ9IjcwIiByeD0iMzUiIGZpbGw9IiNFNkVBRUMiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00NC45OTE0IDQ1Ljg3OTlDNDQuOTkxNCA0NS44Nzk5IDQwLjQ0NjMgNDEuMTg5NSAzNC44Mzk5IDQxLjE4OTVDMjkuMjMzNCA0MS4xODk1IDI0LjY4ODUgNDUuODc5OSAyNC42ODg1IDQ1Ljg3OTlIMjcuMTE2NUMyNy41MTA3IDQ1LjU3MTMgMjcuOTg0MSA0NS4yMjcxIDI4LjUyMjYgNDQuODgzM0MzMC4yMzQgNDMuNzkxIDMyLjQ2NzEgNDIuNzg5NSAzNC44Mzk5IDQyLjc4OTVDMzcuMjEyNyA0Mi43ODk1IDM5LjQ0NTggNDMuNzkxIDQxLjE1NzIgNDQuODgzM0M0MS42OTU3IDQ1LjIyNzEgNDIuMTY5MSA0NS41NzEzIDQyLjU2MzMgNDUuODc5OUg0NC45OTE0WiIgZmlsbD0iYmxhY2siLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zNC45OTczIDM4LjEzNjVDMzguNDI1OSAzOC4wNDUzIDQxLjEzNDUgMzUuMTkxNSA0MS4wNDY4IDMxLjc2MzFDNDAuOTU5MSAyOC4zMzYxIDM4LjExMDIgMjUuNjMyMiAzNC42ODI4IDI1LjcyMzNDMzEuMjU0MiAyNS44MTQ2IDI4LjU0NTYgMjguNjY4MyAyOC42MzMzIDMyLjA5NjZDMjguNzIxIDM1LjUyMzcgMzEuNTcgMzguMjI3NyAzNC45OTczIDM4LjEzNjVaTTM1LjAzOTkgMzkuNzM1OUMzOS4zNTExIDM5LjYyMTIgNDIuNzU2NiAzNi4wMzM0IDQyLjY0NjMgMzEuNzIyMkM0Mi41MzYgMjcuNDExMSAzOC45NTE1IDI0LjAwOTIgMzQuNjQwMyAyNC4xMjM5QzMwLjMyOSAyNC4yMzg2IDI2LjkyMzUgMjcuODI2NSAyNy4wMzM5IDMyLjEzNzZDMjcuMTQ0MiAzNi40NDg3IDMwLjcyODYgMzkuODUwNiAzNS4wMzk5IDM5LjczNTlaIiBmaWxsPSJibGFjayIvPgo8L3N2Zz4K
+- ID: "6954b7c7-2487-423f-8600-436cb3b6dc0e"
+  Hint: Size
+  Value: 1020
+- ID: "6f47a0a5-9c94-4b48-abeb-42d38def6054"
+  Hint: Mime Type
+  Value: image/svg+xml
+- ID: "c06867fe-9a43-4c7d-b739-48780492d06f"
+  Hint: Extension
+  Value: svg
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240911T200435Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "65885c44-8fcd-4a7f-94f1-ee63703fe193"
+      Hint: Alt
+      Value: Default Profile Picture
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "652e2856-23c9-47ea-9e35-f9d82c5d41c6"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240911T201152Z

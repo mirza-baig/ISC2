@@ -1,0 +1,8 @@
+﻿---
+Role: |
+  sitecore\ISC2 Web Admin
+MemberOf:
+  Role: |
+    sitecore\ISC2 Author
+  Role: |
+    sitecore\ISC2 Editor

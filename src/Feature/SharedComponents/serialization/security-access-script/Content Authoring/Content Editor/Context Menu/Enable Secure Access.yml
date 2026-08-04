@@ -1,0 +1,112 @@
+﻿---
+ID: "7d0e3ac7-5d9a-4f1b-93b5-751a7a468aa9"
+Parent: "e2cde005-41c8-441d-a699-d51f94d1cf36"
+Template: "ab154d3d-1126-4ab4-ac21-8b86e6bd70ea"
+Path: /sitecore/system/Modules/PowerShell/Script Library/SPE/Content Authoring/Content Editor/Context Menu/Enable Secure Access
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: network/16x16/lock.png
+- ID: "613d128b-7bf2-40f4-84cb-6717408f9806"
+  Hint: ShowRule
+  Value: |
+    <ruleset>
+      <rule
+        uid="{78D8A114-45F8-46F9-AF47-804E8062F8EC}">
+        <conditions>
+          <or
+            uid="6631B100668C4DE39BE66D981C73B371">
+            <or
+              uid="0243E8E74C804C93A9DA8E65DD7A07F0">
+              <or
+                uid="8140EE01440742C49B3C71C3F2D8687C">
+                <or
+                  uid="7EF74787617C4A60A2700C033BA48368">
+                  <or
+                    uid="BD266C625F244ED2BF4EF02E418DD9D0">
+                    <or
+                      uid="010E3554861743A99F17CF6C79A2AE3A">
+                      <or
+                        uid="1E96F01D522340D38C76C1E45ADBDB59">
+                        <or
+                          uid="B9052E49B2B74943A604D54B9DEA34A9">
+                          <or
+                            uid="BEEC2BBADB054D528BE848A003B98600">
+                            <condition
+                              id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+                              uid="1C0EC46AC0E44EE7B6EFAFDEC8E022D4"
+                              templateid="{C9AF023D-A197-4671-8D84-2A5A46E3A64D}" />
+                            <condition
+                              id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+                              uid="72A8A1306BDA48D6B3FA05BFEC90D5E9"
+                              templateid="{FBD3DC07-032E-46DB-B33E-8D08469CBEC2}" />
+                          </or>
+                          <condition
+                            id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+                            uid="E53DBDC4C843490599EED483959D7269"
+                            templateid="{CF36B6A3-F69A-4449-BCC6-B3680CAC9A25}" />
+                        </or>
+                        <condition
+                          id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+                          uid="9FDBEF6ECDE143E0837D278050E1E16F"
+                          templateid="{6A64EA37-14FB-4EEE-9D74-C78FA427F5E2}" />
+                      </or>
+                      <condition
+                        id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+                        uid="DD4178B2C0394F1A9878235006410574"
+                        templateid="{13659A23-7359-4810-A3B5-2B094452230C}" />
+                    </or>
+                    <condition
+                      id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+                      uid="E71FE68F99814E078603FA292877300F"
+                      templateid="{63D88676-BDE0-40E8-A5B5-BF5E43CBA112}" />
+                  </or>
+                  <condition
+                    id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+                    uid="C9795EA1DE8949F0B40B4DAE8A46FECD"
+                    templateid="{E007705A-251B-4395-9742-B98ACD4D5E5C}" />
+                </or>
+                <condition
+                  id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+                  uid="B7C3D3DF3EC846468AD17EFC6B9F1C44"
+                  templateid="{892A3E60-FCA6-4ECF-A325-215E8E267A6F}" />
+              </or>
+              <condition
+                id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+                uid="CD899102A6A84A3490B6F57AADDB770C"
+                templateid="{EB2FFAB4-A451-4B13-BD03-D99C0829A39A}" />
+            </or>
+            <condition
+              id="{5DE6D53E-EA62-4D17-8BDD-FEBCD80AC07B}"
+              uid="9876E43EBBE64D1DA5B45FA17852C767"
+              templateid="{F39F0134-BFA8-4228-A854-0BBF5808BE66}" />
+          </or>
+        </conditions>
+      </rule>
+    </ruleset>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240611T115135Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "c3b0fb1f-f37a-4af4-b996-f12ac8502939"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240611T134904Z

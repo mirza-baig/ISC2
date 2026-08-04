@@ -1,0 +1,15 @@
+{
+    "namespace": "Feature.Carousel",   
+    "items": {
+      "includes": [
+        {
+          "name": "templates",
+          "path": "/sitecore/templates/Feature/Carousel"
+        },
+		    {
+              "name": "renderings",
+              "path": "/sitecore/layout/renderings/Feature/Carousel"
+		    }        
+      ]
+    }
+  }

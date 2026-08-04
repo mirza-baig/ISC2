@@ -1,0 +1,52 @@
+﻿---
+ID: "a475571d-87ca-45ea-8352-aab8b20c3d30"
+Parent: "0a6c5af7-5fdf-49c5-8e3b-f910333be388"
+Template: "fd2059fd-6043-4dfe-8c04-e2437ce87634"
+Path: /sitecore/content/ISC2/Main/Presentation/Partial Designs/Product Landing Page
+SharedFields:
+- ID: "55faae90-3bba-4f7f-96fe-13c3f40055ff"
+  Hint: Signature
+  Value: "product-landing-page"
+- ID: "c7c26117-dbb1-42b2-ab5e-f7223845cca3"
+  Hint: __Thumbnail
+  Value: |
+    <image mediaid="{95DB0F6D-D5B7-4E10-86EE-E7F7D76B2BEB}" />
+- ID: "f1a1fe9e-a60c-4ddb-a3a0-bb5b29fe732e"
+  Hint: __Renderings
+  Value: |
+    <r xmlns:p="p" xmlns:s="s"
+      p:p="1">
+      <d
+        id="{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}"
+        s:l="{FAB46B54-E80C-4CC7-9959-E0AED8A5F55C}">
+        <r
+          uid="{65B7F873-5744-4323-B9B7-25549AC38ED4}"
+          s:ds="query:$site/Data/Popups Folder/Currency Popup"
+          s:id="{F7DFD113-1D62-458D-A420-D184277DB9B1}"
+          s:par=""
+          s:ph="alert-notification"
+          s:ccb="Clear on publish" />
+      </d>
+    </r>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240531T222933Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "adfae28a-84e2-47ec-9874-ece5f7b08412"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20241202T202914Z

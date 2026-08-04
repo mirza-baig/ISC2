@@ -1,0 +1,30 @@
+{
+  "name": "sitecorev10",
+  "description": "Application utilizing Sitecore JavaScript Services and Next.js",
+  "version": "1.0.335",
+  "type": "module",
+  "scripts": {
+    "postinstall": "npm run bind-hooks && npm run install-front",
+    "bind-hooks": "node ./hooks/bind-hooks.js",
+    "install-front": "cd ./src/Front && npm install",
+    "commitlint": "commitlint",
+    "commit": "git-cz",
+    "changelog": "conventional-changelog --config changelog.config.js -i CHANGELOG.md -s",
+    "version": "npm ci --ignore-scripts && npm run changelog && git add CHANGELOG.md"
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/cz-commitlint"
+    }
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
+    "@commitlint/cz-commitlint": "^19.2.0",
+    "@commitlint/prompt-cli": "^19.3.1",
+    "commitizen": "^4.3.0",
+    "conventional-changelog-cli": "^5.0.0",
+    "conventional-changelog-conventionalcommits": "^8.0.0",
+    "inquirer": "^9.3.5"
+  }
+}

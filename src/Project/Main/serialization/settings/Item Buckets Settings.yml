@@ -1,0 +1,64 @@
+﻿---
+ID: "376da354-62fb-4066-ade3-439419eae7a8"
+Parent: "877091a7-131e-40d2-bdc6-5534284c5d03"
+Template: "9f6e14e6-c593-410b-a57e-21f6b5a413ad"
+Path: /sitecore/system/Settings/Buckets/Item Buckets Settings
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Applications/32x32/gear.png
+- ID: "37ac831a-7cb4-4962-aebd-a269649e5d35"
+  Hint: Tag Parent
+  Value: "{154D56CC-0DE2-43C7-BBC0-A25BD7FFD901}"
+- ID: "5a81d794-7364-4cc5-8aa9-a921d5dda4af"
+  Hint: Opening Search Results
+  Value: New Tab
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 200
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20111026T123900Z
+    - ID: "4b5d1cb7-e617-4cd0-a7e8-cc8a9fd80688"
+      Hint: Rule
+      Value: |
+        <ruleset>
+          <rule
+            uid="{26D2254B-DA44-45A7-A3F8-06939BB41BFD}">
+            <conditions>
+              <condition
+                id="{E5B43654-4D96-41F3-83D6-4F04CC7ADF69}"
+                uid="AF7642FF879047F598F174D818F8187D"
+                templateid="{C9AF023D-A197-4671-8D84-2A5A46E3A64D}" />
+            </conditions>
+            <actions>
+              <action
+                id="{B9EDB000-4C7C-4770-AD29-BEC226213AFC}"
+                uid="ED1F6A4148454EA1A1CA5AE4E8B3F650"
+                format="yyyy/MM" />
+            </actions>
+          </rule>
+        </ruleset>
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "4fbe2943-9fd0-47c3-9aad-7ee692680273"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230417T132106Z

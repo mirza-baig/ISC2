@@ -1,0 +1,37 @@
+﻿---
+ID: "2c3480a9-c5ec-4ae8-a887-e1760768e4a1"
+Parent: "5a52ed53-282d-4c8f-a357-d80342560b54"
+Template: "10863561-7398-4c5d-8a99-b075b90c4e41"
+Path: /sitecore/system/Settings/Html Editor Profiles/Rich Text Minimum/Class Translation/Head2
+SharedFields:
+- ID: "2b6bd0bd-7b87-4e8d-99c8-16bbe70e7de0"
+  Hint: Key
+  Value: Head2
+- ID: "caf92d8d-e76c-41a0-9567-6c5f86b63abf"
+  Hint: Value
+  Value: Heading2
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20071122T183758
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "76446c52-a74d-46fd-95d4-aebde827718b"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "c8f93afe-bfd4-4e8f-9c61-152559854661"
+      Hint: __Valid from
+      Value: 20060131T143643
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240604T161655Z

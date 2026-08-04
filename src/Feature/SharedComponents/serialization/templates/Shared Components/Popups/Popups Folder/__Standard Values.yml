@@ -1,0 +1,51 @@
+﻿---
+ID: "0c1063f8-e85b-4ca2-b90a-6bcf521a9c12"
+Parent: "63910f74-7dc4-4b30-9489-a9f88c99c74b"
+Template: "63910f74-7dc4-4b30-9489-a9f88c99c74b"
+Path: /sitecore/templates/Feature/Shared Components/Popups/Popups Folder/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: people/32x32/led_blue.png
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {1EC1AECA-B52B-44EB-89E9-EC8300902687}
+    {2C652CF8-E584-4D25-9DF6-616DF0F816AF}
+    {0E963E95-6924-41C6-A653-00FD14DA0205}
+    {540C346B-A772-4795-BB74-16540F381650}
+    {778FED65-6D2C-4194-9DCB-09CFB71150A8}
+    {995CB092-FB68-4F2F-9C27-5DD5BA0335E6}
+    {23A70086-9F1E-4FDA-BEED-3BC63F819678}
+    {A947B349-74F7-471C-8A8E-544B2CAC39D3}
+    {B485CF48-74A8-4F75-B388-A438F42E7F7D}
+    {A2C9D4B7-5E31-4F8A-B6C0-9D8E7F3A2B15}
+- ID: "dbbbeca1-21c7-4906-9dd2-493c1efa59a2"
+  Hint: __Shared revision
+  Value: "90deaf5e-3d6e-47ec-8c11-36d560ebb19e"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230530T081256Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "a4ff73e5-203e-4763-b807-9f9f83143a2c"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\gfeola@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260407T173939Z

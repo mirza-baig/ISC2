@@ -1,0 +1,43 @@
+﻿---
+ID: "8c6e215a-827e-4b18-b048-51571003a4c1"
+Parent: "40194ad1-f509-42ae-be4e-336f94f7c491"
+Template: "40194ad1-f509-42ae-be4e-336f94f7c491"
+Path: /sitecore/templates/Feature/VotingRedirector/Nominations Banner/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "2058a651-7551-4754-ae3f-30897db24f04"
+      Hint: CTA
+      Value: 
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20250623T140635Z
+    - ID: "4b749519-4e35-4444-9f9f-5e1e38cfe751"
+      Hint: Image
+      Value: #FFFFFF
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\pdubey@isc2.org
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\pdubey@isc2.org
+    - ID: "841ce62b-4ce5-4196-886d-70124f8d939b"
+      Hint: ColumnWidth
+      Value: Half
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "0350b46b-4439-4876-8534-a14c1a31d028"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\vnagulapalli@isc2.org
+    - ID: "c32794ea-6f4e-4f4d-9b78-733387b40634"
+      Hint: Body
+      Value: 
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20251126T162658Z
