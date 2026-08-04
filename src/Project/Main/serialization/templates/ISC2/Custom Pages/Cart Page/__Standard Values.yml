@@ -1,0 +1,30 @@
+﻿---
+ID: "78dd0c7b-2c87-4618-9792-ca5beec71079"
+Parent: "5d01997d-dfb0-4318-8989-a8d3bdcf932b"
+Template: "5d01997d-dfb0-4318-8989-a8d3bdcf932b"
+Path: /sitecore/templates/Project/ISC2/Custom Pages/Cart Page/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/purchase_order.png
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240717T210623Z
+    - ID: "4e0720e9-9d50-4ddc-87cf-ecd65e8e94c8"
+      Hint: NavigationTitle
+      Value: 
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "ce1391a8-f8ef-4036-849f-d65820f56258"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240807T152309Z

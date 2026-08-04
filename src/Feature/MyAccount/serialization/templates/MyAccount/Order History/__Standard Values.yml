@@ -1,0 +1,49 @@
+﻿---
+ID: "f05519b9-e5fe-439b-a24a-42ca64af083e"
+Parent: "6e474b6d-39ff-4ad7-8749-1e6dfc3bf0d0"
+Template: "6e474b6d-39ff-4ad7-8749-1e6dfc3bf0d0"
+Path: /sitecore/templates/Feature/MyAccount/Order History/__Standard Values
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 300
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240925T165832Z
+    - ID: "30b3f58f-8b01-4bd6-9252-16a025951dd2"
+      Hint: logo
+      Value: |
+        <image mediaid="{7E072EC0-D0E1-4193-A04C-84546AD9FACF}" />
+    - ID: "39a62a02-ad91-458d-a906-a598234df18b"
+      Hint: printInvoiceCtaIcon
+      Value: |
+        <image mediaid="{4232C379-5113-4737-A0E6-330E5DB4D40D}" />
+    - ID: "4f618c00-4f89-457b-b275-708bde6bcfd6"
+      Hint: orderPrintLabelsAndMore
+      Value: "nameLabel=Name&addressLabel=Address&cityLabel=City&regionLabel=Region&postcodeLabel=Postcode&countryLabel=Country&emailLabel=Email&productLabel=Product&quantityLabel=Quantity&priceLabel=Price&amountLabel=Amount&taxLabel=Tax&subTotalLabel=Sub-Total&totalLabel=Total&mailingAddress=Mailing%20Address&billingAddress=Billing%20Address"
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "41599168-73ab-4f2c-91ba-8badba3b30f0"
+    - ID: "9f6ccc13-c792-4521-8fe5-a1b15b0de521"
+      Hint: orderListLabelsAndMore
+      Value: orderHistoryIntroMessage=You%20can%20see%20your%20orders%20purchased%20until%20%7BcurrentDate%7D.&printInvoiceCtaLabel=Print%20your%20invoice&orderLabel=Order&dateLabel=Date&paymentLabel=Payment&orderTotalLabel=Order%20Total&viewMoreCtaLabel=View%20More&viewLessCtaLabel=View%20Less&shippedByLabel=Shipped%20by&noOrderMessage=You%20currently%20have%20no%20orders
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250328T171316Z

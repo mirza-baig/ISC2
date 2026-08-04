@@ -1,0 +1,37 @@
+﻿---
+ID: "6bd07fc1-5dc8-45ed-a2f3-7bf9144aa7a2"
+Parent: "900e4384-01c5-49ea-83a2-9f4e3958f23c"
+Template: "900e4384-01c5-49ea-83a2-9f4e3958f23c"
+Path: /sitecore/templates/Feature/Carousel/Carousel/__Standard Values
+SharedFields:
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {13C1FDBE-757C-4BF1-BC55-99886F3809CA}
+    {2A66B45C-B483-43E2-9E36-FEC25650A309}
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230418T194927Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "3b6bac25-5a8a-475b-a8cd-779649579ba5"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230915T002136Z

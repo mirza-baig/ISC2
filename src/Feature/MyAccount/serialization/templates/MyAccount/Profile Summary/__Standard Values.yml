@@ -1,0 +1,54 @@
+﻿---
+ID: "be2cfb3c-1a5b-40b4-bf8a-1e5429d0d1c7"
+Parent: "2bf9eef7-abe9-42ed-9f76-3f7d6c6b8103"
+Template: "2bf9eef7-abe9-42ed-9f76-3f7d6c6b8103"
+Path: /sitecore/templates/Feature/MyAccount/Profile Summary/__Standard Values
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 300
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "11daebbe-33ef-4cf7-8e53-4cccabd84f22"
+      Hint: defaultProfilePic
+      Value: |
+        <image mediaid="{89715ED9-4445-4AEB-9C48-82B100DAECC8}" />
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240904T195504Z
+    - ID: "3f168103-606f-4ef0-a60d-1927427293cf"
+      Hint: deletePhotoIcon
+      Value: |
+        <image mediaid="{28FE228F-27C2-4BCF-936D-A58F43E65E31}" />
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5303a8f1-86af-4eb7-9de1-7f82ba06babe"
+      Hint: closeUploadModalIcon
+      Value: |
+        <image mediaid="{E141BE1F-5393-4CBB-9C7D-EB1521B27DDC}" />
+    - ID: "5a0b6614-f8da-44cd-8e19-d0b83b17674e"
+      Hint: uploadPhotoIcon
+      Value: |
+        <image mediaid="{D2F5D312-4789-4352-B316-420D9AC93698}" />
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "bd6f5de9-cad7-44fc-b2de-ec2a237a2405"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20241121T200747Z
+    - ID: "f72c5c41-6549-4cf3-9d41-5de97c4926d7"
+      Hint: labelsTitlesAndMore
+      Value: uploadFileCtaLabel=Upload%20file&dropFileText=Or%20drop%20files&userIdLabel=ISC2%20%7BmembershipType%7D%20%23ID&startDateLabel=Start%20Date&recertifyDateLabel=Recertify%20Date&renewalDateLabel=Renewal%20Date&editPictureLabel=Edit%20photo&deletePictureLabel=Delete%20profile%20picture&closeLabel=Close&validationLabel=Validation%20in%20progress&deleteSuccessfulLabel=Your%20picture%20has%20been%20deleted%20successfully.&signOutLabel=Sign%20Out

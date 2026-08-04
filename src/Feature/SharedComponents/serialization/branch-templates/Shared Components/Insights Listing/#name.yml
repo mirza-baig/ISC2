@@ -1,0 +1,23 @@
+﻿---
+ID: "1a81a728-7665-45f5-a6ce-840148ffd552"
+Parent: "71b4b696-a425-4b97-bab1-ba12fe495a17"
+Template: "36fa032b-db11-47df-9feb-d799c4dbf9aa"
+Path: /sitecore/templates/Branches/Feature/Shared Components/Insights Listing/$name
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230621T232148Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "acd5ca0b-a960-4170-83f7-b7b5598430e5"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230621T232148Z

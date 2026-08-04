@@ -1,0 +1,24 @@
+{
+  "namespace": "Feature.MediaCard",
+  "items": {
+    "includes": [
+      {
+        "name": "templates",
+        "path": "/sitecore/templates/Feature/MediaCard"
+      },
+      {
+        "name": "renderings",
+        "path": "/sitecore/layout/renderings/Feature/MediaCard"
+      },
+      {
+        "name": "media",
+        "path": "/sitecore/media library/Feature/MediaCard",
+        "allowedPushOperations": "CreateOnly"
+      },
+      {
+        "name": "placeholdersettings",
+        "path": "/sitecore/layout/Placeholder Settings/Feature/MediaCard"
+      }
+    ]
+  }
+}

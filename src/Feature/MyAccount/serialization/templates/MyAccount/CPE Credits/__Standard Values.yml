@@ -1,0 +1,38 @@
+﻿---
+ID: "29905804-f16c-4e9d-8c44-e79d47bde9b9"
+Parent: "d4ab8748-3be5-4026-876a-bb6b4827b173"
+Template: "d4ab8748-3be5-4026-876a-bb6b4827b173"
+Path: /sitecore/templates/Feature/MyAccount/CPE Credits/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20241002T142809Z
+    - ID: "41c175ce-5ba8-424d-8746-424db096a399"
+      Hint: goToPortalIcon
+      Value: |
+        <image mediaid="{F9537ED0-999E-4BBB-9EFD-DB86CBAAF7AF}" />
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "cbc671b9-3bfd-4dcb-a711-5d1656fa81b1"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "c1e93431-4cf3-45de-904c-382f08ab04f2"
+      Hint: labelsTitlesAndMore
+      Value: heading=CPE%20Credits&tasksCompletedLabel=%7Bcompleted%7D%20of%20%7Btotal%7D&certificationStatusLabel=%7Bcertification%7D%20Certification%20Status&cpesCompletedLabel=CPEs%20completed&percentageCompletedLabel=%7Bpercentage%7D%25%20Completed
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20241002T194430Z

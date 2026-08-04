@@ -1,0 +1,40 @@
+﻿---
+ID: "a80e8149-c0ba-400e-9a6e-a09d50f5c067"
+Parent: "892a3e60-fca6-4ecf-a325-215e8e267a6f"
+Template: "892a3e60-fca6-4ecf-a325-215e8e267a6f"
+Path: /sitecore/templates/Project/ISC2/Custom Pages/ProductLandingPage/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: 
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {81F67499-736D-4CFD-9D01-CACB49164890}
+    {03700D9A-319C-4783-9A3C-021A9B5E7624}
+- ID: "f1a1fe9e-a60c-4ddb-a3a0-bb5b29fe732e"
+  Hint: __Renderings
+  Value: |
+    <r xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <d
+        id="{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}"
+        l="{FAB46B54-E80C-4CC7-9959-E0AED8A5F55C}" />
+    </r>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230501T032709Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "4aefdf0f-0f6a-436a-910b-cfe00446a8e3"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250127T020505Z

@@ -1,0 +1,47 @@
+﻿---
+ID: "dd07421c-e738-40cd-b657-b9add5a98574"
+Parent: "a8229b3c-31cb-41d0-8ef4-a1743c34238a"
+Template: "a8229b3c-31cb-41d0-8ef4-a1743c34238a"
+Path: /sitecore/templates/Feature/Product/Product Form Labels/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "08bfc122-c661-4fc8-ab2c-f55d75e10c62"
+      Hint: messages
+      Value: classesDetails=Classes%20Details%3A&noOptions=No%20options&singleProductSelection=Training%20only&smallQtyWarning=Last%20seats%21&noQtyWarning=Not%20Available&noDatesForSelectedOptions=There%20are%20no%20classes%20in%20this%20period%20with%20the%20selected%20options.&chooseAnotherTimeline=Please%20choose%20another%20timeline.&selectDates=Select%20dates&confirmDateSelection=Confirm%20this%20selection&purchaseOptionNotice=Continue%20to%20the%20provider%27s%20site%20to%20know%20more%20about%20availability%20and%20pricing.&narrowResultsByFilters=Please%20select%20more%20fields%20to%20narrow%20search%20result%20to%20a%20single%20variant&changeSchedule=Change
+    - ID: "22ec3b1c-1230-494d-9fdf-bf603ae94386"
+      Hint: formNotice
+      Value: |
+        This is a prerequisite for taking exams with ISC2.<br />After buying, you´ll need to <a href="/register-for-exam">Register for exam</a> and <a href="#">Schedule the exam</a>.
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240625T162847Z
+    - ID: "3648f4a4-26b7-4c62-a301-0f334acbcc8b"
+      Hint: toolTips
+      Value: region=Select%20region&state=Select%20state&trainingProvider=Select%20training%20provider&duration=Select%20training%20duration&startDate=Select%20schedule&purchaseOptions=Select%20purchase%20options&country=Select%20country&city=Select%20city
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "c78731d3-7d8d-4bc9-86ec-0c7541139229"
+    - ID: "8f66b419-9066-4fe2-bbf2-dd4061a3a65d"
+      Hint: headline
+      Value: $name
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\trobinson@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250205T191935Z
+    - ID: "f7e75d69-ba65-4a04-9dec-185213d087cf"
+      Hint: labels
+      Value: region=Region&state=State&trainingProvider=Training%20Provider&duration=Training%20Duration&startDate=Date&purchaseOptions=Purchase%20Options&purchaseOptionTitle=Purchase%20Option&buyNowCta=Buy%20Now&thirdPartyCta=Go%20to%20Provider%27s%20Site&country=Country&city=City

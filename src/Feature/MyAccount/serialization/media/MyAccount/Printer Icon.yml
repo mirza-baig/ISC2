@@ -1,0 +1,51 @@
+﻿---
+ID: "4232c379-5113-4737-a0e6-330e5db4d40d"
+Parent: "803d9082-bf0c-4383-b0f4-2354a00e2cea"
+Template: "f1828a2c-7e5d-4bbd-98ca-320474871548"
+Path: /sitecore/media library/Feature/MyAccount/Printer Icon
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: "-/media/4232C37951134737A0E6330E5DB4D40D.ashx?h=16&thn=1&w=16"
+- ID: "40e50ed9-ba07-4702-992e-a912738d32dc"
+  Hint: Blob
+  BlobID: "daa8854c-7c54-42f8-aeab-1fc3c7f42097"
+  Value: PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTQiIHZpZXdCb3g9IjAgMCAxNiAxNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEzLjY2NzUgMy44ODg4OUMxNC45NTg2IDMuODg4ODkgMTYuMDAwOSA0LjkzMTExIDE2LjAwMDkgNi4yMjIyMlYxMC44ODg5SDEyLjg4OThWMTRIMy41NTY0MlYxMC44ODg5SDAuNDQ1MzEyVjYuMjIyMjJDMC40NDUzMTIgNC45MzExMSAxLjQ4NzUzIDMuODg4ODkgMi43Nzg2NSAzLjg4ODg5SDMuNTU2NDJWMEgxMi44ODk4VjMuODg4ODlIMTMuNjY3NVpNNS4xMTE5OCAxLjU1NTU2VjMuODg4ODlIMTEuMzM0MlYxLjU1NTU2SDUuMTExOThaTTExLjMzNDIgMTIuNDQ0NFY5LjMzMzMzSDUuMTExOThWMTIuNDQ0NEgxMS4zMzQyWk0xMi44ODk4IDkuMzMzMzNIMTQuNDQ1M1Y2LjIyMjIyQzE0LjQ0NTMgNS43OTQ0NCAxNC4wOTUzIDUuNDQ0NDQgMTMuNjY3NSA1LjQ0NDQ0SDIuNzc4NjVDMi4zNTA4NyA1LjQ0NDQ0IDIuMDAwODcgNS43OTQ0NCAyLjAwMDg3IDYuMjIyMjJWOS4zMzMzM0gzLjU1NjQyVjcuNzc3NzhIMTIuODg5OFY5LjMzMzMzWk0xMy42Njc1IDYuNjExMTFDMTMuNjY3NSA3LjAzODg5IDEzLjMxNzUgNy4zODg4OSAxMi44ODk4IDcuMzg4ODlDMTIuNDYyIDcuMzg4ODkgMTIuMTEyIDcuMDM4ODkgMTIuMTEyIDYuNjExMTFDMTIuMTEyIDYuMTgzMzMgMTIuNDYyIDUuODMzMzMgMTIuODg5OCA1LjgzMzMzQzEzLjMxNzUgNS44MzMzMyAxMy42Njc1IDYuMTgzMzMgMTMuNjY3NSA2LjYxMTExWiIgZmlsbD0iIzIyN0NCNCIvPgo8L3N2Zz4K
+- ID: "6954b7c7-2487-423f-8600-436cb3b6dc0e"
+  Hint: Size
+  Value: 810
+- ID: "6f47a0a5-9c94-4b48-abeb-42d38def6054"
+  Hint: Mime Type
+  Value: image/svg+xml
+- ID: "c06867fe-9a43-4c7d-b739-48780492d06f"
+  Hint: Extension
+  Value: svg
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240926T210413Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "65885c44-8fcd-4a7f-94f1-ee63703fe193"
+      Hint: Alt
+      Value: Printer Icon
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "4f589c91-cd35-49c4-be23-3281aad3ada9"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240926T210446Z

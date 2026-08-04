@@ -1,0 +1,15 @@
+{
+  "namespace": "Feature.VotingRedirector",
+  "items": {
+    "includes": [
+      {
+        "name": "templates",
+        "path": "/sitecore/templates/Feature/VotingRedirector"
+      },
+      {
+        "name": "renderings",
+        "path": "/sitecore/layout/Renderings/Feature/VotingRedirector"
+      }
+    ]
+  }
+}

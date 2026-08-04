@@ -1,0 +1,42 @@
+﻿---
+ID: "be34aa84-15e2-4598-b03d-0519ebe620d0"
+Parent: "9e306b84-063a-40d4-b75c-fd0f03fd0b96"
+Template: "9e306b84-063a-40d4-b75c-fd0f03fd0b96"
+Path: /sitecore/templates/Feature/MyAccount/Events List/__Standard Values
+SharedFields:
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: "{00FB4CF0-7573-444C-8FC4-FD9F0D4BCC60}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240925T165832Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "552a9e2d-d9aa-4d2a-b833-73113e758a20"
+      Hint: labelsTitlesAndMore
+      Value: "{EF239D06-890D-4C65-BE39-D204570B8209}"
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "0e9c0b14-203b-4f74-9172-83ea50bbe723"
+    - ID: "b9c38065-9205-4a69-a333-66ba8e8c2ab2"
+      Hint: seeAllLink
+      Value: |
+        <link text="See All Events" linktype="anchor" url="" anchor="" title="See all events" class="" />
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20241201T152637Z

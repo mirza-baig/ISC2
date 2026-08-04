@@ -1,0 +1,23 @@
+﻿---
+ID: "4e860665-a878-43ed-bd45-702f9cabdefb"
+Parent: "0a6786b1-8e2a-4acd-b267-812f358a716d"
+Template: "0a6786b1-8e2a-4acd-b267-812f358a716d"
+Path: /sitecore/templates/Feature/Shared Components/ChapterFinder/ChapterFinder/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230607T184948Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "60cfff06-ef19-4a88-bde8-fef6ecfc4b6d"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230607T184948Z

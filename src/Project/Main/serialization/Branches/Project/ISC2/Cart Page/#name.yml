@@ -1,0 +1,41 @@
+﻿---
+ID: "2e9831a1-ad65-4645-a7d6-5b0e4fb7a34c"
+Parent: "5d8d172a-b1d8-4147-812e-d9812e029079"
+Template: "5d01997d-dfb0-4318-8989-a8d3bdcf932b"
+Path: /sitecore/templates/Branches/Project/ISC2/Cart Page/$name
+SharedFields:
+- ID: "508c54c0-cd02-4266-8b68-d71f88de1aa9"
+  Hint: ChangeFrequency
+  Value: "{D23B4654-53A5-4589-8B1B-5665A763D144}"
+- ID: "76fb6ffd-4487-4028-a1cf-705fbe360cba"
+  Hint: Priority
+  Value: "{19F3E919-4991-495F-9207-E1DADFD06F54}"
+- ID: "f1a1fe9e-a60c-4ddb-a3a0-bb5b29fe732e"
+  Hint: __Renderings
+  Value: |
+    <r xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <d
+        id="{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}"
+        l="{FAB46B54-E80C-4CC7-9959-E0AED8A5F55C}" />
+    </r>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240718T163733Z
+    - ID: "7d5a44a8-d063-4459-acfa-021d02821994"
+      Hint: pageTitle
+      Value: $name
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "7f40febb-71c9-4a93-8c5c-f6d28d019563"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240719T174113Z

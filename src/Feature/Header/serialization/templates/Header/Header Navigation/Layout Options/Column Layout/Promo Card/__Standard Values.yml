@@ -1,0 +1,35 @@
+﻿---
+ID: "09cf146b-a71b-4293-bef3-83cab683cfb0"
+Parent: "6a4b11c6-e59b-4297-b609-197b265c5d2d"
+Template: "6a4b11c6-e59b-4297-b609-197b265c5d2d"
+Path: /sitecore/templates/Feature/Header/Header Navigation/Layout Options/Column Layout/Promo Card/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/magic_wand.png
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230420T145648Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "d3ec4f15-bd83-46a1-aa8a-c1091c044ddf"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230424T230149Z

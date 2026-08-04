@@ -1,0 +1,47 @@
+﻿---
+ID: "c205a519-bbed-44c9-89f2-9588c21cb91b"
+Parent: "9973bb70-433f-4526-8e68-fe1145addea2"
+Template: "5c547d4e-7111-4995-95b0-6b561751bf2e"
+Path: "/sitecore/layout/Placeholder Settings/Feature/Product/product-detail-right-column"
+SharedFields:
+- ID: "14d0728a-82f9-4b01-ab16-1fe1577cede2"
+  Hint: Editable
+  Value: 1
+- ID: "7256bdab-1fd2-49dd-b205-cb4873d2917c"
+  Hint: Placeholder Key
+  Value: "product-detail-right-column"
+- ID: "dbbbeca1-21c7-4906-9dd2-493c1efa59a2"
+  Hint: __Shared revision
+  Value: "ebeed1ce-ec17-4a13-af61-c8910875b95f"
+- ID: "e391b526-d0c5-439d-803e-17512eae6222"
+  Hint: Allowed Controls
+  Value: |
+    {DB0FA3D6-2CD7-4A7B-95E5-EFC1AEBD9335}
+    {2CA4105F-6C29-4758-A83D-2A40014F6BD7}
+    {61CF026A-559E-44E1-8365-38505D7EF4D1}
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240531T220936Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "c8d9c458-c82a-464b-a650-926ed19aca51"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\gfeola@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20251208T194629Z

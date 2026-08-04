@@ -1,0 +1,39 @@
+﻿---
+ID: "17d5a3a8-4d13-4a6b-9412-bab15dd466fe"
+Parent: "40fb4eb8-b216-4c5c-90c3-2cce6316f326"
+Template: "40fb4eb8-b216-4c5c-90c3-2cce6316f326"
+Path: /sitecore/templates/Project/ISC2/Custom Pages/Order Details Page/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: applications/32x32/document_preferences.png
+- ID: "19d72261-a546-4dfd-8b41-ae3649322ee0"
+  Hint: nonMembersOnly
+  Value: 1
+- ID: "7e6c5fb8-1607-4173-9f9b-ca0e71148f97"
+  Hint: candidateOnly
+  Value: 1
+- ID: "8331dc35-41e5-41f0-bbf3-2b02b6c71c42"
+  Hint: membersOnly
+  Value: 1
+- ID: "d1041e33-ecbf-448f-a6f9-1befb144f7fa"
+  Hint: associateOnly
+  Value: 1
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240717T210623Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "d4cc4d8e-de02-4688-83cd-cee89dde91c8"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240930T195652Z

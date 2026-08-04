@@ -1,0 +1,42 @@
+﻿---
+ID: "72e08962-0c12-4e0d-8137-6011f6906390"
+Parent: "63d88676-bde0-40e8-a5b5-bf5e43cba112"
+Template: "63d88676-bde0-40e8-a5b5-bf5e43cba112"
+Path: /sitecore/templates/Project/ISC2/Custom Pages/ISC2 Page/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/document_notebook.png
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {C14B6289-8AC2-439C-9E5B-40DE9F820C3F}
+    {63D88676-BDE0-40E8-A5B5-BF5E43CBA112}
+    {C9AF023D-A197-4671-8D84-2A5A46E3A64D}
+    {CF536650-D5E7-46FB-BBD3-029FD999EAC7}
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230414T080521Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "b30850a8-1040-4902-8bb9-8abf9b1aac53"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250107T182101Z

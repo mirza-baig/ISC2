@@ -1,0 +1,35 @@
+{
+    "namespace": "Feature.RichTextWithStats",   
+    "items": {
+      "includes": [
+        {
+          "name": "templates",
+          "path": "/sitecore/templates/Feature/RichTextWithStats"
+        },
+		    {
+              "name": "renderings",
+              "path": "/sitecore/layout/renderings/Feature/RichTextWithStats"
+		    }
+        //,{
+        //  "name": "media",
+        //  "path": "/sitecore/media library/Feature/RichTextWithStats"
+        //},
+        //{
+        //  "name": "settings",
+        //  "path": "/sitecore/media library/Feature/RichTextWithStats"
+        //},
+        //{
+        //  "name": "branches",
+        //  "path": "/sitecore/templates/Branches/Feature/RichTextWithStats"
+        //},
+        //{
+        //  "name": "placeholdersettings",
+        //  "path": "/sitecore/layout/Placeholder Settings/Feature/RichTextWithStats"
+        //},
+		//{
+        //  "name": "layouts",
+        //  "path": "/sitecore/layout/Layouts/Feature/RichTextWithStats"
+        //}
+      ]
+    }
+  }

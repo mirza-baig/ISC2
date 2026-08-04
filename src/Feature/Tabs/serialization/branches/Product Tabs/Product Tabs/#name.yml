@@ -1,0 +1,23 @@
+﻿---
+ID: "1b19e8d0-d6d5-4cfa-9cce-5d13b4186393"
+Parent: "fd38f054-0e50-418b-aeb8-74fa19f8d660"
+Template: "bdfd6331-215c-4d8d-99c2-23db0ca3bf05"
+Path: /sitecore/templates/Branches/Feature/Product Tabs/Product Tabs/$name
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230509T121810Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "d367da94-7e03-4063-a65b-510f4eb9564d"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230509T121810Z

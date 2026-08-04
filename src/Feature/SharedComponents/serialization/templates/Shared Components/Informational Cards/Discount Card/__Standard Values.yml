@@ -1,0 +1,42 @@
+﻿---
+ID: "0d48f776-238f-4ac9-a617-d41687f02dd2"
+Parent: "c9635fc3-19c9-40a2-ba52-f4cf9da07766"
+Template: "c9635fc3-19c9-40a2-ba52-f4cf9da07766"
+Path: /sitecore/templates/Feature/Shared Components/Informational Cards/Discount Card/__Standard Values
+SharedFields:
+- ID: "8ef8782f-bbca-40cb-a93f-7db17bfc722c"
+  Hint: enabled
+  Value: 1
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240522T153738Z
+    - ID: "4a88a32c-bf2e-480d-909d-3da394aeff97"
+      Hint: withBorder
+      Value: 1
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "e0d1aea4-ba6b-412b-a511-36058e86cbed"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240617T174520Z
+    - ID: "fe6a5e19-492d-4055-9012-6af760c9793a"
+      Hint: learnMoreLink
+      Value: |
+        <link text="Learn more..." linktype="anchor" url="hero-base" anchor="hero-base" title="" class="" />

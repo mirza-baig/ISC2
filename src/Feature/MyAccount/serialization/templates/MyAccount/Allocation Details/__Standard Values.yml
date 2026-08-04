@@ -1,0 +1,48 @@
+﻿---
+ID: "32a09f9a-24c1-4428-8ad3-e16af2622911"
+Parent: "16c7961e-91de-4e3c-a8b0-b932e83d43c1"
+Template: "16c7961e-91de-4e3c-a8b0-b932e83d43c1"
+Path: /sitecore/templates/Feature/MyAccount/Allocation Details/__Standard Values
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 300
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "15fb2447-6030-477c-b123-c6a16e30443d"
+      Hint: backToAllocationsLink
+      Value: |
+        <link text="See All Allocations" anchor="" linktype="internal" class="" title="See all allocations" target="" querystring="" id="{2871E337-23D6-4B40-B9DB-B814D61D4A7C}" />
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240925T165832Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "5e5bed12-f2bb-427d-b392-4f60425c01af"
+      Hint: removeUserFromAllocationModalNotice
+      Value: "{A9ABAF25-2F15-4DF4-B02F-6AC1301189FC}"
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "47e2f7e9-08ef-45ff-82cc-8a8b9c9c9fdf"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "c6a92aae-9e0b-4fe3-97a7-010edfbfa912"
+      Hint: labelsTitlesAndMore
+      Value: title=Allocation%20details&orderLabel=Order&dateLabel=Date&allocationNumberLabel=%7BallocatedNumber%7D%20of%20%7BavailableNumber%7D&allocatedLabel=Allocated&expiredFlagLabel=Expired&completeAllocationBeforeLabel=Complete%20allocation%20before%20%7BexpiryDate%7D&remainingFilterLabel=Remaining%20%28%7BremainingNumber%7D%29&allocatedFilterLabel=Allocated%20%28%7BallocatedNumber%7D%29&existingUsersOptionLabel=Existing%20users&usersFromFileOptionLabel=Users%20from%20file&selectAllOptionLabel=Select%20All&searchUsersByEmailPlaceholder=Search%20users%20by%20email&addUsersCtaLabel=Add%20users&confirmSelectedCtaLabel=Confirm%20%7BselectedNumber%7D%20selected&removeUserCtaAltText=Remove&uploadCsvFileCtaLabel=Upload%20CSV%20File&cancelUploadCtaLabel=Cancel&uploadProcessingStatusLabel=Processing%3A&invitationSentStatusLabel=Invitation%20sent&redeemedByUserStatusLabel=Redeemed%20by%20user&withoutTaxesLabel=Prices%20before%20taxes.&addUsersModalTitle=Add%20users&addUsersModalFirstNameLabel=First%20name&addUsersModalLastNameLabel=Last%20name&addUsersModalWorkEmailLabel=Work%20email&addUsersModalSelectForAllocationLabel=Select%20for%20allocation&addUsersModalCancelCtaLabel=Cancel&addUsersModalAddCtaLabel=Add&addUsersModalRequiredLabel=Required&userAcceptedInvitationLabel=User%20has%20accepted%20the%20invitation&cancelCtaLabel=Cancel
+    - ID: "d7eaf68a-3051-44f5-87d4-c4db69b430e4"
+      Hint: messagesAndNotices
+      Value: "singleUserSuccessfulyRemovedMessage=1%20user%20was%20removed%20from%20Allocation&singleUserSuccessfulyAllocatedMessage=1%20new%20user%20added%20to%20your%20list&multipleUsersSuccessfulyRemovedMessage=%7BnumberOfUsers%7D%20users%20were%20removed%20from%20Allocation&multipleUsersSuccessfulyAllocatedMessage=%7BnumberOfUsers%7D%20new%20users%20added%20to%20your%20list&emptyListMessage=No%20users%20in%20the%20list&userAlreadyAllocatedMessage=Cannot%20be%20allocated%3A%20This%20user%20was%20already%20allocated%20to%20this%20product.&userNotEligibleMessage=The%20user%20you%20allocated%20this%20product%20to%20is%20not%20eligible%20to%20receive%20it.%20Please%20re-allocate%20the%20product%20to%20an%20eligible%20individual.&userNotAssociatedMessage=Please%20note%3A%20The%20individual%20you%20allocated%20this%20product%20to%20is%20no%20longer%20associated%20with%20your%20account.&maximumNumberOfUsersMessage=You%20have%20reached%20the%20maximum%20number%20of%20users%20for%20this%20product.&expiredWindowMessage=The%20window%20to%20allocate%20this%20product%20has%20expired.&emailInstructionsSentMessage=Users%20will%20receive%20an%20e-mail%20with%20instructions%20to%20access%20the%20content.&addUsersModalRequiredErrorMessage=The%20field%20is%20required.&addUsersModalInvalidEmailErrorMessage=Invalid%20email.&failedToAllocateSingleUserMessage=Failed%20to%20allocate%20user&failedToAllocateMultipleUsersMessage=Failed%20to%20allocate%20users&multipleUsersSuccessfulyCreatedMessage=Users%20has%20been%20created&singleUserSuccessfulyCreatedMessage=User%20has%20been%20created&failedToCreateSingleUserMessage=Failed%20to%20create%20new%20user&failedToCreateMultipleUsersMessage=Failed%20to%20create%20new%20users&failedToRemoveSingleUserMessage=Failed%20to%20remove%20user&singleUserAlreadyExistsMessage=The%20user%20with%20this%20email%20is%20already%20existing&invalidImportFileFormatMessage=Is%20invalid%20file%20format"
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20241130T180802Z

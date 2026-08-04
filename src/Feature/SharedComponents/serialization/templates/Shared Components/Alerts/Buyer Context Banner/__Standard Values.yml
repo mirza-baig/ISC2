@@ -1,0 +1,36 @@
+---
+ID: "c076062c-9d20-4107-9361-6edac0c3863f"
+Parent: "105df65c-3861-4dd2-a766-18ab6ebd85bd"
+Template: "105df65c-3861-4dd2-a766-18ab6ebd85bd"
+Path: /sitecore/templates/Feature/Shared Components/Alerts/Buyer Context Banner/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20260716T044500Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "75f65655-4877-4ec4-b666-cac45a86d1c4"
+      Hint: enabled
+      Value: 1
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "c076062c-9d20-4107-9361-6edac0c3863f"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "c5ec3e6e-d89a-4b36-8897-a02bd1db1b69"
+      Hint: shoppingForLabel
+      Value: "Shopping for:"
+    - ID: "35a3fb72-bb51-449d-885c-c82602bba5bf"
+      Hint: fallbackOrganizationName
+      Value: "Business Co. Canada Ltd"
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260716T044500Z

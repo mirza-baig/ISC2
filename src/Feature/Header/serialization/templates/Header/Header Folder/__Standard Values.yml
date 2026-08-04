@@ -1,0 +1,41 @@
+﻿---
+ID: "ca94f9fd-6835-4bbc-9356-2ecffaa0deec"
+Parent: "240c0380-0f2d-448c-82b7-c84c60e976f8"
+Template: "240c0380-0f2d-448c-82b7-c84c60e976f8"
+Path: /sitecore/templates/Feature/Header/Header Folder/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Applications/32x32/nav_up_blue.png
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {7DCDE3CB-CDD8-4F31-ACC7-357498DC7CF0}
+    {A810CE71-D78D-469C-9A47-F8FDD2B102AB}
+    {DAAD0311-801A-4E3D-85DA-7E954FA8A59F}
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230419T102840Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "c6c16709-5b4b-44cc-b97e-1f0006c56f55"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240722T182334Z

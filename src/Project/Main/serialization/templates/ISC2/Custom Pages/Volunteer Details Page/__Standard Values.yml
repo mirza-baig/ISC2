@@ -1,0 +1,51 @@
+﻿---
+ID: "6932aeec-e1e2-48c5-ae5a-79c591b72fef"
+Parent: "333f200d-1abc-440f-85f4-a95bb891dcde"
+Template: "333f200d-1abc-440f-85f4-a95bb891dcde"
+Path: /sitecore/templates/Project/ISC2/Custom Pages/Volunteer Details Page/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/32x32/document_notebook.png
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {C14B6289-8AC2-439C-9E5B-40DE9F820C3F}
+    {63D88676-BDE0-40E8-A5B5-BF5E43CBA112}
+    {C9AF023D-A197-4671-8D84-2A5A46E3A64D}
+- ID: "a4f985d9-98b3-4b52-aaaf-4344f6e747c6"
+  Hint: __Workflow
+  Value: "{68F795DE-E368-471F-92D8-07F08E74423F}"
+- ID: "ca9b9f52-4fb0-4f87-a79f-24dea62cda65"
+  Hint: __Default workflow
+  Value: "{68F795DE-E368-471F-92D8-07F08E74423F}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "06365ecb-75a5-43df-a7cf-b0129a5dad4e"
+      Hint: contact
+      Value: |
+        <a href="mailto:center@isc2.org">center@isc2.org</a>
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230414T080521Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "9255f45d-b5f7-4a65-b7d4-352d65166cf3"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\akumar
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240112T141502Z

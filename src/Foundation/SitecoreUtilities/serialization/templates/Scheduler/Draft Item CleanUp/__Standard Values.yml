@@ -1,0 +1,31 @@
+﻿---
+ID: "3ce07063-410d-46b1-880d-c12027800490"
+Parent: "cbda7688-2aab-4e80-b425-2b35a7f60b87"
+Template: "cbda7688-2aab-4e80-b425-2b35a7f60b87"
+Path: /sitecore/templates/Feature/Scheduler/Draft Item CleanUp/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230420T023421Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "61329ce2-c56c-4cc4-a9e3-d397d9d7b5e9"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20231102T171109Z

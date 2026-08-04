@@ -1,0 +1,40 @@
+﻿---
+ID: "5630535c-24c0-47a3-bed0-c901ec6e5c8e"
+Parent: "d2f8378f-c01a-4cea-9ef3-9c9ff5db332c"
+Template: "bc273adf-087f-4d90-a458-d149a6057fdd"
+Path: /sitecore/templates/Branches/Project/ISC2/My Account Page/$name
+SharedFields:
+- ID: "f1a1fe9e-a60c-4ddb-a3a0-bb5b29fe732e"
+  Hint: __Renderings
+  Value: |
+    <r xmlns:p="p" xmlns:s="s"
+      p:p="1">
+      <d
+        id="{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}">
+        <r
+          uid="{FE245643-5E93-436F-AED7-4183FA70EDA0}"
+          s:ds="local:/Data/Page Title"
+          s:id="{55C92CD8-A175-431C-AAD5-729E3A791113}"
+          s:par="GridParameters&amp;FieldNames&amp;Styles&amp;DynamicPlaceholderId=1"
+          s:ph="/main-content-top/sxa-my-account-page/my-account-right-column-{32759670-DE16-4E63-9FB9-8F059EBA70D5}-0"
+          s:ccb="Clear on publish" />
+      </d>
+    </r>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240912T195702Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "649679d3-d9ed-4b3b-8095-6da9318b71b2"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240925T205204Z

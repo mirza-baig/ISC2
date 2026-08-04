@@ -1,0 +1,75 @@
+﻿---
+ID: "bc5c3985-6118-46c2-ad60-cc963ae1140e"
+Parent: "0a6c5af7-5fdf-49c5-8e3b-f910333be388"
+Template: "fd2059fd-6043-4dfe-8c04-e2437ce87634"
+Path: /sitecore/content/ISC2/Main/Presentation/Partial Designs/My Account Page
+SharedFields:
+- ID: "55faae90-3bba-4f7f-96fe-13c3f40055ff"
+  Hint: Signature
+  Value: "my-account-page"
+- ID: "c7c26117-dbb1-42b2-ab5e-f7223845cca3"
+  Hint: __Thumbnail
+  Value: |
+    <image mediaid="{94B28AD5-31B9-4E30-B014-D1543EFF6B3B}" />
+- ID: "f1a1fe9e-a60c-4ddb-a3a0-bb5b29fe732e"
+  Hint: __Renderings
+  Value: |
+    <r xmlns:p="p" xmlns:s="s"
+      p:p="1">
+      <d
+        id="{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}"
+        s:l="{FAB46B54-E80C-4CC7-9959-E0AED8A5F55C}">
+        <r
+          uid="{9F0F02CB-493C-4052-88BC-C0A660B7CC99}"
+          p:before="*"
+          s:ds="query:$site/Data/Alerts Folder/Communication Banners"
+          s:id="{0CB1F8CE-67F3-46AC-86AB-99BCE1C1205E}"
+          s:par="CSSStyles"
+          s:ph="/main-content-top/my-account-top-content-{32759670-DE16-4E63-9FB9-8F059EBA70D5}-0"
+          s:ccb="Clear on publish" />
+        <r
+          uid="{32759670-DE16-4E63-9FB9-8F059EBA70D5}"
+          p:after="r[@uid='{9F0F02CB-493C-4052-88BC-C0A660B7CC99}']"
+          s:id="{01C0AD4B-9E94-4B8D-BBD5-642413637E62}"
+          s:par="CacheClearingBehavior=Clear+on+publish"
+          s:ph="main-content-top" />
+        <r
+          uid="{9905D239-9959-495F-B073-25589916F28A}"
+          p:after="r[@uid='{32759670-DE16-4E63-9FB9-8F059EBA70D5}']"
+          s:ds="query:$site/Data/My Account/Profile Summary"
+          s:id="{98B5C952-5D79-4EFF-AF56-3B65C05FCB87}"
+          s:par=""
+          s:ph="/main-content-top/my-account-left-column-{32759670-DE16-4E63-9FB9-8F059EBA70D5}-0"
+          s:ccb="Clear on publish" />
+        <r
+          uid="{34961D7B-88D8-4ED6-A0F8-BA13BD273B80}"
+          p:after="*[1=2]"
+          s:ds="query:$site/Data/Header/Header Top Navigation"
+          s:id="{FCAF2D9C-1548-4780-A592-CD8091046471}"
+          s:par=""
+          s:ph="/main-content-top/my-account-left-column-{32759670-DE16-4E63-9FB9-8F059EBA70D5}-0"
+          s:ccb="Clear on publish" />
+      </d>
+    </r>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240531T222933Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "18b1d61a-e8d0-4092-941f-111ff1885592"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20241128T171429Z

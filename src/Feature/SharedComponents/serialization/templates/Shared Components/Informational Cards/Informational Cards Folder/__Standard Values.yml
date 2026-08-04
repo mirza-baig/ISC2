@@ -1,0 +1,38 @@
+﻿---
+ID: "1bfa97d3-75e9-484d-bd1a-55606e2f95f1"
+Parent: "7cffe1ce-02b4-46c4-ad4c-66719dbedc70"
+Template: "7cffe1ce-02b4-46c4-ad4c-66719dbedc70"
+Path: /sitecore/templates/Feature/Shared Components/Informational Cards/Informational Cards Folder/__Standard Values
+SharedFields:
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {C9635FC3-19C9-40A2-BA52-F4CF9DA07766}
+    {65404EC6-F2A0-4A10-91C8-74BDD3C0DEC5}
+    {C22592E8-1B63-46B8-9E53-D02E405810F1}
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240522T153640Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "8f4cbfda-5ba7-420b-bd6f-c3e110af5b4f"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240823T203304Z

@@ -1,0 +1,38 @@
+﻿---
+ID: "52118de3-8455-4776-8efd-c247db4bf3ff"
+Parent: "d1dcf861-f3ba-4eaa-a496-6b89ab5a5e14"
+Template: "d1dcf861-f3ba-4eaa-a496-6b89ab5a5e14"
+Path: /sitecore/templates/Foundation/Base/_algoliaSearch/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Applications/32x32/view.png
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "020295ca-f930-4b7a-98f0-875947412683"
+      Hint: includeInAlgoliaSearch
+      Value: 1
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230414T081702Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "ce760a21-dbf8-4e23-9702-34a706e1fe7e"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230414T082110Z

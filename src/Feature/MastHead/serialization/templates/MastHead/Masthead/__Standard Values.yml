@@ -1,0 +1,37 @@
+﻿---
+ID: "db0ed4f0-fe10-44f8-803d-46ecf0ea3b37"
+Parent: "25aefe91-2bc2-45b4-baf1-ed5b5a76ff25"
+Template: "25aefe91-2bc2-45b4-baf1-ed5b5a76ff25"
+Path: /sitecore/templates/Feature/Masthead/Masthead/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230430T191653Z
+    - ID: "338b72d0-bd4e-4389-88ec-c96dd841b897"
+      Hint: headline
+      Value: $name
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "c8d92ddd-858e-4811-8c3e-d4fc689fd14e"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "c0201308-d654-4f33-8710-c7b41be976f8"
+      Hint: backgroundGradient
+      Value: "{F010CC87-72B0-42FB-A7DF-CAAFF3971D47}"
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230505T233049Z

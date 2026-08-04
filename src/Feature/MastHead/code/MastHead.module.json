@@ -1,0 +1,24 @@
+{
+  "namespace": "Feature.Masthead",
+  "items": {
+    "includes": [
+      {
+        "name": "templates",
+        "path": "/sitecore/templates/Feature/Masthead"
+      },
+      {
+        "name": "renderings",
+        "path": "/sitecore/layout/renderings/Feature/Masthead"
+      },
+      {
+        "name": "media",
+        "path": "/sitecore/media library/Feature/Masthead",
+        "allowedPushOperations": "CreateOnly"
+      },
+      {
+        "name": "placeholdersettings",
+        "path": "/sitecore/layout/Placeholder Settings/Feature/Masthead"
+      }
+    ]
+  }
+}

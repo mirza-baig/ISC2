@@ -1,0 +1,30 @@
+﻿---
+ID: "164e47f5-8c74-484e-a774-9eb5b94150e5"
+Parent: "943655ef-2831-4e57-a37e-32df46fa129d"
+Template: "943655ef-2831-4e57-a37e-32df46fa129d"
+Path: /sitecore/templates/Feature/Feature Flags/Feature Flags/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Applications/32x32/checkbox.png
+- ID: "dbbbeca1-21c7-4906-9dd2-493c1efa59a2"
+  Hint: __Shared revision
+  Value: "4b643caf-7ba9-499f-97f4-33b56223c9c3"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20260708T124207Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "9c1a3a47-9eeb-4f82-aba7-14dd4694340b"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\gfeola@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260708T124548Z

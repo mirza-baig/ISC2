@@ -1,0 +1,38 @@
+﻿---
+ID: "9185cad6-278b-4850-ac40-6073d20b3d15"
+Parent: "a810ce71-d78d-469c-9a47-f8fdd2b102ab"
+Template: "a810ce71-d78d-469c-9a47-f8fdd2b102ab"
+Path: /sitecore/templates/Feature/Cart/Mini Cart/__Standard Values
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 300
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "252799e4-a91d-4535-a990-219b791e7882"
+      Hint: labelsAndOtherProperties
+      Value: cartTitle=Your%20Minicart&inventoryLabel=Last%20seats%21&subtotalLabel=Subtotal&candidateDiscountLabel=Candidate%20Discount&memberDiscountLabel=Member%20Discount&associateDiscountLabel=Associate%20Discount&totalLabel=Total&taxLabel=Taxes&taxTbd=TBD&productNotAvailableNotice=Product%20no%20longer%20available&withoutTaxesLabel=Prices%20before%20taxes.&yourPriceLabel=Your%20Price%20%24%7Bprice%7D&SFInvoiceNumberLabel=Invoice%20Number
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240813T142957Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "d4dd5e56-8266-4e6a-bf57-45a80e3d5c91"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\gfeola@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20251218T152935Z

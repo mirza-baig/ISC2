@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# Validate commit message using commitlint
+#
+# This script is automatically called by Git after a commit message is entered.
+# It ensures the commit message meets the defined rules in commitlint.
+
+# Location of commitlint executable
+commitlint_exec=node_modules/.bin/commitlint
+
+# Run commitlint against the commit message
+$commitlint_exec --edit "$1"

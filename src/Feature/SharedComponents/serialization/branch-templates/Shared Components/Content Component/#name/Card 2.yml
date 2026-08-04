@@ -1,0 +1,26 @@
+﻿---
+ID: "43869395-4d5d-46e2-823f-46773930843c"
+Parent: "176f4e0e-57ee-407b-856b-26e3d1090819"
+Template: "d998ba6a-8d3d-4215-b0ca-56f8f89cf642"
+Path: /sitecore/templates/Branches/Feature/Shared Components/Content Component/$name/Card 2
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230607T215301Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "289b7fac-ed42-4dc7-9425-bff55103b21e"
+    - ID: "98ef9927-d840-4c92-9c7c-0dd92901be6b"
+      Hint: headline
+      Value: Card 2
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230607T215324Z

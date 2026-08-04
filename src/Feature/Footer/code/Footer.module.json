@@ -1,0 +1,24 @@
+{
+  "namespace": "Feature.Footer",
+  "items": {
+    "includes": [
+      {
+        "name": "templates",
+        "path": "/sitecore/templates/Feature/Footer"
+      },
+      {
+        "name": "renderings",
+        "path": "/sitecore/layout/renderings/Feature/Footer"
+      },
+      {
+        "name": "media",
+        "path": "/sitecore/media library/Feature/Footer",
+        "allowedPushOperations": "CreateOnly"
+      },
+      {
+        "name": "placeholdersettings",
+        "path": "/sitecore/layout/Placeholder Settings/Feature/Footer"
+      }
+    ]
+  }
+}

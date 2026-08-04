@@ -1,0 +1,15 @@
+{
+  "namespace": "Feature.ContentMigration",
+  "items": {
+    "includes": [
+      {
+        "name": "site-content",
+        "path": "/sitecore/content/ISC2"
+      },
+      {
+        "name": "site-media",
+        "path": "/sitecore/media library/Project/ISC2"
+      }
+    ]
+  }
+}

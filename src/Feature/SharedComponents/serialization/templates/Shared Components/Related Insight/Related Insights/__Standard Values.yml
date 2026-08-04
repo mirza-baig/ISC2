@@ -1,0 +1,42 @@
+﻿---
+ID: "ff616055-6d13-4f49-9391-90302e297941"
+Parent: "24bc5996-d638-4e74-9ae3-afd6cdbe3361"
+Template: "24bc5996-d638-4e74-9ae3-afd6cdbe3361"
+Path: /sitecore/templates/Feature/Shared Components/Related Insight/Related Insights/__Standard Values
+SharedFields:
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: 
+- ID: "ea3253ec-6fe0-49dc-9958-521168ed05d3"
+  Hint: defaultThumbnailImage
+  Value: |
+    <image mediaid="{848AEF12-D61D-4352-A6DA-D22548850444}" />
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230505T113133Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "3e190cb7-7709-474c-8207-1d6c1a099d5f"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230605T154220Z
+    - ID: "f18d99bc-2747-495d-a15c-5500a48a5cc8"
+      Hint: title
+      Value: $name

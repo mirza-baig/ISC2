@@ -1,0 +1,31 @@
+{
+  "namespace": "Production.ContentSync",
+  "items": {
+    "includes": [
+      {
+        "name": "site-content",
+        "path": "/sitecore/content/ISC2/Main",
+        "scope": "ItemAndDescendants",
+        "allowedPushOperations": "CreateUpdateAndDelete",
+        "rules": [
+          {
+            "path": "/Home",
+            "scope": "ItemAndDescendants"
+          },
+          {
+            "path": "/Data",
+            "scope": "ItemAndDescendants"
+          },
+          {
+            "path": "/Dictionary",
+            "scope": "ItemAndDescendants"
+          },
+          {
+            "path": "*",
+            "scope": "Ignored"
+          }
+        ]
+      }
+    ]
+  }
+}

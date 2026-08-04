@@ -1,0 +1,44 @@
+﻿---
+ID: "b57cb5bd-57cb-43be-9e89-1a15b11a38af"
+Parent: "10499eaa-b272-4374-a229-15495f8e7db8"
+Template: "2b421e6f-e820-4a04-9a4a-e421a0262b61"
+Path: /sitecore/system/Settings/Html Editor Profiles/Rich Text Minimum/Paragraphs/Heading 2
+BranchID: "14d0d756-dd94-4cfa-aed6-6d2585535700"
+SharedFields:
+- ID: "433e22b5-06aa-4a97-a4ac-7cb059ebbac6"
+  Hint: Value
+  Value: <h2>
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 30
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "001dd393-96c5-490b-924a-b0f25cd9efd8"
+      Hint: __Lock
+      Value: <r />
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20071122T183806
+    - ID: "519cd02a-a857-4894-9c9b-ac9bdc472937"
+      Hint: Header
+      Value: Heading 2
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "6d87852d-6110-4244-9ca1-222602c8a536"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "c8f93afe-bfd4-4e8f-9c61-152559854661"
+      Hint: __Valid from
+      Value: 20060131T143702
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240604T161655Z

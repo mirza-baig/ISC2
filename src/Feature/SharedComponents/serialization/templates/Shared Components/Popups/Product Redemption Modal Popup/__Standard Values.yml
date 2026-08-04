@@ -1,0 +1,133 @@
+﻿---
+ID: "9063fd3a-b2a4-4676-9b2e-2775719f06f0"
+Parent: "778fed65-6d2c-4194-9dcb-09cfb71150a8"
+Template: "778fed65-6d2c-4194-9dcb-09cfb71150a8"
+Path: /sitecore/templates/Feature/Shared Components/Popups/Product Redemption Modal Popup/__Standard Values
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 500
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240930T204758Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "0f9a2965-7c0d-4497-bc05-f9f29c621ab1"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20241031T130659Z
+  - Version: 2
+    Fields:
+    - ID: "01abf0c7-da9a-4be2-87e7-01027960efe7"
+      Hint: scheduleConfirmCtaLabel
+      Value: Schedule
+    - ID: "1b459039-cb51-494e-92ab-85861cfcbc9c"
+      Hint: consentHeading
+      Value: ISC2 Member Release Form
+    - ID: "23a274b3-02e1-4a1e-84ce-39488d22ea7c"
+      Hint: cancelHeading
+      Value: "Are you sure you want to Cancel?"
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240930T204758Z
+    - ID: "35e52424-f19f-4428-843a-a19351b5eec4"
+      Hint: cancelConfirmCtaLabel
+      Value: Cancel anyway
+    - ID: "488a53cd-7d4f-4e68-91cb-66b483602417"
+      Hint: unsuccessCtaLabel
+      Value: Continue to your Dashboard
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "52c662b8-464d-426e-9dc6-639ca8015f16"
+      Hint: unsuccessDescription
+      Value: You might want to contact your manager.
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "68be9b76-e632-4c96-9cf6-9d5f78ca48d0"
+      Hint: cancelDescription
+      Value:  To start the training that you were assigned to, you will need to select a date
+    - ID: "695e173a-1cc4-4368-9925-5bfd7f76d6ee"
+      Hint: successHeading
+      Value: Your product was redeemed succesfully
+    - ID: "7ec5c219-000a-4538-84ba-b815cbd4f984"
+      Hint: consentAgreementCtaLabel
+      Value: Agree
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "d3a4b5c6-e7f8-9012-d3e4-f567890123de"
+    - ID: "9dcce686-029d-4c14-842e-7bb5240f720f"
+      Hint: scheduleHeading
+      Value: Your product was redeemed succesfully
+    - ID: "a7b8c9d0-e1f2-3456-abcd-567890123457"
+      Hint: disagreementWarningConfirmCtaLabel
+      Value: 
+    - ID: "af6fd8fa-3fd2-4683-b240-44d5b3f20138"
+      Hint: unsuccessHeading
+      Value: Your product cannot be redeemed
+    - ID: "b22d5089-f534-4b5e-94cd-d9dbcfcdbc3f"
+      Hint: consentDisagreementCtaLabel
+      Value: Disagree
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\gfeola@isc2.org
+    - ID: "c1b9d9ed-146f-4d7e-b4ee-50886e58626f"
+      Hint: successCtaLabel
+      Value: Continue to your Dashboard
+    - ID: "d6fe8a07-35a4-4d8d-a95d-bd1922a8e92e"
+      Hint: cancelGoBackCtaLabel
+      Value: Go Back
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260402T000000Z
+    - ID: "e5f6a7b8-c9d0-1234-efab-345678901235"
+      Hint: disagreementWarningBody
+      Value: 
+    - ID: "f6a7b8c9-d0e1-2345-fabc-456789012346"
+      Hint: disagreementWarningGoBackCtaLabel
+      Value: 
+    - ID: "e18b84b6-3fce-4a46-9c9c-cc3df2f546c0"
+      Hint: scheduleCancelCtaLabel
+      Value: Cancel
+    - ID: "eeada4e5-4697-44c3-8966-ef7380c10a35"
+      Hint: consentBodyText
+      Value: |
+        <p><span>In consideration of the non-profit organization International Information System Security Certification Consortium, Inc&acute;s (hereinafter &ldquo;ISC2&rdquo;) review of my examination results and membership status, I hereby voluntarily consent to and authorize ISC2, or its authorized agents bearing this release or copy thereof, to release my examination results and membership status to <strong>{employerName}</strong> (Employer, University, or other third-party, hereinafter &ldquo;Recipient&rdquo;) for purposes of verifying my examination results and membership status. I agree that this information may include any of the following:</span></p>
+        <ul>
+            <li><span>First and Last Name</span></li>
+            <li><span>E-mail Address</span></li>
+            <li><span>Date of Exam</span></li>
+            <li><span>Certification Exam Taken</span></li>
+            <li><span>Examination Results (passed of failed result) not examination score</span></li>
+            <li><span>Membership Status</span></li>
+        </ul>
+        <p><span>I authorize ISC2, or its authorized agents, to disclose such information to Recipient. I hereby release ISC2, its authorized agents, and all persons and organizations providing information of all claims and liabilities of any nature regarding this request.<br />
+        <br />
+        I also understand that this information may become a part of my member file with ISC2, regardless of the outcome of this request and/or my final status as an applicant. Notwithstandingthis, ISC2 will release information collected pursuant to this request only with Recipient, for the express purposes described above, or as required by law, by an governmental or regulatory authority, or by a court or other authority of competent jurisdiction.<br />
+        <br />
+        FOR MEMBERS LOCATED OUTSIDE OF THE UNITED STATES: I consent to the transfer of the data described above to Recipient solely for the purposes described above. I acknowlege that ISC2 is based in the United States, and such data will be transferred from the United States to the country where Recipient is located for processing. </span></p>
+        <p>&nbsp;</p>
+    - ID: "f9a70752-c38c-4947-bb4a-d497a801dade"
+      Hint: scheduleDescription
+      Value: "Now you need to schedule:"

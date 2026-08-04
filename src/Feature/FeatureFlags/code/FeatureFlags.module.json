@@ -1,0 +1,11 @@
+{
+  "namespace": "Feature.FeatureFlags",
+  "items": {
+    "includes": [
+      {
+        "name": "templates",
+        "path": "/sitecore/templates/Feature/Feature Flags"
+      }
+    ]
+  }
+}

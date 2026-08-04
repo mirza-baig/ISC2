@@ -1,0 +1,19 @@
+{
+  "namespace": "Feature.Product",
+  "items": {
+    "includes": [
+      {
+        "name": "templates",
+        "path": "/sitecore/templates/Feature/Product"
+      },
+      {
+        "name": "renderings",
+        "path": "/sitecore/layout/renderings/Feature/Product"
+      },
+      {
+        "name": "placeholdersettings",
+        "path": "/sitecore/layout/Placeholder Settings/Feature/Product"
+      }
+    ]
+  }
+}

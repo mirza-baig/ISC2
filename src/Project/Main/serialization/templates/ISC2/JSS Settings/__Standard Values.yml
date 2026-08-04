@@ -1,0 +1,27 @@
+﻿---
+ID: "1134b8f7-a322-4126-b25d-917d1ff16353"
+Parent: "e1f53755-8e7f-4ed5-a41c-f2da9b8469ae"
+Template: "e1f53755-8e7f-4ed5-a41c-f2da9b8469ae"
+Path: /sitecore/templates/Project/ISC2/JSS Settings/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230405T013401Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "d877be30-35ef-4ce3-bdec-0b3e6288bd92"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230405T013401Z

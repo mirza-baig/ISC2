@@ -1,0 +1,832 @@
+
+[
+    {
+        "id": 1,
+        "type": "Step",
+        "title": "Are you interested in pursuing cybersecurity certification for you or your team?",
+        "abstract":"",
+        "options": 
+        [
+            {
+                "response":"I am interested in pursuing certification for myself.",
+                "nextStep":2
+            },
+            {
+                "response":"I am interested in pursuing certification for my team.",
+                "nextStep":19
+            }
+        ],
+        "previousStepId":0
+    },
+    {
+        "id": 2,
+        "type": "Step",
+        "title": "Which of the following best describes your current cybersecurity career goals?",
+        "abstract":"",
+        "options": 
+        [
+            {
+                "response":"I would like to start a cybersecurity career, but unsure where to start.",
+                "nextStep":3
+            },
+            {
+                "response":"I currently work in IT with security responsibilities. I would like to demonstrate my knowledge to advance my career.",
+                "nextStep":7
+            },
+            {
+                "response":"I currently work in cybersecurity and would like to advance to a leadership role.",
+                "nextStep":13
+            },
+            {
+                "response":"I currently work in cybersecurity or IT and would like to demonstrate my cloud security expertise.",
+                "nextStep":14
+            },                
+            {
+                "response":"I am interested in a specialized cybersecurity role, such as secure software development.",
+                "nextStep":15
+            },
+            {
+                "response":"I work in the healthcare industry or wish to pursue a security job with a healthcare provider.",
+                "nextStep":16
+            },
+            {
+                "response":"I work for an MSSP or service provider and would like to demonstrate my security expertise to clients or employers.",
+                "nextStep":17
+            },
+            {
+                "response":"I work for or am pursuing a cybersecurity job in the government or with a contractor that require specific certifications.",
+                "nextStep":18
+            }
+            
+        ],
+        "previousStepId":1
+    },
+    {
+        "id": 3,
+        "type": "Step",
+        "title": "Looking to start a career but unsure of where to start.",
+        "abstract":"You’re not alone. Maybe people are interested in cybersecurity, but unsure where to begin their journey toward certification. Select the option that best describes you.",
+        "options": 
+        [
+            {
+                "response":"I have IT work experience.",
+                "nextStep":4
+            },
+            {
+                "response":"I am looking to change careers have little security or no IT experience.",
+                "nextStep":5
+            },
+            {
+                "response":"I already have an (ISC)² certification. I am interested in earning more certifications.",
+                "nextStep":6
+            }
+        ],
+        "previousStepId":2
+    },
+    {
+        "id": 4,
+        "type": "Result",
+        "title": "You’re In a Great Position",
+        "abstract":"Our research shows IT experience remains a common pathway to a cybersecurity career. The most appropriate certifications for you to explore include:",
+        "results": 
+        [
+            {
+                "title":"CISSP - Certified Information Systems Security Professional",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            },
+            {
+                "title":"SSCP - Systems Security Certified Practitioner",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            },
+            {
+                "title":"CCSP - The Industry 's Premier Cloud Security Certification",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":3
+    },
+    {
+        "id": 5,
+        "type": "Result",
+        "title": "Get Certified in Cybersecurity",
+        "abstract":"While you may not have the required experience right now to earn an (ISC)2 certification, we can assist in your professional development.",
+        "results": 
+        [
+            {
+                "title":"Learn more about our alternative pathway to certification through the Associate of (ISC)2 program.",
+                "eyebrow": "Program",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            },
+            {
+                "title":"Try our Free Security Awareness at Coursera to learn more about basic cybersecurity principles",
+                "eyebrow": "Training",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            },
+            {
+                "title":"Join an ISC2 Charper near you to meet cybersecurity professionals for guidance and support",
+                "eyebrow": "Chapter",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            },
+            {
+                "title":"Attend our free Webinars or take advantage of online events",
+                "eyebrow": "Events",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":3
+    },
+    {
+        "id": 6,
+        "type": "Result",
+        "title": "Congratulations! You’re or a great path for a successful cybersecurity career.",
+        "abstract":"",
+        "results": 
+        [
+            {
+                "title":"SSCP - Systems Security Certified Practitioner",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":3
+    },
+    {
+        "id": 7,
+        "type": "Step",
+        "title": "Our research shows IT experience is a great pathway to cybersecurity positions.",
+        "abstract":"Which the following best describes the primary functional area in which you work within your organization or would like to work in the future?",
+        "options": 
+        [
+            {
+                "response":"Security Administration (Security Specialist, Security Administrator, Security Engineer, Security Architect, Data Recovery Specialist)",
+                "nextStep":8
+            },
+            {
+                "response":"DevSecOps (Application Developer, Database Architect, Database Administrator, Cloud Architect)",
+                "nextStep":9
+            },
+            {
+                "response":"Security Operations (Security Analyst, Incident Responder, Forensic Analyst, Malware Researcher, Pen Tester (Blue Team), Cryptographer)",
+                "nextStep":10
+            },
+            {
+                "response":"Risk Assessment & Management (Risk Manager, Information Assurance Specialist or Administrator, Pen Tester (Red Team), Vulnerability Specialist)",
+                "nextStep":11
+            },
+            {
+                "response":"Policy & Compliance (Business Continuity Manager, User Awareness Manager, Security Auditor, Data Privacy Officer, Governance, Risk and Compliance Officer)",
+                "nextStep":12
+            }
+        ],
+        "previousStepId":2
+    },
+    {
+        "id": 8,
+        "type": "Result",
+        "title": "Security Administration",
+        "abstract":"The following certifications are ideally suited for the positions you are pursuing:",
+        "results": 
+        [
+            {
+                "title":"SSCP - Systems Security Certified Practitioner",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            },
+            {
+                "title":"CCSP - The Industry 's Premier Cloud Security Certification",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":7
+    },
+    {
+        "id": 9,
+        "type": "Result",
+        "title": "DevSecOps",
+        "abstract":"The following certifications are ideally suited for the positions you are pursuing:",
+        "results": 
+        [
+            {
+                "title":"CSSLP - The Industry’s Premier Secure Software Development Certification",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            },
+            {
+                "title":"CCSP - The Industry 's Premier Cloud Security Certification",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":7
+    },
+    {
+        "id": 10,
+        "type": "Result",
+        "title": "Security Operations",
+        "abstract":"The following certifications are ideally suited for the positions you are pursuing:",
+        "results": 
+        [
+            {
+                "title":"SSCP - Systems Security Certified Practitioner",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            },
+            {
+                "title":"CCSP - The Industry's Premier Cloud Security Certification",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            },
+            {
+                "title":"CISSP - Certified Information Systems Security Professional",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":7
+    },
+    {
+        "id": 11,
+        "type": "Result",
+        "title": "Risk Assessment & Management",
+        "abstract":"The following certifications are ideally suited for the positions you are pursuing:",
+        "results": 
+        [
+            {
+                "title":"CCSP - The Industry's Premier Cloud Security Certification",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            },
+            {
+                "title":"CISSP - Certified Information Systems Security Professional",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":7
+    },
+    {
+        "id": 12,
+        "type": "Result",
+        "title": "Policy & Compliance",
+        "abstract":"The following certifications are ideally suited for the positions you are pursuing:",
+        "results": 
+        [
+            {
+                "title":"HCISPP",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            },
+            {
+                "title":"CAP",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            },
+            {
+                "title":"CISSP - Certified Information Systems Security Professional",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":7
+    },
+    {
+        "id": 13,
+        "type": "Result",
+        "title": "The (ISC) CISSP is2 the world’s premier cybersecurity certification. Cybersecurity leaders around the globe earn the CISSP to demonstrate their expertise. We recommend you consider earning the CISSP to help you on your leadership journey.",
+        "abstract":"",
+        "results": 
+        [
+            {
+                "title":"CISSP",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":2
+    },
+    {
+        "id": 14,
+        "type": "Result",
+        "title": "Cybersecurity professionals with a proven ability to secure their organization’s assets in a cloud-based environment has never been greater. We suggest you demonstrate your cloud security expertise by earning the CCSP.",
+        "abstract":"",
+        "results": 
+        [
+            {
+                "title":"CCSP",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":2
+    },
+    {
+        "id": 15,
+        "type": "Result",
+        "title": "Cybersecurity professionals with a proven ability to secure their organization’s assets in a cloud-based environment has never been greater. We suggest you demonstrate your cloud security expertise by earning the CCSP.",
+        "abstract":"",
+        "results": 
+        [
+            {
+                "title":"CCSPLP",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":2
+    },
+    {
+        "id": 16,
+        "type": "Result",
+        "title": "Cybersecurity professionals with a proven ability to secure their organization’s assets in a cloud-based environment has never been greater. We suggest you demonstrate your cloud security expertise by earning the CCSP.",
+        "abstract":"",
+        "results": 
+        [
+            {
+                "title":"HCISSP",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":2
+    },
+    {
+        "id": 17,
+        "type": "Result",
+        "title": "Cybersecurity professionals with a proven ability to secure their organization’s assets in a cloud-based environment has never been greater. We suggest you demonstrate your cloud security expertise by earning the CCSP.",
+        "abstract":"",
+        "results": 
+        [
+            {
+                "title":"CISSP",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            },
+            {
+                "title":"CCSP",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":2
+    },
+    {
+        "id": 18,
+        "type": "Result",
+        "title": "Cybersecurity professionals with a proven ability to secure their organization’s assets in a cloud-based environment has never been greater. We suggest you demonstrate your cloud security expertise by earning the CCSP.",
+        "abstract":"",
+        "results": 
+        [
+            {
+                "title":"CCSP",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            },
+            {
+                "title":"CISSP",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            },
+            {
+                "title":"CAP",
+                "eyebrow": "Certification",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":2
+    },
+    {
+        "id": 19,
+        "type": "Step",
+        "title": "Which of the following best describes your current cybersecurity certification goals for your team?",
+        "abstract":"",
+        "options": 
+        [
+            {
+                "response":"I would like more members of our team to earn their CISSP or other (ISC) certifications",
+                "nextStep":20
+            },
+            {
+                "response":"I am interested in learning how the entire (ISC) certification portfolio2 can help our team grow and advance professionally",
+                "nextStep":21
+            },
+            {
+                "response":"We offer cybersecurity services to clients. I would like to ensure my team has all the appropriate certifications, so our clients are confident in our cybersecurity consultation and services.",
+                "nextStep":22
+            },
+            {
+                "response":"We are a government contractor. I need to know which (ISC) certification's meet governmental requirements.",
+                "nextStep":23
+            }
+        ],
+        "previousStepId":1
+    },
+    {
+        "id": 20,
+        "type": "Result",
+        "title": "We can help. Contact our team for help identifying the best way to guide your team of cybersecurity professionals to reach your certification goals.",
+        "abstract":"",
+        "results": 
+        [
+            {
+                "title":"Contact Us",
+                "eyebrow": "",
+                "abstract":"",
+                 "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":19
+    },
+    {
+        "id": 21,
+        "type": "Result",
+        "title": "Let us help you navigate the (ISC)2 certification portfolio to identify the ideal qualifications for team members across your organization and across all aspects of your cybersecurity program.Contact our team today.",
+        "abstract":"",
+        "results": 
+        [
+            {
+                "title":"Contact Us",
+                "eyebrow": "",
+                "abstract":"",
+                 "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":19
+    },
+    {
+        "id": 22,
+        "type": "Result",
+        "title": "(ISC) credentials are recognized2 around the world. There’s no better way to demonstrate your expertise to current and future clients than your team earning our renowned certifications. Let us help you navigate the (ISC)2 certification portfolio to identify the ideal qualifications for team members across your organization and across all aspects of your cybersecurity program. Contact us today.",
+        "abstract":"",
+        "results": 
+        [
+            {
+                "title":"Contact us",
+                "eyebrow": "",
+                "abstract":"",
+                 "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":19
+    },
+    {
+        "id": 23,
+        "type": "Result",
+        "title": "Most of our certifications meet the requirements of the U.S. Department of Defense (DoD) Directive 8570.1. Thousands of government employees and contractors are members of the (ISC) community, and we have2 developed a certification to align with the Risk Management Framework (RMF). Learn more about DoD",
+        "abstract":"",
+        "results": 
+        [
+            {
+                "title":"DOD",
+                "eyebrow": "",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            },
+            {
+                "title":"Contact Us",
+                "eyebrow": "",
+                "abstract":"",
+                "image":{
+                    "src":"https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=640%201x,%20https://sc-uat.isc2.org/-/jssmedia/Project/ISC2/Main/Components/Slider/IMG-asset.jpg?h=416&iar=0&w=416&hash=2792F7C9FC58F98D31491C9A8215D90C&mw=1080%202x",
+                    "alt":"img",
+                    "width":"336",
+                    "height":"336"
+                },
+                "link":{
+                    "href":"https://sc-uat.isc2.org/",
+                    "text":"Learn More"
+                }
+            }
+        ],
+        "previousStepId":19
+    }
+]

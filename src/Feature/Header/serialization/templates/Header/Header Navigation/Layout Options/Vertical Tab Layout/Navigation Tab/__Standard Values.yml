@@ -1,0 +1,44 @@
+﻿---
+ID: "749a7516-870f-4d2d-8c61-f1abc2a55f33"
+Parent: "079a62ea-7dfc-4b51-8160-6a43cabf7657"
+Template: "079a62ea-7dfc-4b51-8160-6a43cabf7657"
+Path: /sitecore/templates/Feature/Header/Header Navigation/Layout Options/Vertical Tab Layout/Navigation Tab/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/element.png
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: "{8CE5ED81-51B7-498F-B41C-4C8807829B70}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230420T192819Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "846ef3b1-796f-400f-a840-66e06dd66668"
+      Hint: tabHeading
+      Value: 
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "0ede2dbf-f967-43ef-9204-b3aa8a09ef1b"
+    - ID: "930cc322-9e4a-497f-a438-4801ecab1d38"
+      Hint: tabName
+      Value: $name
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230425T135406Z

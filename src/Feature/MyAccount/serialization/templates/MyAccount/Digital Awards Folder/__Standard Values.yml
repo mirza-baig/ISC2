@@ -1,0 +1,35 @@
+﻿---
+ID: "7a35d7b4-a07d-4087-ab0a-26632adb2ca6"
+Parent: "8c5efbf6-8093-4e31-97ae-56c238e2348b"
+Template: "8c5efbf6-8093-4e31-97ae-56c238e2348b"
+Path: /sitecore/templates/Feature/MyAccount/Digital Awards Folder/__Standard Values
+SharedFields:
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: "{11E580ED-9060-4330-87EA-8D9B8473F700}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240625T164010Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "acee4aa2-8352-40be-af15-94288d915291"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240927T152939Z

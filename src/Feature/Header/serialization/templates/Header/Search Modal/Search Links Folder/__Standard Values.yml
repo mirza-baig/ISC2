@@ -1,0 +1,37 @@
+﻿---
+ID: "376e0236-e48e-44fe-ba65-e0d5dfc8c299"
+Parent: "daad0311-801a-4e3d-85da-7e954fa8a59f"
+Template: "daad0311-801a-4e3d-85da-7e954fa8a59f"
+Path: /sitecore/templates/Feature/Header/Search Modal/Search Links Folder/__Standard Values
+SharedFields:
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {90A1740F-B0B1-4772-ABD7-A8F925027073}
+    {D4A89F12-9295-410E-B554-966B0FB7B708}
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240611T201609Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "f47e9df9-1776-44e6-844e-2a1a8295d707"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250207T211925Z

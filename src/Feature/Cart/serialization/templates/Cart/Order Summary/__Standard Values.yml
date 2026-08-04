@@ -1,0 +1,41 @@
+﻿---
+ID: "035f2b8a-bb8a-4217-b368-0580abb890df"
+Parent: "9eff9fc8-f5e8-4d68-8368-473b11902b4f"
+Template: "9eff9fc8-f5e8-4d68-8368-473b11902b4f"
+Path: /sitecore/templates/Feature/Cart/Order Summary/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "240f9ab3-c9ca-476e-96c0-fb4883f1c352"
+      Hint: icon
+      Value: |
+        <image mediaid="{AD301E59-ECDD-46AC-B1D1-3F0A61718E45}" />
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240719T165234Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "bccadcec-b4bd-4a5d-b815-0ebf01ae3534"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20241204T235821Z
+    - ID: "ecbc1a4f-64f6-4eeb-971b-5fda7d2cfccf"
+      Hint: sectionHeadingAndLabels
+      Value: heading=Order%20Summary&subtotalLabel=Subtotal%20%28%7B0%7D%20items%29&totalAmountLabel=Total&secondaryCtaLabel=Continue%20shopping&securePaymentLabel=Secure%20payment&viewDetailsLabel=View%20details&hideDetailsLabel=Hide%20details&productNotAvailableLabel=Product%20no%20longer%20available&discountLabel=Discount&memberDiscountLabel=Member%20Discount&candidateDiscountLabel=Candidate%20Discount&associateDiscountLabel=Associate%20Discount&discountCodeLabel=Discount%20Code%20%7BcouponCode%7D&taxLabel=Taxes&taxCalculationErrorMessage=Unable%20to%20calculate%20taxes.%20Please%20ensure%20your%20address%20is%20correct.&taxTbd=TBD&yourPriceLabel=Your%20Price%20%24%7Bprice%7D
+    - ID: "f6bc5f86-64a2-46b5-a4cb-0e6ca9cbb8d5"
+      Hint: couponTitleAndLabels
+      Value: couponTitle=Coupon%20Code&textInputPlaceholder=Enter%20code&applyButtonLabel=Apply&validationMessageEmpty=Please%20enter%20coupon%20code&validationMessageInvalid=The%20coupon%20code%20is%20not%20valid&validationMessageRepeated=This%20coupon%20has%20already%20been%20applied&validationMessageNotFound=Coupon%20code%20cannot%20be%20found&validationMessageExpired=This%20coupon%20code%20has%20expired&validationMessageProductSpecificCoupon=The%20discount%20code%20does%20not%20get%20applied%20to%20the%20items%20that%20are%20in%20your%20cart&validationMessageNotApplicable=The%20coupon%20code%20is%20not%20applicable&maxCartDiscountsReached=Maximum%20number%20of%20active%20cart%20discounts%20reached&storeCartDiscountsReached=Maximum%20number%20of%20store%20discounts%20on%20a%20single%20cart%20discount%20reached

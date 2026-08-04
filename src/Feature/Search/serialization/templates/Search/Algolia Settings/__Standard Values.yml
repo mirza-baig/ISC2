@@ -1,0 +1,98 @@
+﻿---
+ID: "fbab14de-0d6d-4c07-bc92-6f97f87a3324"
+Parent: "38138e10-5abc-48bb-ab0b-fa5c3ab77a83"
+Template: "38138e10-5abc-48bb-ab0b-fa5c3ab77a83"
+Path: /sitecore/templates/Feature/Search/Algolia Settings/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Applications/32x32/gear_view.png
+- ID: "39b3401a-a476-4d45-847f-9279980a2458"
+  Hint: algoliaApiKey
+  Value: 05da82a526908cc25ee6f37cbd1a105f
+- ID: "7a31ab56-7815-4f39-b016-d47b46e34465"
+  Hint: algoliaAppId
+  Value: YK7J6YF349
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 1200
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230601T100709Z
+    - ID: "2a7a61fc-ef82-436e-ac46-6d1766d00a43"
+      Hint: pressEnterKeySearchLabel
+      Value: Press Enter to Search
+    - ID: "341f35b9-6fde-49be-b0b2-c3bec763c3f4"
+      Hint: sortByLabel
+      Value: Sort By
+    - ID: "42d86b26-b539-41c9-8376-61d7c7b7e251"
+      Hint: algoliaIndexName
+      Value: test v10 qa
+    - ID: "4404cdcf-92a0-4f4b-8727-58c3930d7c27"
+      Hint: startDateLabel
+      Value: Start Date
+    - ID: "49fdbfde-3da5-4f55-8e10-cf57d3a33a08"
+      Hint: locationLabel
+      Value: Location
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5afdd1a7-5125-459f-84f8-e7bb4be331a0"
+      Hint: resultsFoundLabel
+      Value: "{0} Results Found"
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "5e6ce6c4-ec29-4cbf-89a8-89df4b984b08"
+      Hint: clearFiltersLabel
+      Value: Clear Filter
+    - ID: "66059d63-cb2a-4df5-9fa8-0c7526664a96"
+      Hint: trainingMethodLabel
+      Value: Training Method
+    - ID: "695af01d-5125-496d-8c80-667fe491d750"
+      Hint: algoliaChapterFilderIndexName
+      Value: isc2_chapter_directory_qa_sample
+    - ID: "6fc97b4f-c572-4f4c-85b3-60b522d0e204"
+      Hint: min3CharacterSearchLabel
+      Value: Start typing to see search suggestions
+    - ID: "831c08b2-8403-4f34-82d7-c456d33d6389"
+      Hint: seeResultsLabel
+      Value: See Results
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "b32a38d8-9e0b-47fa-b65b-996489ca16c2"
+    - ID: "966b34d5-5d61-4f63-ab2f-4722629b2f11"
+      Hint: placeholderText
+      Value: Please type here...
+    - ID: "99dd1f57-4be4-4c2a-8cd9-ee312f697371"
+      Hint: filterLabel
+      Value: Filter
+    - ID: "9c615642-29d7-4c46-b00a-b0f252b16b03"
+      Hint: startSearchTriggerTypes
+      Value: Min 3 Character Search
+    - ID: "a1c64b9c-c283-4eb1-b392-493487086ed7"
+      Hint: mobileFilterLabel
+      Value: Filter & Sort
+    - ID: "b9582622-e74b-4e5e-b743-9f29ebf56621"
+      Hint: buttonLabel
+      Value: Schedule Training
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\pdubey@isc2.org
+    - ID: "ca3b3f57-6531-432d-9e1a-da0d5dbd54ce"
+      Hint: endDateLabel
+      Value: End Date
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250721T175625Z
+    - ID: "dc88c41b-00f8-4266-a875-2ff5b334f147"
+      Hint: trainingProviderLabel
+      Value: Training Provider

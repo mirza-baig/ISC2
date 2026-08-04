@@ -1,0 +1,51 @@
+﻿---
+ID: "f9537ed0-999e-4bbb-9efd-db86cbaaf7af"
+Parent: "803d9082-bf0c-4383-b0f4-2354a00e2cea"
+Template: "f1828a2c-7e5d-4bbd-98ca-320474871548"
+Path: /sitecore/media library/Feature/MyAccount/Open Icon
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: "-/media/F9537ED0999E4BBB9EFDDB86CBAAF7AF.ashx?h=16&thn=1&w=16"
+- ID: "40e50ed9-ba07-4702-992e-a912738d32dc"
+  Hint: Blob
+  BlobID: "80ef9c60-b232-4a96-a54f-7a661e16dfb5"
+  Value: PHN2ZyB3aWR0aD0iMTEiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMSAxMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzc2NTBfNzk0KSI+CjxwYXRoIGQ9Ik0xMC41MDM1IDAuOTI4MjQxTDUuOTAzMjggMC45MDMzNjVMNi44ODIgMS44ODIwOUw4Ljc5MjIxIDEuOTE1NDJMNy4zNDc3NCAzLjM1OTg5TDQuMzM0NDUgNi4zNzMxN0w0LjMzNDQ1IDcuNzdMNy45NDQ4NCA0LjE4NDg2TDkuNDk1NjEgMi42NTkzMkw5LjUwNTY3IDQuNTMzMTZMMTAuNTI4MiA1LjU1NTcxTDEwLjUwMzUgMC45MjgyNDFaIiBmaWxsPSJibGFjayIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTAuNTQ0OTIyIDAuOTAyMzQ0SDQuMTI4OTVWMS45MDIzNEgxLjU0NDkyVjEwLjEwMjNINy45NzY1TDkuNTEyOTggOC44MjE5NFY3LjIyOTIzSDEwLjUxM1Y5LjI5MDMxTDguMzM4NTUgMTEuMTAyM0gwLjU0NDkyMlYwLjkwMjM0NFoiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfNzY1MF83OTQiPgo8cmVjdCB3aWR0aD0iMTAuMiIgaGVpZ2h0PSIxMC40IiBmaWxsPSJ3aGl0ZSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMC40NDUzMTIgMC44MDA3ODEpIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+Cg==
+- ID: "6954b7c7-2487-423f-8600-436cb3b6dc0e"
+  Hint: Size
+  Value: 706
+- ID: "6f47a0a5-9c94-4b48-abeb-42d38def6054"
+  Hint: Mime Type
+  Value: image/svg+xml
+- ID: "c06867fe-9a43-4c7d-b739-48780492d06f"
+  Hint: Extension
+  Value: svg
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240926T210413Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "65885c44-8fcd-4a7f-94f1-ee63703fe193"
+      Hint: Alt
+      Value: Open Icon
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "81e8f397-bb70-4e9a-963d-96f440704dc8"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240926T210436Z

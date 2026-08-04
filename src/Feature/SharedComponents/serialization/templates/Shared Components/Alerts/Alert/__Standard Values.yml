@@ -1,0 +1,35 @@
+﻿---
+ID: "9c378a15-d4c8-493e-ac7f-46ce251e78a4"
+Parent: "384d61f6-d511-4e7a-a15c-345d6b341f6a"
+Template: "384d61f6-d511-4e7a-a15c-345d6b341f6a"
+Path: /sitecore/templates/Feature/Shared Components/Alerts/Alert/__Standard Values
+SharedFields:
+- ID: "737eabb3-9642-4b30-b079-3dfe56ea1fbb"
+  Hint: alertTypes
+  Value: "{5D12723A-85E3-42CD-9DC1-A352715647B9}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230530T082358Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "9f971962-044f-4dd4-910a-f2ee89f7bbc9"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230530T083522Z

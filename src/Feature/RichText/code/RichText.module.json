@@ -1,0 +1,11 @@
+{
+  "namespace": "Feature.RichText",
+  "items": {
+    "includes": [
+      {
+        "name": "renderings",
+        "path": "/sitecore/layout/renderings/Feature/RichText"
+      }
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+﻿---
+ID: "fe87b538-07ae-4748-b3c6-cfb87071874e"
+Parent: "1044556e-2e1a-4b04-9841-9483633a6cf4"
+Template: "900e551b-f17d-4550-bc4c-003c514a7e04"
+Path: /sitecore/templates/Branches/Feature/Shared Components/Slider With Description/$name/Slide
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230606T104621Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "8704c42f-7b92-45b6-9553-3c4c3bd8e88d"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230606T104910Z
+    - ID: "f0d54635-9724-489b-b5d5-73082f89d9e2"
+      Hint: heading
+      Value: Slide

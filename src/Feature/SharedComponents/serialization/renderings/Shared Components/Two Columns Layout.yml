@@ -1,0 +1,61 @@
+﻿---
+ID: "ee163793-5c9b-491c-98b5-4bc873329f3d"
+Parent: "e2c05558-257b-4369-870b-4d0b30e574e1"
+Template: "04646a89-996f-4ee7-878a-ffdbf1f0ef0d"
+Path: /sitecore/layout/Renderings/Feature/Shared Components/Two Columns Layout
+SharedFields:
+- ID: "037fe404-dd19-4bf7-8e30-4dadf68b27b0"
+  Hint: componentName
+  Value: TwoColumnsLayout
+- ID: "069a8361-b1cd-437c-8c32-a3be78941446"
+  Hint: Placeholders
+  Value: |
+    {B78B6102-B9C8-4E28-B803-5D8710F8A765}
+    {FABD58A4-E81B-466E-9459-D74B3DF3FD23}
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/piece.png
+- ID: "1a7c85e5-dc0b-490d-9187-bb1dbcb4c72f"
+  Hint: Datasource Template
+  Value: 
+- ID: "592a1ce7-abe0-4986-9783-0a34f3961dc0"
+  Hint: Placeholder
+  Value: 
+- ID: "b5b27af1-25ef-405c-87ce-369b3a004016"
+  Hint: Datasource Location
+  Value: 
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 1700
+- ID: "c39a90ce-0035-41bb-90f6-3c8a6ea87797"
+  Hint: AddFieldEditorButton
+  Value: 
+- ID: "f172b787-7b88-4bd5-ae4d-6308e102ef11"
+  Hint: Enable Datasource Query
+  Value: 
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230421T134815Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "650ef943-6efd-49c0-98f4-48e0381ec321"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20241114T145610Z

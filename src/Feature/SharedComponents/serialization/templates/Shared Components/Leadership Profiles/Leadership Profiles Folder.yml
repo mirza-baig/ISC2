@@ -1,0 +1,51 @@
+﻿---
+ID: "54657a88-47d9-49a9-b5ea-a9619c31952c"
+Parent: "16e1d76d-4e1d-4613-9087-e989f006f1dd"
+Template: "ab86861a-6030-46c5-b394-e8f99e8b87db"
+Path: /sitecore/templates/Feature/Shared Components/Leadership Profiles/Leadership Profiles Folder
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Business/32x32/businessmen.png
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {54657A88-47D9-49A9-B5EA-A9619C31952C}
+    {E269FBB5-3750-427A-9149-7AA950B49301}
+- ID: "12c33f3f-86c5-43a5-aeb4-5598cec45116"
+  Hint: __Base template
+  Value: |
+    {1930BBEB-7805-471A-A3BE-4858AC7CF696}
+    {B99ABE3E-3A61-4B33-87E8-D03E9B049F30}
+    {FCCA759E-514A-4CFC-B0F8-5843B32DB0B0}
+    {52380F2B-1BFC-4DC0-87A4-098C561F4461}
+    {33B7DCBD-709A-40B3-9597-9E59D95D2C0B}
+- ID: "f7d48a55-2158-4f02-9356-756654404f73"
+  Hint: __Standard values
+  Value: "{7159ECDC-4F2D-41BE-BC2D-EC98A83B2E89}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230615T145536Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "2f08dbc1-4a7d-41e5-9e2f-05c5bf186cbd"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240624T233733Z

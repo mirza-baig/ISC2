@@ -1,0 +1,82 @@
+﻿---
+ID: "2db58fc9-57a9-4a27-a091-f2bddcdc568c"
+Parent: "03ba3c8c-cbe4-4956-a242-e1d713319306"
+Template: "03ba3c8c-cbe4-4956-a242-e1d713319306"
+Path: /sitecore/templates/Feature/Cart/Cart/__Standard Values
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 400
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "134f5ef0-bfc9-469a-b2ef-b35b7c49d76e"
+      Hint: normalCartSubtitle
+      Value: |
+        In case of needing to discard this quoted cart or make modifications, call your ISC2 representative at <a href="#">+1 212-783-927</a>.
+    - ID: "17251637-4546-4b9c-8cb1-e406fbc142ea"
+      Hint: title
+      Value: $name
+    - ID: "1ee6e5ff-d023-4ec8-b8cd-d283af52707c"
+      Hint: tryAgainList
+      Value: |
+        <ul>
+            <li><span>Attempt clearing your cache</span></li>
+            <li><span>Different browsers</span></li>
+            <li><span>Different networks</span></li>
+        </ul>
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240809T162845Z
+    - ID: "2c93034d-0b30-4a3e-94bc-c1cfdf589d4f"
+      Hint: cartStatusAvailablePopupNotice
+      Value: "{13E248D2-B54E-451B-A46E-11DAE0379FA7}"
+    - ID: "46ae00ff-cbc0-474b-98e7-f724b8d2f5eb"
+      Hint: shoppingCartIcon
+      Value: |
+        <image mediaid="{AE17B7B4-D7CD-412E-B8DD-D2874FA0EDFA}" />
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "73a62646-eeff-4b89-ba19-1babbb99cde6"
+      Hint: emptyCartSubtitle
+      Value: Start Your Journey with our recommendations
+    - ID: "7ea7f576-c449-49d3-8a60-ae6a2985a7de"
+      Hint: optionalDonationProductKey
+      Value: "NOM-DON-CENTERDON"
+    - ID: "8a247531-c28f-4c50-9a99-628f8f5fa971"
+      Hint: cartStatusUnavailablePopupNotice
+      Value: "{267A9489-93DC-4A9A-944E-6673D8140FF3}"
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "48b88636-f917-4837-9e33-15126de26775"
+    - ID: "95704985-2eb8-45ee-82ce-32f8e00d4e01"
+      Hint: alertIcon
+      Value: |
+        <image mediaid="{BB092C54-7C23-4A2E-BC7A-57DB4D5DC7A1}" />
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\gfeola@isc2.org
+    - ID: "c69ceb19-3e11-4a0c-a795-e2d059b9baae"
+      Hint: optionalDonationPopupNotice
+      Value: "{422DBE1C-EB5E-4522-8F6A-98CF5C23539E}"
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260410T152137Z
+    - ID: "e35aaec5-e733-4246-a228-86ab01fe959f"
+      Hint: errorLabels
+      Value: title=An%20error%20occurred&subTitle=You%20might%20want%20to%20check%20the%20information%20you%20entered&tryAgainListTitle=PLEASE%20TRY%20AGAIN
+    - ID: "e6ad83fb-9c75-4dce-fa04-3b2c1d7e6f59"
+      Hint: cartWarningPopupNotice
+      Value: "{B8779452-8DB7-4CE8-B790-D92A2B5074C5}"
+    - ID: "f9b317d5-12c4-4db6-9588-f53833effd91"
+      Hint: labelsNoticesAndTooltips
+      Value: salesNumberLabel=Sales%20number&validUntilLabel=Valid%20until&emptyStateNotice=Your%20cart%20is%20empty.&requiredFieldLabel=Required&removeProductsNotAvailableMessage=Do%20you%20want%20us%20to%20clear%20the%20products%20that%20are%20not%20available%20so%20you%20can%20proceed%20with%20the%20checkout%20process%3F&quantityLabel=Quantity&inventoryLabel=Last%20seats%21&productNotAvailableNotice=Product%20no%20longer%20available&clearNotAvailableProductsModalHeading=There%20are%20products%20in%20your%20Cart%20that%20are%20no%20longer%20available&clearNotAvailableProductsModalDescription=To%20continue%20with%20your%20purchase%2C%20please%20update%20your%20Cart%20by%20removing%20them.&clearNotAvailableProductsModalPrimaryCTALabel=Update%20to%20continue&clearNotAvailableProductsModalSecondaryCTALabel=Cancel&donationsCheckboxLabel=Do%20you%20want%20to%20add%20a%20donation%20of%20any%20amount%20to%20the%20center%20for%20Cyber%20Safety%20and%20Education%3F%20&donationsOptionsListLabel=How%20much%20do%20you%20like%20to%20donate%3F%20&donationsCustomAmountLabel=Enter%20the%20amount&donationsSubmitButtonLabel=Submit&donationsErrorMessage=Unable%20to%20add%20donation%20at%20this%20time.%20Please%20try%20again.&donationsFetchErrorMessage=Can%20not%20find%20available%20donation%20product%20data.&yourPriceLabel=Your%20Price%20%24%7Bprice%7D&SFInvoiceNumberLabel=Invoice%20Number

@@ -1,0 +1,35 @@
+﻿---
+ID: "e3fb6750-c56c-4fad-b249-c896166e38ab"
+Parent: "d043bb4b-cce8-452d-899d-5b40c6a52237"
+Template: "814c1dbb-b118-4511-ba2b-7288ed3d490b"
+Path: /sitecore/system/Modules/Layout Service/Rendering Contents Resolvers/Foundation/Datasource Item And Dictionary Droptree Content Resolver
+SharedFields:
+- ID: "de218ede-a9ad-4b04-86c5-9ff593ccf39d"
+  Hint: Type
+  Value: ISC2.Foundation.SitecoreUtilities.ContentResolvers.DataSourceAndDictionaryContentResolver
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230418T230343Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "5b338fe7-d134-4206-adb2-ceb210f2f726"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20241201T151843Z

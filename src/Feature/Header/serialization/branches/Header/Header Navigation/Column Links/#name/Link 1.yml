@@ -1,0 +1,27 @@
+﻿---
+ID: "4a5613e8-1d18-4181-9d82-790211b333cc"
+Parent: "51c68acc-3594-4c41-9bed-8689e7b529df"
+Template: "6f0dbcaf-95f4-4a11-8fec-80b6cccb319c"
+Path: /sitecore/templates/Branches/Feature/Header/Header Navigation/Column Links/$name/Link 1
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230425T134939Z
+    - ID: "5a2db61f-e3b8-4c12-b1b8-0c30b9bf028b"
+      Hint: link
+      Value: |
+        <link text="Link 1" anchor="" linktype="internal" class="" title="" target="" querystring="" id="{A3F19FD1-65A9-45D0-BD82-B1DA596A4ECD}" />
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "ddb66395-b5ef-4a43-af70-a0e151bdd850"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230425T135018Z

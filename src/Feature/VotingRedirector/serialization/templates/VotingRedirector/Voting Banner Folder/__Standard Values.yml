@@ -1,0 +1,38 @@
+﻿---
+ID: "96a2108f-e9d2-4d7a-b18a-f8c6c9485819"
+Parent: "736a84dd-86ec-4988-a145-5ca4b5830637"
+Template: "736a84dd-86ec-4988-a145-5ca4b5830637"
+Path: /sitecore/templates/Feature/VotingRedirector/Voting Banner Folder/__Standard Values
+SharedFields:
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: "{D64D3589-197F-4875-8A65-05332770C682}"
+- ID: "dbbbeca1-21c7-4906-9dd2-493c1efa59a2"
+  Hint: __Shared revision
+  Value: "16d1cb5b-913d-400c-8c7a-78ebb4fd7793"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20250616T184343Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\pdubey@isc2.org
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\pdubey@isc2.org
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "afd4f95e-687e-4bf7-9e70-bb4ce3facfda"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\pdubey@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250616T194658Z

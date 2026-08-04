@@ -1,0 +1,20 @@
+{
+    "namespace": "Feature.Search",
+    "references": [ "Foundation.SitecoreUtilities" ],
+    "items": {
+      "includes": [
+        {
+          "name": "templates",
+          "path": "/sitecore/templates/Feature/Search"
+        },
+        {
+          "name": "renderings",
+          "path": "/sitecore/layout/renderings/Feature/Search"
+        },
+        {
+          "name": "content-resolvers",
+          "path": "/sitecore/system/Modules/Layout Service/Rendering Contents Resolvers/Feature/Search"
+        }
+      ]
+    }
+  }

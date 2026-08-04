@@ -1,0 +1,38 @@
+﻿---
+ID: "ea9c7262-cab6-4de1-91a3-2647293864a3"
+Parent: "84d19a0a-c58f-453f-83ca-f9817e64dc59"
+Template: "84d19a0a-c58f-453f-83ca-f9817e64dc59"
+Path: /sitecore/templates/Feature/Shared Components/Iframe/Iframe/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/painting_landscape.png
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230526T195210Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "b2342079-6287-41ab-bab3-422ed2fcff17"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230526T204057Z
+    - ID: "df9581e9-97dc-4303-80a0-df4ba8d832b2"
+      Hint: headline
+      Value: $name

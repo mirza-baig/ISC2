@@ -1,0 +1,52 @@
+﻿---
+ID: "ff016318-47a8-4cf3-9bf3-641b22283ee0"
+Parent: "11e580ed-9060-4330-87ea-8d9b8473f700"
+Template: "11e580ed-9060-4330-87ea-8d9b8473f700"
+Path: /sitecore/templates/Feature/MyAccount/Digital Awards/__Standard Values
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 300
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "04f6ca26-6b99-464a-a32e-8d7b02fa9789"
+      Hint: primaryCtaIcon
+      Value: |
+        <image mediaid="{F9537ED0-999E-4BBB-9EFD-DB86CBAAF7AF}" />
+    - ID: "1c5e49c3-2e00-48a8-933d-0c06b3bb4f9d"
+      Hint: awardType
+      Value: 
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240904T195504Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "65020614-909e-4e1d-9c8a-b29120b81e59"
+      Hint: secondaryCtaIcon
+      Value: |
+        <image mediaid="{4232C379-5113-4737-A0E6-330E5DB4D40D}" />
+    - ID: "7f893052-1ba9-45f3-97fe-f894f216f32d"
+      Hint: labelsTooltipsAndMore
+      Value: awardedDateLabel=Awarded&expirationDateLabel=Expires
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "5be4f9b2-04aa-4f97-b627-1bfcc0394a45"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "c0386b60-6132-497f-a84a-6aaf27afd8c9"
+      Hint: title
+      Value: $name
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240930T195353Z

@@ -1,0 +1,37 @@
+﻿---
+ID: "605a37a2-2de2-401c-85ea-677f697eae2c"
+Parent: "ab98f798-312d-45e1-9bae-362c0433ee7f"
+Template: "ab98f798-312d-45e1-9bae-362c0433ee7f"
+Path: /sitecore/templates/Feature/MyAccount/Preferences Sections Folder/__Standard Values
+SharedFields:
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {A87A00B1-E6DB-45AB-8B54-636FEC3B5523}
+    {D9BFA483-C826-4552-B911-AF105450FB96}
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20250402T125449Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\mjamal@isc2.org
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\mjamal@isc2.org
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "0b72ba32-262b-4acc-86de-353465f3bff4"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\mjamal@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250402T144119Z

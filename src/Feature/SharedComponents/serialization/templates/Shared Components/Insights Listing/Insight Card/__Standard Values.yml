@@ -1,0 +1,38 @@
+﻿---
+ID: "0fee0fe6-24a6-45db-ac96-ade1ef566a1c"
+Parent: "9b458d8f-7b9a-4930-b0ec-73757d758e7d"
+Template: "9b458d8f-7b9a-4930-b0ec-73757d758e7d"
+Path: /sitecore/templates/Feature/Shared Components/Insights Listing/Insight Card/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Apps/32x32/Forms &#40;1&#41;.png
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230621T210004Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "4b05be09-784b-4b39-b2d9-4b3d9e5b9b66"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d0e3d720-04c3-49f1-a52d-8695bebfca5f"
+      Hint: heading
+      Value: $name
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230621T233012Z

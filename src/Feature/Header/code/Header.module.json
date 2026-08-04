@@ -1,0 +1,29 @@
+{
+  "namespace": "Feature.Header",
+  "references": [ "Foundation.SitecoreUtilities" ],
+  "items": {
+    "includes": [
+      {
+        "name": "templates",
+        "path": "/sitecore/templates/Feature/Header"
+      },
+      {
+        "name": "renderings",
+        "path": "/sitecore/layout/renderings/Feature/Header"
+      },
+      {
+        "name": "content-resolvers",
+        "path": "/sitecore/system/Modules/Layout Service/Rendering Contents Resolvers/Feature/Header"
+      },
+      {
+        "name": "branches",
+        "path": "/sitecore/templates/Branches/Feature/Header"
+      },
+      {
+        "name": "media",
+        "path": "/sitecore/media library/Feature/Header",
+        "allowedPushOperations": "CreateOnly"
+      }
+    ]
+  }
+}

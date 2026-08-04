@@ -1,0 +1,44 @@
+﻿---
+ID: "8e346b23-eb35-4d54-a635-31b9989aa6d1"
+Parent: "a1dc4094-a2ae-4245-9d13-aa795035e57c"
+Template: "a1dc4094-a2ae-4245-9d13-aa795035e57c"
+Path: /sitecore/templates/Feature/Shared Components/Path Finder/Path Finder/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: applications/32x32/find_next.png
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230619T105910Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "574e0530-434b-4f32-8f7b-00c84f9a44a3"
+      Hint: nextLabel
+      Value: Next
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "887712b7-1d1c-442e-8f20-df43ce940979"
+      Hint: previousLabel
+      Value: Previos
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "e6549687-963b-4311-ab38-a597ddb2ed0f"
+    - ID: "a8fbfb04-5a18-4b63-98f9-5fbae7838f7e"
+      Hint: startOverLabel
+      Value: Start Over
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230623T131947Z

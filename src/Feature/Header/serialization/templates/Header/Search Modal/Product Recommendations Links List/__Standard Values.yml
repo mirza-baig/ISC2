@@ -1,0 +1,46 @@
+﻿---
+ID: "39c3bc78-fd5f-4a8d-b234-7ac46655526f"
+Parent: "d4a89f12-9295-410e-b554-966b0fb7b708"
+Template: "d4a89f12-9295-410e-b554-966b0fb7b708"
+Path: /sitecore/templates/Feature/Header/Search Modal/Product Recommendations Links List/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: office/32x32/selection_refresh.png
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {89F1877D-4421-4093-BC7D-51263572BBEF}
+    {D46DEF33-53B2-4AC2-8105-0C5059557606}
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230428T121121Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5391b6d7-93d5-42c8-9bda-036bb08577c4"
+      Hint: sectionOtherProperties
+      Value: noResultsFoundMessage=Sorry%2C%20we%20found%20no%20results%20for%20%7BsearchTerm%7D.
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "16c40c1e-df0c-4561-8a25-5977d4f34601"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "c58fc43d-963c-4135-b391-b950a4b6b423"
+      Hint: sectionTitle
+      Value: $name
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240828T165406Z

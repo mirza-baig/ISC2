@@ -1,0 +1,8 @@
+﻿---
+Role: |
+  sitecore\ISC2 Business Approver
+MemberOf:
+  Role: |
+    sitecore\Sitecore Client Authoring
+  Role: |
+    sitecore\Sitecore Client Users

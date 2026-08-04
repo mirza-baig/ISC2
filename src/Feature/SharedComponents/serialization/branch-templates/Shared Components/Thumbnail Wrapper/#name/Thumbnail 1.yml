@@ -1,0 +1,23 @@
+﻿---
+ID: "0a9de2bf-5740-480d-b5f3-98a5a233f9a6"
+Parent: "f2e6ee5b-5b57-4a39-935d-16341f690e1e"
+Template: "365e6aed-7254-49de-ab8c-5a64e9869872"
+Path: /sitecore/templates/Branches/Feature/Shared Components/Thumbnail Wrapper/$name/Thumbnail 1
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230922T131950Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "b22d57d6-4aca-4c2b-84f2-39f8fe2826b1"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230922T132209Z

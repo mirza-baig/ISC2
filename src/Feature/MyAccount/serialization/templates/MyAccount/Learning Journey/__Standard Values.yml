@@ -1,0 +1,41 @@
+﻿---
+ID: "8fe15c48-f571-4438-aa7b-42338bc7ced4"
+Parent: "7b8d2328-07a7-4449-92fb-9996ddea3b92"
+Template: "7b8d2328-07a7-4449-92fb-9996ddea3b92"
+Path: /sitecore/templates/Feature/MyAccount/Learning Journey/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "20e6b033-8245-43e8-87a6-92f405b7e938"
+      Hint: isCompactComponent
+      Value: 1
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240925T165832Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "d8701375-7681-41af-8c9a-39e1292b65c5"
+    - ID: "9f635aab-b041-40ad-9574-41fe3bfc1c5c"
+      Hint: seeAllLink
+      Value: |
+        <link text="See All My Learning Journey" linktype="anchor" url="#" anchor="#" title="See all my Learning Journey" class="" />
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "c18312e2-e754-47c1-8dec-8f4c7c7318c3"
+      Hint: labelsTitlesAndMore
+      Value: "title=My%20Courses%20%26%20Exams&assignedBy=Assigned%20by&schedulePeriod=Schedule%20Period&accessPeriod=Access%20Period&date=Date&expirationDateLabel=Expiration%20Date&buttonLabel=Schedule&failed=Failed&availableLabel=Available&expiredLabel=Expired&filterOptionAllLabel=All&filterOptionTrainingsLabel=Trainings&filterOptionExamsLabel=Exams&filterOptionCoursesLabel=Courses&filterOptionCertificatesLabel=Certificates&filterOptionSkillBuildersLabel=Skill-Builders&specialAccommodationsTitle=Special%20Accommodation&saExpirationDateLabel=Expiration%20Date&callToScheduleLabel=Call%20to%20Schedule&callToScheduleSupportingText=Schedule%20is%20required%20to%20be%20completed%20by%20phone.%20Select&callToScheduleLinkText=here&callToScheduleLinkUrl=https%3A%2F%2Fwww.pearsonvue.com%2Fcontent%2Fdam%2FVUE%2Fvue%2Fja%2Fdocuments%2Ftest-takers%2FCustomer-Service.pdf&callToScheduleLinkPostText=to%20obtain%20the%20correct%20number."
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250328T022951Z

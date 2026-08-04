@@ -1,0 +1,71 @@
+﻿---
+ID: "68f795de-e368-471f-92d8-07f08e74423f"
+Parent: "05592656-56d7-4d85-aacf-30919ee494f9"
+Template: "1c0acc50-37be-4742-b43c-96a07a7410a5"
+Path: /sitecore/system/Workflows/ISC2 Standard Workflow
+SharedFields:
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: "{4B7E2DA9-DE43-4C83-88C3-02F042031D04}"
+- ID: "b5166b38-e4bf-4410-953c-2037f2bf6a56"
+  Hint: Initial state
+  Value: "{19D11EBA-3B80-46E3-B9EB-E32F8EC69FB0}"
+- ID: "dec8d2d5-e3cf-48b6-a653-8e69e2716641"
+  Hint: __Security
+  Value: |
+    ar|sitecore\ISC2 Web Admin|pd|+item:delete|+item:admin|+workflowState:delete|+item:write|+item:read|^*|+workflowState:write|+item:rename|+item:create|+workflowCommand:execute|pe|+item:delete|+item:admin|+workflowState:delete|+item:write|+item:read|^*|+workflowState:write|+item:rename|+item:create|+workflowCommand:execute|ar|sitecore\ISC2 Author|pd|+item:delete|+item:admin|+workflowState:delete|+item:write|+item:read|^*|+workflowState:write|+item:rename|+item:create|+workflowCommand:execute|pe|+item:delete|+item:admin|+workflowState:delete|+item:write|+item:read|^*|+workflowState:write|+item:rename|+item:create|+workflowCommand:execute|ar|sitecore\ISC2 Tech Admin|pd|+workflowState:delete|+item:write|+item:read|+workflowState:write|+workflowCommand:execute|pe|+workflowState:delete|+item:write|+item:read|+workflowState:write|+workflowCommand:execute|
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20140202T234746Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\admin
+    - ID: "591f16da-4020-4ffd-9560-ef4996fc2a61"
+      Hint: Default Comment Dialog Height
+      Value: 250
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "511fc70e-01d8-4e32-9eb2-afa2650c393c"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20230727T024116Z
+  - Version: 2
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20140202T234746Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\admin
+    - ID: "591f16da-4020-4ffd-9560-ef4996fc2a61"
+      Hint: Default Comment Dialog Height
+      Value: 250
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "731656cc-d632-4bc1-8ba6-d71d632e634d"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240630T222848Z

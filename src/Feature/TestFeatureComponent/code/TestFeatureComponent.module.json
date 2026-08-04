@@ -1,0 +1,15 @@
+{
+  "namespace": "Feature.TestFeatureComponent",
+  "items": {
+    "includes": [
+      {
+        "name": "templates",
+        "path": "/sitecore/templates/Feature/Test Feature Component"
+      },
+      {
+        "name": "renderings",
+        "path": "/sitecore/layout/renderings/Feature/Test Feature Component"
+      }
+    ]
+  }
+}

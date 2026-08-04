@@ -1,0 +1,50 @@
+﻿---
+ID: "1a9b396e-96d2-4c87-9e44-f69aa0fe179a"
+Parent: "a36ff686-9c81-4ad3-b23a-275168ff6b10"
+Template: "a36ff686-9c81-4ad3-b23a-275168ff6b10"
+Path: /sitecore/templates/Feature/Cart/Order Details/__Standard Values
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240904T195504Z
+    - ID: "2a250dbe-2b5f-473c-acc0-73fc5303a81d"
+      Hint: labelsTooltipsAndMore
+      Value: printOrderCtaLabel=Print%20your%20order&appreciationMessageHeadline=Thanks%20for%20Your%20Purchase&providedByLabel=Provided%20by%20ISC2&shippingSectionTitle=Shipping&companySectionTitle=Company&paymentSectionTitle=Payment&paymentWaitingApprovalNotice=Waiting%20for%20payment%20approval&orderNumberCopy=Order%20%23%7BorderId%7D
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "52df02e6-a8e7-4735-aa05-e34965909dab"
+      Hint: checkoutErrorMessage
+      Value: |
+        <div class="flex w-full flex-col py-12"><div class="rich-text-block flex flex-col bg-transparent pb-10 px-5 text-black-100 sm:px-16 sm:pb-10"><div class="rich-text slider-scrollbar cursor-auto text-left"><p>There was an error with your order.</p><p>Please return to your cart at <a href="https://xmc-dev.isc2.org/cart">https://xmc-dev.isc2.org/cart</a> and try again.</p><p>If you reach this error message again after retrying to place your order, <a href="https://xmc-dev.isc2.org/contact-us">contact us</a>.</p></div></div></div>
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "7df5b678-d7a0-4203-b165-57dbd9035b38"
+      Hint: appreciationMessage
+      Value: |
+        <p style="text-align: center;">We are waiting for payment approval to proceed with your order.</p>
+        <p style="text-align: center;">You will receive an email at {userEmail} with all your purchase details.<br />
+        Remember to check your spam or promotions inbox.</p>
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "3346cf26-65ac-45f4-9080-2fd81f10dba5"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\pdubey@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20260427T214920Z
+    - ID: "e95a273e-da4d-4b0f-a4a5-67f5feb6103c"
+      Hint: purchaseConfirmationCopy
+      Value: |
+        <h2 style="text-align: center;"><span>You&acute;ve purchased an exam</span></h2>
+        <p style="text-align: center;"><span>This is a prerequisite for taking exams with ISC2.<br />
+        Now, remember to <a href="#">Register for exam</a> and <a href="#">Schedule the exam</a>.</span></p>

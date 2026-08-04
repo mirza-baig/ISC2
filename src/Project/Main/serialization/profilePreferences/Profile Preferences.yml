@@ -1,0 +1,99 @@
+﻿---
+ID: "e9431f4f-ba23-4e32-b512-1053e906a160"
+Parent: "dd35514b-a04f-48f3-8540-d4ec2d33acac"
+Template: "0545474c-a0ce-4718-954f-42772ae2bc6e"
+Path: /sitecore/content/ISC2/Main/Data/My Account/Profile Preferences
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "12fae5b2-6a15-4648-a3fc-eb208c08efd4"
+      Hint: sectionTitle
+      Value: Preferences
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20250402T132229Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\mjamal@isc2.org
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\mjamal@isc2.org
+    - ID: "7db446d3-fe6a-44db-b3b4-9d6de9171ee8"
+      Hint: mfaDescription
+      Value: Configure and update your MFA settings.
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "b3c08d93-d6f5-4123-a66d-7b5eeae01558"
+    - ID: "ae64a659-9c66-43e1-8624-5cf34412ca3d"
+      Hint: mfaTitle
+      Value: "Multi-Factor Authentication"
+    - ID: "aee06670-7b5c-4f62-91e5-b2bc5aa4db0f"
+      Hint: alertLabels
+      Value: updateSuccess=Preferences%20updated%20successfully&updateError=Failed%20to%20update%20preferences&fetchError=Failed%20to%20load%20preferences
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\pdubey@isc2.org
+    - ID: "c7abbb29-afc4-41dc-ab73-508c312b129b"
+      Hint: mfaCtaText
+      Value: Update MFA Settings
+    - ID: "ca3a17bd-8d2b-497e-a7d2-788449c5ab2e"
+      Hint: sections
+      Value: "{C8B148FB-38E2-4E9F-B078-6D3CBE461B39}"
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250610T195933Z
+  - Version: 2
+    Fields:
+    - ID: "12fae5b2-6a15-4648-a3fc-eb208c08efd4"
+      Hint: sectionTitle
+      Value: Preferences
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20250611T161609Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\mjamal@isc2.org
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\vsingh@isc2.org
+    - ID: "7db446d3-fe6a-44db-b3b4-9d6de9171ee8"
+      Hint: mfaDescription
+      Value: Configure and update your MFA settings.
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "0b514ef5-9cdd-4656-ba05-5c45f37d8e56"
+    - ID: "ae64a659-9c66-43e1-8624-5cf34412ca3d"
+      Hint: mfaTitle
+      Value: "Multi-Factor Authentication"
+    - ID: "aee06670-7b5c-4f62-91e5-b2bc5aa4db0f"
+      Hint: alertLabels
+      Value: updateSuccess=Preferences%20updated%20successfully&updateError=Failed%20to%20update%20preferences&fetchError=Failed%20to%20load%20preferences
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\gfeola@isc2.org
+    - ID: "c7abbb29-afc4-41dc-ab73-508c312b129b"
+      Hint: mfaCtaText
+      Value: Update MFA Settings
+    - ID: "c8f93afe-bfd4-4e8f-9c61-152559854661"
+      Hint: __Valid from
+      Value: 20250611T161609Z
+    - ID: "ca3a17bd-8d2b-497e-a7d2-788449c5ab2e"
+      Hint: sections
+      Value: "{C8B148FB-38E2-4E9F-B078-6D3CBE461B39}"
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20251126T140811Z
+    - ID: "e04cafb0-7a86-4fcd-b722-1a7d85beb5a0"
+      Hint: languageDescription
+      Value: <p>Select the language in which you would most prefer to receive communications from ISC2.</p>
+    - ID: "fcb5d862-0f9b-4a07-80f4-05bd50380013"
+      Hint: languageTitle
+      Value: Language Preferences

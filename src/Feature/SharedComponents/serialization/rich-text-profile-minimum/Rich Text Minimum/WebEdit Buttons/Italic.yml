@@ -1,0 +1,49 @@
+﻿---
+ID: "a0204e79-fd10-4407-afa3-9f1176be5d9c"
+Parent: "e109a67c-1054-462d-b11b-75c63694899f"
+Template: "02404208-46d4-49bf-988b-eb363a52a1c9"
+Path: /sitecore/system/Settings/Html Editor Profiles/Rich Text Minimum/WebEdit Buttons/Italic
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: Office/16x16/font_style_italics.png
+- ID: "1bb289d6-44d7-4fcc-af15-db32b841f957"
+  Hint: Click
+  Value: |
+    chrome:field:execute({command:"Italic", userInterface:true, value:true})
+- ID: "dec8d2d5-e3cf-48b6-a653-8e69e2716641"
+  Hint: __Security
+  Value: |
+    ar|sitecore\Sitecore Minimal Page Editor|pd|-item:read|pe|-item:read|
+- ID: "e8cc41c7-c304-4282-b782-e21ca32d324c"
+  Hint: Icon
+  Value: Office/16x16/font_style_italics.png
+Languages:
+- Language: en
+  Fields:
+  - ID: "371e0d96-4f00-4b80-ad14-6284e00493ba"
+    Hint: Tooltip
+    Value: Italic
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "001dd393-96c5-490b-924a-b0f25cd9efd8"
+      Hint: __Lock
+      Value: <r />
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20080121T132643Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "6c9fda85-0294-44e9-9ff6-b4be3a5863af"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240604T161656Z

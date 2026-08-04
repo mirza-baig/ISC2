@@ -1,0 +1,49 @@
+﻿---
+ID: "fab46b54-e80c-4cc7-9959-e0aed8a5f55c"
+Parent: "da04b275-8838-4a3a-afee-817cf1fdd2eb"
+Template: "e4e11508-04a4-4b0b-a263-5201f811c9cd"
+Path: /sitecore/layout/Layouts/Project/ISC2 Layout
+SharedFields:
+- ID: "80334869-86dc-4472-aa89-44cf1b2f6c9b"
+  Hint: Placeholders
+  Value: |
+    {8D44F374-623F-4201-9572-F2319C5A705C}
+    {88E814D7-5331-483A-B156-76C39A34E9B9}
+    {874B958F-EA5F-4F94-ACF8-E63AB969D685}
+    {262F8660-0978-44DE-B62C-A6A6778681D2}
+    {8967CE62-01FD-4962-B947-C2053A342C53}
+    {E01CCC4A-32B4-4DEE-8B6C-1FEF8CFB81BF}
+    {79B322AE-7470-4E87-B39E-0F2848A51567}
+    {59D8ED53-D848-4D93-A7D3-61985BF5E4FD}
+- ID: "9c6106ea-7a5a-48e2-8cad-f0f693b1e2d4"
+  Hint: __Read Only
+  Value: 
+- ID: "a036b2bc-ba04-44f6-a75f-bae6cd242abf"
+  Hint: Path
+  Value: /Views/SXA JSS/SXA JSS Layout.cshtml
+Languages:
+- Language: en
+  Fields:
+  - ID: "b5e02ad9-d56f-4c41-a065-a133db87bdeb"
+    Hint: __Display name
+    Value: 
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20190111T114424Z
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "143dda2a-9ccb-40c5-9aa3-057512abe622"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240602T221824Z

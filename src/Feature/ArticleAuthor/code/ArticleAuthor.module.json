@@ -1,0 +1,11 @@
+{
+    "namespace": "Feature.ArticleAuthor",   
+    "items": {
+      "includes": [
+        {
+          "name": "templates",
+          "path": "/sitecore/templates/Feature/ArticleAuthor"
+        }       
+      ]
+    }
+  }

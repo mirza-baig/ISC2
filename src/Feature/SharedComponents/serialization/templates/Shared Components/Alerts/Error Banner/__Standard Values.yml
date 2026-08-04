@@ -1,0 +1,38 @@
+﻿---
+ID: "cea72279-5de1-4cc8-b29b-a8683e4f66d0"
+Parent: "449fd0e6-3514-4412-ad60-0dd03e3477be"
+Template: "449fd0e6-3514-4412-ad60-0dd03e3477be"
+Path: /sitecore/templates/Feature/Shared Components/Alerts/Error Banner/__Standard Values
+SharedFields:
+- ID: "be6286e9-819f-4888-b9ac-538f25fa0f54"
+  Hint: backgroundColor
+  Value: "{D8111F0C-DE66-4D2F-BDA7-3E711C53987D}"
+- ID: "f5a43829-f6d1-45e7-aa98-3a30a0b74bdc"
+  Hint: fontColor
+  Value: "{BE61F52D-17AF-4931-ADD5-F96DC13D1FD1}"
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240910T171845Z
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "2728ddef-ddeb-4c66-85b5-2dc5abfa7cd8"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20241108T160311Z

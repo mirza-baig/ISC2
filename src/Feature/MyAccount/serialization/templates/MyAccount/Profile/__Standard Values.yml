@@ -1,0 +1,62 @@
+﻿---
+ID: "8cf16b3f-c0c1-4a83-a52c-83d6729ffa45"
+Parent: "981f1cd4-3504-4ee2-9a2e-a0fa2ed3f4a7"
+Template: "981f1cd4-3504-4ee2-9a2e-a0fa2ed3f4a7"
+Path: /sitecore/templates/Feature/MyAccount/Profile/__Standard Values
+SharedFields:
+- ID: "ba3f86a2-4a1c-4d78-b63d-91c2779c1b5e"
+  Hint: __Sortorder
+  Value: 600
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "20f16505-aab4-4c5f-9048-355ab7670e61"
+      Hint: howToEditNameCta
+      Value: |
+        <link text="contact us" linktype="anchor" url="#" anchor="#" title="Contact us" class="" />
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20240904T195504Z
+    - ID: "2e7c03b9-465a-40e3-8a4e-57956187e7d5"
+      Hint: otherLabelsTitlesAndMore
+      Value: passwordHeading=Password&cancelText=Cancel&saveChangesText=Save%20Changes&successConfirmationMessage=Your%20Profile%20has%20been%20updated&errorEditingMessage=There%20was%20an%20error%20when%20updating%20your%20profile&requiredFieldLabel=Required&requiredErrorMessage=%7Bfield%7D%20is%20required&emailFormatErrorMessage=%7Bfield%7D%20must%20be%20an%20email&dropdownPlaceholder=Choose%20option&incorrectPostalCodeMessage=Incorrect%20Zip%20Code%20Format
+    - ID: "52807595-0f8f-4b20-8d2a-cb71d28c6103"
+      Hint: __Owner
+      Value: |
+        sitecore\Admin
+    - ID: "5be72d3d-8e9d-49ba-b91c-835a6fa32619"
+      Hint: addressInfoLabelsAndTooltips
+      Value: addressInformationHeading=Address%20Information&addressInformationEditCtaLabel=Edit&mailingAddressText=Mailing%20Address&billingAddressText=Billing%20Address&addressLabel=Address&countryLabel=Country&stateProvinceLabel=State&cityLabel=City&zipCodeLabel=Zip%20Code&billingAsMailingCheckboxLabel=Same%20as%20Mailing%20Address&addressTooltip=Address&countryTooltip=Country&stateProvinceTooltip=State&cityTooltip=City&zipCodeTooltip=Zip%20Code
+    - ID: "5dd74568-4d4b-44c1-b513-0af5f4cda34f"
+      Hint: __Created by
+      Value: |
+        sitecore\Admin
+    - ID: "858919b1-d0b7-4ae9-ae76-e91a564b8f56"
+      Hint: passwordEditCta
+      Value: |
+        <link text="Edit" linktype="external" url="https://my.isc2.org/s/change-password" anchor="" title="Edit Password" target="_blank" />
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "a57402a7-1fc9-4606-a331-28400633029b"
+    - ID: "9108f28b-9ce2-4b46-84d1-8f17fbbefef4"
+      Hint: emailAddressLabelsAndTooltips
+      Value: emailAddressHeading=Email%20Address
+    - ID: "abdead28-4e53-41a2-81d5-90038830834a"
+      Hint: employmentInfoLabelsAndTooltips
+      Value: employmentInformationHeading=Employment%20Information&employmentInformationEditCtaLabel=Edit&employerNameLabel=Employer%20Name&employerNameTooltip=Employer%20Name&jobTitleLabel=Title&workEmailLabel=Work%20Email&workEmailTooltip=Work%20Email&workPhoneLabel=Work%20Phone&governmentContractorSwitchLabel=Government%20Contractor&governmentEmployerSwitchLabel=Government%20Employer
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\randere@isc2.org
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20250319T183008Z
+    - ID: "dd9bc438-742b-4d5c-a9a5-47a01c6be05a"
+      Hint: emailAddressEditCta
+      Value: |
+        <link text="Edit" linktype="external" url="https://my.isc2.org/s/change-email" anchor="" title="Edit Email" target="_blank" />
+    - ID: "f5705082-ecfb-429b-986d-df886669b304"
+      Hint: contactInfoLabelsAndTooltips
+      Value: contactInformationHeading=Contact%20Information&contactInformationEditCtaLabel=Edit&firstNameLabel=Name&lastNameLabel=Last%20Name&howToEditNameNotice=To%20edit%20your%20Name%20and%20Last%20Name%2C%20please%20%7BhowToEditNameCta%7D.&countryLabel=Country&countryTooltip=Country&phoneLabel=Phone&prefixLabel=Prefix&suffixLabel=Suffix&nicknameLabel=Nickname&pronounLabel=Pronoun

@@ -1,0 +1,47 @@
+﻿---
+ID: "8bf1674e-84d4-4922-97d4-62844cc0544c"
+Parent: "6a64ea37-14fb-4eee-9d74-c78fa427f5e2"
+Template: "6a64ea37-14fb-4eee-9d74-c78fa427f5e2"
+Path: /sitecore/templates/Project/ISC2/Custom Pages/HomePage/__Standard Values
+SharedFields:
+- ID: "06d5295c-ed2f-4a54-9bf2-26228d113318"
+  Hint: __Icon
+  Value: 
+- ID: "1172f251-dad4-4efb-a329-0c63500e4f1e"
+  Hint: __Masters
+  Value: |
+    {C9AF023D-A197-4671-8D84-2A5A46E3A64D}
+    {5D8D172A-B1D8-4147-812E-D9812E029079}
+    {E7D440A1-FFF5-4416-9567-0EE2FF1C74B4}
+    {13659A23-7359-4810-A3B5-2B094452230C}
+    {63D88676-BDE0-40E8-A5B5-BF5E43CBA112}
+    {D2F8378F-C01A-4CEA-9EF3-9C9FF5DB332C}
+    {7620D2C6-1254-4A4D-82AC-E186EAB78F9A}
+    {CF536650-D5E7-46FB-BBD3-029FD999EAC7}
+    {BAA6F5B1-4198-4AEB-99C5-8DA0D7C3A654}
+- ID: "f1a1fe9e-a60c-4ddb-a3a0-bb5b29fe732e"
+  Hint: __Renderings
+  Value: |
+    <r xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <d
+        id="{FE5D7FDF-89C0-4D99-9AA3-B5FBD009C9F3}"
+        l="{FAB46B54-E80C-4CC7-9959-E0AED8A5F55C}" />
+    </r>
+Languages:
+- Language: en
+  Versions:
+  - Version: 1
+    Fields:
+    - ID: "25bed78c-4957-4165-998a-ca1b52f67497"
+      Hint: __Created
+      Value: 20230501T032709Z
+    - ID: "8cdc337e-a112-42fb-bbb4-4143751e123f"
+      Hint: __Revision
+      Value: "2a0f6e06-2a74-45e8-a84c-78422493b8ec"
+    - ID: "badd9cf9-53e0-4d0c-bcc0-2d784c282f6a"
+      Hint: __Updated by
+      Value: |
+        sitecore\Admin
+    - ID: "d9cf14b1-fa16-4ba6-9288-e8a174d4d522"
+      Hint: __Updated
+      Value: 20240912T200016Z
