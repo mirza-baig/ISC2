@@ -7,6 +7,7 @@ query Order($orderNumber: String, $locale: Locale, $externalId: String!, $email:
         ${CART_FIELDS}
       }
       orderNumber
+      createdAt
       customerEmail
       custom {
         customFieldsRaw {

@@ -28,6 +28,7 @@ export { default as useUpdateUserPicture } from './userPicture/useUpdateUserPict
 export { default as useGetSubscriptions } from './user/useGetSubscriptions';
 export { default as useGetLearningJourney } from './user/useGetLearningJourney';
  export { default as useActiveBusinessAccount } from './user/useActiveBusinessAccount';
+export { default as useHasAllocatorRelationship } from './user/useHasAllocatorRelationship';
 export { default as useValidateEnrollmentAccess } from './user/useValidateEnrollmentAccess';
 export { default as useCustomMutation } from './useCustomMutation';
 export { default as useDebounce } from './useDebounce';

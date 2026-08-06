@@ -5,6 +5,7 @@ export * from './cart';
 export * from './checkout';
 export * from './headers';
 export * from './localStorageKeys';
+export * from './order';
 export * from './pdp';
 export * from './queryKeys';
 export * from './roles';

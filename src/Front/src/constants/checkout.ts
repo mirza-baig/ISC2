@@ -7,6 +7,20 @@ export enum PAYMENT_METHODS {
   BLIK = 'blik',
 }
 
+/**
+ * Payment methods offered only to business buyers.
+ *
+ * MuleSoft's Authorized Buyer payload says which of these an account may *use*
+ * (`purchaseControls.prepaidAuthorized`, `credit.*`, `prepaid.*` in lib/authorizedBuyer);
+ * it does not report which one a given order was placed with. That selection is read back
+ * off the order's `paymentInfo.payments[].paymentMethodInfo.method` — see
+ * `resolveBusinessPaymentMethod` in utils/order.
+ */
+export enum BUSINESS_PAYMENT_METHODS {
+  PREAPPROVED_CREDIT = 'preapproved-credit',
+  PREPAID_ACCOUNT = 'prepaid-account',
+}
+
 export enum CHECKOUT_STEPS {
   PERSONAL_INFORMATION = 'personal-information',
   PAYMENT_INFORMATION = 'payment-information',
