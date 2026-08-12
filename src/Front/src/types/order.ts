@@ -111,8 +111,6 @@ export type BusinessOrderConfirmationLabels = {
   prepaidAccountStepCopy?: string;
   orderAllocationStepTitle?: string;
   orderAllocationStepCopy?: string;
-  privateCoursesStepTitle?: string;
-  privateCoursesStepCopy?: string;
   printReceiptCtaLabel?: string;
   openDashboardCtaLabel?: string;
   allocationsDashboardUrl?: string;

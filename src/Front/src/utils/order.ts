@@ -1,5 +1,5 @@
-import { BUSINESS_PAYMENT_METHODS, PRIVATE_COURSE_PRODUCT_TYPES } from 'constants/index';
-import { CartLineItem, Order } from 'types/index';
+import { BUSINESS_PAYMENT_METHODS } from 'constants/index';
+import { Order } from 'types/index';
 
 type PaymentIdentifier = {
   type: 'card' | 'google_wallet' | 'apple_pay';
@@ -76,20 +76,3 @@ export const resolveBusinessPaymentMethod = (
   return null;
 };
 
-/**
- * Whether the checked-out cart included a private course, which adds its own step to the
- * confirmation's "What Happens Next?" box.
- *
- * Bundle line items are checked through their nested products, since a bundle carries the
- * `bundle` product type itself.
- */
-export const hasPrivateCourse = (lineItems: CartLineItem[] = []): boolean =>
-  lineItems.some((lineItem) => {
-    if ('products' in lineItem) {
-      return hasPrivateCourse(lineItem.products);
-    }
-
-    const productTypeName = lineItem.productType?.name?.toLowerCase();
-
-    return Boolean(productTypeName && PRIVATE_COURSE_PRODUCT_TYPES.includes(productTypeName));
-  });

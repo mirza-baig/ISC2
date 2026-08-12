@@ -6,7 +6,6 @@ import { useDownloadBusinessReceipt, useHasAllocatorRelationship } from 'hooks/i
 import {
   buildBusinessReceiptData,
   formatDate,
-  hasPrivateCourse,
   parseFieldsFromURLString,
   parsePrice,
   resolveBusinessPaymentMethod,
@@ -43,9 +42,9 @@ type WhatHappensNextStep = {
  * Business order confirmation.
  *
  * Differs from the individual confirmation in `OrderDetailsContent` by showing the
- * selected payment method, a quantity and unit price per product, and a "What Happens
- * Next?" box whose steps depend on how the cart was paid for and whether it contained a
- * private course.
+ * selected payment method, a quantity and unit price per product, a "What Happens Next?"
+ * box whose steps depend on how the cart was paid for, and a downloadable Transaction
+ * Receipt PDF in place of the browser print dialog.
  */
 const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsContentProps) => {
   const router = useRouter();
@@ -84,12 +83,9 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
     [activeCart.lineItems]
   );
 
-  const includesPrivateCourse = useMemo(() => hasPrivateCourse(lineItems), [lineItems]);
-
   /**
-   * Steps 2 and 4 are the conditional ones the ticket calls out: the payment step renders
-   * only for the business payment methods, and the private course step only when the
-   * checked-out cart contained one.
+   * Step 2 is the conditional one: the payment step renders only for the business
+   * payment methods.
    */
   const whatHappensNextSteps = useMemo<WhatHappensNextStep[]>(() => {
     const steps: WhatHappensNextStep[] = [
@@ -124,17 +120,9 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
       copy: label('orderAllocationStepCopy'),
     });
 
-    if (includesPrivateCourse) {
-      steps.push({
-        key: 'private-courses',
-        title: label('privateCoursesStepTitle'),
-        copy: label('privateCoursesStepCopy'),
-      });
-    }
-
     return steps;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [businessPaymentMethod, includesPrivateCourse, labels, order.customerEmail]);
+  }, [businessPaymentMethod, labels, order.customerEmail]);
 
   /**
    * Business buyers get a generated Transaction Receipt PDF rather than the browser

@@ -33,9 +33,6 @@ export const BUSINESS_ORDER_CONFIRMATION_DEFAULT_LABELS = {
     "You'll receive an order confirmation email at {userEmail} within the next few minutes.",
   orderAllocationStepTitle: 'Order Allocation',
   orderAllocationStepCopy: "You can open your dashboard now to allocate products you've purchased.",
-  privateCoursesStepTitle: 'Private Courses',
-  privateCoursesStepCopy:
-    'ISC2 will contact you within 2 business days to confirm your private course details.',
   printReceiptCtaLabel: 'Print Receipt',
   openDashboardCtaLabel: 'Open Dashboard',
   supportCopy: 'Questions about your order?',
