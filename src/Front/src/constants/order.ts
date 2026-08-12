@@ -69,3 +69,47 @@ export const BUSINESS_ORDER_DASHBOARD_DEFAULT_URLS = {
   allocations: '/my-account/allocations',
   orderHistory: '/my-account/order-history',
 } as const;
+
+/**
+ * Business transaction receipt copy. Authors override any of these via the same
+ * "labels, tooltips and more" field the confirmation screen reads; until then the PDF
+ * renders the agreed wording.
+ *
+ * The disclaimer is required by the story — the receipt has to be unambiguously
+ * distinguishable from a payment invoice — so it is deliberately not optional here.
+ */
+export const BUSINESS_RECEIPT_DEFAULT_LABELS = {
+  documentTitle: 'Transaction Receipt',
+  disclaimer:
+    'This document is a transaction receipt confirming payment and is not a payment invoice or a request for payment.',
+  orderNumberLabel: 'Order Number',
+  orderDateLabel: 'Order Date',
+  orderStatusLabel: 'Status',
+  currencyLabel: 'Currency',
+  organizationLabel: 'Organization',
+  isc2EntityLabel: 'ISC2 Entity',
+  billToLabel: 'Bill To',
+  purchaseDetailsLabel: 'Purchase Details',
+  buyerNameLabel: 'Buyer',
+  emailLabel: 'Email',
+  poNumberLabel: 'PO Number',
+  customerOrderReferenceLabel: 'Customer Order Reference',
+  taxIdLabel: 'Tax ID Number',
+  intacctCustomerIdLabel: 'Customer ID',
+  productColumnLabel: 'Product',
+  locationColumnLabel: 'Location',
+  quantityColumnLabel: 'Qty',
+  listPriceColumnLabel: 'List Price',
+  discountedPriceColumnLabel: 'Discounted',
+  subtotalColumnLabel: 'Subtotal',
+  subtotalLabel: 'Subtotal',
+  taxLabel: 'Tax',
+  totalLabel: 'Total',
+  paymentMethodLabel: 'Payment Method',
+  downloadReceiptCtaLabel: 'Print Your Receipt',
+  footerNote: 'ISC2 · Thank you for your business.',
+} as const;
+
+/** Product types that make the in-person class location relevant on the receipt. */
+export const IN_PERSON_MODALITIES = ['in person', 'in-person', 'classroom', 'onsite', 'on-site'];
+

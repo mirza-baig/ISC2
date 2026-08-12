@@ -103,6 +103,7 @@ const Order = ({ fields }: OrderHistoryComponentProps) => {
             <OrderPrintButton
               contentRef={contentRef}
               printInvoiceCtaLabel={orderLabels.printInvoiceCtaLabel}
+              order={order}
             />
           </div>
         </div>

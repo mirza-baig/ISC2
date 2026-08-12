@@ -1,14 +1,14 @@
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { useRouter } from 'next/router';
 
-import { useCart } from 'providers/index';
-import { useHasAllocatorRelationship } from 'hooks/index';
+import { useCart, useShopperContext } from 'providers/index';
+import { useDownloadBusinessReceipt, useHasAllocatorRelationship } from 'hooks/index';
 import {
+  buildBusinessReceiptData,
   formatDate,
   hasPrivateCourse,
   parseFieldsFromURLString,
   parsePrice,
-  printIndividualContent,
   resolveBusinessPaymentMethod,
 } from 'utils/index';
 import {
@@ -51,9 +51,8 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
   const router = useRouter();
   const { activeCart } = useCart();
   const { hasAllocatorRelationship } = useHasAllocatorRelationship();
-
-  const printableRef = useRef<HTMLDivElement>(null);
-  const printFrameRef = useRef<HTMLIFrameElement>(null);
+  const { shopperContext } = useShopperContext();
+  const { downloadReceipt, isGeneratingReceipt } = useDownloadBusinessReceipt();
 
   const labels = parseFieldsFromURLString<BusinessOrderConfirmationLabels>(
     fields.labelsTooltipsAndMore
@@ -137,12 +136,22 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessPaymentMethod, includesPrivateCourse, labels, order.customerEmail]);
 
+  /**
+   * Business buyers get a generated Transaction Receipt PDF rather than the browser
+   * print dialog the individual confirmation uses.
+   */
   const onPrintReceipt = () => {
-    const content = printableRef.current;
+    const receiptData = buildBusinessReceiptData({
+      order,
+      cart: activeCart,
+      buyerName: [order.shippingAddress?.firstName, order.shippingAddress?.lastName]
+        .filter(Boolean)
+        .join(' '),
+      organizationName: shopperContext?.organization?.name,
+      paymentMethod: paymentMethodName,
+    });
 
-    if (content) {
-      printIndividualContent(content, printFrameRef.current);
-    }
+    downloadReceipt({ data: receiptData, labels });
   };
 
   const onOpenDashboard = () => {
@@ -157,7 +166,7 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
 
   return (
     <div className="flex flex-col items-center mx-5 md:mx-16 my-10 md:my-15 gap-10">
-      <div ref={printableRef} className="flex flex-col items-center w-full gap-10">
+      <div className="flex flex-col items-center w-full gap-10">
         <div className="flex flex-col items-center gap-4 text-center">
           {/*
             The circle is drawn here rather than with TickFilledIcon: that icon's backing
@@ -275,6 +284,7 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
           variant="secondary"
           label={label('printReceiptCtaLabel')}
           onClick={onPrintReceipt}
+          isLoading={isGeneratingReceipt}
           className="!self-auto flex-1 justify-center"
         />
         <Button
@@ -297,8 +307,6 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
           {labels?.supportPhoneCopy && <span> {labels.supportPhoneCopy}</span>}
         </p>
       )}
-
-      <iframe title="Print Receipt" ref={printFrameRef} style={{ display: 'none' }} />
     </div>
   );
 };
