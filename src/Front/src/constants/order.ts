@@ -3,7 +3,7 @@
  * adding the matching keys to the Order Details item's "Labels, Tooltips And More" field;
  * until then the confirmation renders the agreed copy.
  *
- * Same arrangement as BUSINESS_STEP_ONE_DEFAULT_LABELS in constants/checkout.
+ * Same arrangement as the business keys on StepOneLabels in types/checkout.
  *
  * `{userEmail}` and `{orderId}` are replaced at render time, matching how the individual
  * confirmation already substitutes them.
@@ -52,19 +52,6 @@ export const BUSINESS_PAYMENT_METHOD_DEFAULT_STEPS = {
     title: 'Prepaid Account',
     copy: 'This order has been deducted from your prepaid account balance.',
   },
-} as const;
-
-/**
- * Where "Open Dashboard" sends the buyer. The dashboard tabs are authored in Sitecore and
- * have no route constant in this repo, so authors should set `allocationsDashboardUrl` /
- * `orderHistoryDashboardUrl` on the same field.
- *
- * These placeholders only keep the CTA from rendering a dead link before those keys are
- * added — they are NOT confirmed paths. Verify against the authored My Account tabs.
- */
-export const BUSINESS_ORDER_DASHBOARD_DEFAULT_URLS = {
-  allocations: '/my-account/allocations',
-  orderHistory: '/my-account/order-history',
 } as const;
 
 /**

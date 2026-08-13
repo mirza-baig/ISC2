@@ -21,6 +21,7 @@ export { default as useGetStandalonePrices } from './prices/useGetStandalonePric
 export { default as useGetDistributionChannel } from './prices/useGetDistributionChannel';
 export { default as useGetOrder } from './order/useGetOrder';
 export { default as useDownloadBusinessReceipt } from './order/useDownloadBusinessReceipt';
+export { default as useOrderDashboardLinks } from './order/useOrderDashboardLinks';
 export { default as useGetAllCountries } from './configuration/useGetAllCountries';
 export { default as useGetAllStates } from './configuration/useGetAllStates';
 export { default as useUserPicture } from './userPicture/useUserPicture';

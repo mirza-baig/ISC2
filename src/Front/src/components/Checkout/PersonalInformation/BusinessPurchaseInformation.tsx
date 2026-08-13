@@ -3,7 +3,6 @@ import { Control } from 'react-hook-form';
 import { Country, PersonalInformation, State, StepOneLabels } from 'types/index';
 import { FormCheckbox, FormDateInput, FormFileInput, FormTextInput } from 'ui/index';
 import {
-  BUSINESS_STEP_ONE_DEFAULT_LABELS,
   CUSTOMER_ORDER_REFERENCE_MAX_LENGTH,
   PO_NUMBER_MAX_LENGTH,
 } from 'constants/index';
@@ -56,8 +55,7 @@ export default function BusinessPurchaseInformation({
       <div className="grid lg:grid-cols-2 gap-x-8 gap-y-4">
         <div className="flex flex-col gap-y-4">
           <p className="text-black body-m">
-            {stepOneLabels.companyInformationTitle ||
-              BUSINESS_STEP_ONE_DEFAULT_LABELS.companyInformationTitle}
+            {stepOneLabels.companyInformationTitle || ''}
           </p>
  
           <FormTextInput
@@ -71,7 +69,7 @@ export default function BusinessPurchaseInformation({
           <FormTextInput
             name="poNumber"
             control={control}
-            label={stepOneLabels.poNumberLabel || BUSINESS_STEP_ONE_DEFAULT_LABELS.poNumberLabel}
+            label={stepOneLabels.poNumberLabel || ''}
             maxLength={PO_NUMBER_MAX_LENGTH}
             disabled={isSubmitting}
             isOptional={!isPoRequired}
@@ -81,7 +79,7 @@ export default function BusinessPurchaseInformation({
             name="poAttachment"
             control={control}
             label={
-              stepOneLabels.poAttachmentLabel || BUSINESS_STEP_ONE_DEFAULT_LABELS.poAttachmentLabel
+              stepOneLabels.poAttachmentLabel || ''
             }
             disabled={isSubmitting}
             isOptional={!isPoAttachmentRequired}
@@ -93,12 +91,10 @@ export default function BusinessPurchaseInformation({
             name="customerOrderReference"
             control={control}
             label={
-              stepOneLabels.customerOrderReferenceLabel ||
-              BUSINESS_STEP_ONE_DEFAULT_LABELS.customerOrderReferenceLabel
+              stepOneLabels.customerOrderReferenceLabel || ''
             }
             tooltipText={
-              stepOneLabels.customerOrderReferenceTooltip ||
-              BUSINESS_STEP_ONE_DEFAULT_LABELS.customerOrderReferenceTooltip
+              stepOneLabels.customerOrderReferenceTooltip || ''
             }
             maxLength={CUSTOMER_ORDER_REFERENCE_MAX_LENGTH}
             disabled={isSubmitting}
@@ -109,12 +105,10 @@ export default function BusinessPurchaseInformation({
               name="courseDeliveryDate"
               control={control}
               label={
-                stepOneLabels.courseDeliveryDateLabel ||
-                BUSINESS_STEP_ONE_DEFAULT_LABELS.courseDeliveryDateLabel
+                stepOneLabels.courseDeliveryDateLabel || ''
               }
               tooltipText={
-                stepOneLabels.courseDeliveryDateTooltip ||
-                BUSINESS_STEP_ONE_DEFAULT_LABELS.courseDeliveryDateTooltip
+                stepOneLabels.courseDeliveryDateTooltip || ''
               }
               disabled={isSubmitting}
             />
@@ -123,8 +117,7 @@ export default function BusinessPurchaseInformation({
  
         <div className="flex flex-col gap-y-4">
           <p className="text-black body-m">
-            {stepOneLabels.contactInformationTitle ||
-              BUSINESS_STEP_ONE_DEFAULT_LABELS.contactInformationTitle}
+            {stepOneLabels.contactInformationTitle || ''}
           </p>
  
           <div className="grid sm:grid-cols-2 gap-4">

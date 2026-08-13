@@ -56,8 +56,9 @@ export type StepOneLabels = {
   mailingAddressTitle: string;
   billingAddressTitle: string;
   /**
-   * Business buyer copy. Optional because the keys are added to the Sitecore field per
-   * environment; BUSINESS_STEP_ONE_DEFAULT_LABELS supplies the value until they are.
+   * Business buyer copy, authored on the Checkout datasource's
+   * "Headline, labels, tooltips and more" field. Optional because the parsed field only
+   * contains the keys that were authored — an unauthored key renders as an empty label.
    */
   businessPageHeadline?: string;
   businessStepTitle?: string;

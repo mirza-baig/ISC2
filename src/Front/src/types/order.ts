@@ -113,8 +113,6 @@ export type BusinessOrderConfirmationLabels = {
   orderAllocationStepCopy?: string;
   printReceiptCtaLabel?: string;
   openDashboardCtaLabel?: string;
-  allocationsDashboardUrl?: string;
-  orderHistoryDashboardUrl?: string;
   supportCopy?: string;
   supportLinkLabel?: string;
   supportLinkUrl?: string;

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { BUSINESS_STEP_ONE_DEFAULT_LABELS, CHECKOUT_STEPS } from 'constants/checkout';
+import { CHECKOUT_STEPS } from 'constants/checkout';
 import { createContext, Dispatch, SetStateAction, useContext, useMemo, useState } from 'react';
  
 import { useIsBusinessBuyer } from 'hooks/index';
@@ -86,7 +86,7 @@ const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ field
       {
         id: CHECKOUT_STEPS.PERSONAL_INFORMATION,
         label: isBusinessBuyer
-          ? stepOneLabels.businessStepTitle || BUSINESS_STEP_ONE_DEFAULT_LABELS.stepTitle
+          ? stepOneLabels.businessStepTitle || ''
           : stepOneLabels.stepTitle,
       },
       { id: CHECKOUT_STEPS.PAYMENT_INFORMATION, label: stepTwoLabels.stepTitle },

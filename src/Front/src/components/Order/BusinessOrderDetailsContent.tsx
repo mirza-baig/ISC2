@@ -2,7 +2,11 @@ import { useMemo } from 'react';
 import { useRouter } from 'next/router';
 
 import { useCart, useShopperContext } from 'providers/index';
-import { useDownloadBusinessReceipt, useHasAllocatorRelationship } from 'hooks/index';
+import {
+  useDownloadBusinessReceipt,
+  useHasAllocatorRelationship,
+  useOrderDashboardLinks,
+} from 'hooks/index';
 import {
   buildBusinessReceiptData,
   formatDate,
@@ -12,7 +16,6 @@ import {
 } from 'utils/index';
 import {
   BUSINESS_ORDER_CONFIRMATION_DEFAULT_LABELS,
-  BUSINESS_ORDER_DASHBOARD_DEFAULT_URLS,
   BUSINESS_PAYMENT_METHOD_DEFAULT_STEPS,
   BUSINESS_PAYMENT_METHODS,
 } from 'constants/index';
@@ -52,6 +55,7 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
   const { hasAllocatorRelationship } = useHasAllocatorRelationship();
   const { shopperContext } = useShopperContext();
   const { downloadReceipt, isGeneratingReceipt } = useDownloadBusinessReceipt();
+  const dashboardLinks = useOrderDashboardLinks();
 
   const labels = parseFieldsFromURLString<BusinessOrderConfirmationLabels>(
     fields.labelsTooltipsAndMore
@@ -142,12 +146,19 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
     downloadReceipt({ data: receiptData, labels });
   };
 
-  const onOpenDashboard = () => {
-    const destination = hasAllocatorRelationship
-      ? labels?.allocationsDashboardUrl || BUSINESS_ORDER_DASHBOARD_DEFAULT_URLS.allocations
-      : labels?.orderHistoryDashboardUrl || BUSINESS_ORDER_DASHBOARD_DEFAULT_URLS.orderHistory;
+  /**
+   * Destinations come from General Link fields on the Order Summary datasource, so a
+   * moved page keeps working. The CTA is hidden rather than pushed to a dead path when
+   * neither link is authored.
+   */
+  const dashboardDestination = hasAllocatorRelationship
+    ? dashboardLinks.allocationsUrl
+    : dashboardLinks.dashboardUrl;
 
-    router.push(destination);
+  const onOpenDashboard = () => {
+    if (dashboardDestination) {
+      router.push(dashboardDestination);
+    }
   };
 
   const showSupportLine = Boolean(labels?.supportLinkLabel || labels?.supportPhoneCopy);
@@ -275,13 +286,15 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
           isLoading={isGeneratingReceipt}
           className="!self-auto flex-1 justify-center"
         />
-        <Button
-          type="button"
-          variant="primary"
-          label={label('openDashboardCtaLabel')}
-          onClick={onOpenDashboard}
-          className="!self-auto flex-1 justify-center"
-        />
+        {Boolean(dashboardDestination) && (
+          <Button
+            type="button"
+            variant="primary"
+            label={label('openDashboardCtaLabel')}
+            onClick={onOpenDashboard}
+            className="!self-auto flex-1 justify-center"
+          />
+        )}
       </div>
 
       {showSupportLine && (

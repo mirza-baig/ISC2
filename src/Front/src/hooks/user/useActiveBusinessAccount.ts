@@ -11,6 +11,7 @@ import {
 } from 'lib/authorizedBuyer';
 
 import useLoggedUser from '../useLoggedUser';
+import useIsBusinessBuyer from '../cart/useIsBusinessBuyer';
 
 type ActiveBusinessAccount = {
   account?: AuthorizedBuyerAccount;
@@ -47,13 +48,16 @@ export default function useActiveBusinessAccount(): ActiveBusinessAccount {
   const { externalID } = useLoggedUser();
   const { activeCart } = useCart();
   const { shopperContext } = useShopperContext();
+  const isBusinessBuyer = useIsBusinessBuyer();
 
   const selectedAccountId = shopperContext?.organization?.id;
 
   const { data } = useQuery<AuthorizedBuyerResponse>({
     queryKey: [QUERY_KEYS.AUTHORIZED_BUYER_ACCOUNTS, externalID],
     queryFn: () => getAuthorizedBuyerAccounts(externalID!),
-    enabled: Boolean(externalID) && Boolean(selectedAccountId),
+    // Also gated on the business-buyer check so a stale shopper-context selection cannot
+    // keep fetching account data after the B2B feature flag is switched off.
+    enabled: isBusinessBuyer && Boolean(externalID) && Boolean(selectedAccountId),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     retry: false,

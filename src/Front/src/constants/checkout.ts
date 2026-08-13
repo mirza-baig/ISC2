@@ -52,25 +52,6 @@ export const COURSE_DELIVERY_PRODUCT_TYPES = [
 ];
 
 /**
- * Fallbacks for the business buyer step one copy. Sitecore authors override these by
- * adding the matching keys to the checkout item's "Step One Labels, Tooltips And More"
- * field; until then the checkout renders the agreed copy.
- */
-export const BUSINESS_STEP_ONE_DEFAULT_LABELS = {
-  pageHeadline: 'Purchase Information',
-  stepTitle: 'Purchase Information',
-  companyInformationTitle: 'Company Information',
-  contactInformationTitle: 'Contact Information',
-  poNumberLabel: 'PO Number',
-  poAttachmentLabel: 'PO Attachment',
-  customerOrderReferenceLabel: 'Customer order reference',
-  customerOrderReferenceTooltip:
-    'This text will be added to the order history and documents for your reference.',
-  courseDeliveryDateLabel: 'Course Delivery Date',
-  courseDeliveryDateTooltip: 'Please enter the course delivery date for your kit or exam purchase.',
-} as const;
-
-/**
  * The only Stripe payment method types approved for checkout.
  *
  * The PaymentIntent is created by the service layer with Stripe's automatic
