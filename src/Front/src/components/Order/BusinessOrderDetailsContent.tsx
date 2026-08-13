@@ -2,11 +2,7 @@ import { useMemo } from 'react';
 import { useRouter } from 'next/router';
 
 import { useCart, useShopperContext } from 'providers/index';
-import {
-  useDownloadBusinessReceipt,
-  useHasAllocatorRelationship,
-  useOrderDashboardLinks,
-} from 'hooks/index';
+import { useDownloadBusinessReceipt, useHasAllocatorRelationship } from 'hooks/index';
 import {
   buildBusinessReceiptData,
   formatDate,
@@ -55,7 +51,6 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
   const { hasAllocatorRelationship } = useHasAllocatorRelationship();
   const { shopperContext } = useShopperContext();
   const { downloadReceipt, isGeneratingReceipt } = useDownloadBusinessReceipt();
-  const dashboardLinks = useOrderDashboardLinks();
 
   const labels = parseFieldsFromURLString<BusinessOrderConfirmationLabels>(
     fields.labelsTooltipsAndMore
@@ -147,18 +142,28 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
   };
 
   /**
-   * Destinations come from General Link fields on the Order Summary datasource, so a
-   * moved page keeps working. The CTA is hidden rather than pushed to a dead path when
-   * neither link is authored.
+   * Destinations are General Link fields on this component's own datasource, so a moved
+   * target page keeps resolving. The CTA is hidden rather than pushed to a dead path when
+   * the relevant link is not authored.
    */
-  const dashboardDestination = hasAllocatorRelationship
-    ? dashboardLinks.allocationsUrl
-    : dashboardLinks.dashboardUrl;
+  const dashboardLink = hasAllocatorRelationship
+    ? fields.orderAllocationUrl?.value
+    : fields.orderHistoryUrl?.value;
+
+  const dashboardDestination = dashboardLink?.href;
 
   const onOpenDashboard = () => {
-    if (dashboardDestination) {
-      router.push(dashboardDestination);
+    if (!dashboardDestination) {
+      return;
     }
+
+    // Respect the authored target: both links are currently set to open in a new tab.
+    if (dashboardLink?.target === '_blank') {
+      window.open(dashboardDestination, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    router.push(dashboardDestination);
   };
 
   const showSupportLine = Boolean(labels?.supportLinkLabel || labels?.supportPhoneCopy);

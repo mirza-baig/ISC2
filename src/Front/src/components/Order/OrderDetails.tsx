@@ -2,6 +2,7 @@ import {
   ComponentRendering,
   Field,
   GetStaticComponentProps,
+  LinkField,
   RichTextField,
   useComponentProps,
   withDatasourceCheck,
@@ -26,6 +27,9 @@ export type OrderDetailsFields = {
   purchaseConfirmationCopy: RichTextField;
   labelsTooltipsAndMore: Field<string>;
   checkoutErrorMessage?: RichTextField | null;
+  /** Dashboard CTA destinations on the business confirmation screen. */
+  orderAllocationUrl?: LinkField;
+  orderHistoryUrl?: LinkField;
 };
 
 interface OrderDetailsProps {

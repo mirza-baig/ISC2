@@ -1,0 +1,103 @@
+{
+    "sxa-order-details-page": [
+        {
+            "uid": "4c905199-78f6-42c3-98d9-cb5a240d85ca",
+            "componentName": "OrderDetails",
+            "dataSource": "{85A4FD0F-CE9E-4196-B548-2764E60566AB}",
+            "fields": {
+                "appreciationMessage": {
+                    "value": "<p>Your order details are below, and an email has been sent to {userEmail} with your purchase information.</p>\n\n<p>To start a course, review your order history or download invoices, log in to <a href=\"/dashboard\" class=\"border-b\" style=\"border-style: dotted; color: rgb(34 124 180); border-color: rgb(34 124 180);\">www.isc2.org/dashboard</a>. If you paid AMF or Candidate dues, it may take several minutes for your payment to be reflected in your dashboard.<br /><br />\n\n<a href=\"/dashboard\" class=\"primary-cta\">Open Dashboard</a></p>"
+                },
+                "labelsTooltipsAndMore": {
+                    "value": "printOrderCtaLabel=Print%20Your%20Order&appreciationMessageHeadline=Thank%20You%20for%20Your%20Purchase&providedByLabel=Provided%20by%20ISC2&shippingSectionTitle=Shipping&companySectionTitle=Company&paymentSectionTitle=Payment&paymentWaitingApprovalNotice=Waiting%20for%20payment%20approval&orderNumberCopy=Order%20%23%7BorderId%7D"
+                },
+                "checkoutErrorMessage": {
+                    "value": "<div class=\"flex w-full flex-col pt-10\">\n<div class=\"rich-text-block flex flex-col bg-transparent px-5 text-black-100 sm:px-16\">\n<div class=\"rich-text slider-scrollbar cursor-auto text-center\">\n<h2 class=\"pb-27\" style=\"font-size: 2.5rem;\">There was an error with your order.</h2>\n<h2 class=\"pb-27\" style=\"font-size: 2.5rem;\">Please return to your cart at <a href=\"https://www.isc2.org/Checkout\">https://www.isc2.org/Checkout</a> and try again.</h2>\n<p style=\"padding-bottom: 0;\">If you reach this error message again after retrying to place your order, <a href=\"https://www.isc2.org/contact-us\">contact us</a>.</p>\n</div></div></div>"
+                },
+                "purchaseConfirmationCopy": {
+                    "value": "<p><strong>Important:</strong> After purchasing, exam takers will register for and schedule their exam via the <a href=\"/dashboard\" class=\"border-b\" style=\"border-style: dotted; color: rgb(34 124 180); border-color: rgb(34 124 180);\">ISC2 Dashboard</a>.</p>\n\n<p>Learn what you need to know about certification exams every step of the way <a href=\"/exams\" class=\"border-b\" style=\"border-style: dotted; color: rgb(34 124 180); border-color: rgb(34 124 180);\">here</a>.</p>"
+                }
+            },
+            "placeholders": {
+                "order-details-order-summary": [
+                    {
+                        "uid": "2cf6dbab-c73c-4671-a84a-1b7d884aa515",
+                        "componentName": "OrderSummary",
+                        "dataSource": "{ACBE4C28-49A2-4C34-84EC-C96AEDF3F465}",
+                        "fields": {
+                            "couponTitleAndLabels": {
+                                "value": ""
+                            },
+                            "enableCartOnlyFeatures": {
+                                "value": false
+                            },
+                            "icon": {
+                                "value": {
+                                    "src": "https://edge.sitecorecloud.io/internation15d1-xmcfa72-dev541a-14de/media/Project/ISC2/Main/Components/Cart/Secure-Payment.svg?iar=0",
+                                    "alt": "Secure Payment"
+                                }
+                            },
+                            "primaryCta": {
+                                "value": {
+                                    "href": ""
+                                }
+                            },
+                            "sectionHeadingAndLabels": {
+                                "value": "heading=Order%20Summary&subtotalLabel=Subtotal%20%28%7B0%7D%20items%29&totalAmountLabel=Total&secondaryCtaLabel=Continue%20shopping&securePaymentLabel=Secure%20payment&viewDetailsLabel=View%20details&hideDetailsLabel=Hide%20details&productNotAvailableLabel=Product%20no%20longer%20available&discountLabel=Discount&memberDiscountLabel=Member%20Discount&candidateDiscountLabel=Candidate%20Discount&associateDiscountLabel=Associate%20Discount&discountCodeLabel=Discount%20Code%20%7BcouponCode%7D&taxLabel=Taxes&taxCalculationErrorMessage=Unable%20to%20calculate%20taxes.%20Please%20ensure%20your%20address%20is%20correct.&taxTbd=TBD&yourPriceLabel=Your%20Price%20%24%7Bprice%7D&businessHeadline=Order%20Confirmed%21&businessSubheadline=Thank%20you%20for%20your%20purchase&businessConfirmationCopy=Your%20order%20details%20are%20below%2C%20and%20an%20email%20has%20been%20sent%20to%20%7BuserEmail%7D%20with%20your%20purchase%20information.&orderNumberLabel=Order%20Number&orderDateLabel=Order%20Date&quantitySingularLabel=%7Bquantity%7D%20Attendee&quantityLabel=%7Bquantity%7D%20Attendees&unitPriceLabel=%7Bprice%7D%20ea.&totalLabel=Total&paymentMethodLabel=Payment%20Method&whatHappensNextTitle=What%20Happens%20Next%3F&emailConfirmationStepTitle=Email%20Confirmation&emailConfirmationStepCopy=You%27ll%20receive%20an%20order%20confirmation%20email%20at%20%7BuserEmail%7D%20within%20the%20next%20few%20minutes.&orderAllocationStepTitle=Order%20Allocation&orderAllocationStepCopy=You%20can%20open%20your%20dashboard%20now%20to%20allocate%20products%20you%27ve%20purchased.&printReceiptCtaLabel=Print%20Receipt&openDashboardCtaLabel=Open%20Dashboard&supportCopy=Questions%20about%20your%20order%3F"
+                            },
+                            "taxCalculationErrorPopup": {
+                                "id": "e74e9ee4-cf43-4633-b57a-16a1f74ef53e",
+                                "url": "/Data/Popups-Folder/Tax-Calculation-Error-Popup-Notice",
+                                "name": "Tax Calculation Error Popup Notice",
+                                "displayName": "Tax Calculation Error Popup Notice",
+                                "fields": {
+                                    "caption": {
+                                        "value": "REASONS FOR THIS ERROR"
+                                    },
+                                    "errorMessages": {
+                                        "value": "<ul>\n    <li>The system is down.</li>\n    <li>Location changed during checkout.</li>\n</ul>"
+                                    },
+                                    "heading": {
+                                        "value": "At the moment taxes cannot be calculated, so you will not be able to continue with your purchase."
+                                    },
+                                    "retryCtaLabel": {
+                                        "value": "Ok"
+                                    },
+                                    "description": {
+                                        "value": "Please wait a few minutes."
+                                    }
+                                }
+                            },
+                            "orderAllocationUrl": {
+                                "value": {
+                                    "text": "Allocations",
+                                    "anchor": "",
+                                    "linktype": "internal",
+                                    "class": "",
+                                    "title": "",
+                                    "target": "",
+                                    "querystring": "",
+                                    "id": "{2871E337-23D6-4B40-B9DB-B814D61D4A7C}",
+                                    "href": "/Dashboard/Allocations"
+                                }
+                            },
+                            "openDashboardUrl": {
+                                "value": {
+                                    "text": "Allocation",
+                                    "anchor": "",
+                                    "linktype": "internal",
+                                    "class": "",
+                                    "title": "",
+                                    "target": "",
+                                    "querystring": "",
+                                    "id": "{2871E337-23D6-4B40-B9DB-B814D61D4A7C}",
+                                    "href": "/Dashboard/Allocations"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
