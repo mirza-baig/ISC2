@@ -19,7 +19,7 @@ import { RichTextUI } from 'ui/index';
 import MiniCartSummary from './MiniCartSummary';
 import EmptyMiniCartHeader from './EmptyMiniCartHeader';
 import MiniCartHeader from './MiniCartHeader';
-import { MiniCartLineItem } from './MiniCartLineItem';
+import { MiniCartLineItems } from './MiniCartLineItems';
 
 type MiniCartProps = ComponentProps & {
   rendering: ComponentRendering | RouteData;
@@ -78,11 +78,7 @@ const MiniCart = ({ fields, rendering }: MiniCartProps) => {
 
               {!activeCart.computed.isEmpty && (
                 <>
-                  <ul className="flex flex-col flex-1 w-full px-4 divide-y slider-scrollbar divide-gray-30 overflow-y-auto">
-                    {activeCart.lineItems?.map((lineItem) => (
-                      <MiniCartLineItem key={lineItem.id} lineItem={lineItem} />
-                    ))}
-                  </ul>
+                  <MiniCartLineItems />
                   <MiniCartSummary />
                 </>
               )}

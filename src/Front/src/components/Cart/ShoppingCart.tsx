@@ -5,8 +5,14 @@ import { format, parse } from 'date-fns';
 
 import { DangerIcon } from 'icons/index';
 import { LoadingIndicator, RichTextUI } from 'ui/index';
-import { useCartValidity, useLoggedUser, useRecalculateCart, useCartPreload } from 'hooks/index';
-import { useCart, useCartFields, useModal, useUserSession } from 'providers/index';
+import {
+  useCartValidity,
+  useLoggedUser,
+  useRecalculateCart,
+  useCartPreload,
+  useGetAlgoliaSitecoreData,
+} from 'hooks/index';
+import { useCart, useCartFields, useLineItems, useModal, useUserSession } from 'providers/index';
 import useAnalyticsTracking from 'hooks/useAnalyticsTracking';
 import { getCartAttributes, useAnalyticsItems } from 'utils/cart';
 
@@ -31,6 +37,7 @@ const ShoppingCart = ({ rendering }: ShoppingCartProps) => {
   const { currencyCode, syncCurrencyCode } = useUserSession();
   const { isUserNotLoggedIn, isB2BAdminUser } = useLoggedUser();
   const { cartError } = useCartValidity({ isCheckout: false });
+  const { algoliaIndex } = useLineItems();
   const { track } = useAnalyticsTracking();
   const eventTrackedRef = useRef(false);
   const mappedItems = useAnalyticsItems();
@@ -71,6 +78,17 @@ const ShoppingCart = ({ rendering }: ShoppingCartProps) => {
     currencyCode,
     syncCurrencyCode,
   ]);
+
+  // One Algolia search for the whole cart, rather than one per line item.
+  const productKeysList = useMemo(
+    () => (activeCart.lineItems ?? []).map((lineItem) => lineItem.productKey),
+    [activeCart.lineItems]
+  );
+
+  const { algoliaBulkData, algoliaDataIsLoading } = useGetAlgoliaSitecoreData({
+    productKeysList,
+    algoliaIndex,
+  });
 
   const cartAttributes = useMemo(() => {
     if (activeCart.computed.isB2B) {
@@ -185,7 +203,14 @@ const ShoppingCart = ({ rendering }: ShoppingCartProps) => {
 
               <section className="flex flex-col w-full lg:gap-y-5">
                 {activeCart.lineItems?.map((lineItem) => (
-                  <CartLineItem key={lineItem.id} lineItem={lineItem} />
+                  <CartLineItem
+                    key={lineItem.id}
+                    lineItem={lineItem}
+                    algoliaData={algoliaBulkData?.find(
+                      (product) => product.objectID === lineItem.productKey
+                    )}
+                    algoliaDataIsLoading={algoliaDataIsLoading}
+                  />
                 ))}
               </section>
               {activeCart.computed.includesSubscription &&
