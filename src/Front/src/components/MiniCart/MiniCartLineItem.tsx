@@ -1,10 +1,10 @@
 import clsx from 'clsx';
 import { MouseEventHandler, useCallback, useMemo } from 'react';
 
-import { CartLineItem } from 'types/index';
+import { CartLineItem, LineItemAlgoliaData } from 'types/index';
 import { TrashIcon } from 'icons/index';
 import { getPriceQuantityFor, isDonationItem, parsePriceFromMoney } from 'utils/index';
-import { useGetAlgoliaSitecoreData, useRemoveFromCart } from 'hooks/index';
+import { useRemoveFromCart } from 'hooks/index';
 import { useCart, useLineItems, useMiniCartFields } from 'providers/index';
 import {
   LineItemAttributes,
@@ -19,18 +19,20 @@ const THUMBNAIL_IMAGE_CLASSES = 'h-20 aspect-square -mt-3 mr-3';
 export namespace MiniCartLineItem {
   export type Props = {
     lineItem: CartLineItem;
+    /** Resolved by the parent from one batched Algolia search. */
+    algoliaData?: LineItemAlgoliaData;
+    algoliaDataIsLoading?: boolean;
   };
 }
 
-export const MiniCartLineItem = ({ lineItem }: MiniCartLineItem.Props) => {
-  const { algoliaIndex, lineItemHasDiscounts } = useLineItems();
+export const MiniCartLineItem = ({
+  lineItem,
+  algoliaData,
+  algoliaDataIsLoading,
+}: MiniCartLineItem.Props) => {
+  const { lineItemHasDiscounts } = useLineItems();
   const { labels } = useMiniCartFields();
   const { activeCart } = useCart();
-
-  const { algoliaData, algoliaDataIsLoading } = useGetAlgoliaSitecoreData({
-    productKeysList: [lineItem?.productKey],
-    algoliaIndex,
-  });
 
   const { removeFromCart, isRemovingFromCart } = useRemoveFromCart();
 
