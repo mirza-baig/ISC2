@@ -37,6 +37,7 @@
     "@algolia/autocomplete-theme-classic": "^1.9.4",
     "@hookform/resolvers": "^3.9.0",
     "@paypal/react-paypal-js": "^8.7.0",
+    "@react-pdf/renderer": "^4.6.1",
     "@sitecore-cloudsdk/core": "^0.5.2",
     "@sitecore-cloudsdk/events": "^0.5.2",
     "@sitecore-cloudsdk/personalize": "^0.5.2",
