@@ -3,7 +3,7 @@ import { setAPIRouteHeaders } from 'utils/index';
 import { LanguagePreferenceSchema } from 'types/languagePreference';
 import { ContactInformationSchema, EmploymentInformationSchema } from 'types/profile';
 import { z } from 'zod';
- 
+
 const ALLOWED_UPDATE_FIELDS: readonly string[] = [
   ...Object.keys(ContactInformationSchema.shape),
   ...Object.keys(EmploymentInformationSchema.shape),
@@ -14,7 +14,7 @@ const ALLOWED_UPDATE_FIELDS: readonly string[] = [
   'PreferredLanguage',
   'otherPhone',
 ];
- 
+
 function validateAndSanitizeUserData(userData: Record<string, unknown>): {
   isValid: boolean;
   sanitizedData?: Record<string, unknown>;
@@ -23,21 +23,21 @@ function validateAndSanitizeUserData(userData: Record<string, unknown>): {
   if (!userData.externalId || typeof userData.externalId !== 'string') {
     return { isValid: false, error: 'Missing or invalid externalId' };
   }
- 
+
   if (!userData.email || typeof userData.email !== 'string') {
     return { isValid: false, error: 'Missing or invalid email' };
   }
- 
+
   const sanitizedData: Record<string, unknown> = {
     externalId: (userData.externalId as string).trim(),
     email: (userData.email as string).trim().toLowerCase(),
   };
- 
+
   const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/;
   if (!emailRegex.test(sanitizedData.email as string)) {
     return { isValid: false, error: 'Invalid email format' };
   }
- 
+
   for (const field of ALLOWED_UPDATE_FIELDS) {
     if (field in userData) {
       if (field === 'PreferredLanguage') {
@@ -126,11 +126,11 @@ function validateAndSanitizeUserData(userData: Record<string, unknown>): {
       }
     }
   }
- 
+
   const providedFields = Object.keys(userData);
   const allowedFieldNames = ['externalId', 'email', ...ALLOWED_UPDATE_FIELDS];
   const extraFields = providedFields.filter((f) => !allowedFieldNames.includes(f));
- 
+
   if (extraFields.length > 0) {
     console.warn(
       `[SECURITY WARNING] Attempt to update unauthorized fields: ${extraFields.join(
@@ -138,35 +138,35 @@ function validateAndSanitizeUserData(userData: Record<string, unknown>): {
       )} by user ${sanitizedData.externalId}`
     );
   }
- 
+
   return { isValid: true, sanitizedData };
 }
- 
+
 export default async function updateUserData(req: NextApiRequest, res: NextApiResponse) {
   setAPIRouteHeaders(res, 'POST');
- 
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
- 
+
   const { body } = req;
   const { userData } = body;
- 
+
   if (!userData || typeof userData !== 'object') {
     return res.status(400).json({ error: 'Missing or invalid userData in request body' });
   }
- 
+
   const validation = validateAndSanitizeUserData(userData);
- 
+
   if (!validation.isValid) {
     console.error(
       `[VALIDATION ERROR] ${validation.error} - User: ${userData.externalId || 'unknown'}`
     );
     return res.status(400).json({ error: validation.error });
   }
- 
+
   const sanitizedData = validation.sanitizedData!;
- 
+
   const updatedFields = Object.keys(sanitizedData).filter(
     (k) => k !== 'externalId' && k !== 'email'
   );
@@ -175,7 +175,7 @@ export default async function updateUserData(req: NextApiRequest, res: NextApiRe
       updatedFields.join(', ') || 'none'
     }`
   );
- 
+
   try {
     const response = await fetch(`${process.env.SALESFORCE_CLOUDHUB_URL}/v1/user/updateUserData`, {
       method: 'POST',
@@ -188,16 +188,16 @@ export default async function updateUserData(req: NextApiRequest, res: NextApiRe
         userData: sanitizedData,
       }),
     });
- 
+
     const data = await response.json();
- 
+
     if (data.errors) {
       console.error(
         `[MULESOFT ERROR] ${JSON.stringify(data.errors)} - User: ${sanitizedData.externalId}`
       );
       throw data.errors;
     }
- 
+
     return res.status(200).json(data);
   } catch (errors) {
     console.error(
@@ -206,4 +206,3 @@ export default async function updateUserData(req: NextApiRequest, res: NextApiRe
     return res.status(500).json({ errors });
   }
 }
- 

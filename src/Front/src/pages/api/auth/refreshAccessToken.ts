@@ -34,6 +34,7 @@ export default async function refreshAccessToken(tokens: Tokens) {
     const { exp } = await tokenIntrospection(tokens);
 
     return {
+      ...tokens,
       accessToken: access_token,
       refreshToken: refresh_token ?? tokens.refreshToken,
       accessTokenExpires: exp,
@@ -41,6 +42,7 @@ export default async function refreshAccessToken(tokens: Tokens) {
     };
   } catch (error) {
     return {
+      ...tokens,
       error: 'RefreshAccessTokenError',
     };
   }

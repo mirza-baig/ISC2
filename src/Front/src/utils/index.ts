@@ -6,6 +6,7 @@ export * from './location';
 export * from './socialShare';
 export * from './background-color';
 export * from './engage';
+export * from './engageCartEvents';
 export * from './userRoles';
 export * from './stripe';
 export * from './apiUtils';

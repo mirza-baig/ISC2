@@ -1,10 +1,10 @@
 import { Control } from 'react-hook-form';
- 
+
 import { Country, PersonalInformation, State, StepOneLabels } from 'types/index';
 import { FormDropdown, FormTextInput } from 'ui/index';
- 
+
 type AddressPrefix = 'billingAddress' | 'mailingAddress';
- 
+
 type AddressLabels = {
   addressLineOneLabel: string;
   addressLineOneTooltip: string;
@@ -18,7 +18,7 @@ type AddressLabels = {
   zipCodeLabel: string;
   zipCodeTooltip: string;
 };
- 
+
 type BusinessAddressFieldsProps = {
   control: Control<PersonalInformation>;
   prefix: AddressPrefix;
@@ -29,7 +29,7 @@ type BusinessAddressFieldsProps = {
   isPostalCodeRequired?: boolean;
   onCountryChanged?: (countryCode: string) => void;
 };
- 
+
 /**
  * Address block in the order the business buyer purchase information design uses:
  * Address 1 / Address 2, City / State, Country / Zip Code.
@@ -55,7 +55,7 @@ export default function BusinessAddressFields({
           disabled={disabled}
           maxLength={255}
         />
- 
+
         <FormTextInput
           isOptional
           control={control}
@@ -65,7 +65,7 @@ export default function BusinessAddressFields({
           maxLength={255}
         />
       </div>
- 
+
       <div className="grid sm:grid-cols-2 gap-4">
         <FormTextInput
           control={control}
@@ -75,7 +75,7 @@ export default function BusinessAddressFields({
           disabled={disabled}
           maxLength={40}
         />
- 
+
         {states.length > 0 && (
           <FormDropdown
             control={control}
@@ -91,7 +91,7 @@ export default function BusinessAddressFields({
           />
         )}
       </div>
- 
+
       <div className="grid sm:grid-cols-2 gap-4">
         <FormDropdown
           control={control}
@@ -105,7 +105,7 @@ export default function BusinessAddressFields({
           disabled={disabled}
           maxLength={80}
         />
- 
+
         <FormTextInput
           control={control}
           name={`${prefix}.postalCode`}
@@ -119,7 +119,7 @@ export default function BusinessAddressFields({
     </div>
   );
 }
- 
+
 export const getMailingAddressLabels = (stepOneLabels: StepOneLabels): AddressLabels => ({
   addressLineOneLabel: stepOneLabels.shippingAddressLineOneLabel,
   addressLineOneTooltip: stepOneLabels.shippingAddressLineOneTooltip,
@@ -133,7 +133,7 @@ export const getMailingAddressLabels = (stepOneLabels: StepOneLabels): AddressLa
   zipCodeLabel: stepOneLabels.shippingZipCodeLabel,
   zipCodeTooltip: stepOneLabels.shippingZipCodeTooltip,
 });
- 
+
 export const getBillingAddressLabels = (stepOneLabels: StepOneLabels): AddressLabels => ({
   addressLineOneLabel: stepOneLabels.addressLineOneLabel,
   addressLineOneTooltip: stepOneLabels.addressLineOneTooltip,

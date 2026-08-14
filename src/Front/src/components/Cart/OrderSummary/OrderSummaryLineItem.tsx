@@ -7,6 +7,7 @@ import { Cart, CartLineItem } from 'types/index';
 import { LineItemLoadingIndicator, LineItemPrice, BundleLineItemProducts } from 'ui/index';
 import {
   formatDateRange,
+  getPriceQuantityFor,
   getUTCTime,
   getVariantAttributes,
   isBundleLineItem,
@@ -101,7 +102,7 @@ export const OrderSummaryLineItem = ({
       return '';
     }
 
-    return parsePriceFromMoney(lineItem.nonMemberPrice, lineItem.quantity, false);
+    return parsePriceFromMoney(lineItem.nonMemberPrice, getPriceQuantityFor(lineItem), false);
   }, [hasDiscounts, lineItem]);
 
   const onTrashIconClick: MouseEventHandler = useCallback(

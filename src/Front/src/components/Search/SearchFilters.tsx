@@ -7,8 +7,8 @@ import { FacetKeyValues, SortOptions } from 'types/index';
 import { useScrollDirection } from 'hooks/index';
 
 import SearchCurrentRefinements from './SearchCurrentRefinements';
-import SearchFacet from './SearchFacets/SearchFacet';
 import SearchSort from './SearchSort/SearchSort';
+import { renderSearchFacets } from './renderSearchFacets';
 
 interface SearchFiltersProps {
   className?: string;
@@ -38,19 +38,13 @@ export default function SearchFilters({
 
   const FacetsContent = useMemo(
     () =>
-      filterKeyValues?.map((filter, index) =>
-        (filter.FacetAttribute !== 'state' && filter.FacetAttribute !== 'city') ||
-        ((filter.FacetAttribute === 'state' || filter.FacetAttribute === 'city') &&
-          countryFilterSelected) ? (
-          <SearchFacet
-            key={filter.FacetAttribute}
-            type={filter.FacetType}
-            attribute={filter.FacetAttribute}
-            label={filter.FacetLabel}
-            openByDefault={index === 0}
-            showMoreLabel={showMoreLabel}
-          />
-        ) : null
+      renderSearchFacets(
+        filterKeyValues,
+        showMoreLabel,
+        (filter) =>
+          (filter.FacetAttribute !== 'state' && filter.FacetAttribute !== 'city') ||
+          ((filter.FacetAttribute === 'state' || filter.FacetAttribute === 'city') &&
+            countryFilterSelected)
       ),
     [filterKeyValues, showMoreLabel, countryFilterSelected]
   );

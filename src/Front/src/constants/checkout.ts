@@ -57,23 +57,15 @@ export const BUSINESS_STEP_ONE_DEFAULT_LABELS = {
 } as const;
 
 /**
- * The only Stripe payment method types approved for checkout.
+ * Payment methods offered only to business buyers.
  *
- * The PaymentIntent is created by the service layer with Stripe's automatic
- * payment methods, so the Payment Element renders whatever is switched on in the
- * Stripe Dashboard — a newly available payment option would otherwise appear at
- * checkout with no code change here. Every Stripe confirmation is validated
- * against this list before `stripe.confirmPayment` runs, so anything Stripe adds
- * is refused regardless of Dashboard or feature flag state.
- *
- * Values are Stripe payment method type IDs (snake_case), matching the `type`
- * reported by the Payment Element `change` event.
+ * MuleSoft's Authorized Buyer payload says which of these an account may *use*
+ * (`purchaseControls.prepaidAuthorized`, `credit.*`, `prepaid.*` in lib/authorizedBuyer);
+ * it does not report which one a given order was placed with. That selection is read back
+ * off the order's `paymentInfo.payments[].paymentMethodInfo.method` — see
+ * `resolveBusinessPaymentMethod` in utils/order.
  */
-export const APPROVED_STRIPE_PAYMENT_METHOD_TYPES = [
-  'card',
-  'bancontact',
-  'ideal',
-  'klarna',
-] as const;
-
-export type ApprovedStripePaymentMethodType = (typeof APPROVED_STRIPE_PAYMENT_METHOD_TYPES)[number];
+export enum BUSINESS_PAYMENT_METHODS {
+  PREAPPROVED_CREDIT = 'preapproved-credit',
+  PREPAID_ACCOUNT = 'prepaid-account',
+}

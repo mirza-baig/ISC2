@@ -3,14 +3,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ProfileFormSections, AddressInformationSchema, AddressInformation } from 'types/index';
-import { getAddressInformationFromUser } from 'utils/index';
+import { getAddressInformationFromUser, isPostalCodeRequiredForCountry } from 'utils/index';
 import { useGetAllCountries, useGetAllStates, useLoggedUser, useUpdateUserData } from 'hooks/index';
 
 import { BillingAddressForm } from './BillingAddressForm';
 import { MailingAddressForm } from './MailingAddressForm';
 import { ProfileSectionFooter } from '../../Base/ProfileSectionFooter';
 import { AddressInformationLabels, ProfileSectionProps } from '../../profile.types';
-import { POSTAL_CODES_PATTERNS } from 'constants/postalCodesPatterns';
 
 export namespace AddressInformationSection {
   export type Props = ProfileSectionProps & {
@@ -58,15 +57,11 @@ export const AddressInformationForm = (props: AddressInformationSection.Props) =
   const mailingCountry = watch('mailingAddress.countryCode') ?? '';
 
   const [isBillingPostalCodeRequired, setIsBillingPostalCodeRequired] = useState<boolean>(
-    Boolean(
-      POSTAL_CODES_PATTERNS[user?.billingAddress.countryCode as keyof typeof POSTAL_CODES_PATTERNS]
-    ) ?? false
+    isPostalCodeRequiredForCountry(user?.billingAddress.countryCode)
   );
 
   const [isMailingPostalCodeRequired, setIsMailingPostalCodeRequired] = useState<boolean>(
-    Boolean(
-      POSTAL_CODES_PATTERNS[user?.mailingAddress.countryCode as keyof typeof POSTAL_CODES_PATTERNS]
-    ) ?? false
+    isPostalCodeRequiredForCountry(user?.mailingAddress.countryCode)
   );
 
   const [previousBillingStates, setPreviousBillingStates] = useState<Record<string, string>>({});
@@ -97,9 +92,7 @@ export const AddressInformationForm = (props: AddressInformationSection.Props) =
           }));
         }
 
-        setIsBillingPostalCodeRequired(
-          Boolean(POSTAL_CODES_PATTERNS[countryCode as keyof typeof POSTAL_CODES_PATTERNS])
-        );
+        setIsBillingPostalCodeRequired(isPostalCodeRequiredForCountry(countryCode));
 
         const savedState = previousBillingStates[countryCode];
 
@@ -122,9 +115,7 @@ export const AddressInformationForm = (props: AddressInformationSection.Props) =
           }));
         }
 
-        setIsMailingPostalCodeRequired(
-          Boolean(POSTAL_CODES_PATTERNS[countryCode as keyof typeof POSTAL_CODES_PATTERNS])
-        );
+        setIsMailingPostalCodeRequired(isPostalCodeRequiredForCountry(countryCode));
 
         const savedState = previousMailingStates[countryCode];
 

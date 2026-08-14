@@ -44,11 +44,13 @@ export const config = {
 // Wire up the EditingRenderMiddleware handler
 // When hosting your Next.js JSS application on a platform other than Vercel, the integration with Experience Editor stops working because of a protocol mismatch error.
 // Ref: https://doc.sitecore.com/xp/en/developers/hd/latest/sitecore-headless-development/override-default-protocols-using-the-editingrendermiddleware-in-next-js-jss-apps.html
+const LOCALHOST_REGEXP = /^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/i;
+
 const handler = new EditingRenderMiddleware({
   resolveServerUrl: (req: NextApiRequest) => {
-    return `${
-      process.env.VERCEL === '1' ? 'https' : process.env.PROD === '1' ? 'https' : 'http'
-    }://${req.headers.host}`;
+    const host = req.headers.host || '';
+    const protocol = LOCALHOST_REGEXP.test(host) ? 'http' : 'https';
+    return `${protocol}://${host}`;
   },
 }).getHandler();
 

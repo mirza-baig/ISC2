@@ -1,5 +1,5 @@
 import { Control } from 'react-hook-form';
- 
+
 import { Country, PersonalInformation, State, StepOneLabels } from 'types/index';
 import { FormCheckbox, FormDateInput, FormFileInput, FormTextInput } from 'ui/index';
 import {
@@ -7,9 +7,11 @@ import {
   CUSTOMER_ORDER_REFERENCE_MAX_LENGTH,
   PO_NUMBER_MAX_LENGTH,
 } from 'constants/index';
-import BusinessAddressFields, { getBillingAddressLabels, getMailingAddressLabels } from './BusinessAddressFields';
- 
- 
+import BusinessAddressFields, {
+  getBillingAddressLabels,
+  getMailingAddressLabels,
+} from './BusinessAddressFields';
+
 type BusinessPurchaseInformationProps = {
   control: Control<PersonalInformation>;
   stepOneLabels: StepOneLabels;
@@ -26,7 +28,7 @@ type BusinessPurchaseInformationProps = {
   isMailingPostalCodeRequired: boolean;
   onBillingCountryChanged: (countryCode: string) => void;
 };
- 
+
 /**
  * Checkout step one for business buyers.
  *
@@ -59,7 +61,7 @@ export default function BusinessPurchaseInformation({
             {stepOneLabels.companyInformationTitle ||
               BUSINESS_STEP_ONE_DEFAULT_LABELS.companyInformationTitle}
           </p>
- 
+
           <FormTextInput
             name="employer"
             control={control}
@@ -67,7 +69,7 @@ export default function BusinessPurchaseInformation({
             maxLength={80}
             disabled
           />
- 
+
           <FormTextInput
             name="poNumber"
             control={control}
@@ -76,7 +78,7 @@ export default function BusinessPurchaseInformation({
             disabled={isSubmitting}
             isOptional={!isPoRequired}
           />
- 
+
           <FormFileInput
             name="poAttachment"
             control={control}
@@ -86,7 +88,7 @@ export default function BusinessPurchaseInformation({
             disabled={isSubmitting}
             isOptional={!isPoAttachmentRequired}
           />
- 
+
           <FormTextInput
             isOptional
             showTooltipWhenOptional
@@ -103,7 +105,7 @@ export default function BusinessPurchaseInformation({
             maxLength={CUSTOMER_ORDER_REFERENCE_MAX_LENGTH}
             disabled={isSubmitting}
           />
- 
+
           {isCourseDeliveryDateRequired && (
             <FormDateInput
               name="courseDeliveryDate"
@@ -120,13 +122,13 @@ export default function BusinessPurchaseInformation({
             />
           )}
         </div>
- 
+
         <div className="flex flex-col gap-y-4">
           <p className="text-black body-m">
             {stepOneLabels.contactInformationTitle ||
               BUSINESS_STEP_ONE_DEFAULT_LABELS.contactInformationTitle}
           </p>
- 
+
           <div className="grid sm:grid-cols-2 gap-4">
             <FormTextInput
               name="firstName"
@@ -143,7 +145,7 @@ export default function BusinessPurchaseInformation({
               disabled
             />
           </div>
- 
+
           <FormTextInput
             name="email"
             control={control}
@@ -151,7 +153,7 @@ export default function BusinessPurchaseInformation({
             maxLength={80}
             disabled
           />
- 
+
           <FormTextInput
             isOptional
             type="number"
@@ -163,11 +165,11 @@ export default function BusinessPurchaseInformation({
           />
         </div>
       </div>
- 
+
       <div className="flex flex-col gap-y-4 mt-6">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <p className="text-black body-m">{stepOneLabels.mailingAddressTitle}</p>
- 
+
           <FormCheckbox
             control={control}
             name="isSameAddress"
@@ -175,7 +177,7 @@ export default function BusinessPurchaseInformation({
             disabled={isSubmitting}
           />
         </div>
- 
+
         <BusinessAddressFields
           disabled
           control={control}
@@ -186,11 +188,11 @@ export default function BusinessPurchaseInformation({
           isPostalCodeRequired={isMailingPostalCodeRequired}
         />
       </div>
- 
+
       {!isSameAddress && (
         <div className="flex flex-col gap-y-4 mt-6">
           <p className="text-black body-m">{stepOneLabels.billingAddressTitle}</p>
- 
+
           <BusinessAddressFields
             control={control}
             prefix="billingAddress"
@@ -203,7 +205,7 @@ export default function BusinessPurchaseInformation({
           />
         </div>
       )}
- 
+
       <div className="my-5">
         <FormCheckbox
           name="agreeTerms"

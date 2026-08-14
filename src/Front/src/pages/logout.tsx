@@ -1,28 +1,38 @@
 import { signOut } from 'next-auth/react';
-import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 import { useUserSession } from 'providers/index';
 import { useQueryClient } from '@tanstack/react-query';
+import { SESSION_STORAGE_KEYS, SESSION_LOCALSTORAGE_KEYS } from 'constants/sessionTimeout';
+
+const B2B_SHOPPER_CONTEXT_KEY = 'b2b-shopper-context';
 
 export default function Logout() {
-  const router = useRouter();
   const { setCartId, setIsCurrencyManualOverride, setIsConsentAllocation } = useUserSession();
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    // Signs user out of our Next App
-    signOut({ redirect: false }).then(async () => {
-      await queryClient.invalidateQueries();
+    const clearClientState = () => {
       setCartId('');
       setIsCurrencyManualOverride(false);
       setIsConsentAllocation(false);
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.SESSION_ACTIVE);
+      sessionStorage.removeItem(B2B_SHOPPER_CONTEXT_KEY);
       sessionStorage.removeItem('allocation-sort-isc2');
       sessionStorage.removeItem('allocation-sort-dir-isc2');
       sessionStorage.removeItem('allocation-filters-isc2');
-      router.push('/');
-    });
-  }, [queryClient, router, setCartId, setIsConsentAllocation, setIsCurrencyManualOverride]);
+      localStorage.removeItem(SESSION_LOCALSTORAGE_KEYS.LAST_ACTIVITY);
+      queryClient.clear();
+    };
+
+    // Signs user out of our Next App, then hard-navigate so no stale React/session state remains.
+    signOut({ redirect: false })
+      .catch(() => undefined)
+      .then(() => {
+        clearClientState();
+        window.location.assign('/');
+      });
+  }, [queryClient, setCartId, setIsConsentAllocation, setIsCurrencyManualOverride]);
 
   return null;
 }

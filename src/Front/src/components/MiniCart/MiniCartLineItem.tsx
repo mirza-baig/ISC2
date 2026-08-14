@@ -3,7 +3,7 @@ import { MouseEventHandler, useCallback, useMemo } from 'react';
 
 import { CartLineItem } from 'types/index';
 import { TrashIcon } from 'icons/index';
-import { isDonationItem, parsePriceFromMoney } from 'utils/index';
+import { getPriceQuantityFor, isDonationItem, parsePriceFromMoney } from 'utils/index';
 import { useGetAlgoliaSitecoreData, useRemoveFromCart } from 'hooks/index';
 import { useCart, useLineItems, useMiniCartFields } from 'providers/index';
 import {
@@ -103,8 +103,8 @@ export const MiniCartLineItem = ({ lineItem }: MiniCartLineItem.Props) => {
             textClassName={hasDiscounts ? '!font-semibold' : ''}
             currency={activeCart.computed.currencySymbol}
             value={parsePriceFromMoney(
-              Boolean(lineItem.nonMemberPrice) ? lineItem.nonMemberPrice : lineItem.price.value,
-              lineItem.quantity,
+              lineItem.nonMemberPrice ? lineItem.nonMemberPrice : lineItem.price.value,
+              getPriceQuantityFor(lineItem),
               false
             )}
           />

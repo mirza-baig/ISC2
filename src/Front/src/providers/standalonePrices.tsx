@@ -52,6 +52,20 @@ type StandalonePricesProviderProps = {
   children: React.ReactNode;
 };
 
+// The commercetools standalone-price query takes its SKUs as a literal `sku in ("a", "b", …)`
+// predicate, so the queue must never be flushed as one unbounded request: a few hundred SKUs
+// produce an enormous predicate and a long serial page-walk, and past a certain size the query is
+// rejected outright — which strands those SKUs permanently unpriced, since the query does not
+// retry. The B2B PLP's price sort queues its entire result set at once (hundreds of SKUs, most of
+// all right after Clear), so the queue is drained in bounded waves instead: the effect below
+// re-runs as each wave lands and picks up the next one.
+//
+// Waves are sequential, so the size is a balance: small enough that the predicate stays modest,
+// large enough that a big queue does not turn into a long chain of waves. 250 SKUs is roughly a
+// 6KB predicate, and (since the pages within a wave are now fetched in parallel) each wave costs
+// about two round trips no matter how many price rows it returns.
+const PRICING_FETCH_BATCH_SIZE = 250;
+
 const StandalonePricesProvider: React.FC<StandalonePricesProviderProps> = ({ children }) => {
   const { distributionChannel, isGettingDistributionChannel } = useGetDistributionChannel();
   const { currencyCode } = useUserSession();
@@ -84,11 +98,12 @@ const StandalonePricesProvider: React.FC<StandalonePricesProviderProps> = ({ chi
     return () => router.events.off('routeChangeStart', handleRouteChange);
   }, []);
 
-  const { standalonePrices, isGettingStandalonePrices, refetch } = useGetStandalonePrices({
-    skuList: skusToBeFetched,
-    distributionChannelId: distributionChannel?.id,
-    enabled: false,
-  });
+  const { standalonePrices, isGettingStandalonePrices, refetch, standalonePricesError } =
+    useGetStandalonePrices({
+      skuList: skusToBeFetched,
+      distributionChannelId: distributionChannel?.id,
+      enabled: false,
+    });
 
   // Prices rules used for PDP, PLP and analytics
   const showPriceForRole = useMemo(() => {
@@ -136,9 +151,9 @@ const StandalonePricesProvider: React.FC<StandalonePricesProviderProps> = ({ chi
   useEffect(() => {
     if (!isGettingStandalonePrices && !isFetchQueued.current) {
       setSkusToBeFetched((prevSkusToBeFetched) => {
-        const newSkusToFetch = pendingSkus.filter(
-          (sku) => !productPrices[sku] && !prevSkusToBeFetched.includes(sku)
-        );
+        const newSkusToFetch = pendingSkus
+          .filter((sku) => !productPrices[sku] && !prevSkusToBeFetched.includes(sku))
+          .slice(0, PRICING_FETCH_BATCH_SIZE);
         return newSkusToFetch.length ? newSkusToFetch : prevSkusToBeFetched;
       });
     }
@@ -158,17 +173,34 @@ const StandalonePricesProvider: React.FC<StandalonePricesProviderProps> = ({ chi
     }
   }, [isGettingStandalonePrices]);
 
+  // Closes out the batch in `lastFetchedSkusRef`: merges whatever prices came back and records
+  // every SKU of that batch the response did not price as resolved-with-no-price. Without that
+  // sentinel a consumer waiting on a SKU appearing in `productPrices` would wait forever (the B2B
+  // PLP price sort holds its rows until every SKU resolves) and the queue would never advance past
+  // it — the query does not retry (`retry: false`), so nothing else would ever fill the gap.
+  const settleFetchedBatch = useCallback((fetched?: StandalonePriceMapping) => {
+    setProductPrices((prevProductPrices) => {
+      const next = { ...prevProductPrices, ...fetched };
+      lastFetchedSkusRef.current.forEach((sku) => {
+        if (!(sku in next)) next[sku] = {};
+      });
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!standalonePricesError || !lastFetchedSkusRef.current.length) {
+      return;
+    }
+
+    settleFetchedBatch();
+  }, [standalonePricesError, settleFetchedBatch]);
+
   useEffect(() => {
     if (standalonePrices !== undefined) {
-      setProductPrices((prevProductPrices) => {
-        const next = { ...prevProductPrices, ...standalonePrices };
-        lastFetchedSkusRef.current.forEach((sku) => {
-          if (!(sku in next)) next[sku] = {};
-        });
-        return next;
-      });
+      settleFetchedBatch(standalonePrices);
     }
-  }, [standalonePrices]);
+  }, [standalonePrices, settleFetchedBatch]);
 
   return (
     <StandalonePricesContext.Provider

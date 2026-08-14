@@ -11,13 +11,13 @@ import {
   LayoutServiceContext,
   HTMLLink,
 } from '@sitecore-jss/sitecore-jss-nextjs';
- 
+
 import { CPECredit } from './profile';
 import { TypedMoney } from './pricing';
 import { ServiceLayerError } from './miniCart';
 import { CurrencyCodes } from 'utils/index';
 import { USER_ROLES } from 'constants/index';
- 
+
 export * from './analytics';
 export * from './searchModal';
 export * from './checkout';
@@ -33,34 +33,34 @@ export * from './learningJourney';
 export * from './product';
 export * from './allocations';
 export * from './languagePreference';
- 
+
 export type Tokens = {
   accessToken: string;
   refreshToken: string;
 };
- 
+
 export interface SVGIconProps {
   size: number;
   className?: string;
 }
- 
+
 export type TooltipPosition = 'left' | 'right' | 'bottom' | 'top';
- 
+
 export type CustomItem<T> = Item & { fields: T };
- 
+
 export type DropLinkFieldType = CustomItem<{ Value: Field }>;
- 
+
 export interface BackgroundThemeField {
   backgroundGradient: DropLinkFieldType;
 }
- 
+
 interface Fields {
   link: LinkField;
   logo?: ImageField;
   abstract?: TextField;
   icon?: ImageField;
 }
- 
+
 export interface NavigationLink {
   className?: string;
   displayAs?: 'MainNavigationLink' | 'TextLink' | 'Headline';
@@ -75,31 +75,31 @@ export interface NavigationLink {
   id?: string;
   tabIndex?: number;
 }
- 
+
 export interface ColumnLinks {
   heading: TextField;
   icon: ImageField;
   links: NavigationLink[];
 }
- 
+
 export interface Tab {
   tabHeading: TextField;
   tabDescription: TextField;
   tabName: TextField;
   columnLinks: ColumnLinks[];
 }
- 
+
 export interface PromoCard {
   promoImage: ImageField;
   promoHeading: TextField;
   promoLinkCTA: LinkField;
 }
- 
+
 export interface Caption {
   title: TextField;
   content: TextField;
 }
- 
+
 export interface MenuItem {
   menuDisplayName: TextField;
   mainHeadline: TextField;
@@ -108,23 +108,23 @@ export interface MenuItem {
   promoCard: PromoCard;
   tabs: Tab[];
 }
- 
+
 export interface HeaderNavigationFields {
   logo: ImageField;
   navigationItems: MenuItem[];
 }
- 
+
 export interface HeaderNavigation {
   fields: HeaderNavigationFields;
 }
- 
+
 export type ColorSelector = {
   fields: {
     backgroundColorHexCode: Field<string>;
     foregroundColorHexCode: Field<string>;
   };
 };
- 
+
 export interface UserLinksFields {
   registerForExamLink: LinkField;
   shoppingCartLink: LinkField;
@@ -139,7 +139,7 @@ export interface UserLinksFields {
   confirmButtonText: TextField;
   revertButtonText: TextField;
 }
- 
+
 export interface HeaderUserLinks {
   id: string;
   fields: {
@@ -147,7 +147,7 @@ export interface HeaderUserLinks {
   };
   children: HeaderUserLinksSection[];
 }
- 
+
 export interface HeaderUserLinkField {
   id: string;
   name: string;
@@ -155,7 +155,7 @@ export interface HeaderUserLinkField {
     link: LinkField;
   };
 }
- 
+
 interface HeaderUserLinksSection {
   id: string;
   fields: {
@@ -163,15 +163,15 @@ interface HeaderUserLinksSection {
   };
   children: HeaderUserLinkField[];
 }
- 
+
 export interface NavigationLayoutProps {
   onBackButtonClick: () => void;
 }
- 
+
 export interface GraphQLResponse<T> {
   data: T;
 }
- 
+
 export interface AlgoliaSettings {
   algoliaDetails: {
     algoliaApiKey: Field<string>;
@@ -181,7 +181,7 @@ export interface AlgoliaSettings {
     placeholderText: Field<string>;
   };
 }
- 
+
 export interface AlgoliaSettingsForInsightListing {
   algoliaDetails: {
     algoliaApiKey: Field<string>;
@@ -189,7 +189,7 @@ export interface AlgoliaSettingsForInsightListing {
     algoliaSortDescByDateIndexName: Field<string>;
   };
 }
- 
+
 export interface AlgoliaSettingsForChapterFinder {
   algoliaDetails: {
     algoliaApiKey: Field<string>;
@@ -197,7 +197,7 @@ export interface AlgoliaSettingsForChapterFinder {
     algoliaChapterFilderIndexName: Field<string>;
   };
 }
- 
+
 export interface SearchResultHit {
   content: string;
   contentLength: number;
@@ -211,28 +211,28 @@ export interface SearchResultHit {
   articleDate?: string;
   [key: string]: any;
 }
- 
+
 export interface FacetKeyValues {
   FacetAttribute: string;
   FacetLabel: string;
   FacetType: string;
   KeyName: string;
 }
- 
+
 export interface SearchDefaultFilter {
   FilterKey: string;
   FilterValue: string;
 }
- 
+
 export type SortOptions = SearchDefaultFilter;
- 
+
 export interface SocialProfileLink {
   fields: {
     label: Field<string>;
     ctaLink: LinkField;
   };
 }
- 
+
 export interface LeadershipCardFields {
   ctaLabel?: Field<string>;
   description?: RichTextField;
@@ -241,12 +241,12 @@ export interface LeadershipCardFields {
   nameCertification: TextField;
   title: TextField;
 }
- 
+
 interface PathFinderOption {
   response: Field<string>;
   nextStep: Field<number>;
 }
- 
+
 export interface PathFinderResult {
   title: Field<string>;
   eyebrow?: Field<string>;
@@ -255,7 +255,7 @@ export interface PathFinderResult {
   link?: LinkField;
   cardUrl?: Field<string>;
 }
- 
+
 export interface PathFinderStep {
   id: Field<number>;
   type: Field<string>;
@@ -267,39 +267,39 @@ export interface PathFinderStep {
   previousStepId: Field<number>;
   results?: PathFinderResult[];
 }
- 
+
 export interface LayoutPropsExtended {
   layoutData: LayoutServiceDataExtended;
   headLinks: HTMLLink[];
 }
- 
+
 export interface LayoutServiceDataExtended {
   sitecore: LayoutServiceContextDataUpdated & {
     route: RouteData | null;
   };
 }
- 
+
 export interface LayoutServiceContextDataUpdated {
   context: LayoutServiceContextUpdated;
 }
- 
+
 export interface LayoutServiceContextUpdated extends LayoutServiceContext {
   canonicalUrl?: string;
 }
- 
+
 export interface ThumbnailBlockCardFields {
   headline: TextField;
   thumbnailImage: ImageField;
   link: LinkField;
 }
- 
+
 export interface BackgroundGradient {
   fields: {
     backgroundGradient: Field<string>;
     contentHexColor: Field<string>;
   };
 }
- 
+
 export interface RssArticle {
   name: string;
   fields: Array<{
@@ -316,7 +316,7 @@ export interface RssArticle {
     value: string;
   };
 }
- 
+
 export interface RssArticleDetails {
   articleBody: string;
   thumbnailImage: string;
@@ -324,7 +324,7 @@ export interface RssArticleDetails {
   articleDate: string;
   articleUrl: string;
 }
- 
+
 export interface RssGraphQLResponse {
   search: {
     results: RssArticle[];
@@ -335,7 +335,7 @@ export interface RssGraphQLResponse {
     total: number;
   };
 }
- 
+
 export interface RssChannel extends AtomLink {
   title: string;
   description: string;
@@ -353,7 +353,7 @@ export interface RssChannel extends AtomLink {
     }[];
   }[];
 }
- 
+
 export interface AtomLink {
   'atom:link': {
     $: {
@@ -363,7 +363,7 @@ export interface AtomLink {
     };
   }[];
 }
- 
+
 export interface RSSObject {
   rss: {
     $: {
@@ -378,14 +378,14 @@ export interface QuerySuggestion {
   query: string;
   [key: string]: unknown;
 }
- 
+
 export type AutocompleteSuggestions = Pick<
   AutocompleteState<QuerySuggestion>,
   'collections' | 'query' | 'status'
 >;
- 
+
 export type SessionStatus = 'loading' | 'unauthenticated' | 'authenticated';
- 
+
 export type UserRole =
   | USER_ROLES.MEMBER
   | USER_ROLES.CANDIDATE
@@ -393,7 +393,7 @@ export type UserRole =
   | USER_ROLES.REGISTERED
   | USER_ROLES.B2B_ADMIN
   | USER_ROLES.GUEST;
- 
+
 export type UserSession = {
   user: {
     email?: string;
@@ -412,7 +412,7 @@ export type UserSession = {
     };
   };
 };
- 
+
 export type UserAddress = {
   street: string;
   streetTwo?: string;
@@ -423,7 +423,7 @@ export type UserAddress = {
   country: string;
   countryCode: string;
 };
- 
+
 /**
  * Business account data sourced from the Salesforce Account object.
  * Every member is optional: the Mulesoft payload is still being extended
@@ -435,18 +435,18 @@ export type BusinessAccountPurchaseControls = {
   poAttachmentRequired?: boolean | string;
   prepaidAuthorized?: boolean | string;
 };
- 
+
 export type BusinessAccountCredit = {
   paymentTerms?: string;
   creditLimit?: number;
   creditBalance?: number;
 };
- 
+
 export type BusinessAccountPrepaid = {
   expirationDate?: string;
   balance?: number;
 };
- 
+
 export type BusinessAccount = {
   id?: string;
   name?: string;
@@ -457,7 +457,7 @@ export type BusinessAccount = {
   credit?: BusinessAccountCredit;
   prepaid?: BusinessAccountPrepaid;
 };
- 
+
 export type UserData = {
   firstName: string;
   lastName: string;
@@ -536,12 +536,12 @@ export type UserData = {
     prices: TypedMoney[];
   };
 };
- 
+
 export type UserPicture = {
   base64: string;
   isLoading: boolean;
 };
- 
+
 export interface PromoCardFields {
   heading: Field<string>;
   description: Field<string>;
@@ -551,7 +551,7 @@ export interface PromoCardFields {
     };
   };
 }
- 
+
 export interface RouteFields {
   [key: string]: unknown;
   Title?: Field;
@@ -577,34 +577,34 @@ export interface RouteFields {
   promoPills?: Field<string>;
   promoCard?: { fields: PromoCardFields };
 }
- 
+
 export interface PromoPills {
   regularPill?: string;
   discountPillNumber?: string;
   discountPillComplement?: string;
 }
- 
+
 export type FlashAlert = {
   type: 'success' | 'error';
   label: string;
   closable?: boolean;
 };
- 
+
 export type Country = {
   countryName: string;
   countryCode: string;
 };
- 
+
 export type State = {
   stateName: string;
   stateCode: string;
 };
- 
+
 export type MutationCallbacks<TSuccess = void, TError = ServiceLayerError[] | string> = {
   onSuccess?: (value?: TSuccess) => void;
   onError?: (errors: TError | null) => void;
 };
- 
+
 export type CountryInfo = {
   country: string;
   currency: CurrencyCodes;

@@ -17,6 +17,7 @@ import {
   SUBSCRIPTION_PRODUCT_TYPES,
   CART_ATTRIBUTES,
 } from 'constants/cart';
+import { POSTAL_CODES_PATTERNS } from 'constants/postalCodesPatterns';
 import { useCart } from 'providers/cart';
 
 import { calculateDiscount, parsePrice, parsePriceFromMoney } from './price';
@@ -28,6 +29,19 @@ const DEFAULT_SUMMARY = {
   itemsQuantity: 0,
   notAvailableItemsQuantity: 0,
   hasNotAvailableProducts: false,
+};
+
+// Which OCCURRENCE of a bundle a raw cart line belongs to — the key `cart.bundles` is grouped by.
+//
+// Falls back to the bundle SKU whenever no instance was written, which is every line added before
+// multi-occurrence support and every line added by a caller that did not opt in (the PDP). That
+// fallback is the compatibility contract, and it mirrors `getBundleInstanceKey` in the cart
+// service — the two must agree or a row will not find its lines.
+const getBundleInstanceKey = (lineItem: LineItem): string | undefined => {
+  const field = (name: string) =>
+    lineItem.custom?.customFieldsRaw?.find((attr) => attr.name === name)?.value;
+
+  return (field('bundle-instance') ?? field('bundle-sku')) as string | undefined;
 };
 
 export const addComputedFieldsToLineItems = (cart: Cart): Cart => {
@@ -42,10 +56,10 @@ export const addComputedFieldsToLineItems = (cart: Cart): Cart => {
       }
 
       const bundleLineItems = (cart.lineItems as LineItem[]).filter((item) => {
-        const lineItemAttrs = item.custom?.customFieldsRaw?.find(
-          (attr) => attr.name === 'bundle-sku'
-        );
-        const isMatchingBundle = lineItemAttrs?.value === bundleName;
+        // Matched on the occurrence, not the bundle SKU: a cart holding the same class for two
+        // dates has two entries here, and comparing on the SKU would hand BOTH sets of component
+        // lines to each of them — one row priced double, the other's lines consumed twice.
+        const isMatchingBundle = getBundleInstanceKey(item) === bundleName;
         return isMatchingBundle && bundle.skus.includes(item.variant.sku);
       });
 
@@ -57,7 +71,13 @@ export const addComputedFieldsToLineItems = (cart: Cart): Cart => {
         ...accum,
         {
           id: bundleName,
-          quantity: 1,
+          // The bundle SKU is no longer recoverable from `id` once that id is an occurrence key,
+          // so the summary carries it. Older cart payloads have no `bundleSku`, and there the id
+          // IS the bundle SKU — which is why the fallback is exactly right rather than a guess.
+          bundleSku: bundle.bundleSku ?? bundleName,
+          // Seats. `1` for everything the PDP adds (commercetools defaults a bundle add to one),
+          // and the real count for a B2B listing add that asked for several.
+          quantity: bundle.quantity ?? 1,
           productType: {
             id: 'bundle',
             name: 'bundle',
@@ -266,6 +286,21 @@ export const getSelectDateBundlePayload = ({
 export const isBundleLineItem = (lineItem: CartLineItem): lineItem is BundleLineItem =>
   'products' in lineItem;
 
+export const getPriceQuantityFor = (lineItem: CartLineItem): number =>
+  isBundleLineItem(lineItem) ? 1 : lineItem.quantity;
+
+/**
+ * Which class session a bundle line in the cart was added for.
+ *
+ * commercetools explodes a bundle into one line item per component and keeps no record of which
+ * component the shopper picked, so this reads it back off the components: for a class bundle the
+ * picked product is by definition the DATED session — every fixed component (the exam) is dateless.
+ * Needed wherever a bundle has to be RE-sent (a currency rebuild, a quantity change), since an add
+ * without its picked session is rejected outright.
+ */
+export const getPickedProductFromBundleLine = (bundleLine: BundleLineItem): LineItem | undefined =>
+  bundleLine.products?.find((product) => getVariantAttributes(product.variant).start_date);
+
 export const removeBundleDiscountCodes = (cart: Cart): Cart => {
   const filteredDiscountCodes = (cart.discountCodes || []).filter(
     ({ discountCode }) => !discountCode?.code?.startsWith(BUNDLES_DISCOUNTS_NAME)
@@ -290,16 +325,28 @@ export type TaxAddressInput = {
 
 const hasAddressValue = (value?: string) => Boolean(value?.trim());
 
+/** Matches checkout/profile UI: postal is required only when a country has a pattern. */
+export const isPostalCodeRequiredForCountry = (countryCode?: string) => {
+  if (!countryCode?.trim()) {
+    return false;
+  }
+
+  return Boolean(
+    POSTAL_CODES_PATTERNS[countryCode.trim().toUpperCase() as keyof typeof POSTAL_CODES_PATTERNS]
+  );
+};
+
 /** Cart/shipping address has the fields tax calculation requires. */
 export const isTaxAddressDefined = (address?: TaxAddressInput) => {
   const country = address?.country || address?.countryCode;
   const street = address?.street || address?.streetName;
+  const postalCodeRequired = isPostalCodeRequiredForCountry(country);
 
   return Boolean(
     hasAddressValue(country) &&
       hasAddressValue(street) &&
       hasAddressValue(address?.city) &&
-      hasAddressValue(address?.postalCode)
+      (!postalCodeRequired || hasAddressValue(address?.postalCode))
   );
 };
 

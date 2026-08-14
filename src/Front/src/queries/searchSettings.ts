@@ -332,6 +332,48 @@ export const resolvePublicPathByItemId = (itemId: string, language = 'en'): stri
   `;
 };
 
+// B2B Product List labels — grouped, editable in Sitecore under
+// /sitecore/content/ISC2/Main/Data/B2B Product List Labels. Each child item holds a Name Value
+// List `labels` field (key=value&key=value); the api route parses them by group. See
+// docs/B2B-EnvLocal-Sitecore-Items.md.
+export const B2B_PRODUCT_LIST_LABELS = `
+  query {
+    b2bLabels: item(
+      path: "/sitecore/content/ISC2/Main/Data/B2B Product List Labels",
+      language: "en"
+    ) {
+      children {
+        results {
+          name
+          labels: field(name: "labels") {
+            value
+          }
+        }
+      }
+    }
+    # The SAME authored item the PDP's purchase-option radios open (its Form Labels And Tooltips
+    # datasource points a "peaceOfMindTermsModal" droplink at this popup). Read by path rather than
+    # duplicated into a label group so the listing can never drift from the PDP's terms copy.
+    productMessageModal: item(
+      path: "/sitecore/content/ISC2/Main/Data/Popups Folder/Peace Of Mind Terms Modal Popup",
+      language: "en"
+    ) {
+      heading: field(name: "heading") {
+        value
+      }
+      description: field(name: "description") {
+        value
+      }
+      primaryCtaLabel: field(name: "primaryCtaLabel") {
+        value
+      }
+      secondaryCtaLabel: field(name: "secondaryCtaLabel") {
+        value
+      }
+    }
+  }
+`;
+
 export const TRAINING_FINDER_SEARCH_SETTINGS = `
   query {
     searchWrapperSettings: item(

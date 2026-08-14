@@ -1,13 +1,13 @@
 import { FieldValues, useController, UseControllerProps } from 'react-hook-form';
 import { ChangeEvent, useCallback } from 'react';
 import clsx from 'clsx';
- 
+
 import { QuestionIcon } from 'icons/index';
 import { useFormFields } from 'providers/index';
 import { PoAttachment } from 'types/index';
- 
+
 import Tooltip from './Tooltip';
- 
+
 export namespace FormFileInput {
   export type Props<T extends FieldValues> = UseControllerProps<T> & {
     label: string;
@@ -16,19 +16,19 @@ export namespace FormFileInput {
     accept?: string;
   };
 }
- 
+
 const STYLES =
   'border disabled:!bg-input-disabled disabled:!opacity-100 disabled:!text-black border-black h-13 rounded-lg w-full text-gray-70 px-3 body-s outline-isc2-green focus:ring-isc2-green focus:border-isc2-green file:mr-3 file:my-2 file:rounded-lg file:border-0 file:bg-gray-10 file:px-3 file:py-1 file:body-s file:text-black file:cursor-pointer';
- 
+
 const readFileAsDataUrl = (file: File) =>
   new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
- 
+
     reader.onload = () => resolve(String(reader.result ?? ''));
     reader.onerror = () => reject(reader.error);
     reader.readAsDataURL(file);
   });
- 
+
 /** File picker whose form value is `{ fileName, base64 }`, mirroring PhotoSchema. */
 export function FormFileInput<T extends FieldValues>({
   name,
@@ -40,36 +40,36 @@ export function FormFileInput<T extends FieldValues>({
   accept,
 }: FormFileInput.Props<T>) {
   const { requiredText, getFieldErrorMessage } = useFormFields();
- 
+
   const {
     field: { value, onChange, ...rest },
     fieldState: { error },
   } = useController({ control, name });
- 
+
   const onFileSelected = useCallback(
     async (ev: ChangeEvent<HTMLInputElement>) => {
       if (disabled) {
         return;
       }
- 
+
       const file = ev.target.files?.[0];
- 
+
       if (!file) {
         onChange(undefined);
         return;
       }
- 
+
       const base64 = await readFileAsDataUrl(file);
- 
+
       onChange({ fileName: file.name, base64 });
     },
     [onChange, disabled]
   );
- 
+
   const errorMessage = getFieldErrorMessage({ field: label, error });
   const hasTooltip = Boolean(tooltipText);
   const selectedFileName = (value as PoAttachment | undefined)?.fileName;
- 
+
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-1">
@@ -86,7 +86,7 @@ export function FormFileInput<T extends FieldValues>({
                 className="w-52 text-center"
               />
             )}
- 
+
             {!isOptional && requiredText}
           </span>
         )}

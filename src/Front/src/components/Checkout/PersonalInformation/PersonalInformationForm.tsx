@@ -18,7 +18,7 @@ import { FormFieldsProvider, useCart, useCheckoutProcess } from 'providers/index
 import { Button, FormTextInput, FormDropdown, FormCheckbox, RichTextUI } from 'ui/index';
 import { ANALYTICS_EVENTS } from 'constants/index';
 import { formatAnalyticsCouponCodes } from 'utils/analytics';
-import { POSTAL_CODES_PATTERNS } from 'constants/postalCodesPatterns';
+import { isPostalCodeRequiredForCountry } from 'utils/cart';
 import BusinessPurchaseInformation from './BusinessPurchaseInformation';
 
 const FORM_CONDITIONS: FieldConditions<PersonalInformation> = {
@@ -56,15 +56,11 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
   const mappedItems = useAnalyticsItems();
 
   const [isBillingPostalCodeRequired, setIsBillingPostalCodeRequired] = useState<boolean>(
-    Boolean(
-      POSTAL_CODES_PATTERNS[user?.billingAddress.countryCode as keyof typeof POSTAL_CODES_PATTERNS]
-    ) ?? false
+    isPostalCodeRequiredForCountry(user?.billingAddress.countryCode)
   );
 
   const [isMailingPostalCodeRequired, setIsMailingPostalCodeRequired] = useState<boolean>(
-    Boolean(
-      POSTAL_CODES_PATTERNS[user?.mailingAddress.countryCode as keyof typeof POSTAL_CODES_PATTERNS]
-    ) ?? false
+    isPostalCodeRequiredForCountry(user?.mailingAddress.countryCode)
   );
 
   const [previousBillingStates, setPreviousBillingStates] = useState<Record<string, string>>({});
@@ -131,11 +127,7 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
     if (accountShippingAddress) {
       setValue('mailingAddress', accountShippingAddress);
       setIsMailingPostalCodeRequired(
-        Boolean(
-          POSTAL_CODES_PATTERNS[
-            accountShippingAddress.countryCode as keyof typeof POSTAL_CODES_PATTERNS
-          ]
-        )
+        isPostalCodeRequiredForCountry(accountShippingAddress.countryCode)
       );
     }
   }, [
@@ -159,9 +151,7 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
 
     if (mailing?.street) {
       setValue('billingAddress', { ...mailing });
-      setIsBillingPostalCodeRequired(
-        Boolean(POSTAL_CODES_PATTERNS[mailing.countryCode as keyof typeof POSTAL_CODES_PATTERNS])
-      );
+      setIsBillingPostalCodeRequired(isPostalCodeRequiredForCountry(mailing.countryCode));
     }
   }, [isBusinessBuyer, isSameAddress, accountShippingAddress, getValues, setValue]);
 
@@ -197,13 +187,9 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
       }
 
       if (isBillingCountry) {
-        setIsBillingPostalCodeRequired(
-          Boolean(POSTAL_CODES_PATTERNS[countryCode as keyof typeof POSTAL_CODES_PATTERNS])
-        );
+        setIsBillingPostalCodeRequired(isPostalCodeRequiredForCountry(countryCode));
       } else {
-        setIsMailingPostalCodeRequired(
-          Boolean(POSTAL_CODES_PATTERNS[countryCode as keyof typeof POSTAL_CODES_PATTERNS])
-        );
+        setIsMailingPostalCodeRequired(isPostalCodeRequiredForCountry(countryCode));
       }
 
       const previousStateMap = isBillingCountry ? previousBillingStates : previousMailingStates;

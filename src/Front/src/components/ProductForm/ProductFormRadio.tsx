@@ -1,5 +1,6 @@
 import clsx from 'clsx';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useMemo } from 'react';
+import type { MouseEvent as ReactMouseEvent } from 'react';
 import { FormElementTypes, PRODUCT_ONLY_KEY } from 'types/forms';
 
 import { ProductPrice, StandalonePrice } from 'types/index';
@@ -52,10 +53,12 @@ const ProductFormRadio = ({ fields }: ProductFormRadioFields) => {
   const { isGettingStandalonePrices } = useStandalonePrices();
   const { toggleSelectedProduct, isShowPrices, productVariants, isBannedTier } = useProductForm();
   const { setModalContent } = useModal();
-  const ref = useRef<HTMLParagraphElement>(null);
 
   const onOpenTermsAndConditionHandler = useCallback(
-    (e: Event) => {
+    (e: ReactMouseEvent<HTMLDivElement>) => {
+      if (!(e.target as HTMLElement).closest('a')) {
+        return;
+      }
       e.preventDefault();
       e.stopPropagation();
       if (peaceOfMindTermsModalContent?.fields) {
@@ -81,16 +84,6 @@ const ProductFormRadio = ({ fields }: ProductFormRadioFields) => {
       fields?.parentKey
     );
   }, [fields, isBannedTier, toggleSelectedProduct]);
-
-  useEffect(() => {
-    const el = ref?.current;
-    const linkElements = el?.getElementsByTagName('a');
-    const links = (linkElements && Array.from(linkElements)) || [];
-    links?.forEach((link) => link.addEventListener('click', onOpenTermsAndConditionHandler));
-    return () => {
-      links?.forEach((link) => link.removeEventListener('click', onOpenTermsAndConditionHandler));
-    };
-  }, [onOpenTermsAndConditionHandler]);
 
   const labelValue = useMemo(
     () => (value === PRODUCT_ONLY_KEY ? productVariants?.[0]?.title || label : label),
@@ -171,7 +164,10 @@ const ProductFormRadio = ({ fields }: ProductFormRadioFields) => {
             )}
         </div>
         {Boolean(productMessage) && (
-          <div ref={ref} className="pdp-radio-rich-text body-s text-gray-500 pl-6 m-0">
+          <div
+            className="pdp-radio-rich-text body-s text-gray-500 pl-6 m-0"
+            onClickCapture={onOpenTermsAndConditionHandler}
+          >
             <RichText field={{ value: productMessage }} />
           </div>
         )}

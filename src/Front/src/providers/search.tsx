@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { useBreakpoint } from 'hooks/index';
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, type Dispatch } from 'react';
 
 import { SearchDefaultFilter } from 'types/index';
 
@@ -12,6 +12,10 @@ type SearchContextProps = {
   defaultFilters: SearchDefaultFilter[];
   openFiltersMenu: () => void;
   closeFiltersMenu: () => void;
+  /** When true, the filters menu is used as an overlay on ALL breakpoints (B2B PLP), so it
+   *  must NOT be auto-closed on desktop (default behavior keeps it mobile-only). */
+  overlayFiltersMode: boolean;
+  setOverlayFiltersMode: Dispatch<boolean>;
   setDefaultFilters: (defaultFiters: SearchDefaultFilter[]) => void;
   setAlgoliaIndexName: (indexName: string) => void;
   setDefaultSortValue: (sortValue: string) => void;
@@ -26,6 +30,8 @@ const SearchContext = createContext<SearchContextProps>({
   defaultFilters: [],
   openFiltersMenu: () => {},
   closeFiltersMenu: () => {},
+  overlayFiltersMode: false,
+  setOverlayFiltersMode: () => {},
   setDefaultFilters: () => {},
   setAlgoliaIndexName: () => {},
   setCurrentTerm: () => {},
@@ -38,6 +44,7 @@ type SearchProviderProps = {
 
 const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
   const [isFiltersMenuOpen, setIsFiltersMenuOpen] = useState(false);
+  const [overlayFiltersMode, setOverlayFiltersMode] = useState(false);
   const [defaultFilters, setDefaultFilters] = useState<SearchDefaultFilter[]>([]);
   const [algoliaIndexName, setAlgoliaIndexName] = useState('');
   const [currentTerm, setCurrentTerm] = useState('');
@@ -51,19 +58,25 @@ const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const body = document.querySelector('body');
-
-    if (['sm', 'max-sm'].includes(breakpoint) && body) {
-      body.style.overflow = isFiltersMenuOpen ? 'hidden' : '';
+    if (!body) {
+      return;
     }
 
-    if (!['sm', 'max-sm'].includes(breakpoint) && body) {
+    const isMobileBreakpoint = ['sm', 'max-sm'].includes(breakpoint);
+
+    // The filters menu is an overlay on mobile always, and on desktop only in overlayFiltersMode
+    // (B2B PLP). In those cases, lock body scroll while open. On desktop in the normal (sidebar)
+    // mode, the overlay isn't used, so close it if somehow open.
+    if (isMobileBreakpoint || overlayFiltersMode) {
+      body.style.overflow = isFiltersMenuOpen ? 'hidden' : '';
+    } else {
       body.style.overflow = '';
 
       if (isFiltersMenuOpen) {
         closeFiltersMenu();
       }
     }
-  }, [breakpoint, isFiltersMenuOpen, closeFiltersMenu]);
+  }, [breakpoint, isFiltersMenuOpen, closeFiltersMenu, overlayFiltersMode]);
 
   return (
     <SearchContext.Provider
@@ -71,6 +84,8 @@ const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
         isFiltersMenuOpen,
         openFiltersMenu,
         closeFiltersMenu,
+        overlayFiltersMode,
+        setOverlayFiltersMode,
         defaultFilters,
         setDefaultFilters,
         algoliaIndexName,

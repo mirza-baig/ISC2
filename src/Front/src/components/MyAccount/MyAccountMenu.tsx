@@ -42,8 +42,8 @@ const MyAccountMenu = ({ fields }: MyAccountMenuProps) => {
     setIsUserSigningOut(true);
     sessionStorage.removeItem(SESSION_STORAGE_KEYS.SESSION_ACTIVE);
     localStorage.removeItem(SESSION_LOCALSTORAGE_KEYS.LAST_ACTIVITY);
-    router.push('/api/auth/federated-sign-out');
-  }, [router]);
+    window.location.assign('/api/auth/federated-sign-out');
+  }, []);
 
   const onChangeBuyerClick = useCallback(() => {
     setModalContent(<ChangeBuyerModal onSignOutStarted={() => setIsUserSigningOut(true)} />, {

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { BUSINESS_STEP_ONE_DEFAULT_LABELS, CHECKOUT_STEPS } from 'constants/checkout';
 import { createContext, Dispatch, SetStateAction, useContext, useMemo, useState } from 'react';
- 
+
 import { useIsBusinessBuyer } from 'hooks/index';
- 
+
 import {
   CheckoutFields,
   CheckoutStep,
@@ -14,7 +14,7 @@ import {
   TaxErrorPopupLabels,
 } from 'types/index';
 import { parseFieldsFromURLString } from 'utils/index';
- 
+
 type CheckoutContextProps = {
   fields: CheckoutFields;
   checkoutSteps: CheckoutStep[];
@@ -32,7 +32,7 @@ type CheckoutContextProps = {
   hasInventoryError: boolean;
   setHasInventoryError: Dispatch<SetStateAction<boolean>>;
 };
- 
+
 const CheckoutProcessContext = createContext<CheckoutContextProps>({
   fields: {} as CheckoutFields,
   checkoutSteps: [],
@@ -50,15 +50,15 @@ const CheckoutProcessContext = createContext<CheckoutContextProps>({
   hasInventoryError: false,
   setHasInventoryError: () => {},
 });
- 
+
 type CheckoutProcessProviderProps = {
   fields: CheckoutFields;
   children: React.ReactNode;
 };
- 
+
 const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ fields, children }) => {
   const isBusinessBuyer = useIsBusinessBuyer();
- 
+
   const [taxErrorLabels, setTaxErrorLabels] = useState<TaxErrorPopupLabels>({
     heading: null,
     description: null,
@@ -70,17 +70,17 @@ const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ field
     () => parseFieldsFromURLString<StepOneLabels>(fields.stepOneLabelsTooltipsAndMore),
     [fields.stepOneLabelsTooltipsAndMore]
   );
- 
+
   const stepTwoLabels = useMemo(
     () => parseFieldsFromURLString<StepTwoLabels>(fields.stepTwoLabelsTooltipsAndMore),
     [fields.stepTwoLabelsTooltipsAndMore]
   );
- 
+
   const errorLabels = useMemo(
     () => parseFieldsFromURLString<ErrorLabels>(fields.errorLabels),
     [fields.errorLabels]
   );
- 
+
   const checkoutSteps: CheckoutStep[] = useMemo(
     () => [
       {
@@ -91,14 +91,19 @@ const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ field
       },
       { id: CHECKOUT_STEPS.PAYMENT_INFORMATION, label: stepTwoLabels.stepTitle },
     ],
-    [isBusinessBuyer, stepOneLabels.businessStepTitle, stepOneLabels.stepTitle, stepTwoLabels.stepTitle]
+    [
+      isBusinessBuyer,
+      stepOneLabels.businessStepTitle,
+      stepOneLabels.stepTitle,
+      stepTwoLabels.stepTitle,
+    ]
   );
- 
+
   const [activeStep, setActiveStep] = useState<CheckoutStep['id']>(checkoutSteps[0].id);
   const [errorState, setErrorState] = useState<ServiceLayerError[] | null>(null);
   const [hasPaymentError, setHasPaymentError] = useState<boolean>(false);
   const [hasInventoryError, setHasInventoryError] = useState<boolean>(false);
- 
+
   return (
     <CheckoutProcessContext.Provider
       value={{
@@ -123,7 +128,7 @@ const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ field
     </CheckoutProcessContext.Provider>
   );
 };
- 
+
 const useCheckoutProcess = () => useContext(CheckoutProcessContext);
- 
+
 export { CheckoutProcessProvider, useCheckoutProcess };

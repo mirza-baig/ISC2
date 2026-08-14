@@ -7,11 +7,7 @@ export type {
   AuthorizedBuyerResponse,
   BuyerMockScenario,
 } from './types';
-export {
-  BUYER_MOCK_SCENARIOS,
-  DEFAULT_BUYER_MOCK_SCENARIO,
-  isBuyerMockScenario,
-} from './types';
+export { BUYER_MOCK_SCENARIOS, DEFAULT_BUYER_MOCK_SCENARIO, isBuyerMockScenario } from './types';
 export { BUYER_SCENARIO_ACCOUNTS } from './scenarios';
 export {
   ACCOUNT_ACME,
@@ -26,10 +22,7 @@ export {
   ACCOUNT_TYPE_VARIANT,
   ACCOUNT_UMBRELLA,
 } from './accounts';
-export {
-  getAuthorizedBuyerAccounts,
-  resolveBuyerMockScenario,
-} from './getAuthorizedBuyerAccounts';
+export { getAuthorizedBuyerAccounts, resolveBuyerMockScenario } from './getAuthorizedBuyerAccounts';
 export type { GetAuthorizedBuyerAccountsOptions } from './getAuthorizedBuyerAccounts';
 export {
   mapAccountToShopperOrganization,

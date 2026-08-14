@@ -7,8 +7,8 @@ import { FacetKeyValues, SortOptions } from 'types/index';
 import { useSearch } from 'providers/index';
 
 import SearchCurrentRefinements from './SearchCurrentRefinements';
-import SearchFacet from './SearchFacets/SearchFacet';
 import SearchSort from './SearchSort/SearchSort';
+import { renderSearchFacets } from './renderSearchFacets';
 
 interface SearchFiltersMenuProps {
   filterLabel: Field<string>;
@@ -19,6 +19,9 @@ interface SearchFiltersMenuProps {
   sortOptions: SortOptions[];
   showMoreLabel: string;
   isSortAvailable?: boolean;
+  /** Overlay-filter mode (B2B PLP): the overlay is used on ALL breakpoints, so it must not be
+   *  hidden on desktop (default behavior keeps it mobile-only). */
+  overlayFilters?: boolean;
 }
 
 const SearchFiltersMenu = ({
@@ -30,6 +33,7 @@ const SearchFiltersMenu = ({
   sortOptions,
   showMoreLabel,
   isSortAvailable,
+  overlayFilters = false,
 }: SearchFiltersMenuProps) => {
   const { isFiltersMenuOpen, closeFiltersMenu } = useSearch();
 
@@ -37,7 +41,8 @@ const SearchFiltersMenu = ({
     <section
       className={clsx(
         'hidden h-dynamic-screen flex-col fixed overflow-hidden top-0 left-0 right-0 m-auto bg-white-00 shadow-md backdrop-filter backdrop-blur-md bg-opacity-90',
-        isFiltersMenuOpen && '!flex !sm:hidden z-filters-menu'
+        isFiltersMenuOpen &&
+          (overlayFilters ? '!flex z-filters-menu' : '!flex !sm:hidden z-filters-menu')
       )}
     >
       <main className="flex flex-col grow pt-20 items-start px-5 divide-y divide-gray-50 overflow-y-auto">
@@ -53,16 +58,7 @@ const SearchFiltersMenu = ({
 
         {isSortAvailable && <SearchSort sortByLabel={sortByLabel} sortOptions={sortOptions} />}
 
-        {filterKeyValues?.map((filter, index) => (
-          <SearchFacet
-            key={filter.FacetAttribute}
-            type={filter.FacetType}
-            attribute={filter.FacetAttribute}
-            label={filter.FacetLabel}
-            openByDefault={index === 0}
-            showMoreLabel={showMoreLabel}
-          />
-        ))}
+        {renderSearchFacets(filterKeyValues, showMoreLabel)}
       </main>
 
       <footer className="p-5 flex space-x-7 border-t border-gray-50">

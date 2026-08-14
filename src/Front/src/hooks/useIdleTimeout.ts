@@ -1,5 +1,4 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { useRouter } from 'next/router';
 import {
   SESSION_TIMEOUT_CONFIG,
   SESSION_STORAGE_KEYS,
@@ -12,7 +11,6 @@ interface UseIdleTimeoutOptions {
 }
 
 export function useIdleTimeout({ isAuthenticated, onTimeout }: UseIdleTimeoutOptions): void {
-  const router = useRouter();
   const lastActivityUpdateRef = useRef<number>(0);
   const checkIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -25,9 +23,10 @@ export function useIdleTimeout({ isAuthenticated, onTimeout }: UseIdleTimeoutOpt
     if (onTimeout) {
       onTimeout();
     } else {
-      router.push('/api/auth/federated-sign-out');
+      // Full navigation so federated logout redirects are followed.
+      window.location.assign('/api/auth/federated-sign-out');
     }
-  }, [onTimeout, router]);
+  }, [onTimeout]);
 
   const updateLastActivity = useCallback(() => {
     const now = Date.now();

@@ -27,17 +27,17 @@ export { default as useDeleteUserPicture } from './userPicture/useDeleteUserPict
 export { default as useUpdateUserPicture } from './userPicture/useUpdateUserPicture';
 export { default as useGetSubscriptions } from './user/useGetSubscriptions';
 export { default as useGetLearningJourney } from './user/useGetLearningJourney';
- export { default as useActiveBusinessAccount } from './user/useActiveBusinessAccount';
+export { default as useActiveBusinessAccount } from './user/useActiveBusinessAccount';
+export { default as useHasAllocatorRelationship } from './user/useHasAllocatorRelationship';
 export { default as useValidateEnrollmentAccess } from './user/useValidateEnrollmentAccess';
 export { default as useCustomMutation } from './useCustomMutation';
 export { default as useDebounce } from './useDebounce';
 export { default as useGetInventory } from './inventory/useGetInventory';
 export { default as useSession } from './useSession';
-export { useCreditHoldMessage } from './useCreditHoldMessage';
- 
+
 // PRODUCTS
 export { default as useGetProduct } from './product/useGetProduct';
- 
+
 // CARTS
 export { default as useUpdateB2BPersonalInformation } from './cart/useUpdateB2BPersonalInformation';
 export { default as useGetCart } from './cart/useGetCart';
@@ -53,8 +53,8 @@ export { default as useUpdateTax } from './cart/useUpdateTax';
 export { default as useCartValidity } from './cart/useCartValidity';
 export { default as useOnCartPersonalInformationComplete } from './cart/useOnCartPersonalInformationComplete';
 export { default as useIsCpqStyleCheckout } from './cart/useIsCpqStyleCheckout';
-export { default as useIsBusinessBuyer } from  './cart/useIsBusinessBuyer';
- 
+export { default as useIsBusinessBuyer } from './cart/useIsBusinessBuyer';
+
 // ALLOCATIONS
 export { default as useGetAllocationDetails } from './allocations/useGetAllocationDetails';
 export { default as useAddAllocations } from './allocations/useAddAllocations';
@@ -65,17 +65,20 @@ export { default as useCreateAllocationMembers } from './allocations/useCreateAl
 export { default as useAcceptAllocation } from './allocations/useAcceptAllocation';
 export { default as useAcceptOilAllocation } from './allocations/useAcceptOilAllocation';
 export { default as useAcceptTermsAndConditions } from './allocations/useAcceptTermsAndConditions';
- 
+
 // CHECKOUT
 export { default as useGetPaymentIntent } from './checkout/useGetPaymentIntent';
 export { default as useConfirmPayment } from './checkout/useConfirmPayment';
 export { default as useHandleStripeReturn } from './checkout/useHandleStripeReturn';
 export { default as useCreateOrderFromCart } from './checkout/useCreateOrderFromCart';
- 
+
 // PREFERENCES
 export { default as useGetAccountData } from './useGetAccountData';
 export { default as useUpdateCommunicationPreferences } from './useUpdateCommunicationPreferences';
- 
+
+// CREDIT HOLD
+export { useCreditHoldMessage } from './useCreditHoldMessage';
+
 // ALGOLIA
 export { default as useGetAlgoliaSitecoreData } from './useGetAlgoliaSitecoreData';
 export { default as useGetAlgoliaSearchData } from './useGetAlgoliaSearchData';

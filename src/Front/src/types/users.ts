@@ -1,9 +1,9 @@
 import { POSTAL_CODES_PATTERNS } from 'constants/postalCodesPatterns';
 import { CUSTOMER_ORDER_REFERENCE_MAX_LENGTH, PO_NUMBER_MAX_LENGTH } from 'constants/checkout';
 import { z } from 'zod';
- 
+
 export const COUNTRIES_REQUIRING_STATES = ['US'];
- 
+
 export const AddressSchema = z
   .object({
     street: z.string().trim().min(1).max(255),
@@ -16,10 +16,10 @@ export const AddressSchema = z
   .superRefine((input, ctx) => {
     const countryCode = input.countryCode?.toUpperCase() as keyof typeof POSTAL_CODES_PATTERNS;
     const postalCode = input.postalCode;
- 
+
     if (countryCode && POSTAL_CODES_PATTERNS[countryCode]) {
       const pattern = POSTAL_CODES_PATTERNS[countryCode];
- 
+
       if (!pattern?.test(postalCode)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -28,7 +28,7 @@ export const AddressSchema = z
         });
       }
     }
- 
+
     const requiresState = COUNTRIES_REQUIRING_STATES.includes(countryCode);
     if (requiresState && !input.stateCode?.trim()) {
       ctx.addIssue({
@@ -38,19 +38,19 @@ export const AddressSchema = z
       });
     }
   });
- 
+
 export const PhotoSchema = z.object({
   base64: z.string().trim().min(1),
 });
- 
+
 export const PoAttachmentSchema = z.object({
   fileName: z.string().trim().min(1),
   base64: z.string().trim().min(1),
 });
- 
+
 export type Address = z.infer<typeof AddressSchema>;
 export type PoAttachment = z.infer<typeof PoAttachmentSchema>;
- 
+
 /**
  * Raises the issue the form fields provider already renders as the standard
  * "{field} is required" message. Conditional requirements live here rather than on
@@ -65,7 +65,7 @@ const addRequiredIssue = (ctx: z.RefinementCtx, path: string) =>
     type: 'string',
     path: [path],
   });
- 
+
 export const PersonalInformationSchema = z
   .object({
     firstName: z.string().trim().min(1).max(40),
@@ -97,34 +97,33 @@ export const PersonalInformationSchema = z
         path: ['agreeTerms'],
       });
     }
- 
+
     if (!input.isBusinessBuyer) {
       return;
     }
- 
+
     if (input.isPoRequired && !input.poNumber?.trim()) {
       addRequiredIssue(ctx, 'poNumber');
     }
- 
+
     if (input.isPoAttachmentRequired && !input.poAttachment?.fileName?.trim()) {
       addRequiredIssue(ctx, 'poAttachment');
     }
- 
+
     if (input.isCourseDeliveryDateRequired && !input.courseDeliveryDate?.trim()) {
       addRequiredIssue(ctx, 'courseDeliveryDate');
     }
   });
- 
+
 export type PersonalInformation = z.infer<typeof PersonalInformationSchema>;
- 
+
 export type UpdateUserPayload = Omit<PersonalInformation, 'agreeTerms' | 'isSameAddress'> & {
   PreferredLanguage?: string;
   /** Salesforce Contact `OtherPhone`, where business buyers' checkout phone edits land. */
   otherPhone?: string;
 };
- 
+
 export type UpdateUserPicturePayload = {
   FileName: string;
   PhotoData: string;
 };
- 

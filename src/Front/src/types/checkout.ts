@@ -1,6 +1,6 @@
 import { Field, ImageField, LinkField, RichTextField } from '@sitecore-jss/sitecore-jss-nextjs';
 import { CHECKOUT_STEPS, PAYMENT_METHODS } from 'constants/index';
- 
+
 export type PaymentIntent = {
   intentPaymentId: string;
   stripeClientSecret: string;
@@ -8,12 +8,12 @@ export type PaymentIntent = {
   braintreeClientSecret?: string;
   branintreePaypalClientId?: string;
 };
- 
+
 export type CheckoutStep = {
   id: CHECKOUT_STEPS.PERSONAL_INFORMATION | CHECKOUT_STEPS.PAYMENT_INFORMATION;
   label: string;
 };
- 
+
 export type StepOneLabels = {
   pageHeadline: string;
   stepTitle: string;
@@ -70,7 +70,7 @@ export type StepOneLabels = {
   courseDeliveryDateLabel?: string;
   courseDeliveryDateTooltip?: string;
 };
- 
+
 export type StepTwoLabels = {
   stepTitle: string;
   stepHeadline: string;
@@ -83,13 +83,13 @@ export type StepTwoLabels = {
   productsNotAvailableModalButtonLabel: string;
   freeOrderLabel: string;
 };
- 
+
 export type ErrorLabels = {
   title: string;
   subTitle: string;
   tryAgainListTitle: string;
 };
- 
+
 export type TaxErrorPopupLabels = {
   heading: Field<string> | null;
   description: Field<string> | null;
@@ -97,7 +97,7 @@ export type TaxErrorPopupLabels = {
   errorMessages: Field<string> | null;
   retryCtaLabel: Field<string> | null;
 };
- 
+
 export type CheckoutFields = {
   bottomNotice: Field<string>;
   confirmPurchaseCta: LinkField;
@@ -108,7 +108,7 @@ export type CheckoutFields = {
   errorLabels: Field<string>;
   tryAgainList: RichTextField;
 };
- 
+
 export type ConfirmPaymentPayload =
   | {
       paymentMethod:
@@ -119,11 +119,11 @@ export type ConfirmPaymentPayload =
         | PAYMENT_METHODS.BLIK;
     }
   | { paymentMethod: PAYMENT_METHODS.PAYPAL; paymentMethodNonce: string };
- 
+
 export type PaymentConfirmationPayload =
   | { intentPaymentId: string; cartID?: string }
   | { paymentMethodNonce: string; cartID?: string };
- 
+
 export type PaymentResponse =
   | { status: 'succeeded'; orderPayload: PaymentConfirmationPayload }
   | { status: 'failed'; orderPayload?: PaymentConfirmationPayload };

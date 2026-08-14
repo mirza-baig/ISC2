@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   useAddToCart,
@@ -7,24 +7,31 @@ import {
   useLoggedUser,
 } from 'hooks/index';
 import { useCart, useLayout, useUserSession } from 'providers/index';
+import { useFeatureFlag } from 'providers/featureFlags';
 import { AddToCartHit } from 'types/index';
 import { CT_BANNED_TIERS } from 'types/pricing';
 import { INNER_PROVIDER_KEY, ProductHit } from 'types/forms';
+import { B2B_FEATURE_FLAG } from 'constants/b2b';
 import { getChannel, getProductSelectorSearchResult } from 'utils/product-form';
 import { isDonationItem } from 'utils/cart';
 
-// const MAX_QUANTITY = 10;
+/**
+ * Ceiling on a URL-supplied quantity (`?cart-sku=SKU_5`). Only ever consulted on the B2B path —
+ * see `isUrlQuantityEnabled` below; a link can't be used to bulk-add for anyone else.
+ */
+const MAX_QUANTITY = 10;
 
-const parseCartSkuParam = (
-  raw: string
-): { sku: string; productSku?: string; quantity: number } | null => {
+type CartSkuEntry = { sku: string; productSku?: string; quantity: number };
+
+const parseCartSkuParam = (raw: string): CartSkuEntry | null => {
   const parts = raw.trim().toUpperCase().split('_');
   if (!parts[0]) return null;
 
   const lastPart = parts[parts.length - 1];
   const lastIsNumber = /^\d+$/.test(lastPart);
-  // const quantity = lastIsNumber ? Math.min(parseInt(lastPart, 10), MAX_QUANTITY) : 1;
-  const quantity = 1;
+  // Parsed unconditionally, APPLIED conditionally: whether this number is honoured or forced back
+  // to 1 is decided at the single point of use (`effectiveQty`), which is where the B2B gate lives.
+  const quantity = lastIsNumber ? Math.min(parseInt(lastPart, 10), MAX_QUANTITY) : 1;
   const skuParts = lastIsNumber ? parts.slice(0, -1) : parts;
 
   if (!skuParts[0]) return null;
@@ -38,15 +45,52 @@ const parseCartSkuParam = (
   return sku && productSku ? { sku, productSku, quantity } : null;
 };
 
-type UseCartPreloadOptions = {
-  openCartOnSuccess?: boolean;
+/**
+ * Reads the `?cart-sku=` entries straight off `window.location`, in URL order, dropping any that
+ * don't parse. Re-read (rather than captured once) on every pass of the pre-fill effect, because
+ * consuming the link clears the params — see `B2BPlpCartPreload`.
+ */
+const readCartSkuEntries = (): CartSkuEntry[] => {
+  if (typeof window === 'undefined') return [];
+  const searchParams = new URLSearchParams(window.location.search);
+  const rawParams: string[] = [];
+  searchParams.forEach((value, key) => {
+    if (key.toLowerCase() === 'cart-sku') rawParams.push(value);
+  });
+  return rawParams.map(parseCartSkuParam).filter((e): e is CartSkuEntry => e !== null);
 };
 
-const useCartPreload = ({ openCartOnSuccess = true }: UseCartPreloadOptions = {}) => {
+type UseCartPreloadOptions = {
+  openCartOnSuccess?: boolean;
+  /**
+   * Called **once**, as soon as the `?cart-sku=` entries read from the URL have been dealt with —
+   * added, skipped because they are already in the cart, or rejected (unknown SKU, out of stock,
+   * banned tier, currency mismatch). Fires on the failure paths too, so a caller can treat it as
+   * "this link has been consumed, whatever the outcome".
+   *
+   * **Opt-in and inert unless passed** — every existing caller is unaffected. It exists because
+   * only this hook knows when the pre-fill has actually finished, while what to *do* about that is
+   * the calling page's business: the B2B PLP uses it to strip the param out of the address bar so
+   * a later reload of a URL that has since collected filter params doesn't re-trigger the link
+   * (see `B2BPlpCartPreload`). Deliberately terminal: a bail-out is settled too, so a link that was
+   * rejected is not re-attempted if the condition that rejected it later changes.
+   */
+  onSettled?: () => void;
+};
+
+const useCartPreload = ({ openCartOnSuccess = true, onSettled }: UseCartPreloadOptions = {}) => {
   const { activeCart, isGettingCart } = useCart();
   const { openMiniCart } = useLayout();
   const { currencyCode, geolocationCountry, userCountry } = useUserSession();
   const { isB2BAdminUser } = useLoggedUser();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
+  /**
+   * **B2B-only and feature-flagged.** A `?cart-sku=SKU_5` link adds 5 for a B2B admin while the
+   * B2B experience is switched on, and **1 for everybody else** — B2C is capped at one unit per
+   * line (QTY-1), so honouring a URL quantity there would be a way around that cap. With the flag
+   * off, every caller (cart page included) behaves exactly as it did before: quantity 1.
+   */
+  const isUrlQuantityEnabled = isB2BFeatureEnabled && isB2BAdminUser;
   const { distributionChannel } = useGetDistributionChannel();
   const { addToCartAsync } = useAddToCart();
   const addedSkusRef = useRef<Set<string>>(new Set());
@@ -54,20 +98,37 @@ const useCartPreload = ({ openCartOnSuccess = true }: UseCartPreloadOptions = {}
   const [isPreloading, setIsPreloading] = useState(false);
   const [hasPreloadWarning, setHasPreloadWarning] = useState(false);
 
-  const urlSkus = useMemo(() => {
-    if (typeof window === 'undefined') return [];
-    const searchParams = new URLSearchParams(window.location.search);
-    const rawParams: string[] = [];
-    searchParams.forEach((value, key) => {
-      if (key.toLowerCase() === 'cart-sku') rawParams.push(value);
-    });
-    return rawParams
-      .map(parseCartSkuParam)
-      .filter((e): e is { sku: string; productSku?: string; quantity: number } => e !== null)
-      .flatMap(({ sku, productSku }) => (productSku ? [sku, productSku] : [sku]));
-  }, []);
+  // Kept in a ref so an inline `onSettled` arrow doesn't have to be a dependency of the effect
+  // below (a fresh identity every render would re-run the whole pre-fill).
+  const onSettledRef = useRef(onSettled);
+  onSettledRef.current = onSettled;
+  const hasSettledRef = useRef(false);
+
+  // Every SKU the link names, variant and parent alike, for the one inventory lookup below.
+  const urlSkus = useMemo(
+    () =>
+      readCartSkuEntries().flatMap(({ sku, productSku }) =>
+        productSku ? [sku, productSku] : [sku]
+      ),
+    []
+  );
 
   const hasCartSkuParam = urlSkus.length > 0;
+
+  /**
+   * Every way this hook can stop working on the URL's entries goes through here: it clears the
+   * loading flag exactly as before and, the first time only, notifies the caller. The once-guard
+   * matters because the effect re-runs on cart changes and would otherwise settle repeatedly, and
+   * a page with no `cart-sku` param never notifies at all — there was no link to consume.
+   */
+  const settle = useCallback(() => {
+    setIsPreloading(false);
+    if (hasSettledRef.current || !hasCartSkuParam) {
+      return;
+    }
+    hasSettledRef.current = true;
+    onSettledRef.current?.();
+  }, [hasCartSkuParam]);
 
   useEffect(() => {
     if (hasCartSkuParam) {
@@ -100,25 +161,18 @@ const useCartPreload = ({ openCartOnSuccess = true }: UseCartPreloadOptions = {}
       return;
     }
 
-    const searchParams = new URLSearchParams(window.location.search);
-    const rawParams: string[] = [];
-    searchParams.forEach((value, key) => {
-      if (key.toLowerCase() === 'cart-sku') rawParams.push(value);
-    });
-    const entries = rawParams
-      .map(parseCartSkuParam)
-      .filter((e): e is { sku: string; productSku?: string; quantity: number } => e !== null);
+    const entries = readCartSkuEntries();
 
     if (!entries.length) {
-      setIsPreloading(false);
+      settle();
       return;
     }
     if (isBannedTier) {
-      setIsPreloading(false);
+      settle();
       return;
     }
     if (!activeCart.computed.isEmpty && activeCart.computed.currencyCode !== currencyCode) {
-      setIsPreloading(false);
+      settle();
       return;
     }
 
@@ -137,7 +191,7 @@ const useCartPreload = ({ openCartOnSuccess = true }: UseCartPreloadOptions = {}
       return !existingCartSkus.has(effectiveSku) && !addedSkusRef.current.has(effectiveSku);
     });
     if (!hasPendingItems) {
-      setIsPreloading(false);
+      settle();
       return;
     }
 
@@ -168,7 +222,7 @@ const useCartPreload = ({ openCartOnSuccess = true }: UseCartPreloadOptions = {}
       });
 
       if (!allowedEntries.length) {
-        setIsPreloading(false);
+        settle();
         return;
       }
 
@@ -204,12 +258,12 @@ const useCartPreload = ({ openCartOnSuccess = true }: UseCartPreloadOptions = {}
       }
 
       if (!inventoryCheckedEntries.length) {
-        setIsPreloading(false);
+        settle();
         return;
       }
 
       let addedAny = false;
-      for (const { sku, productSku /*, quantity*/ } of inventoryCheckedEntries) {
+      for (const { sku, productSku, quantity } of inventoryCheckedEntries) {
         const effectiveCartSku = productSku ?? sku;
         if (existingCartSkus.has(effectiveCartSku)) {
           addedSkusRef.current.add(effectiveCartSku);
@@ -219,8 +273,7 @@ const useCartPreload = ({ openCartOnSuccess = true }: UseCartPreloadOptions = {}
 
         addedSkusRef.current.add(effectiveCartSku);
 
-        // const effectiveQty = isB2BAdminUser ? quantity : 1;
-        const effectiveQty = 1;
+        const effectiveQty = isUrlQuantityEnabled ? quantity : 1;
         const resolvedProductKey = productMap.get(sku)?.productKey ?? productSku;
         const item: AddToCartHit = productSku
           ? { sku: productSku, pickedProducts: [{ sku, productKey: resolvedProductKey! }] }
@@ -257,10 +310,10 @@ const useCartPreload = ({ openCartOnSuccess = true }: UseCartPreloadOptions = {}
         openMiniCart();
       }
 
-      setIsPreloading(false);
+      settle();
     };
 
-    run().catch(() => setIsPreloading(false));
+    run().catch(() => settle());
   }, [
     userCountry,
     isGettingCart,
@@ -271,12 +324,14 @@ const useCartPreload = ({ openCartOnSuccess = true }: UseCartPreloadOptions = {}
     activeCart.computed.currencyCode,
     activeCart.computed.isB2B,
     isB2BAdminUser,
+    isUrlQuantityEnabled,
     addToCartAsync,
     openMiniCart,
     openCartOnSuccess,
     inventoryEntries,
     isGettingInventoryEntries,
     urlSkus,
+    settle,
   ]);
 
   return { isPreloading, hasPreloadWarning };

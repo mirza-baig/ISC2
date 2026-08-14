@@ -8,6 +8,7 @@ import { useSearch } from 'providers/index';
 import { goToTop } from 'utils/goToTop';
 import { useAnalyticsTracking } from 'hooks/index';
 import { ANALYTICS_EVENTS } from 'constants/analytics';
+import { PRODUCT_TYPE_ATTRIBUTE, getProductTypeLabel } from './productTypeLabels';
 
 interface CheckboxFacetProps extends RefinementListProps {
   className?: string;
@@ -30,6 +31,16 @@ export default function CheckboxFacet({
     ...otherProps,
   });
   const { currentTerm, defaultFilters } = useSearch();
+
+  // MAP-1 (first pass): show friendly labels for the B2B PLP's productType facet values.
+  // Display-only — the refinement value/count are untouched; other facets are unaffected.
+  const displayLabel = useCallback(
+    (value: string, fallback: string) =>
+      otherProps.attribute === PRODUCT_TYPE_ATTRIBUTE
+        ? getProductTypeLabel(value, fallback)
+        : fallback,
+    [otherProps.attribute]
+  );
 
   const [isOpen, toggleIsOpen] = useToggle(openByDefault);
   const { track } = useAnalyticsTracking();
@@ -163,7 +174,7 @@ export default function CheckboxFacet({
                 htmlFor={`checkbox-${index}`}
                 className="body-m cursor-pointer pointer-events-none truncate"
               >
-                {item?.label} ({item?.count})
+                {displayLabel(item?.value, item?.label)} ({item?.count})
               </label>
             </button>
           ))}

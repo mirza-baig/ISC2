@@ -15,7 +15,8 @@ import TrainingFinderHit from './SearchHits/TrainingFinderHit';
 import VolunteerSearchHit from './SearchHits/VolunteerSearchHit';
 import SearchInfiniteHits from './SearchHits/SearchInfiniteHits';
 import SearchFacet from './SearchFacets/SearchFacet';
-import NonEditable from 'ui/NonEditable';
+import SearchNonEditableNotice from './SearchNonEditableNotice';
+import { buildDefaultFilterGroups, buildFilterGroup } from './searchFilterGroups';
 
 import { fetchSearchWrapperSettings } from 'providers/algoliaSettings';
 
@@ -165,22 +166,11 @@ const SearchWrapperWithQueryString = ({ fields }: SearchWrapperWithQueryStringPr
 
     Object.entries(algoliaState.refinements).forEach(([attribute, values]) => {
       if (values.length > 0) {
-        const attributeFilters = values.map((value) => `${attribute}:${value}`);
-        filterParts.push(`(${attributeFilters.join(' OR ')})`);
+        filterParts.push(buildFilterGroup(attribute, values));
       }
     });
 
-    if (settings?.defaultFilterKeyValues?.length) {
-      const defaultFilters = settings.defaultFilterKeyValues.map((filter) => {
-        const values = filter.FilterValue.split(',');
-        const mappedValues = values.map((value) => `${filter.FilterKey}:${value}`);
-        return `(${mappedValues.join(' OR ')})`;
-      });
-
-      if (defaultFilters[0] !== '(:)') {
-        filterParts.push(...defaultFilters);
-      }
-    }
+    filterParts.push(...buildDefaultFilterGroups(settings?.defaultFilterKeyValues));
 
     return filterParts.join(' AND ');
   }, [algoliaState.refinements, settings?.defaultFilterKeyValues]);
@@ -222,11 +212,7 @@ const SearchWrapperWithQueryString = ({ fields }: SearchWrapperWithQueryStringPr
   }
 
   if (isEditing) {
-    return (
-      <div className="py-5 pt-40">
-        <NonEditable />
-      </div>
-    );
+    return <SearchNonEditableNotice />;
   }
 
   return (

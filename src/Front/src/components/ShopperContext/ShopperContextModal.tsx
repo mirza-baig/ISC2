@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { useLoggedUser, useSession } from 'hooks/index';
-import {
-  getAuthorizedBuyerAccounts,
-  mapAccountsToShopperOrganizations,
-} from 'lib/authorizedBuyer';
+import { getAuthorizedBuyerAccounts, mapAccountsToShopperOrganizations } from 'lib/authorizedBuyer';
 import { useModal, useShopperContext } from 'providers/index';
+import { useFeatureFlag } from 'providers/featureFlags';
 import type { ShopperOrganization } from 'providers/shopperContext';
 
 import ShopperContextModalContent from './ShopperContextModalContent';
@@ -39,6 +37,7 @@ export default function ShopperContextModal() {
   const { setShopperContext } = useShopperContext();
   const { session, isSessionLoading } = useSession();
   const { isUserLoggedIn, isGettingUser, isB2BAdminUser, externalID } = useLoggedUser();
+  const isB2BFlowEnabled = useFeatureFlag('B2B_Company_Flow');
   const hasOpenedRef = useRef(false);
 
   const dismissModal = useCallback(() => {
@@ -77,6 +76,16 @@ export default function ShopperContextModal() {
     }
 
     if (!isUserLoggedIn || !isB2BAdminUser || !externalID) {
+      return;
+    }
+
+    // Flag off: never prompt, and fail closed to individual shopping the same way the
+    // zero-accounts and error paths do. Checked before the prompted guard so an
+    // organization stored while the flag was on cannot survive it being turned off.
+    if (!isB2BFlowEnabled) {
+      markPromptedForUser(externalID);
+      hasOpenedRef.current = true;
+      setShopperContext({ type: 'myself', organization: null });
       return;
     }
 
@@ -128,6 +137,7 @@ export default function ShopperContextModal() {
     isGettingUser,
     isUserLoggedIn,
     isB2BAdminUser,
+    isB2BFlowEnabled,
     externalID,
     modalContent,
     openModalForOrganizations,

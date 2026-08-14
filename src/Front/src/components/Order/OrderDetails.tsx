@@ -2,13 +2,14 @@ import {
   ComponentRendering,
   Field,
   GetStaticComponentProps,
+  LinkField,
   RichTextField,
   useComponentProps,
   withDatasourceCheck,
 } from '@sitecore-jss/sitecore-jss-nextjs';
 import { useSearchParams } from 'next/navigation';
 
-import { useGetOrder } from 'hooks/index';
+import { useGetOrder, useIsBusinessBuyer } from 'hooks/index';
 import { LoadingIndicator, RichTextUI } from 'ui/index';
 import { CartProvider, LineItemsProvider } from 'providers/index';
 import { AlgoliaSettings } from 'types/index';
@@ -16,6 +17,7 @@ import { SEARCH_SETTINGS_QUERY_FOR_ALGOLIA } from 'queries/index';
 import { getGraphQLResult } from 'utils/index';
 
 import OrderDetailsContent from './OrderDetailsContent';
+import BusinessOrderDetailsContent from './BusinessOrderDetailsContent';
 import { LOCALSTORAGE_KEYS } from 'constants/index';
 import { useMemo } from 'react';
 
@@ -25,6 +27,9 @@ export type OrderDetailsFields = {
   purchaseConfirmationCopy: RichTextField;
   labelsTooltipsAndMore: Field<string>;
   checkoutErrorMessage?: RichTextField | null;
+  /** Dashboard CTA destinations on the business confirmation screen. */
+  orderAllocationUrl?: LinkField;
+  orderHistoryUrl?: LinkField;
 };
 
 interface OrderDetailsProps {
@@ -36,6 +41,10 @@ const OrderDetails = ({ fields, rendering }: OrderDetailsProps): JSX.Element => 
   const algoliaSettings = useComponentProps<AlgoliaSettings>(rendering.uid);
   const searchParams = useSearchParams();
   const redirectStatus = searchParams?.get('redirect_status');
+  // Read outside the CartProvider override below on purpose: the override holds the
+  // ordered cart, while the buyer's B2B admin role and selected organization — what
+  // actually decides the business variant — come from the session and shopper context.
+  const isBusinessBuyer = useIsBusinessBuyer();
 
   const checkoutErrorMessageHtml = useMemo(
     () => fields.checkoutErrorMessage?.value?.trim() ?? '',
@@ -66,7 +75,11 @@ const OrderDetails = ({ fields, rendering }: OrderDetailsProps): JSX.Element => 
     return (
       <CartProvider overrideWithCart={orderCart}>
         <LineItemsProvider algoliaSettings={algoliaSettings}>
-          <OrderDetailsContent fields={fields} rendering={rendering} order={order} />
+          {isBusinessBuyer ? (
+            <BusinessOrderDetailsContent fields={fields} order={order} />
+          ) : (
+            <OrderDetailsContent fields={fields} rendering={rendering} order={order} />
+          )}
         </LineItemsProvider>
       </CartProvider>
     );

@@ -94,4 +94,14 @@ export const CouponErrorLabels: { [key: string]: CouponErrorCode } = {
 export type AddToCartHit = {
   sku: string;
   pickedProducts?: { sku: string; productKey: string }[];
+  /** Per-item quantity. Overrides the payload-level `quantity` in `useAddToCart`, so ONE mutation
+   *  can carry several lines at different quantities (needed by the B2B currency re-price path,
+   *  which must rebuild the whole cart in a single UPDATE_CART). Omit to use the shared quantity. */
+  quantity?: number;
+  /**
+   * B2B opt-in, forwarded to the cart service on a BUNDLE add only. It lets the cart hold the same
+   * bundle more than once (one class, several dates) and makes `quantity` mean seats on that add.
+   * Omitted by every other caller, and omitting it is the pre-existing behaviour.
+   */
+  allowMultiple?: boolean;
 };

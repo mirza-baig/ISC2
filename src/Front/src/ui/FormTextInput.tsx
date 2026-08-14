@@ -1,12 +1,12 @@
 import { FieldValues, useController, UseControllerProps } from 'react-hook-form';
 import { ChangeEvent, KeyboardEventHandler, useCallback } from 'react';
 import clsx from 'clsx';
- 
+
 import { QuestionIcon } from 'icons/index';
 import { useFormFields } from 'providers/index';
- 
+
 import Tooltip from './Tooltip';
- 
+
 export namespace FormTextInput {
   export type Props<T extends FieldValues> = UseControllerProps<T> & {
     type?: HTMLInputElement['type'];
@@ -23,12 +23,12 @@ export namespace FormTextInput {
     showTooltipWhenOptional?: boolean;
   };
 }
- 
+
 const DIGITS = '0123456789';
- 
+
 const STYLES =
   'border disabled:!bg-input-disabled disabled:!opacity-100 disabled:!text-black border-black h-13 rounded-lg w-full text-gray-70 px-3 body-s outline-isc2-green focus:ring-isc2-green focus:border-isc2-green';
- 
+
 export function FormTextInput<T extends FieldValues>({
   type = 'text',
   name,
@@ -43,21 +43,21 @@ export function FormTextInput<T extends FieldValues>({
   showTooltipWhenOptional,
 }: FormTextInput.Props<T>) {
   const { requiredText, getFieldErrorMessage } = useFormFields();
- 
+
   const {
     field: { value, ...rest },
     fieldState: { error },
   } = useController({ control, name });
- 
+
   const onInput: KeyboardEventHandler<HTMLInputElement> = useCallback(
     (evt) => {
       if (evt.code === 'Backspace') {
         return;
       }
- 
+
       if (type === 'number') {
         const isDigit = DIGITS.includes(evt.key);
- 
+
         if (!isDigit) {
           evt.preventDefault();
         }
@@ -65,21 +65,21 @@ export function FormTextInput<T extends FieldValues>({
     },
     [type]
   );
- 
+
   const onFormFieldChange = useCallback(
     (ev: ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
       if (disabled) {
         return;
       }
- 
+
       rest.onChange(ev);
     },
     [rest, disabled]
   );
- 
+
   const errorMessage = getFieldErrorMessage({ field: label, error });
   const showTooltip = Boolean(tooltipText) && (!isOptional || Boolean(showTooltipWhenOptional));
- 
+
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-1">
@@ -105,7 +105,7 @@ export function FormTextInput<T extends FieldValues>({
                 className="w-52 text-center"
               />
             )}
- 
+
             {!isOptional && requiredText}
           </span>
         )}
@@ -128,4 +128,3 @@ export function FormTextInput<T extends FieldValues>({
     </div>
   );
 }
- 

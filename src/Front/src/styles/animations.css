@@ -51,3 +51,28 @@
     filter: blur(0);
   }
 }
+
+/* B2B PLP: quick fade + slide-up entrance for rows as they mount (initial load + infinite-scroll
+   pages), so lazy-loaded items ease into place instead of popping in and feeling jumpy. Only
+   newly-mounted rows animate — existing keyed rows aren't remounted, so they don't replay. */
+@keyframes b2bRowEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.b2b-row-enter {
+  animation: b2bRowEnter 260ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .b2b-row-enter {
+    animation: none;
+  }
+}

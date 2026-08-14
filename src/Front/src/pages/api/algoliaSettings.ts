@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import axios from 'axios';
-import config from 'temp/config';
 import { TRAINING_FINDER_SEARCH_SETTINGS } from 'queries/searchSettings';
+import { handledApiPreamble, postSitecoreGraphQL } from 'utils/sitecoreApiRoute';
 import {
   FetchedSearchWrapperWithQueryStringFields,
   KeyValuePair,
@@ -58,50 +57,14 @@ const parseDefaultFilterKeyValues = (str: string): SearchDefaultFilter[] => {
   return defaultFilters;
 };
 
-const authenticate = (req: NextApiRequest): boolean => {
-  const apiKey = req.headers['x-api-key'];
-  const validApiKey = config.sitecoreApiKey;
-
-  if (typeof apiKey === 'string' && apiKey === validApiKey) {
-    return true;
-  }
-
-  return false;
-};
-
 const algoliaSettings = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader(
-      'Access-Control-Allow-Headers',
-      'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, x-api-key'
-    );
-    res.status(200).end();
-    return;
-  }
-
-  if (req.method !== 'GET') {
-    res.status(405).json({ error: 'Method not allowed' });
-    return;
-  }
-
-  if (!authenticate(req)) {
-    res.status(401).json({ error: 'Unauthorized' });
+  if (handledApiPreamble(req, res)) {
     return;
   }
 
   try {
-    const response = await axios.post<GraphQLSearchWrapperSettingsResponse>(
-      config.graphQLEndpoint,
-      { query: TRAINING_FINDER_SEARCH_SETTINGS },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          sc_apikey: config.sitecoreApiKey,
-        },
-      }
+    const response = await postSitecoreGraphQL<GraphQLSearchWrapperSettingsResponse>(
+      TRAINING_FINDER_SEARCH_SETTINGS
     );
 
     const { data } = response;

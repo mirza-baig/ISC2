@@ -8,6 +8,7 @@ import {
   getVariantAttributes,
   isDonationItem,
   parsePriceFromMoney,
+  sendEngageAddToCartEvents,
 } from 'utils/index';
 import { ANALYTICS_EVENTS, DEFAULT_BRAND, QUERY_KEYS } from 'constants/index';
 import { useAnalyticsTracking } from 'hooks/index';
@@ -33,8 +34,28 @@ const getActions = ({ items, quantity, externalPrice }: AddToCartProps, currency
   items.map((item) => {
     const basePayload = { sku: item.sku, currency };
     const pricePayload = externalPrice ? { externalPrice: { centPrecision: externalPrice } } : {};
+    // A quantity carried on the ITEM wins over the payload-level one, which is shared by every
+    // action in the batch. Without this, a single mutation can only add all of its lines at the
+    // same quantity — see `rebuildCartInSelectedCurrency` in B2BProductLineHitContainer, which has
+    // to re-add a whole B2B cart (mixed quantities) in ONE UPDATE_CART. `ProductHit` has no
+    // `quantity`, so the PDP/donation callers are unaffected and keep using the shared value.
+    const itemQuantity =
+      'quantity' in item && item.quantity !== undefined ? item.quantity : quantity;
+    // A bundle is identified by its picked products rather than a quantity — that has always been
+    // true and stays true for the PDP, which sends neither of the two fields below. The B2B listing
+    // does send them (see `buildAddPayload`): `allowMultiple` opts the cart service in to seats on
+    // a bundle and to holding the same bundle more than once, and `quantity` is then the seat
+    // count. Both are forwarded only when the caller actually set them, so every existing caller
+    // produces byte-for-byte the action it produced before.
     const extraPayload =
-      'pickedProducts' in item ? { pickedProducts: item.pickedProducts } : { quantity };
+      'pickedProducts' in item
+        ? {
+            pickedProducts: item.pickedProducts,
+            ...('allowMultiple' in item && item.allowMultiple
+              ? { allowMultiple: true, quantity: itemQuantity }
+              : {}),
+          }
+        : { quantity: itemQuantity };
 
     return {
       addLineItem: {
@@ -44,62 +65,6 @@ const getActions = ({ items, quantity, externalPrice }: AddToCartProps, currency
       },
     };
   });
-
-const sendEngageAddEvent = (
-  addedLineItems: CartLineItem[],
-  currency: string,
-  engage: {
-    event: (
-      type: string,
-      eventData: Record<string, unknown>,
-      extensionData?: Record<string, unknown>
-    ) => Promise<unknown>;
-  } | null
-) => {
-  if (!engage) {
-    return;
-  }
-
-  if (!addedLineItems || addedLineItems.length === 0) {
-    return;
-  }
-
-  addedLineItems.forEach((lineItem) => {
-    const originalPrice = parsePriceFromMoney(lineItem.price.value, 1) as number;
-    const discountedPrice = lineItem.price.discounted?.value
-      ? (parsePriceFromMoney(lineItem.price.discounted.value, 1) as number)
-      : null;
-
-    const eventData = {
-      channel: 'WEB',
-      currency: currency,
-      pointOfSale: process.env.NEXT_PUBLIC_ENGAGE_TARGET_POS || 'WEB',
-      product: {
-        name: lineItem.name,
-        type: lineItem.productType?.name || 'Product',
-        item_id: lineItem.variant.sku,
-        productId: lineItem.productKey,
-        referenceId: lineItem.productKey,
-        orderedAt: new Date().toISOString(),
-        quantity: lineItem.quantity,
-        price: discountedPrice || originalPrice,
-        originalPrice: originalPrice,
-        currency: currency,
-      },
-    };
-
-    const extensionData = {
-      source: 'useAddToCart',
-      timestamp: new Date().toISOString(),
-    };
-
-    try {
-      engage.event(ANALYTICS_EVENTS.ADD_TO_CART_CDP, eventData, extensionData);
-    } catch (e: unknown) {
-      /* empty */
-    }
-  });
-};
 
 const isCartInvalidError = (error: unknown): boolean => {
   if (!error) return false;
@@ -316,7 +281,9 @@ export default function useAddToCart(callbacks?: MutationCallbacks) {
         .filter((lineItem): lineItem is CartLineItem => lineItem !== undefined);
 
       if (addedLineItems.length > 0) {
-        sendEngageAddEvent(addedLineItems, currencyCode, engage || null);
+        sendEngageAddToCartEvents(addedLineItems, currencyCode, engage || null, {
+          source: 'useAddToCart',
+        });
       }
 
       track({

@@ -85,9 +85,21 @@ export type LineItem = {
 };
 
 export type BundleLineItem = {
+  /**
+   * The OCCURRENCE this row is: a bundle SKU on its own for anything added before multi-occurrence
+   * support (and by any caller that did not opt in), or `<bundleSku>::<pickedSkus>` once it did.
+   * Unique per row either way, which is all the UI needs of it — use `bundleSku` to name the
+   * product.
+   */
   id: string;
+  /**
+   * Which bundle PRODUCT this row is an occurrence of. Not derivable from `id` any more, and a cart
+   * can now hold two rows that share it (the same class bought for two different dates).
+   */
+  bundleSku: string;
   products: LineItem[];
-  quantity: 1;
+  /** Seats. One for every bundle the PDP adds; the B2B listing can sell several at once. */
+  quantity: number;
   productType: {
     id: 'bundle';
     name: 'bundle';
@@ -121,6 +133,12 @@ export type Bundle = {
   originalPrice: TypedMoney;
   skus: string[];
   totalPrice: TypedMoney;
+  /**
+   * Both optional because the cart service only started returning them alongside multi-occurrence
+   * support, and a cart response can be served from a cache written before that.
+   */
+  bundleSku?: string;
+  quantity?: number;
 };
 
 export type CartLineItem = LineItem | BundleLineItem;

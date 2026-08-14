@@ -37,7 +37,7 @@ export default function ShopperContextModalContent({
     return user?.fullName?.trim() || 'there';
   }, [user?.firstName, user?.lastName, user?.fullName]);
 
-  const [selectedType, setSelectedType] = useState<ShoppingContextType>('organization');
+  const [selectedType, setSelectedType] = useState<ShoppingContextType>('myself');
   const [selectedOrganizationId, setSelectedOrganizationId] = useState(organizations[0]?.id ?? '');
 
   const selectedOrganization = useMemo(
@@ -150,21 +150,23 @@ export default function ShopperContextModalContent({
             </div>
           )}
 
-          <div className="flex items-start gap-x-3 rounded-md bg-gray-10 px-4 py-3 text-xs sm:text-sm text-gray-90">
-            <QuestionIcon size={20} className="shrink-0 mt-0.5 text-gray-70" />
-            <p>
-              Missing an organization? Please contact your sales representative or{' '}
-              <a
-                href={DEFAULT_SUPPORT_HREF}
-                className="text-link-blue underline hover:no-underline"
-              >
-                reach out to our support team
-              </a>
-              .
-            </p>
-          </div>
+          {selectedType === 'organization' && (
+            <div className="flex items-start gap-x-3 rounded-md bg-gray-10 px-4 py-3 text-xs sm:text-sm text-gray-90">
+              <QuestionIcon size={20} className="shrink-0 mt-0.5 text-gray-70" />
+              <p>
+                Missing an organization? Please contact your sales representative or{' '}
+                <a
+                  href={DEFAULT_SUPPORT_HREF}
+                  className="text-link-blue underline hover:no-underline"
+                >
+                  reach out to our support team
+                </a>
+                .
+              </p>
+            </div>
+          )}
 
-          <div className="flex justify-end items-center gap-x-6 mt-2">
+          <div className="flex justify-center items-center gap-x-6 mt-2">
             <button
               type="button"
               aria-label="Cancel"

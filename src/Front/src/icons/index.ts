@@ -1,5 +1,6 @@
 export { default as BuildingIcon } from './BuildingIcon';
 export { default as CartIcon } from './CartIcon';
+export { default as ShoppingCartIcon } from './ShoppingCartIcon';
 export { default as CloseIcon } from './CloseIcon';
 export { default as CollapseIndicatorIcon } from './CollapseIndicatorIcon';
 export { default as EnvelopeIcon } from './EnvelopeIcon';

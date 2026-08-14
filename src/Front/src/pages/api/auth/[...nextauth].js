@@ -61,7 +61,10 @@ const extendGuestData = async (profile) => {
 export const authOptions = (req) => ({
   callbacks: {
     async jwt({ token, account, profile, user }) {
-      if (user) {
+      // Keep IdP id_token for federated logout (must survive access-token refresh).
+      if (account?.id_token) {
+        token.idToken = account.id_token;
+      } else if (user?.idToken) {
         token.idToken = user.idToken;
       }
 
@@ -87,8 +90,10 @@ export const authOptions = (req) => ({
       const refreshedToken = await refreshAccessToken(token);
 
       return {
+        ...token,
         ...refreshedToken,
         profile: token.profile,
+        idToken: token.idToken,
       };
     },
     async signIn({ profile }) {
@@ -164,7 +169,8 @@ export const authOptions = (req) => ({
       wellKnown: process.env.SALESFORCE_AUTHURL
         ? process.env.SALESFORCE_AUTHURL + '/.well-known/openid-configuration'
         : '',
-      authorization: { params: { scope: 'openid api refresh_token' } },
+      // Force the IdP login page after logout so Salesforce SSO cannot silently re-auth.
+      authorization: { params: { scope: 'openid api refresh_token', prompt: 'login' } },
       token: process.env.SALESFORCE_AUTHURL
         ? process.env.SALESFORCE_AUTHURL + '/services/oauth2/token'
         : '',

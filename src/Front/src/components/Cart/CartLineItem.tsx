@@ -3,7 +3,7 @@ import clsx from 'clsx';
 
 import { TrashIcon } from 'icons/index';
 import { CartLineItem as TCartLineItem } from 'types/index';
-import { isDonationItem, parsePriceFromMoney } from 'utils/index';
+import { getPriceQuantityFor, isDonationItem, parsePriceFromMoney } from 'utils/index';
 import { useGetAlgoliaSitecoreData, useRemoveFromCart } from 'hooks/index';
 import { useCart, useLineItems, useCartFields } from 'providers/index';
 import { ProductThumbnail } from 'ui/ProductThumbnail';
@@ -70,7 +70,11 @@ export const CartLineItem = ({ lineItem }: CartLineItem.Props) => {
           />
           <LineItemPrice
             strikeThrough={hasDiscounts}
-            value={parsePriceFromMoney(lineItem.nonMemberPrice, lineItem.quantity, false)}
+            value={parsePriceFromMoney(
+              lineItem.nonMemberPrice,
+              getPriceQuantityFor(lineItem),
+              false
+            )}
             currency={activeCart.computed.currencySymbol}
           />
         </>
@@ -80,8 +84,8 @@ export const CartLineItem = ({ lineItem }: CartLineItem.Props) => {
     return (
       <LineItemPrice
         value={parsePriceFromMoney(
-          Boolean(lineItem.nonMemberPrice) ? lineItem.nonMemberPrice : lineItem.price.value,
-          lineItem.quantity,
+          lineItem.nonMemberPrice ? lineItem.nonMemberPrice : lineItem.price.value,
+          getPriceQuantityFor(lineItem),
           false
         )}
         currency={activeCart.computed.currencySymbol}
