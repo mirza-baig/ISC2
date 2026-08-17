@@ -21,6 +21,9 @@ import { formatAnalyticsCouponCodes } from 'utils/analytics';
 import { isPostalCodeRequiredForCountry } from 'utils/cart';
 import BusinessPurchaseInformation from './BusinessPurchaseInformation';
 
+// IMPORTANT ffor the comment below `useConditionalForm` rhf-conditional-logic does not merely skip validation for a field whose condition is
+// false — it deletes the value from the object handed to the submit handler. Every clause
+// below therefore needs the mailing address restored afterwards; see `onFormSubmitted`.
 const FORM_CONDITIONS: FieldConditions<PersonalInformation> = {
   // A business buyer's mailing address mirrors the account's read-only shipping address,
   // so it is never validated: an incomplete account record must not block checkout.
@@ -234,7 +237,10 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
       },
     });
 
-    onCartPersonalInformationComplete(data);
+    onCartPersonalInformationComplete({
+      ...data,
+      mailingAddress: data.mailingAddress ?? getValues('mailingAddress'),
+    });
   };
 
   return (

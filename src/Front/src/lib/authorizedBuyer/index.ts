@@ -22,7 +22,11 @@ export {
   ACCOUNT_TYPE_VARIANT,
   ACCOUNT_UMBRELLA,
 } from './accounts';
-export { getAuthorizedBuyerAccounts, resolveBuyerMockScenario } from './getAuthorizedBuyerAccounts';
+export {
+  BUYER_MOCK_SCENARIO_SESSION_KEY,
+  getAuthorizedBuyerAccounts,
+  resolveBuyerMockScenario,
+} from './getAuthorizedBuyerAccounts';
 export type { GetAuthorizedBuyerAccountsOptions } from './getAuthorizedBuyerAccounts';
 export {
   mapAccountToShopperOrganization,

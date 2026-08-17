@@ -6,6 +6,7 @@ import { Address } from 'types/index';
 import { COURSE_DELIVERY_PRODUCT_TYPES, OTP_ACCOUNT_TYPE, QUERY_KEYS } from 'constants/index';
 import {
   getAuthorizedBuyerAccounts,
+  resolveBuyerMockScenario,
   type AuthorizedBuyerAccount,
   type AuthorizedBuyerResponse,
 } from 'lib/authorizedBuyer';
@@ -50,8 +51,10 @@ export default function useActiveBusinessAccount(): ActiveBusinessAccount {
 
   const selectedAccountId = shopperContext?.organization?.id;
 
+  const mockScenario = resolveBuyerMockScenario();
+
   const { data } = useQuery<AuthorizedBuyerResponse>({
-    queryKey: [QUERY_KEYS.AUTHORIZED_BUYER_ACCOUNTS, externalID],
+    queryKey: [QUERY_KEYS.AUTHORIZED_BUYER_ACCOUNTS, externalID, mockScenario],
     queryFn: () => getAuthorizedBuyerAccounts(externalID!),
     enabled: Boolean(externalID) && Boolean(selectedAccountId),
     refetchOnMount: false,

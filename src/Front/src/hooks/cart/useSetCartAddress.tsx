@@ -31,6 +31,12 @@ export default function useSetCartAddress(callbacks?: MutationCallbacks) {
         throw new Error('Missing cart id while setting cart address');
       }
 
+      // commercetools rejects an address without a country, and it rejects the whole form
+      // Fail before the request rather then submitting.
+      if (!mailingAddress?.countryCode?.trim()) {
+        throw new Error('Missing shipping country while setting cart address');
+      }
+
       const { data } = await api.post<UpdateCartResponse>('', {
         query: 'UPDATE_CART',
         variables: {

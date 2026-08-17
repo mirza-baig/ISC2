@@ -6,6 +6,11 @@ import {
   type BuyerMockScenario,
 } from './types';
 
+export const BUYER_MOCK_SCENARIO_SESSION_KEY = 'buyer-mock-scenario-isc2';
+
+/**
+   logout clears this scenario.
+ */
 const resolveScenarioFromQuery = (): BuyerMockScenario | null => {
   if (typeof window === 'undefined') {
     return null;
@@ -14,7 +19,13 @@ const resolveScenarioFromQuery = (): BuyerMockScenario | null => {
   try {
     const value = new URLSearchParams(window.location.search).get('buyerScenario');
     if (value && isBuyerMockScenario(value)) {
+      sessionStorage.setItem(BUYER_MOCK_SCENARIO_SESSION_KEY, value);
       return value;
+    }
+
+    const stored = sessionStorage.getItem(BUYER_MOCK_SCENARIO_SESSION_KEY);
+    if (stored && isBuyerMockScenario(stored)) {
+      return stored;
     }
   } catch {
     // Ignore malformed URL / non-browser edge cases.
