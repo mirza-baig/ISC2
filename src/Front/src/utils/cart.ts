@@ -16,6 +16,7 @@ import {
   LINE_ITEMS_ATTRIBUTES,
   SUBSCRIPTION_PRODUCT_TYPES,
   CART_ATTRIBUTES,
+  FREE_PRICE,
 } from 'constants/cart';
 import { POSTAL_CODES_PATTERNS } from 'constants/postalCodesPatterns';
 import { useCart } from 'providers/cart';
@@ -192,6 +193,17 @@ export const getVariantAttributes = (
 };
 
 export const isDonationItem = (str = '') => str.toLowerCase().includes(DONATION_NAME);
+
+// Mirrors the totalPrice computed field below, for carts returned by a mutation
+// (recalculate/tax) that have not been through getComputedFieldsFromCart yet.
+export const isCartTotalFree = (cart?: Partial<Cart> | null) => {
+  const totalPriceToUse = cart?.taxedPrice?.totalGross || cart?.totalPrice;
+
+  return (
+    Boolean(totalPriceToUse) &&
+    parsePrice(totalPriceToUse?.centAmount, totalPriceToUse?.fractionDigits) === FREE_PRICE
+  );
+};
 
 export const getComputedFieldsFromCart = (cart: Cart | null, isSuccess: boolean) => {
   const lineItemsSummary = getLineItemsSummary(cart?.lineItems);
