@@ -392,6 +392,7 @@ export type UserRole =
   | USER_ROLES.ASSOCIATE
   | USER_ROLES.REGISTERED
   | USER_ROLES.B2B_ADMIN
+  | USER_ROLES.B2B_AUTHORIZED_BUYER
   | USER_ROLES.GUEST;
 
 export type UserSession = {
@@ -445,6 +446,21 @@ export type BusinessAccountCredit = {
 export type BusinessAccountPrepaid = {
   expirationDate?: string;
   balance?: number;
+};
+
+export type AccountContactRelation = {
+  accountId?: string;
+  accountName?: string;
+  accountOwner?: string;
+  accountOwnerEmail?: string;
+  roles?: string;
+  accountType?: string;
+  currency?: string;
+  taxExempt?: boolean;
+  shippingAddress?: Partial<UserAddress>;
+  purchaseControls?: BusinessAccountPurchaseControls;
+  credit?: BusinessAccountCredit;
+  prepaid?: BusinessAccountPrepaid;
 };
 
 export type BusinessAccount = {

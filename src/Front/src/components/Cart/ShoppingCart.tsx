@@ -6,6 +6,7 @@ import { format, parse } from 'date-fns';
 import { DangerIcon } from 'icons/index';
 import { LoadingIndicator, RichTextUI } from 'ui/index';
 import {
+  useB2BCartAccess,
   useCartValidity,
   useLoggedUser,
   useRecalculateCart,
@@ -22,6 +23,10 @@ import { CartWarningModal } from './CartWarningModal';
 import EmptyCart from './EmptyCart';
 import Donation from './Donation';
 import CartError from './CartError';
+import B2BCartPageBody from '../B2BCart/B2BCartPageBody';
+import B2BCartSummaryActions from '../B2BCart/B2BCartSummaryActions';
+// Private classes held back on this page (B-15):
+// import { useHasB2BCartExtraLines } from '../B2BCart/useB2BCartExtraLines';
 import { ANALYTICS_EVENTS } from 'constants/analytics';
 import { CurrencyCodes } from 'utils/index';
 
@@ -38,12 +43,20 @@ const ShoppingCart = ({ rendering }: ShoppingCartProps) => {
   const { isUserNotLoggedIn, isB2BAdminUser } = useLoggedUser();
   const { cartError } = useCartValidity({ isCheckout: false });
   const { algoliaIndex } = useLineItems();
+  const { showB2BCart, canEditQuantity, isResolvingAccess } = useB2BCartAccess();
+  // Private classes are held back on this page (B-15), so the B2B cart carries only commercetools
+  // lines and this page's empty state is the standard one again. Restore with them:
+  // const hasB2BExtraLines = useHasB2BCartExtraLines();
   const { track } = useAnalyticsTracking();
   const eventTrackedRef = useRef(false);
   const mappedItems = useAnalyticsItems();
   const pendingRecalculationRef = useRef(false);
 
-  const { isPreloading, hasPreloadWarning } = useCartPreload({ openCartOnSuccess: false });
+  const { isPreloading, hasPreloadWarning } = useCartPreload({
+    openCartOnSuccess: false,
+    allowUrlQuantity: canEditQuantity,
+    isUrlQuantityResolving: isResolvingAccess,
+  });
 
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
@@ -152,8 +165,36 @@ const ShoppingCart = ({ rendering }: ShoppingCartProps) => {
     return <CartError />;
   }
 
+  // Untouched by B2B while private classes are held back (B-15). The guard the new cart needed was
+  // `&& !(showB2BCart && hasB2BExtraLines)` — a B2B cart whose only line is one commercetools does
+  // not carry is not an empty cart — and it comes back with them.
   if (activeCart?.computed.isFetchedAndEmpty && !isPreloading) {
     return <EmptyCart />;
+  }
+
+  if (showB2BCart) {
+    return (
+      <B2BCartPageBody
+        title={fields.title.value}
+        isPreloading={isPreloading}
+        summaryCoupon={<B2BCartSummaryActions rendering={rendering} part="coupon" />}
+        summaryFooter={<B2BCartSummaryActions rendering={rendering} part="cta" />}
+        notice={
+          <>
+            {isMounted && isGettingCart && <LoadingIndicator className="self-center" />}
+            {activeCart.computed.hasNotAvailableProducts && (
+              <div className="bg-red-warning bg-opacity-5 border border-red-warning p-5 space-x-2 text-gray-90 body-s flex rounded-lg">
+                <DangerIcon size={20} className="!fill-red-warning" />
+                <span className="flex flex-1">{labels.removeProductsNotAvailableMessage}</span>
+              </div>
+            )}
+          </>
+        }
+      >
+        {activeCart.computed.includesSubscription &&
+          !(activeCart.computed.isB2B || isB2BAdminUser) && <Donation />}
+      </B2BCartPageBody>
+    );
   }
 
   return (

@@ -9,11 +9,13 @@ import {
 import { useCart, useLayout, useUserSession } from 'providers/index';
 import { useFeatureFlag } from 'providers/featureFlags';
 import { AddToCartHit } from 'types/index';
+import type { CartLineItem } from 'types/index';
 import { CT_BANNED_TIERS } from 'types/pricing';
 import { INNER_PROVIDER_KEY, ProductHit } from 'types/forms';
 import { B2B_FEATURE_FLAG } from 'constants/b2b';
 import { getChannel, getProductSelectorSearchResult } from 'utils/product-form';
 import { isDonationItem } from 'utils/cart';
+import useUpdateLineItemQuantity from './useUpdateLineItemQuantity';
 
 /**
  * Ceiling on a URL-supplied quantity (`?cart-sku=SKU_5`). Only ever consulted on the B2B path —
@@ -76,24 +78,49 @@ type UseCartPreloadOptions = {
    * rejected is not re-attempted if the condition that rejected it later changes.
    */
   onSettled?: () => void;
+  allowUrlQuantity?: boolean;
+  isUrlQuantityResolving?: boolean;
 };
 
-const useCartPreload = ({ openCartOnSuccess = true, onSettled }: UseCartPreloadOptions = {}) => {
+const useCartPreload = ({
+  openCartOnSuccess = true,
+  onSettled,
+  allowUrlQuantity = false,
+  isUrlQuantityResolving = false,
+}: UseCartPreloadOptions = {}) => {
   const { activeCart, isGettingCart } = useCart();
   const { openMiniCart } = useLayout();
   const { currencyCode, geolocationCountry, userCountry } = useUserSession();
   const { isB2BAdminUser } = useLoggedUser();
   const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   /**
-   * **B2B-only and feature-flagged.** A `?cart-sku=SKU_5` link adds 5 for a B2B admin while the
-   * B2B experience is switched on, and **1 for everybody else** — B2C is capped at one unit per
-   * line (QTY-1), so honouring a URL quantity there would be a way around that cap. With the flag
-   * off, every caller (cart page included) behaves exactly as it did before: quantity 1.
+   * **B2B-only, feature-flagged, and Authorized Buyers only.** A `?cart-sku=SKU_5` link adds 5 for
+   * a caller that opts in with `allowUrlQuantity` — which every caller feeds from
+   * `useB2BCartAccess().canEditQuantity`, the Authorized Buyer privilege (CART-F) — and **1 for
+   * everybody else**. B2C is capped at one unit per line (QTY-1), so honouring a URL quantity
+   * elsewhere would be a way around that cap, and the requester's rule (2026-08-17) is that the
+   * quantity portion of the link is an Authorized Buyer privilege and nothing else: being a B2B
+   * admin does **not** grant it, which is why `isB2BAdminUser` is not consulted here. The opt-in
+   * also stops at a CPQ/quoted cart: those lines are read-only (CTX-5), so a link must not
+   * bulk-add into one. With the flag off, every caller behaves exactly as it did before:
+   * quantity 1.
+   *
+   * On this path the link is also **authoritative for a SKU already in the cart** — see
+   * `syncExistingLine` in the loop below.
    */
-  const isUrlQuantityEnabled = isB2BFeatureEnabled && isB2BAdminUser;
+  const isUrlQuantityEnabled =
+    isB2BFeatureEnabled && allowUrlQuantity && !activeCart.computed.isB2B;
+  const isUrlQuantityPending = isUrlQuantityResolving && !isUrlQuantityEnabled;
   const { distributionChannel } = useGetDistributionChannel();
   const { addToCartAsync } = useAddToCart();
   const addedSkusRef = useRef<Set<string>>(new Set());
+
+  // Held in a ref, like `onSettled` below: `updateQuantity` is a fresh arrow every render, so as an
+  // effect dependency it would re-run the whole pre-fill on each one. Only ever called on the
+  // Authorized Buyer path (`isUrlQuantityEnabled`), and it refuses a CPQ cart itself (CTX-5).
+  const { updateQuantity } = useUpdateLineItemQuantity();
+  const updateQuantityRef = useRef(updateQuantity);
+  updateQuantityRef.current = updateQuantity;
 
   const [isPreloading, setIsPreloading] = useState(false);
   const [hasPreloadWarning, setHasPreloadWarning] = useState(false);
@@ -160,6 +187,9 @@ const useCartPreload = ({ openCartOnSuccess = true, onSettled }: UseCartPreloadO
     if (urlSkus.length && isGettingInventoryEntries) {
       return;
     }
+    if (hasCartSkuParam && isUrlQuantityPending) {
+      return;
+    }
 
     const entries = readCartSkuEntries();
 
@@ -176,19 +206,34 @@ const useCartPreload = ({ openCartOnSuccess = true, onSettled }: UseCartPreloadO
       return;
     }
 
-    const existingCartSkus = new Set(
-      (activeCart.lineItems ?? []).flatMap((lineItem) => {
-        const skus: string[] = [];
-        if (lineItem.variant?.sku) skus.push(lineItem.variant.sku);
-        if (lineItem.productType?.id === 'bundle' && lineItem.productKey)
-          skus.push(lineItem.productKey);
-        return skus;
-      })
-    );
+    // Keyed the same two ways an entry can name a line — the variant SKU, and a bundle's product
+    // key — so the quantity sync below can reach the line itself, not just know that it exists.
+    // First line wins: a cart may legitimately hold the same bundle SKU twice (a class booked as
+    // two separate occurrences), and a link has no way to say which one it means.
+    const existingCartLines = new Map<string, CartLineItem>();
+    for (const lineItem of activeCart.lineItems ?? []) {
+      const keys: string[] = [];
+      if (lineItem.variant?.sku) keys.push(lineItem.variant.sku);
+      if (lineItem.productType?.id === 'bundle' && lineItem.productKey)
+        keys.push(lineItem.productKey);
+      for (const key of keys) {
+        if (!existingCartLines.has(key)) existingCartLines.set(key, lineItem as CartLineItem);
+      }
+    }
+    const existingCartSkus = new Set(existingCartLines.keys());
 
-    const hasPendingItems = entries.some(({ sku, productSku }) => {
+    const targetQuantityFor = (quantity: number) => (isUrlQuantityEnabled ? quantity : 1);
+
+    const hasPendingItems = entries.some(({ sku, productSku, quantity }) => {
       const effectiveSku = productSku ?? sku;
-      return !existingCartSkus.has(effectiveSku) && !addedSkusRef.current.has(effectiveSku);
+      if (addedSkusRef.current.has(effectiveSku)) return false;
+      const existingLine = existingCartLines.get(effectiveSku);
+      // An entry the cart already has is still pending work on the Authorized Buyer path, because
+      // there the link *sets* the quantity rather than only adding — see `syncExistingLine`.
+      if (existingLine) {
+        return isUrlQuantityEnabled && existingLine.quantity !== targetQuantityFor(quantity);
+      }
+      return true;
     });
     if (!hasPendingItems) {
       settle();
@@ -221,6 +266,25 @@ const useCartPreload = ({ openCartOnSuccess = true, onSettled }: UseCartPreloadO
         return true;
       });
 
+      // A line already in the cart that this run will not reach — its SKU was filtered out just
+      // above (another training provider, a donation for a B2B shopper) or the inventory gate below
+      // rejects it (sold out, or a class whose start date has passed) — is left exactly as it is,
+      // even when the link asks for a different quantity: a decrease is a remove-then-re-add, and
+      // re-adding a SKU commercetools will no longer sell is how a line gets lost. Marked handled so
+      // it stops reading as outstanding work on every later cart change (the effect re-runs on each
+      // one, and the quantity sync means an untouched mismatch would otherwise stay outstanding).
+      const markUnreachableExistingLines = (reachableSkus: Set<string>) => {
+        for (const { sku, productSku } of entries) {
+          const effectiveSku = productSku ?? sku;
+          if (existingCartLines.has(effectiveSku) && !reachableSkus.has(effectiveSku)) {
+            addedSkusRef.current.add(effectiveSku);
+          }
+        }
+      };
+      markUnreachableExistingLines(
+        new Set(allowedEntries.map(({ sku, productSku }) => productSku ?? sku))
+      );
+
       if (!allowedEntries.length) {
         settle();
         return;
@@ -239,6 +303,10 @@ const useCartPreload = ({ openCartOnSuccess = true, onSettled }: UseCartPreloadO
         const effectiveSku = productSku ?? sku;
         return Boolean(inventoryEntries[effectiveSku]);
       });
+
+      markUnreachableExistingLines(
+        new Set(inventoryCheckedEntries.map(({ sku, productSku }) => productSku ?? sku))
+      );
 
       const hasWarning = allowedEntries.some(({ sku, productSku }) => {
         const effectiveSku = productSku ?? sku;
@@ -262,18 +330,49 @@ const useCartPreload = ({ openCartOnSuccess = true, onSettled }: UseCartPreloadO
         return;
       }
 
+      /**
+       * The Authorized Buyer half of the link's quantity rule (2026-08-17): for that shopper the
+       * link is **authoritative**, not additive. A SKU the cart already holds has its line set to
+       * the quantity the link asks for — raised, lowered, or **reduced to 1 when the link carries
+       * no `_QTY` at all** — using the same shared `useUpdateLineItemQuantity` the cart page's
+       * Update button calls, so a decrease goes through the same remove-then-re-add it always has.
+       *
+       * For everyone else the older rule stands unchanged: an already-in-cart SKU is skipped
+       * outright, never topped up and never reduced. That is what keeps B2C's one-unit-per-line cap
+       * (QTY-1) intact and what every non-B2B caller of this hook still sees, since
+       * `isUrlQuantityEnabled` is false for all of them.
+       *
+       * Marked in `addedSkusRef` whether or not the write succeeds: one attempt per SKU per page
+       * life. The effect re-runs on every cart change, so an unmarked failed attempt on a line the
+       * write moved but did not land on target would retry itself indefinitely.
+       */
+      const syncExistingLine = async (existingLine: CartLineItem, targetQty: number) => {
+        if (!isUrlQuantityEnabled || existingLine.quantity === targetQty) return false;
+        try {
+          await updateQuantityRef.current(existingLine, targetQty);
+          return true;
+        } catch (err) {
+          console.error('[useCartPreload] updateQuantity error:', err);
+          return false;
+        }
+      };
+
       let addedAny = false;
       for (const { sku, productSku, quantity } of inventoryCheckedEntries) {
         const effectiveCartSku = productSku ?? sku;
-        if (existingCartSkus.has(effectiveCartSku)) {
+        const effectiveQty = targetQuantityFor(quantity);
+        const existingLine = existingCartLines.get(effectiveCartSku);
+        if (existingLine) {
+          const alreadyHandled = addedSkusRef.current.has(effectiveCartSku);
           addedSkusRef.current.add(effectiveCartSku);
+          if (alreadyHandled) continue;
+          if (await syncExistingLine(existingLine, effectiveQty)) addedAny = true;
           continue;
         }
         if (addedSkusRef.current.has(effectiveCartSku)) continue;
 
         addedSkusRef.current.add(effectiveCartSku);
 
-        const effectiveQty = isUrlQuantityEnabled ? quantity : 1;
         const resolvedProductKey = productMap.get(sku)?.productKey ?? productSku;
         const item: AddToCartHit = productSku
           ? { sku: productSku, pickedProducts: [{ sku, productKey: resolvedProductKey! }] }
@@ -325,6 +424,8 @@ const useCartPreload = ({ openCartOnSuccess = true, onSettled }: UseCartPreloadO
     activeCart.computed.isB2B,
     isB2BAdminUser,
     isUrlQuantityEnabled,
+    isUrlQuantityPending,
+    hasCartSkuParam,
     addToCartAsync,
     openMiniCart,
     openCartOnSuccess,

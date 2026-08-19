@@ -1,52 +1,37 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
-import { QUERY_KEYS } from 'constants/index';
+import { B2B_ROLES } from 'constants/roles';
+import useGetAccountData from '../useGetAccountData';
 
-import useLoggedUser from '../useLoggedUser';
-
-/**
- * Temporary Allocator relationship fetch.
- *
- * The relationship lives in Salesforce and has no endpoint yet, so this resolves to
- * `false` — business buyers land on Order History until the service exists. That is the
- * safe default: Order History is reachable by every business buyer, whereas sending a
- * non-allocator to Allocations would be a dead end.
- *
- * To wire it up, add `pages/api/salesforce/b2b/getAllocatorRelationship.ts` following
- * `getAllocations.ts`, then replace this body with the fetch — the return type stays the
- * same and no caller changes. Mirrors how `lib/authorizedBuyer/getAuthorizedBuyerAccounts`
- * documents its own swap.
- */
-const getHasAllocatorRelationship = async (externalID?: string): Promise<boolean> => {
-  if (!externalID) {
-    throw new Error('Error while fetching allocator relationship: invalid parameters');
-  }
-
-  return false;
-};
+const parseRoles = (rolesString?: string | null): string[] =>
+  rolesString
+    ?.split(';')
+    .map((r) => r.trim())
+    .filter(Boolean) ?? [];
 
 /**
- * Whether the logged-in buyer is an allocator, which decides where the business order
- * confirmation's "Open Dashboard" CTA sends them.
+ * Whether the logged-in buyer is an allocator on any of their B2B accounts, which
+ * decides where the business order confirmation's "Open Dashboard" CTA sends them.
  *
- * Deliberately not derived from `useGetAllocations`: that query is gated on the
- * `isConsentAllocation` flag the buyer sets on the allocations tab, so it reports empty
- * for an allocator who has just checked out and never opened that tab.
+ * Derived from the account data response's `accountContactRelations[].roles` — a
+ * semicolon-delimited Salesforce multi-picklist. The underlying query is prefetched
+ * inside `useLoggedUser` on session hydration, so reading it here is a cache hit and
+ * never triggers its own network request.
+ *
+ * `some()` treats the user as an allocator if any of their relationships grants the
+ * role; narrow to a specific account here if the confirmation ever becomes
+ * order-scoped for multi-account B2B users.
  */
 export default function useHasAllocatorRelationship() {
-  const { externalID } = useLoggedUser();
+  const { data: accountData, isLoading } = useGetAccountData();
 
-  const { data, isLoading } = useQuery<boolean>({
-    queryKey: [QUERY_KEYS.ALLOCATOR_RELATIONSHIP, externalID],
-    queryFn: () => getHasAllocatorRelationship(externalID),
-    enabled: Boolean(externalID),
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    retry: false,
-  });
+  const hasAllocatorRelationship = useMemo(() => {
+    const relations = accountData?.data?.salesforceGetAccountData?.accountContactRelations ?? [];
+    return relations.some((relation) => parseRoles(relation?.roles).includes(B2B_ROLES.ALLOCATOR));
+  }, [accountData]);
 
   return {
-    hasAllocatorRelationship: data ?? false,
+    hasAllocatorRelationship,
     isGettingAllocatorRelationship: isLoading,
   };
 }

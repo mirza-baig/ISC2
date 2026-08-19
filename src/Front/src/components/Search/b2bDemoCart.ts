@@ -1,4 +1,6 @@
-import { useSyncExternalStore } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
+
+import { clampToAtLeastOne } from 'hooks/cart/b2bLineQuantity';
 
 /**
  * TEMPORARY demo-cart store — remove before release (paired with B2BDemoPrivateClassRow).
@@ -11,7 +13,9 @@ import { useSyncExternalStore } from 'react';
  * cart line stay in sync exactly like production.
  *
  * To remove: delete this file, B2BDemoPrivateClassRow.tsx, and their usages in SearchResults,
- * B2BPlpCart, and SearchWrapper (all marked "TEMP"/"demo").
+ * B2BPlpCart, SearchWrapper, B2BCartConnected and B2BCart/useB2BCartExtraLines.ts (all marked
+ * "TEMP"/"demo") — the last of those is what the cart page and the mini cart ask before they decide
+ * a cart is empty, so making it return `false` is enough to put both back on commercetools alone.
  */
 
 export const DEMO_SKU = 'DEMO-CLASSROOM-001';
@@ -27,7 +31,9 @@ interface DemoCartState {
   quantity: number;
 }
 
-let state: DemoCartState = { inCart: false, quantity: 0 };
+const INITIAL_STATE: DemoCartState = { inCart: false, quantity: 0 };
+
+let state: DemoCartState = INITIAL_STATE;
 const listeners = new Set<() => void>();
 
 const emit = () => listeners.forEach((listener) => listener());
@@ -38,22 +44,58 @@ const subscribe = (listener: () => void) => {
   };
 };
 const getSnapshot = () => state;
+const getServerSnapshot = () => INITIAL_STATE;
+
+const STORAGE_KEY = 'b2b-demo-cart';
+let hydrated = false;
+
+const persist = () => {
+  try {
+    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (error) {
+    void error;
+  }
+};
+
+const hydrateFromSession = () => {
+  if (hydrated || typeof window === 'undefined') {
+    return;
+  }
+  hydrated = true;
+  try {
+    const raw = window.sessionStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      return;
+    }
+    const stored = JSON.parse(raw) as Partial<DemoCartState> | null;
+    if (stored?.inCart) {
+      state = { inCart: true, quantity: clampToAtLeastOne(Number(stored.quantity)) };
+      emit();
+    }
+  } catch (error) {
+    void error;
+  }
+};
 
 export const b2bDemoCartActions = {
   add(quantity: number) {
-    state = { inCart: true, quantity: Math.max(1, quantity) };
+    state = { inCart: true, quantity: clampToAtLeastOne(quantity) };
+    persist();
     emit();
   },
   setQuantity(quantity: number) {
-    state = { ...state, quantity: Math.max(1, quantity) };
+    state = { ...state, quantity: clampToAtLeastOne(quantity) };
+    persist();
     emit();
   },
   remove() {
-    state = { inCart: false, quantity: 0 };
+    state = INITIAL_STATE;
+    persist();
     emit();
   },
 };
 
 export function useB2BDemoCart(): DemoCartState {
-  return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  useEffect(hydrateFromSession, []);
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

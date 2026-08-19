@@ -5,7 +5,12 @@ import SalesforceProvider from 'next-auth/providers/salesforce';
 import tokenIntrospection from './tokenIntrospection';
 import refreshAccessToken from './refreshAccessToken';
 
-import { engageServer, getUserFlag, getLoggedInUserSalesforceData } from 'utils/index';
+import {
+  engageServer,
+  getUserFlag,
+  getLoggedInUserSalesforceData,
+  getIsAuthorizedBuyerFromMulesoft,
+} from 'utils/index';
 import encrypt from 'utils/encrypt';
 
 const extendGuestData = async (profile) => {
@@ -53,7 +58,9 @@ const extendGuestData = async (profile) => {
     body: JSON.stringify({
       guestType: 'customer',
       userFlag: getUserFlag(sessionObject),
-      ...profile,
+      email: profile.email,
+      firstName: profile.firstName,
+      lastName: profile.lastName,
     }),
   });
 };
@@ -79,6 +86,11 @@ export const authOptions = (req) => ({
         const { exp } = await tokenIntrospection(token);
         token.accessTokenExpires = exp;
 
+        token.isAuthorizedBuyer = await getIsAuthorizedBuyerFromMulesoft(
+          profile.custom_attributes?.user_id,
+          profile.custom_attributes?.email || profile.custom_attributes?.email_address
+        );
+
         return Promise.resolve(token);
       }
 
@@ -94,6 +106,7 @@ export const authOptions = (req) => ({
         ...refreshedToken,
         profile: token.profile,
         idToken: token.idToken,
+        isAuthorizedBuyer: token.isAuthorizedBuyer,
       };
     },
     async signIn({ profile }) {
@@ -102,10 +115,6 @@ export const authOptions = (req) => ({
           email: profile.email,
           firstName: profile.given_name,
           lastName: profile.family_name,
-          phone: profile.custom_attributes?.primaryPhone,
-          postalCode: profile.custom_attributes?.zipCode,
-          state: profile.custom_attributes?.state,
-          street: profile.custom_attributes?.streetAddress,
           custom_attributes: profile.custom_attributes,
         };
 

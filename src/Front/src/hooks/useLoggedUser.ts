@@ -56,6 +56,30 @@ export default function useLoggedUser() {
     retryOnMount: false,
   });
 
+  /**
+   * Preload the Salesforce account data (includes `accountContactRelations` with B2B
+   * roles) as soon as the session hydrates, so downstream `useGetAccountData()` calls
+   * on any page read from cache instead of firing their own request. Result is
+   * discarded here — consumers pull it via `useGetAccountData()` under the same
+   * query key.
+   */
+  useQuery({
+    queryKey: ['accountData', externalID],
+    queryFn: async () => {
+      const response = await fetch(
+        `/api/salesforce/user/getAccountData?externalID=${externalID}&email=${email}`
+      );
+      if (!response.ok) {
+        throw new Error('Failed to prefetch account data');
+      }
+      return response.json();
+    },
+    enabled: Boolean(externalID) && Boolean(email),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+
   const userPersonalInformation = useMemo(() => getPersonalInformationFromUser(data), [data]);
 
   const sessionStatus: SessionStatus = useMemo(() => {

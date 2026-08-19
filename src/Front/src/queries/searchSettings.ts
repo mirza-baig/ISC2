@@ -303,6 +303,9 @@ export const middlewareApiForLayout = (path: string): string => `
           nonMemberOnly: field(name: "NonMembersOnly") {
             value
           }
+          b2bAccount: field(name: "b2bAccount") {
+            value
+          }
         }
       }
     }

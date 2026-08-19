@@ -13,6 +13,7 @@ interface LayoutFields {
   nonMemberOnly: { value: string };
   b2bAdminOnly: { value: string };
   associateOnly: { value: string };
+  b2bAccount: { value: string };
 }
 
 interface ApiResponse {
@@ -46,6 +47,9 @@ const DEFAULT_RESPONSE: LayoutFields = {
     value: '',
   },
   nonMemberOnly: {
+    value: '',
+  },
+  b2bAccount: {
     value: '',
   },
 };
@@ -136,6 +140,10 @@ class AccessControlPlugin implements MiddlewarePlugin {
       roles.push(USER_ROLES.B2B_ADMIN);
     }
 
+    if (pageFields.b2bAccount?.value === '1') {
+      roles.push(USER_ROLES.B2B_AUTHORIZED_BUYER);
+    }
+
     return roles;
   }
 
@@ -172,6 +180,13 @@ class AccessControlPlugin implements MiddlewarePlugin {
 
     const userFlag = getUserFlag({ user: token.profile } as UserSession);
     const userIsB2BAdmin = getIsUserB2bAdmin({ user: token.profile } as UserSession);
+
+    if (
+      rolesForPage.includes(USER_ROLES.B2B_AUTHORIZED_BUYER) &&
+      Boolean(token.isAuthorizedBuyer)
+    ) {
+      return res;
+    }
 
     if (userIsB2BAdmin) {
       if (!rolesForPage.includes(USER_ROLES.B2B_ADMIN) && !rolesForPage.includes(userFlag)) {

@@ -9,6 +9,17 @@ interface CommunicationPreferences {
   centerForCyber: boolean;
 }
 
+/**
+ * Salesforce B2B account relationship. `roles` is a semicolon-delimited multi-picklist
+ * (e.g. "Allocator;Authorized Buyer") — split on `;` before comparing.
+ */
+export interface AccountContactRelation {
+  accountId?: string;
+  accountName?: string;
+  roles?: string | null;
+  accountType?: string;
+}
+
 interface AccountData {
   data: {
     salesforceGetAccountData: {
@@ -16,6 +27,7 @@ interface AccountData {
       boardElectionEligible?: boolean;
       bodNominationAccess?: boolean;
       PreferredLanguage?: string;
+      accountContactRelations?: AccountContactRelation[];
     };
   };
 }

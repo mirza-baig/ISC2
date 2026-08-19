@@ -1,13 +1,15 @@
 import { useCart } from 'providers/index';
 import { getPickedProductFromBundleLine, isBundleLineItem } from 'utils/index';
 import useAddToCart from './useAddToCart';
+import useChangeLineItemQuantity from './useChangeLineItemQuantity';
 import useRemoveFromCart from './useRemoveFromCart';
 import type { AddToCartHit, CartLineItem, ProductHit as AddToCartProductHit } from 'types/index';
 
 /**
- * B2B PLP "set line-item quantity" (QTY-4 interim). There is no native
- * `changeLineItemQuantity` op in the service layer, so we set a line's quantity using the
- * existing add/remove mechanisms:
+ * B2B "set line-item quantity" (QTY-4 interim). A self-serve cart has no set-quantity path of its
+ * own — the service layer's `changeLineItemQuantity` action skips the bundle and channel transforms
+ * an add goes through — so a self-serve line's quantity is set with the existing add/remove
+ * mechanisms:
  *   - increase → add the delta (single mutation, reuses the working add path)
  *   - decrease → remove the line, then re-add at the target quantity
  *   - zero     → remove the line
@@ -16,15 +18,27 @@ import type { AddToCartHit, CartLineItem, ProductHit as AddToCartProductHit } fr
  * active cart, writing here makes both views reflect the change automatically (no local
  * state to keep in sync).
  *
- * CPQ carts are never modified (CTX-5): if the active cart is a CPQ/B2B cart this is a no-op.
+ * CPQ carts are read-only unless the caller opts in with `allowCpqCart` (CTX-5, narrowed
+ * 2026-08-17): the cart page and the mini cart let an **Authorized Buyer** change a quoted line's
+ * quantity, and nothing else does — the PLP surfaces and `useCartPreload` pass no options and keep
+ * refusing outright. A quote takes the single-action path below rather than the add/remove pair,
+ * and the write still has to be allowed by the service layer (CT-CART-7).
  * B2B-only (the PLP is gated).
  */
-export default function useUpdateLineItemQuantity() {
+export type UpdateLineItemQuantityOptions = {
+  allowCpqCart?: boolean;
+};
+
+export default function useUpdateLineItemQuantity({
+  allowCpqCart = false,
+}: UpdateLineItemQuantityOptions = {}) {
   const { activeCart } = useCart();
   const { addToCartAsync, isAddingToCart } = useAddToCart();
   const { removeFromCartAsync, isRemovingFromCart } = useRemoveFromCart();
+  const { changeLineItemQuantityAsync, isChangingLineItemQuantity } = useChangeLineItemQuantity();
 
-  const isReadOnly = Boolean(activeCart?.computed?.isB2B);
+  const isCpqCart = Boolean(activeCart?.computed?.isB2B);
+  const isReadOnly = isCpqCart && !allowCpqCart;
 
   const updateQuantity = async (lineItem: CartLineItem, targetQty: number): Promise<void> => {
     if (isReadOnly) {
@@ -32,6 +46,11 @@ export default function useUpdateLineItemQuantity() {
     }
     const current = lineItem.quantity;
     if (targetQty === current) {
+      return;
+    }
+
+    if (isCpqCart) {
+      await changeLineItemQuantityAsync({ lineItem, quantity: targetQty });
       return;
     }
 
@@ -88,7 +107,7 @@ export default function useUpdateLineItemQuantity() {
 
   return {
     updateQuantity,
-    isUpdatingQuantity: isAddingToCart || isRemovingFromCart,
+    isUpdatingQuantity: isAddingToCart || isRemovingFromCart || isChangingLineItemQuantity,
     isReadOnly,
   };
 }

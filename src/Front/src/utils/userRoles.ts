@@ -1,5 +1,5 @@
-import { USER_ROLES } from 'constants/index';
-import { UserRole, UserSession } from 'types/index';
+import { ACCOUNT_CONTACT_ROLES, USER_ROLES } from 'constants/index';
+import { AccountContactRelation, UserRole, UserSession } from 'types/index';
 
 export const getUserFlag = (profile?: UserSession | null): UserRole => {
   if (!profile?.user) {
@@ -24,3 +24,11 @@ export const getUserFlag = (profile?: UserSession | null): UserRole => {
 export const getIsUserB2bAdmin = (profile?: UserSession | null): boolean => {
   return profile?.user.custom_attributes?.isB2BAdmin === 'true';
 };
+
+export const hasAccountRole = (
+  relations: AccountContactRelation[] | undefined,
+  role: ACCOUNT_CONTACT_ROLES
+): boolean => Boolean(relations?.some(({ roles }) => (roles || '').toLowerCase().includes(role)));
+
+export const getIsAuthorizedBuyer = (relations?: AccountContactRelation[]): boolean =>
+  hasAccountRole(relations, ACCOUNT_CONTACT_ROLES.AUTHORIZED_BUYER);

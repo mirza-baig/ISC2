@@ -36,6 +36,13 @@ export const BUSINESS_ORDER_CONFIRMATION_DEFAULT_LABELS = {
   printReceiptCtaLabel: 'Print Receipt',
   openDashboardCtaLabel: 'Open Dashboard',
   supportCopy: 'Questions about your order?',
+  /**
+   * Business-only defaults for the support line. Hardcoded so the B2B confirmation
+   * always renders the same "Contact Support" link, independent of what Sitecore
+   * authored in "Labels, Tooltips And More" for the individual variant.
+   */
+  supportLinkLabel: 'Contact Support',
+  supportLinkUrl: 'https://www.isc2.org/contact-us',
 } as const;
 
 /**

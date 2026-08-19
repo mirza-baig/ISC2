@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { setAPIRouteHeaders } from 'utils/index';
+import { fetchAccountDataFromMulesoft, setAPIRouteHeaders } from 'utils/index';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   setAPIRouteHeaders(res, 'GET');
@@ -10,29 +10,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const response = await fetch(
-      `${process.env.SALESFORCE_CLOUDHUB_URL}/v1/user/accountData?externalID=${externalID}&email=${email}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          client_id: process.env.SALESFORCE_CLOUDHUB_ID ?? '',
-          client_secret: process.env.SALESFORCE_CLOUDHUB_SECRET ?? '',
-        },
-      }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok || data?.error) {
-      console.error(
-        'Error while fetching account data',
-        data.error || data.message || data.Description
-      );
-      throw 'Error while fetching account data. See server logs for more information.';
-    }
+    const data = await fetchAccountDataFromMulesoft(String(externalID), String(email));
 
     return res.status(200).send(data || {});
   } catch (error) {
-    return res.status(500).send({ error });
+    console.error('Error while fetching account data', error);
+
+    return res.status(500).send({ error: 'Error while fetching account data.' });
   }
 }

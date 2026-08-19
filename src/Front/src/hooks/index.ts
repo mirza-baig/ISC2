@@ -20,7 +20,6 @@ export { default as useGetCountryFromCoords } from './useGetCountryFromCoords';
 export { default as useGetStandalonePrices } from './prices/useGetStandalonePrices';
 export { default as useGetDistributionChannel } from './prices/useGetDistributionChannel';
 export { default as useGetOrder } from './order/useGetOrder';
-export { default as useDownloadBusinessReceipt } from './order/useDownloadBusinessReceipt';
 export { default as useGetAllCountries } from './configuration/useGetAllCountries';
 export { default as useGetAllStates } from './configuration/useGetAllStates';
 export { default as useUserPicture } from './userPicture/useUserPicture';
@@ -30,6 +29,7 @@ export { default as useGetSubscriptions } from './user/useGetSubscriptions';
 export { default as useGetLearningJourney } from './user/useGetLearningJourney';
 export { default as useActiveBusinessAccount } from './user/useActiveBusinessAccount';
 export { default as useHasAllocatorRelationship } from './user/useHasAllocatorRelationship';
+export { default as useAuthorizedBuyer } from './user/useAuthorizedBuyer';
 export { default as useValidateEnrollmentAccess } from './user/useValidateEnrollmentAccess';
 export { default as useCustomMutation } from './useCustomMutation';
 export { default as useDebounce } from './useDebounce';
@@ -55,6 +55,7 @@ export { default as useCartValidity } from './cart/useCartValidity';
 export { default as useOnCartPersonalInformationComplete } from './cart/useOnCartPersonalInformationComplete';
 export { default as useIsCpqStyleCheckout } from './cart/useIsCpqStyleCheckout';
 export { default as useIsBusinessBuyer } from './cart/useIsBusinessBuyer';
+export { default as useB2BCartAccess } from './cart/useB2BCartAccess';
 
 // ALLOCATIONS
 export { default as useGetAllocationDetails } from './allocations/useGetAllocationDetails';

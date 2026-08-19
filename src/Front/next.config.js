@@ -69,16 +69,18 @@ const nextConfig = {
 
   async redirects() {
     const isPreview = process.env.APPLICATION_ENV === 'preview';
+    const sitecoreEnv = process.env.SITECORE_ENVIRONMENT || jssConfig.sitecoreEnvironment;
+    const isLocal = sitecoreEnv === 'local';
 
     const mediaRedirects = [
       {
         source: '/-/media/:slug*',
-        destination: `${process.env.SITECORE_MEDIA_HOST}/-/media/:slug*`,
+        destination: 'https://media.isc2.org/-/media/:slug*',
         permanent: true,
       },
       {
         source: '/-/jssmedia/:slug*',
-        destination: `${process.env.SITECORE_MEDIA_HOST}/-/media/:slug*`,
+        destination: 'https://media.isc2.org/-/media/:slug*',
         permanent: true,
       },
     ];
@@ -2320,12 +2322,11 @@ const nextConfig = {
       //#endregion
     ];
 
-    return isPreview ? [...mediaRedirects, ...baseRedirects] : baseRedirects;
+    return isPreview && !isLocal ? [...mediaRedirects, ...baseRedirects] : baseRedirects;
   },
 
   async rewrites() {
-    // When in connected mode we want to proxy Sitecore paths off to Sitecore
-    return [
+    const rewrites = [
       // API endpoints
       {
         source: '/sitecore/api/:path*',
@@ -2334,7 +2335,7 @@ const nextConfig = {
       // media items
       {
         source: '/-/:path*',
-        destination: `${jssConfig.sitecoreApiHost}/${jssConfig.sitecoreEnvironment}/:path*`,
+        destination: `${jssConfig.sitecoreApiHost}/-/:path*`,
       },
       // visitor identification
       {
@@ -2352,6 +2353,16 @@ const nextConfig = {
         destination: `${jssConfig.sitecoreApiHost}/sitecore/service/:path*`,
       },
     ];
+
+    const sitecoreEnv = process.env.SITECORE_ENVIRONMENT || jssConfig.sitecoreEnvironment;
+    if (sitecoreEnv === 'local') {
+      rewrites.unshift({
+        source: '/-/jssmedia/:path*',
+        destination: `${jssConfig.sitecoreApiHost}/-/media/:path*`,
+      });
+    }
+
+    return rewrites;
   },
 };
 

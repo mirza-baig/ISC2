@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-import { useCartPreload } from 'hooks/index';
+import { useB2BCartAccess, useCartPreload } from 'hooks/index';
 import { useModal } from 'providers/index';
 import { GenericModal } from 'ui/index';
 
@@ -119,9 +119,18 @@ const B2BPlpCartPreload = ({ onStateChange }: B2BPlpCartPreloadProps): null => {
   }, []);
   useEffect(() => () => clearTimeout(reclearTimerRef.current), []);
 
+  // The `_QTY` part of the link is an Authorized Buyer privilege wherever the link is opened
+  // (2026-08-17), so this surface passes the same two values the cart page does instead of leaning
+  // on the B2B-admin claim the hook used to accept. `isResolvingAccess` holds the pre-fill for the
+  // moment the role takes to resolve — without it the link would be spent at quantity 1 and
+  // `addedSkusRef` would mark the SKU done before the answer arrived.
+  const { canEditQuantity, isResolvingAccess } = useB2BCartAccess();
+
   const { isPreloading, hasPreloadWarning } = useCartPreload({
     openCartOnSuccess: false,
     onSettled: clearCartSkuParams,
+    allowUrlQuantity: canEditQuantity,
+    isUrlQuantityResolving: isResolvingAccess,
   });
   const { setModalContent } = useModal();
   const labels = useB2BCartLabels();

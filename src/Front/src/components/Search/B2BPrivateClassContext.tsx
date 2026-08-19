@@ -6,6 +6,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from 'react';
 import { fetchB2BLabels } from 'providers/b2bLabels';
@@ -85,6 +86,47 @@ const EMPTY_ANSWERS: PrivateClassAnswers = {
   customAddress: EMPTY_CUSTOM_ADDRESS,
 };
 
+type AnswersBySku = Record<string, PrivateClassAnswers>;
+
+const EMPTY_ANSWERS_BY_SKU: AnswersBySku = {};
+
+let answersBySkuStore: AnswersBySku = EMPTY_ANSWERS_BY_SKU;
+const answersListeners = new Set<() => void>();
+
+const emitAnswers = () => answersListeners.forEach((listener) => listener());
+
+const subscribeAnswers = (listener: () => void) => {
+  answersListeners.add(listener);
+  return () => {
+    answersListeners.delete(listener);
+  };
+};
+
+const getAnswersSnapshot = (): AnswersBySku => answersBySkuStore;
+const getAnswersServerSnapshot = (): AnswersBySku => EMPTY_ANSWERS_BY_SKU;
+
+const readAnswers = (store: AnswersBySku, sku: string): PrivateClassAnswers | undefined =>
+  Object.entries(store).find(([key]) => key === sku)?.[1];
+
+const writeAnswers = (sku: string, patch: Partial<PrivateClassAnswers>): void => {
+  answersBySkuStore = {
+    ...answersBySkuStore,
+    [sku]: { ...EMPTY_ANSWERS, ...readAnswers(answersBySkuStore, sku), ...patch },
+  };
+  emitAnswers();
+};
+
+const dropAnswers = (sku: string): void => {
+  if (!(sku in answersBySkuStore)) {
+    return;
+  }
+  answersBySkuStore = Object.entries(answersBySkuStore).reduce<AnswersBySku>(
+    (next, [key, answers]) => (key === sku ? next : { ...next, [key]: answers }),
+    {}
+  );
+  emitAnswers();
+};
+
 const EMPTY_LABEL_GROUPS: B2BLabelGroups = {
   privateClass: {},
   addressModal: {},
@@ -96,7 +138,7 @@ const EMPTY_LABEL_GROUPS: B2BLabelGroups = {
   currencyModal: {},
 };
 
-interface B2BPrivateClassContextValue {
+export interface B2BPrivateClassContextValue {
   /** Sitecore-managed label groups (/Data/B2B Product List Labels), fetched once. Empty until
    *  loaded — the label hooks always fall back to code defaults. */
   labelGroups: B2BLabelGroups;
@@ -132,7 +174,11 @@ export const B2BPrivateClassProvider = ({
    *  is skipped and the nested inventory queue is already inert until a row registers a SKU. */
   enabled?: boolean;
 }): JSX.Element => {
-  const [answersBySku, setAnswersBySku] = useState<Record<string, PrivateClassAnswers>>({});
+  const answersBySku = useSyncExternalStore(
+    subscribeAnswers,
+    getAnswersSnapshot,
+    getAnswersServerSnapshot
+  );
   const [labelGroups, setLabelGroups] = useState<B2BLabelGroups>(EMPTY_LABEL_GROUPS);
   const [locationModalOpen, setLocationModalOpen] = useState(false);
   const [locationModalInitial, setLocationModalInitial] = useState<AddressSelection | null>(null);
@@ -160,27 +206,12 @@ export const B2BPrivateClassProvider = ({
   }, [enabled]);
 
   const getAnswers = useCallback(
-    (sku: string): PrivateClassAnswers => answersBySku[sku] ?? EMPTY_ANSWERS,
+    (sku: string): PrivateClassAnswers => readAnswers(answersBySku, sku) ?? EMPTY_ANSWERS,
     [answersBySku]
   );
 
-  const setAnswers = useCallback((sku: string, patch: Partial<PrivateClassAnswers>) => {
-    setAnswersBySku((prev) => ({
-      ...prev,
-      [sku]: { ...EMPTY_ANSWERS, ...prev[sku], ...patch },
-    }));
-  }, []);
-
-  const clearAnswers = useCallback((sku: string) => {
-    setAnswersBySku((prev) => {
-      if (!(sku in prev)) {
-        return prev;
-      }
-      const next = { ...prev };
-      delete next[sku];
-      return next;
-    });
-  }, []);
+  const setAnswers = writeAnswers;
+  const clearAnswers = dropAnswers;
 
   const openLocationModal = useCallback(
     (initial: AddressSelection, onConfirm: (result: AddressSelection) => void) => {
@@ -308,6 +339,7 @@ export const useB2BCartLabels = () => {
   const c = useLabelGroups().cart;
   return {
     title: c.title || 'Cart',
+    orderSummary: c.orderSummary || 'Order Summary',
     item: c.item || 'Item',
     items: c.items || 'Items',
     subtotal: c.subtotal || 'Subtotal',
@@ -354,6 +386,11 @@ export const useB2BCartLabels = () => {
       c.cpqUnavailableDescription ||
       'This quoted cart is already assigned to another customer, so it cannot be checked out from this account.',
     cpqUnavailableConfirm: c.cpqUnavailableConfirm || 'OK',
+    clearUnavailableHeading: c.clearUnavailableHeading || 'Some items are no longer available',
+    clearUnavailableDescription:
+      c.clearUnavailableDescription ||
+      'One or more items in your cart are sold out. They have to be removed before you can check out.',
+    clearUnavailableConfirm: c.clearUnavailableConfirm || 'Remove and continue',
     // `?cart-sku=` link pre-fill (CART-3): the status line while the link's items are being added,
     // and the notice when some of them couldn't be. The cart page shows its own warning modal from
     // a rendering-datasource field (`cartWarningPopupNotice`), which has no value on the PLP.

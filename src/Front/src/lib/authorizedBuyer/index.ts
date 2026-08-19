@@ -32,3 +32,12 @@ export {
   mapAccountToShopperOrganization,
   mapAccountsToShopperOrganizations,
 } from './mapToShopperOrganization';
+export type { AccountContactRelation } from './accountContactRelations';
+export {
+  AUTHORIZED_BUYER_ROLE,
+  findAuthorizedBuyerRelations,
+  isAuthorizedBuyer,
+  parseRoles,
+  rolesContain,
+  toAccountContactRelations,
+} from './accountContactRelations';
