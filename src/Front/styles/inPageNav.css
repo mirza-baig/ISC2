@@ -1,0 +1,26 @@
+#inPageNav a.page-link {
+  color: #919191;
+  display: inline-block;
+  width: 14rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: small;
+  text-transform: uppercase;
+}
+
+#inPageNav a.bold-link {
+  font-weight: bold;
+  color: #000;
+}
+
+#inPageNav .tray-ico {
+  background-image: radial-gradient(circle, black 2px, transparent 0);
+  background-size: 50% 36.33%;
+  background-repeat: repeat-y;
+  display: inline-block;
+  width: 10px;
+  height: 33%;
+  position: absolute;
+  right: 5%;
+}

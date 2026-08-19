@@ -13,120 +13,20 @@ import { Button } from 'ui/index';
 
 import { ProductsNotAvailableModal } from './ProductsNotAvailableModal';
 import { PaymentMethodSection } from './PaymentMethodSection';
-import { CHECKOUT_STEPS, PAYMENT_METHODS, ANALYTICS_EVENTS } from 'constants/index';
-import { ConfirmPaymentPayload, Cart, CartLineItem, PersonalInformation } from 'types/index';
-import { parsePriceFromMoney, addComputedFieldsToLineItems } from 'utils/index';
+import { CHECKOUT_STEPS, PAYMENT_METHODS } from 'constants/index';
+import { ConfirmPaymentPayload, Cart, PersonalInformation } from 'types/index';
+import {
+  addComputedFieldsToLineItems,
+  sendEngageAddToCartEvents,
+  sendEngageBeginCheckoutEvent,
+} from 'utils/index';
 
-const sendEngageAddToCartForB2B = (
-  cartLineItems: CartLineItem[],
-  currency: string,
-  engage: {
-    event: (
-      type: string,
-      eventData: Record<string, unknown>,
-      extensionData?: Record<string, unknown>
-    ) => Promise<unknown>;
-  } | null
-) => {
-  if (!engage) {
-    return;
-  }
-
-  if (!cartLineItems || cartLineItems.length === 0) {
-    return;
-  }
-
-  cartLineItems.forEach((lineItem) => {
-    const originalPrice = parsePriceFromMoney(lineItem.price.value, 1) as number;
-    const discountedPrice = lineItem.price.discounted?.value
-      ? (parsePriceFromMoney(lineItem.price.discounted.value, 1) as number)
-      : null;
-
-    const eventData = {
-      channel: 'WEB',
-      currency: currency,
-      pointOfSale: process.env.NEXT_PUBLIC_ENGAGE_TARGET_POS || 'WEB',
-      product: {
-        name: lineItem.name,
-        type: lineItem.productType?.name || 'Product',
-        item_id: lineItem.variant.sku,
-        productId: lineItem.productKey,
-        referenceId: lineItem.productKey,
-        orderedAt: new Date().toISOString(),
-        quantity: lineItem.quantity,
-        price: discountedPrice || originalPrice,
-        originalPrice: originalPrice,
-        currency: currency,
-      },
-    };
-
-    const extensionData = {
-      source: 'b2bPaymentConfirmation',
-      userType: 'B2B User',
-      isB2BTransaction: true,
-      timestamp: new Date().toISOString(),
-    };
-
-    try {
-      engage.event(ANALYTICS_EVENTS.ADD_TO_CART_CDP, eventData, extensionData);
-    } catch (e: unknown) {
-      console.error('Error sending B2B add to cart CDP event:', e);
-    }
-  });
-};
-
-const sendEngageBeginCheckoutForB2B = (
-  cartLineItems: CartLineItem[],
-  currency: string,
-  engage: {
-    event: (
-      type: string,
-      eventData: Record<string, unknown>,
-      extensionData?: Record<string, unknown>
-    ) => Promise<unknown>;
-  } | null
-) => {
-  if (!engage) {
-    return;
-  }
-
-  if (!cartLineItems || cartLineItems.length === 0) {
-    return;
-  }
-
-  const totalValue = cartLineItems.reduce((sum, lineItem) => {
-    const originalPrice = parsePriceFromMoney(lineItem.price.value, 1) as number;
-    const discountedPrice = lineItem.price.discounted?.value
-      ? (parsePriceFromMoney(lineItem.price.discounted.value, 1) as number)
-      : null;
-    const itemPrice = discountedPrice || originalPrice;
-    return sum + itemPrice * lineItem.quantity;
-  }, 0);
-
-  const eventData = {
-    channel: 'WEB',
-    currency: currency,
-    pointOfSale: process.env.NEXT_PUBLIC_ENGAGE_TARGET_POS || 'WEB',
-    value: totalValue,
-    product: cartLineItems.map((lineItem) => {
-      return {
-        item_id: lineItem.variant.sku,
-      };
-    }),
-  };
-
-  const extensionData = {
-    source: 'b2bPaymentConfirmation',
+const B2B_ENGAGE_OPTIONS = {
+  source: 'b2bPaymentConfirmation',
+  extensionData: {
     userType: 'B2B User',
     isB2BTransaction: true,
-    timestamp: new Date().toISOString(),
-  };
-
-  try {
-    engage.event(ANALYTICS_EVENTS.BEGIN_CHECKOUT_CDP, eventData, extensionData);
-  } catch (e: unknown) {
-    console.error('Error sending B2B begin checkout CDP event:', e);
-  }
+  },
 };
 
 type Props = {
@@ -178,8 +78,14 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
         const cartWithComputedFields = addComputedFieldsToLineItems(activeCart as Cart);
         const currency = activeCart.computed.currencyCode || 'USD';
 
-        sendEngageAddToCartForB2B(cartWithComputedFields.lineItems, currency, engage);
-        sendEngageBeginCheckoutForB2B(cartWithComputedFields.lineItems, currency, engage);
+        sendEngageAddToCartEvents(cartWithComputedFields.lineItems, currency, engage, {
+          ...B2B_ENGAGE_OPTIONS,
+          errorMessage: 'Error sending B2B add to cart CDP event:',
+        });
+        sendEngageBeginCheckoutEvent(cartWithComputedFields.lineItems, currency, engage, {
+          ...B2B_ENGAGE_OPTIONS,
+          errorMessage: 'Error sending B2B begin checkout CDP event:',
+        });
       }
 
       confirmPayment({ paymentMethod });

@@ -1,7 +1,6 @@
 import { Field, ImageField, Link } from '@sitecore-jss/sitecore-jss-nextjs';
 import clsx from 'clsx';
 import { useCallback, useState } from 'react';
-import { useRouter } from 'next/router';
 import { CloseIcon } from 'icons/index';
 import { parseFieldsFromURLString } from 'utils/index';
 import { LoadingIndicator, UserDataSummary } from 'ui/index';
@@ -33,7 +32,6 @@ export interface HeaderUserMenuProps {
 const LINK_CLASS_NAME = 'body-m block relative py-3 sm:py-0';
 
 export default function HeaderUserMenu({ className, setMenuOpen, fields }: HeaderUserMenuProps) {
-  const router = useRouter();
   const { isUserLoggedIn, isB2BAdminUser } = useLoggedUser();
   const { shopperContext } = useShopperContext();
   const { userRoleMenuLinks, userLinksForRole } = useHeaderNavigation();
@@ -48,8 +46,8 @@ export default function HeaderUserMenu({ className, setMenuOpen, fields }: Heade
     setIsUserSigningOut(true);
     sessionStorage.removeItem(SESSION_STORAGE_KEYS.SESSION_ACTIVE);
     localStorage.removeItem(SESSION_LOCALSTORAGE_KEYS.LAST_ACTIVITY);
-    router.push('/api/auth/federated-sign-out');
-  }, [router]);
+    window.location.assign('/api/auth/federated-sign-out');
+  }, []);
 
   const onChangeBuyerClick = useCallback(() => {
     if (setMenuOpen) {

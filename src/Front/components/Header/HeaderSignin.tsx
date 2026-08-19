@@ -3,6 +3,7 @@ import {
   withDatasourceCheck,
   ComponentRendering,
   RouteData,
+  useSitecoreContext,
 } from '@sitecore-jss/sitecore-jss-nextjs';
 import { ComponentProps } from 'lib/component-props';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -12,13 +13,19 @@ import { signIn } from 'next-auth/react';
 
 import { UserLinksFields, HeaderUserLinks } from 'types/index';
 import { useCart, useHeaderNavigation, useLayout } from 'src/providers';
+import { useFeatureFlag } from 'providers/featureFlags';
 import { useBreakpoint, useDisableScroll, useLoggedUser, useOnEventOutside } from 'hooks/index';
 import { CartIcon, SearchIcon, UserIcon, ChevronDownIcon } from 'icons/index';
 import { useAnalyticsTracking, useScrollDirection, useToggle } from 'hooks/index';
 
 import HeaderUserMenu, { HeaderUserMenuFields } from './HeaderUserMenu';
 import CurrencyDropdown from './HeaderCurrencyDropdown/CurrencyDropdown';
-import { ANALYTICS_EVENTS, USER_ROLES } from 'constants/index';
+import {
+  ANALYTICS_EVENTS,
+  USER_ROLES,
+  B2B_LISTING_TEMPLATE_NAME,
+  B2B_FEATURE_FLAG,
+} from 'constants/index';
 
 interface Fields {
   id: string;
@@ -50,6 +57,14 @@ function HeaderSignin({ fields }: SigninProps): JSX.Element {
 
   const { scrollDirection } = useScrollDirection();
   const { isGettingCart, activeCart } = useCart();
+
+  // The B2B Product Listing Page has its own on-page cart (a docked panel + collapsed floating
+  // bubble, see SearchWrapper/B2BPlpCart) — the header's cart button would be a redundant/
+  // conflicting second entry point there, so it's hidden on that page only.
+  const { sitecoreContext } = useSitecoreContext();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
+  const isB2BListing =
+    isB2BFeatureEnabled && sitecoreContext?.route?.templateName === B2B_LISTING_TEMPLATE_NAME;
 
   const [isMenuOpen, toggleMenu, setMenuOpen] = useToggle(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -222,26 +237,32 @@ function HeaderSignin({ fields }: SigninProps): JSX.Element {
           </span>
 
           {isMounted && (
-            <CurrencyDropdown
-              selectCurrencyText={fields?.props?.selectCurrencyText?.value?.toString()}
-              confirmationEnabled={fields?.props?.enableCurrencyConfirmation?.value}
-            />
+            // id used by the B2B PLP's mobile cart bubble to anchor next to this control
+            // (SearchWrapper.tsx) — safe to keep on every page, only read on the B2B listing page.
+            <div id="header-currency-dropdown">
+              <CurrencyDropdown
+                selectCurrencyText={fields?.props?.selectCurrencyText?.value?.toString()}
+                confirmationEnabled={fields?.props?.enableCurrencyConfirmation?.value}
+              />
+            </div>
           )}
 
-          <button
-            role="button"
-            aria-label="cart"
-            className="text-xs flex relative justify-evenly py-2 !m-0 px-2 disabled:cursor-progress disabled:opacity-35"
-            onClick={onCartIconPress}
-            disabled={!isMounted || isGettingCart}
-          >
-            <CartIcon size={20} />
-            {Boolean(cartSize) && (
-              <span className="text-xs absolute top-5 right-1.5 rounded-full bg-gray-60">
-                {cartSize}
-              </span>
-            )}
-          </button>
+          {!isB2BListing && (
+            <button
+              role="button"
+              aria-label="cart"
+              className="text-xs flex relative justify-evenly py-2 !m-0 px-2 disabled:cursor-progress disabled:opacity-35"
+              onClick={onCartIconPress}
+              disabled={!isMounted || isGettingCart}
+            >
+              <CartIcon size={20} />
+              {Boolean(cartSize) && (
+                <span className="text-xs absolute top-5 right-1.5 rounded-full bg-gray-60">
+                  {cartSize}
+                </span>
+              )}
+            </button>
+          )}
         </div>
       </div>
       {isMenuOpen && (
