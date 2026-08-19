@@ -12,6 +12,82 @@ const algoliaIndex = searchClient.initIndex(algoliaIndexName);
 
 const CACHE_TTL = parseInt(process.env.PRODUCT_SEARCH_CACHE_TTL || '3600', 10);
 
+// Algolia returns every indexed attribute plus a `_highlightResult` block by default, which is how a
+// single product-form search grew to ~1.5MB. These are the only hit fields the product-form
+// experience reads (`ProductHit` in types/forms, plus the `region`/`city`/`state`/`country` location
+// attributes the classroom scaffold filters on). `objectID` always comes back and duplicates `sku`;
+// `isoStart`/`isoEnd` on `ProductHit` are computed client-side, not indexed.
+const PRODUCT_FORM_ATTRIBUTES = [
+  'sku',
+  'productID',
+  'productKey',
+  'title',
+  'parentTitle',
+  'copyName',
+  'description',
+  'productMessage',
+  'productType',
+  'productTypeLabel',
+  'isMasterVariant',
+  'link',
+  'division',
+  'modality',
+  'duration',
+  'trainingProvider',
+  'region',
+  'city',
+  'state',
+  'country',
+  'startDate',
+  'endDate',
+  'startTime',
+  'endTime',
+  'timeZone',
+  'timeZoneIana',
+  'daysOfWeek',
+  'itemsRef',
+  'itemVariantSkuList',
+  'itemProductKeyList',
+  // Indexed on bundle records only, and read off `bundlePdpData` to decide whether the bundle's
+  // items are rendered expanded (ProductFormRadioGroup).
+  'expand',
+  'skuReferencesProduct',
+  'skuReferencesVariant',
+];
+
+// Facet counts seed the form's option lists, so each name here has to match a form field name in
+// scaffolds/forms (`region.key`, `duration.key`, ...). `sku` is also required: the provider reads it
+// off the facet list to build the SKU set for the inventory lookup.
+const PRODUCT_FORM_FACETS = [
+  'sku',
+  'region.key',
+  'country',
+  'state',
+  'city',
+  'duration.key',
+  'trainingProvider.key',
+  'startDate',
+  'endDate',
+];
+
+// Every caller scopes the search to an explicit set of products, so the page size follows that set
+// rather than the index-wide ceiling. The widest product in the index carries ~66 variants, so 100
+// per entity leaves headroom without ever paging back the whole index.
+const MAX_VARIANTS_PER_PRODUCT = 100;
+const MAX_HITS_PER_PAGE = 1000;
+
+const resolveHitsPerPage = ({ productIds, skus, productKeys }: SearchParams): number => {
+  // A sku filter matches at most one record per sku.
+  if (skus?.length) {
+    return skus.length;
+  }
+  const productCount = (productKeys?.length || 0) + (productIds?.length || 0);
+  if (!productCount) {
+    return MAX_HITS_PER_PAGE;
+  }
+  return Math.min(productCount * MAX_VARIANTS_PER_PRODUCT, MAX_HITS_PER_PAGE);
+};
+
 type SearchParams = {
   facets: string[];
   productIds?: string[];
@@ -52,8 +128,12 @@ const getProductSearchResults = async ({
 
   const data: AlgoliaApiResponse = await algoliaIndex.search('', {
     facetFilters,
-    facets: ['*'],
-    hitsPerPage: skus?.length ? skus?.length : 1000,
+    facets: PRODUCT_FORM_FACETS,
+    attributesToRetrieve: PRODUCT_FORM_ATTRIBUTES,
+    // The query is always empty, so highlighting only adds a duplicate copy of the matched
+    // attributes to every hit.
+    attributesToHighlight: [],
+    hitsPerPage: resolveHitsPerPage({ facets, productIds, skus, productKeys }),
   });
 
   const result = {
