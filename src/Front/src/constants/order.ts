@@ -100,5 +100,14 @@ export const BUSINESS_RECEIPT_DEFAULT_LABELS = {
   footerNote: 'ISC2 · Thank you for your business.',
 } as const;
 
+/**
+ * Fallback for the Order History export CTA. Authors override it by adding
+ * `exportExcelCtaLabel` to the Order History item's "Labels And More" field, the same
+ * arrangement the rest of the order history copy already uses.
+ */
+export const ORDER_HISTORY_EXPORT_DEFAULT_LABELS = {
+  exportExcelCtaLabel: 'Export to Excel',
+} as const;
+
 /** Product types that make the in-person class location relevant on the receipt. */
 export const IN_PERSON_MODALITIES = ['in person', 'in-person', 'classroom', 'onsite', 'on-site'];

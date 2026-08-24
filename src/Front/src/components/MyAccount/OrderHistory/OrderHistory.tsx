@@ -4,6 +4,7 @@ import { getShortIsoDate, parseFieldsFromURLString } from 'utils/index';
 import { PrintableOrder, OrderProduct } from 'types/index';
 import useGetAllOrders from 'hooks/order/useGetAllOrders';
 import Order from './Order';
+import OrderHistoryExportButton from './OrderHistoryExportButton';
 import LoadingIndicator from 'ui/LoadingIndicator';
 import { useLoggedUser } from 'hooks/index';
 
@@ -26,6 +27,7 @@ export interface OrderHistoryPageLabels {
   viewMoreCtaLabel: string;
   viewLessCtaLabel: string;
   shippedByLabel: string;
+  exportExcelCtaLabel?: string;
 }
 
 export interface OrderPrintLabels {
@@ -117,7 +119,15 @@ const OrderHistory = ({ fields }: OrderHistoryPageProps) => {
 
   return (
     <section className="flex flex-col gap-5 mt-0!">
-      <h2 className="text-sm-base sm:text-lg">{getOrderLabel(orders && orders.length > 0)}</h2>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <h2 className="text-sm-base sm:text-lg">{getOrderLabel(orders && orders.length > 0)}</h2>
+        {orders && orders.length > 0 && (
+          <OrderHistoryExportButton
+            orders={orders}
+            exportExcelCtaLabel={orderLabels.exportExcelCtaLabel}
+          />
+        )}
+      </div>
       {ordersElements}
     </section>
   );

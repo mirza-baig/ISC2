@@ -65,6 +65,13 @@ export type PrintableOrder = {
   tax: TypedMoney;
   subTotal: TypedMoney;
   origin: string;
+  /**
+   * Business purchase details, collected at checkout step one. Optional because
+   * `salesforceGetOrders` does not return them yet — they are exported as blank columns
+   * until it does.
+   */
+  poNumber?: string;
+  customerOrderReference?: string;
   products: OrderProduct[];
   mailingAddress?: UserAddress;
   billingAddress?: UserAddress;
