@@ -53,6 +53,15 @@ export const parsePrice = (amount: string | number = 0, fractionDigits = 0, simp
     : `${absoluteValue.toFixed(fractionDigits)}`;
 };
 
+/**
+ * "USD 762.38" style — currency code prefix rather than the symbol format elsewhere
+ * (`getCurrencySymbol` in utils/currencies) uses. The business wants this explicit form
+ * kept on quoted/receipted amounts. Lives here rather than utils/currencies so that
+ * file can stay free of the `providers/index` import chain `parsePrice` pulls in.
+ */
+export const formatMoneyWithCurrencyCode = (currencyCode: string, money?: TypedMoney) =>
+  `${currencyCode} ${parsePrice(money?.centAmount, money?.fractionDigits)}`;
+
 export const parsePriceFromMoney = (
   value: TypedMoney | undefined,
   quantity = 1,

@@ -73,6 +73,7 @@ export { default as useGetPaymentIntent } from './checkout/useGetPaymentIntent';
 export { default as useConfirmPayment } from './checkout/useConfirmPayment';
 export { default as useHandleStripeReturn } from './checkout/useHandleStripeReturn';
 export { default as useCreateOrderFromCart } from './checkout/useCreateOrderFromCart';
+export { default as useDownloadQuote } from './checkout/useDownloadQuote';
 
 // PREFERENCES
 export { default as useGetAccountData } from './useGetAccountData';

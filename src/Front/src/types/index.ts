@@ -29,6 +29,7 @@ export * from './cart';
 export * from './profile';
 export * from './order';
 export * from './profile';
+export * from './quote';
 export * from './learningJourney';
 export * from './product';
 export * from './allocations';

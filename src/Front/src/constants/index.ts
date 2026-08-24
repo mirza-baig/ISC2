@@ -8,6 +8,7 @@ export * from './headers';
 export * from './localStorageKeys';
 export * from './order';
 export * from './pdp';
+export * from './quote';
 export * from './queryKeys';
 export * from './roles';
 export * from './urls';

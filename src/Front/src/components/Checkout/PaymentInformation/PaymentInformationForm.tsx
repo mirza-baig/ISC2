@@ -7,15 +7,31 @@ import {
 } from '@paypal/react-paypal-js';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 
-import { useConfirmPayment, useGetPaymentIntent, useRecalculateCart } from 'hooks/index';
-import { useCart, useCheckoutProcess, useModal, usePersonalize } from 'providers/index';
+import {
+  useConfirmPayment,
+  useDownloadQuote,
+  useGetPaymentIntent,
+  useRecalculateCart,
+} from 'hooks/index';
+import {
+  useCart,
+  useCheckoutProcess,
+  useModal,
+  usePersonalize,
+  useShopperContext,
+} from 'providers/index';
 import { Button } from 'ui/index';
+import { DownloadIcon } from 'icons/index';
 
 import { ProductsNotAvailableModal } from './ProductsNotAvailableModal';
 import { PaymentMethodSection } from './PaymentMethodSection';
-import { CHECKOUT_STEPS, PAYMENT_METHODS } from 'constants/index';
+import { CHECKOUT_STEPS, PAYMENT_METHODS, QUOTE_DOCUMENT_DEFAULT_LABELS } from 'constants/index';
 import { ConfirmPaymentPayload, Cart, PersonalInformation } from 'types/index';
-import { addComputedFieldsToLineItems, sendEngageB2BPaymentConfirmationEvents } from 'utils/index';
+import {
+  addComputedFieldsToLineItems,
+  buildQuoteData,
+  sendEngageB2BPaymentConfirmationEvents,
+} from 'utils/index';
 
 type Props = {
   personalInformation?: PersonalInformation;
@@ -33,6 +49,8 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
   const { setModalContent } = useModal();
   const { activeCart, isFreeOrder } = useCart();
   const { engage } = usePersonalize();
+  const { shopperContext } = useShopperContext();
+  const { downloadQuote, isGeneratingQuote } = useDownloadQuote();
 
   const [paymentMethod, setPaymentMethod] = useState<PAYMENT_METHODS>();
   const [isStripeFormComplete, setIsStripeFormComplete] = useState(false);
@@ -128,6 +146,18 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     clearStripeData();
     setPaymentMethod(PAYMENT_METHODS.PAYPAL);
   }, [setHasPaymentError, isConfirmingPayment, clearStripeData]);
+
+  // Built fresh from the live cart on every click, so editing products/quantities and
+  // downloading again always reflects the current cart — nothing to invalidate.
+  const onDownloadQuoteClick = useCallback(() => {
+    const quoteData = buildQuoteData({
+      cart: activeCart,
+      personalInformation,
+      organizationName: shopperContext?.organization?.name || personalInformation?.employer,
+    });
+
+    downloadQuote({ data: quoteData });
+  }, [activeCart, personalInformation, shopperContext, downloadQuote]);
 
   useEffect(() => {
     const paymentElement = elements?.getElement('payment');
@@ -236,6 +266,25 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
         <PaymentMethodSection title="" isActive={false}>
           {stepTwoLabels.freeOrderLabel}
         </PaymentMethodSection>
+      )}
+
+      {/*
+        Quote PDF is not offered for free B2B orders — that path skips Payment
+        Information entirely (see isPaymentStepSkipped in providers/checkoutProcess),
+        and there is no tax/payment context yet to quote against.
+      */}
+      {!isFreeOrder && (
+        <div className="flex justify-end">
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={isGeneratingQuote}
+            isLoading={isGeneratingQuote}
+            onClick={onDownloadQuoteClick}
+            label={QUOTE_DOCUMENT_DEFAULT_LABELS.downloadQuoteCtaLabel}
+            Icon={<DownloadIcon size={15} />}
+          />
+        </div>
       )}
 
       <footer className="flex flex-wrap justify-between max-sm:flex-col-reverse max-sm:gap-y-4">
