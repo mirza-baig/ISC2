@@ -14,7 +14,16 @@ type CachedData = {
   cachedAt: string;
 };
 
-const CACHE_TTL = parseInt(process.env.INSIGHTS_CACHE_TTL || '3600', 10);
+// Cache TTL guard (F4 - Algolia usage): fall back to the 1-hour default when the
+// configured value is missing or implausibly low (e.g. a stray "5"), so a misconfig
+// can't defeat the read cache. Insights articles change rarely; sub-minute caching
+// here is never intended. Set a value >= 60 to override.
+const INSIGHTS_TTL_DEFAULT = 3600;
+const parsedInsightsTtl = parseInt(process.env.INSIGHTS_CACHE_TTL || '', 10);
+const CACHE_TTL =
+  Number.isFinite(parsedInsightsTtl) && parsedInsightsTtl >= 60
+    ? parsedInsightsTtl
+    : INSIGHTS_TTL_DEFAULT;
 
 const getCachedInsights = unstable_cache(
   async (tag: string): Promise<CachedData> => {

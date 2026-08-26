@@ -10,7 +10,16 @@ const algoliaAppId = process.env.ALGOLIA_APP_ID || '';
 const searchClient = algoliasearch(algoliaAppId, algoliaApiKey);
 const algoliaIndex = searchClient.initIndex(algoliaIndexName);
 
-const CACHE_TTL = parseInt(process.env.PRODUCT_SEARCH_CACHE_TTL || '3600', 10);
+// Cache TTL guard (F4 - Algolia usage): fall back to the 1-hour default when the
+// configured value is missing or implausibly low (e.g. a stray "5"), so a misconfig
+// can't defeat the read cache. Product data changes rarely; sub-minute caching here
+// is never intended. Set a value >= 60 to override.
+const PRODUCT_SEARCH_TTL_DEFAULT = 3600;
+const parsedProductSearchTtl = parseInt(process.env.PRODUCT_SEARCH_CACHE_TTL || '', 10);
+const CACHE_TTL =
+  Number.isFinite(parsedProductSearchTtl) && parsedProductSearchTtl >= 60
+    ? parsedProductSearchTtl
+    : PRODUCT_SEARCH_TTL_DEFAULT;
 
 // Algolia returns every indexed attribute plus a `_highlightResult` block by default, which is how a
 // single product-form search grew to ~1.5MB. These are the only hit fields the product-form

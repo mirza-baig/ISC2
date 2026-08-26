@@ -892,10 +892,39 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
           }) as ReturnType<AlgoliaSearchClient['search']>;
         }
 
+        // F4 (Algolia usage): the initial unfiltered "browse everything" query is identical for every
+        // visitor, so serve it from a shared server cache (/api/algolia/browse) instead of firing
+        // browser->Algolia on every page load (and every bot hit). Real searches, filters, sort and
+        // pagination still go live. B2B PLP is excluded (personalized). Any failure falls back to live.
+        // A "browse" = no search term typed. Default filters, facet clicks, and pagination are all
+        // fine to cache because the cache key is the full request (each filter/page combo is its own
+        // entry), and empty-query results are identical for every visitor. Only actual term searches
+        // (query set) stay live. B2B PLP is excluded (personalized).
+        const isBrowse =
+          typeof window !== 'undefined' &&
+          !isB2BListing &&
+          requests.length > 0 &&
+          requests.every(({ params }) => {
+            const q = params?.query;
+            return !q || q.trim() === '';
+          });
+
+        if (isBrowse) {
+          return fetch('/api/algolia/browse', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ requests }),
+          })
+            .then((response) => (response.ok ? response.json() : baseSearchClient.search(...args)))
+            .catch(() => baseSearchClient.search(...args)) as ReturnType<
+            AlgoliaSearchClient['search']
+          >;
+        }
+
         return baseSearchClient.search(...args);
       },
     } as AlgoliaSearchClient;
-  }, [baseSearchClient]);
+  }, [baseSearchClient, isB2BListing]);
 
   const renderSearchHit = useCallback(
     (hit: Hit<SearchResultHit>, index: number, isFeatured: boolean) => {
