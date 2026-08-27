@@ -4,8 +4,14 @@ export type QuoteLineItem = {
   quantity: number;
   /** Undiscounted unit price, pre-formatted for display (e.g. "USD 712.50"). */
   listPrice: string;
-  /** Discounted unit price, present only when the line actually carries a discount. */
-  discountedPrice?: string;
+  /**
+   * Always populated — equal to `listPrice` when the line has no discount, so the
+   * "Your Price" column shows a real price rather than a dash.
+   */
+  discountedPrice: string;
+  /** True only when discountedPrice actually differs from listPrice — governs the
+   *  strikethrough on List Price. */
+  hasDiscount: boolean;
   tax: string;
   subtotal: string;
 };
@@ -45,4 +51,26 @@ export type QuoteDocumentLabels = {
   totalLabel?: string;
   footerNote?: string;
   downloadQuoteCtaLabel?: string;
+  /** Placeholder until Legal supplies the real copy; rendered at the bottom of the PDF. */
+  disclaimerText?: string;
+};
+
+export type QuoteSitecoreFields = {
+  QuoteDocumentTitle?: string;
+  QuoteCreatedDateLabel?: string;
+  QuoteBillToLabel?: string;
+  QuoteShipToLabel?: string;
+  QuoteBuyerNameLabel?: string;
+  QuoteProductColumnLabel?: string;
+  QuoteQuantityColumnLabel?: string;
+  QuoteListPriceColumnLabel?: string;
+  QuoteDiscountedPriceColumnLabel?: string;
+  QuoteTaxColumnLabel?: string;
+  QuoteSubtotalColumnLabel?: string;
+  QuoteSubtotalLabel?: string;
+  QuoteTaxLabel?: string;
+  QuoteTotalLabel?: string;
+  QuoteFooterNote?: string;
+  QuoteDownloadQuoteCtaLabel?: string;
+  QuoteDisclaimerText?: string;
 };

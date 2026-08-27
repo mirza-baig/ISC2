@@ -4,7 +4,9 @@ import {
   LineItem,
   PersonalInformation,
   QuoteDocumentData,
+  QuoteDocumentLabels,
   QuoteLineItem,
+  QuoteSitecoreFields,
   TypedMoney,
 } from 'types/index';
 
@@ -24,7 +26,10 @@ const buildQuoteLineItem = (lineItem: CartLineItem, currencyCode: string): Quote
     name: lineItem.name,
     quantity: lineItem.quantity ?? 1,
     listPrice: formatMoney(currencyCode, listPrice),
-    ...(discounted && { discountedPrice: formatMoney(currencyCode, discounted) }),
+    // Always populated — same as listPrice when there's no discount, so "Your Price"
+    // shows a real number instead of a dash.
+    discountedPrice: formatMoney(currencyCode, discounted ?? listPrice),
+    hasDiscount: Boolean(discounted),
     tax: formatMoney(currencyCode, tax),
     subtotal: formatMoney(currencyCode, total ?? discounted ?? listPrice),
   };
@@ -38,6 +43,28 @@ const flattenLineItems = (lineItems: CartLineItem[]): LineItem[] =>
   lineItems.flatMap((lineItem) =>
     'products' in lineItem ? flattenLineItems(lineItem.products) : [lineItem]
   );
+
+export const mapQuoteLabelsFromSitecoreFields = (
+  fields: QuoteSitecoreFields
+): QuoteDocumentLabels => ({
+  documentTitle: fields.QuoteDocumentTitle,
+  createdDateLabel: fields.QuoteCreatedDateLabel,
+  billToLabel: fields.QuoteBillToLabel,
+  shipToLabel: fields.QuoteShipToLabel,
+  buyerNameLabel: fields.QuoteBuyerNameLabel,
+  productColumnLabel: fields.QuoteProductColumnLabel,
+  quantityColumnLabel: fields.QuoteQuantityColumnLabel,
+  listPriceColumnLabel: fields.QuoteListPriceColumnLabel,
+  discountedPriceColumnLabel: fields.QuoteDiscountedPriceColumnLabel,
+  taxColumnLabel: fields.QuoteTaxColumnLabel,
+  subtotalColumnLabel: fields.QuoteSubtotalColumnLabel,
+  subtotalLabel: fields.QuoteSubtotalLabel,
+  taxLabel: fields.QuoteTaxLabel,
+  totalLabel: fields.QuoteTotalLabel,
+  footerNote: fields.QuoteFooterNote,
+  downloadQuoteCtaLabel: fields.QuoteDownloadQuoteCtaLabel,
+  disclaimerText: fields.QuoteDisclaimerText,
+});
 
 const addressLines = (address?: PersonalInformation['billingAddress']): string[] =>
   [

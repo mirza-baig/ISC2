@@ -9,6 +9,7 @@ import {
   CheckoutFields,
   CheckoutStep,
   ErrorLabels,
+  QuoteDocumentLabels,
   ServiceLayerError,
   StepOneLabels,
   StepTwoLabels,
@@ -21,6 +22,8 @@ type CheckoutContextProps = {
   checkoutSteps: CheckoutStep[];
   stepOneLabels: StepOneLabels;
   stepTwoLabels: StepTwoLabels;
+  quoteLabels: QuoteDocumentLabels;
+  setQuoteLabels: Dispatch<SetStateAction<QuoteDocumentLabels>>;
   errorLabels: ErrorLabels;
   activeStep: CheckoutStep['id'];
   setActiveStep: Dispatch<SetStateAction<CheckoutStep['id']>>;
@@ -39,6 +42,8 @@ const CheckoutProcessContext = createContext<CheckoutContextProps>({
   checkoutSteps: [],
   stepOneLabels: {} as StepOneLabels,
   stepTwoLabels: {} as StepTwoLabels,
+  quoteLabels: {} as QuoteDocumentLabels,
+  setQuoteLabels: () => {},
   errorLabels: {} as ErrorLabels,
   activeStep: CHECKOUT_STEPS.PERSONAL_INFORMATION,
   setActiveStep: () => {},
@@ -81,6 +86,11 @@ const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ field
     () => parseFieldsFromURLString<StepTwoLabels>(fields.stepTwoLabelsTooltipsAndMore),
     [fields.stepTwoLabelsTooltipsAndMore]
   );
+
+  // Not derived from this component's own `fields` — the Quote* keys are authored onto
+  // OrderSummary's sectionHeadingAndLabels field instead (a separately-placed sibling
+  // component), which pushes them here via setQuoteLabels once it parses them.
+  const [quoteLabels, setQuoteLabels] = useState<QuoteDocumentLabels>({});
 
   const errorLabels = useMemo(
     () => parseFieldsFromURLString<ErrorLabels>(fields.errorLabels),
@@ -127,6 +137,8 @@ const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ field
         setActiveStep,
         stepOneLabels,
         stepTwoLabels,
+        quoteLabels,
+        setQuoteLabels,
         errorLabels,
         errorState,
         setErrorState,

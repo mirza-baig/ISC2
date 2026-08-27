@@ -23,11 +23,21 @@ const styles = StyleSheet.create({
     lineHeight: 1.5,
   },
 
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  titleBlock: { alignItems: 'flex-end' },
-  title: { fontSize: 20, color: COLORS.ink },
-  /** Spans the title because the block shrinks to its content. */
-  titleRule: { width: '100%', height: 2, backgroundColor: COLORS.green, marginTop: 6 },
+  /** Logo centered on top, title stacked underneath it — a title reads more like a
+   *  document heading here than tucked in the top-right corner next to the logo. */
+  header: { alignItems: 'center' },
+  title: { fontSize: 20, color: COLORS.ink, marginTop: 14, textAlign: 'center' },
+  titleRule: { width: 160, height: 2, backgroundColor: COLORS.green, marginTop: 6 },
+
+  disclaimer: {
+    marginTop: 24,
+    padding: 8,
+    backgroundColor: '#F4F6F4',
+    borderLeftWidth: 2,
+    borderLeftColor: COLORS.green,
+    fontSize: 7.5,
+    color: COLORS.muted,
+  },
 
   metaRow: { flexDirection: 'row', marginTop: 18 },
   metaCell: { flex: 1, paddingRight: 12 },
@@ -129,11 +139,9 @@ export const QuoteDocument = ({ data, labels }: QuoteDocumentProps) => {
     <Document title={label('documentTitle')} author="ISC2" subject={label('documentTitle')}>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          <Isc2LogoPdf width={96} />
-          <View style={styles.titleBlock}>
-            <Text style={styles.title}>{label('documentTitle')}</Text>
-            <View style={styles.titleRule} />
-          </View>
+          <Isc2LogoPdf width={110} />
+          <Text style={styles.title}>{label('documentTitle')}</Text>
+          <View style={styles.titleRule} />
         </View>
 
         <View style={styles.metaRow}>
@@ -179,10 +187,10 @@ export const QuoteDocument = ({ data, labels }: QuoteDocumentProps) => {
             <View key={`${lineItem.name}-${index}`} style={styles.tableRow} wrap={false}>
               <Text style={[styles.productName, styles.colProduct]}>{lineItem.name}</Text>
               <Text style={styles.colQty}>{lineItem.quantity}</Text>
-              <Text style={[styles.colMoney, ...(lineItem.discountedPrice ? [styles.strike] : [])]}>
+              <Text style={[styles.colMoney, ...(lineItem.hasDiscount ? [styles.strike] : [])]}>
                 {lineItem.listPrice}
               </Text>
-              <Text style={styles.colMoney}>{lineItem.discountedPrice || '—'}</Text>
+              <Text style={styles.colMoney}>{lineItem.discountedPrice}</Text>
               <Text style={styles.colMoney}>{lineItem.tax}</Text>
               <Text style={styles.colMoney}>{lineItem.subtotal}</Text>
             </View>
@@ -203,6 +211,10 @@ export const QuoteDocument = ({ data, labels }: QuoteDocumentProps) => {
             <Text style={styles.grandTotalValue}>{data.total}</Text>
           </View>
         </View>
+
+        {Boolean(label('disclaimerText')) && (
+          <Text style={styles.disclaimer}>{label('disclaimerText')}</Text>
+        )}
 
         <View style={styles.footer} fixed>
           <Text>{label('footerNote')}</Text>

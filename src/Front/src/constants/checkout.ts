@@ -12,6 +12,14 @@ export enum CHECKOUT_STEPS {
   PAYMENT_INFORMATION = 'payment-information',
 }
 
+/**
+ * DOM id OrderSummary renders on the Payment Information step, and
+ * PaymentInformationForm portals its Download Quote / Confirm Purchase buttons into —
+ * putting them under the order summary box like the prototype, without lifting that
+ * form's state into the (separately placed, Sitecore-composed) OrderSummary component.
+ */
+export const CHECKOUT_STEP_TWO_ACTIONS_ANCHOR_ID = 'checkout-step-two-actions';
+
 export const PO_NUMBER_MAX_LENGTH = 30;
 
 export const CUSTOMER_ORDER_REFERENCE_MAX_LENGTH = 75;
