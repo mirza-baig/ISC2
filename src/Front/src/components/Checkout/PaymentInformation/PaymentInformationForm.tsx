@@ -6,29 +6,44 @@ import {
   OnApproveBraintreeData,
 } from '@paypal/react-paypal-js';
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import {
   useBusinessPaymentEligibility,
   useConfirmPayment,
+  useDownloadQuote,
   useEnsureBusinessCartTax,
   useGetPaymentIntent,
   useIsBusinessBuyer,
   useRecalculateCart,
 } from 'hooks/index';
-import { useCart, useCheckoutProcess, useModal, usePersonalize } from 'providers/index';
+import {
+  useCart,
+  useCheckoutProcess,
+  useModal,
+  usePersonalize,
+  useShopperContext,
+} from 'providers/index';
 import { Button } from 'ui/index';
+import { DownloadIcon } from 'icons/index';
 
 import { ProductsNotAvailableModal } from './ProductsNotAvailableModal';
 import { PaymentMethodSection } from './PaymentMethodSection';
 import {
   BUSINESS_PAYMENT_METHODS,
   BUSINESS_STEP_TWO_DEFAULT_LABELS,
+  CHECKOUT_STEP_TWO_ACTIONS_ANCHOR_ID,
   CHECKOUT_STEPS,
   isBusinessAccountPaymentMethod,
   PAYMENT_METHODS,
+  QUOTE_DOCUMENT_DEFAULT_LABELS,
 } from 'constants/index';
 import { ConfirmPaymentPayload, Cart, PersonalInformation, StepTwoLabels } from 'types/index';
-import { addComputedFieldsToLineItems, sendEngageB2BPaymentConfirmationEvents } from 'utils/index';
+import {
+  addComputedFieldsToLineItems,
+  buildQuoteData,
+  sendEngageB2BPaymentConfirmationEvents,
+} from 'utils/index';
 
 const SHOW_BUSINESS_PAYMENT_TEST_DETAILS = true;
 
@@ -69,18 +84,31 @@ type Props = {
 
 type CheckoutPaymentMethod = PAYMENT_METHODS | BUSINESS_PAYMENT_METHODS;
 
+/** Associates the portaled Confirm Purchase button with this form via the HTML `form`
+ *  attribute — a `type="submit"` button only submits its nearest DOM-ancestor form, and
+ *  a portal moves it out of that ancestry, so this is required, not just tidy. */
+const PAYMENT_FORM_ID = 'payment-information-form';
+
 export default function PaymentInformationForm({ personalInformation }: Props) {
   const elements = useElements();
 
   const { isPaypalInfoIncomplete, isStripeInfoIncomplete, isGettingPaymentIntent } =
     useGetPaymentIntent();
   const { confirmPayment, isConfirmingPayment } = useConfirmPayment();
-  const { stepTwoLabels, fields, setActiveStep, setHasPaymentError, hasInventoryError } =
-    useCheckoutProcess();
+  const {
+    stepTwoLabels,
+    quoteLabels,
+    fields,
+    setActiveStep,
+    setHasPaymentError,
+    hasInventoryError,
+  } = useCheckoutProcess();
   const { isRecalculating } = useRecalculateCart();
   const { setModalContent } = useModal();
   const { activeCart, isFreeOrder } = useCart();
   const { engage } = usePersonalize();
+  const { shopperContext } = useShopperContext();
+  const { downloadQuote, isGeneratingQuote } = useDownloadQuote();
   const isBusinessBuyer = useIsBusinessBuyer();
   const { ensureTaxedCart, hasTaxedTotal, isEnsuringTax } = useEnsureBusinessCartTax();
   const {
@@ -98,6 +126,32 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
   const [isStripeFormComplete, setIsStripeFormComplete] = useState(false);
   const [isOrderSubmitted, setIsOrderSubmitted] = useState<boolean>(false);
   const [staleBusinessPaymentMessage, setStaleBusinessPaymentMessage] = useState<string>();
+  const [actionsAnchor, setActionsAnchor] = useState<HTMLElement | null>(null);
+
+  // OrderSummary (a separately-placed, Sitecore-composed component) renders the anchor
+  // this portals into. It can still be showing its own loading state on first render, so
+  // this watches for the anchor to appear rather than assuming one effect pass finds it.
+  useEffect(() => {
+    const existing = document.getElementById(CHECKOUT_STEP_TWO_ACTIONS_ANCHOR_ID);
+
+    if (existing) {
+      setActionsAnchor(existing);
+      return;
+    }
+
+    const observer = new MutationObserver(() => {
+      const anchor = document.getElementById(CHECKOUT_STEP_TWO_ACTIONS_ANCHOR_ID);
+
+      if (anchor) {
+        setActionsAnchor(anchor);
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, []);
 
   const copy = businessPaymentCopy(stepTwoLabels);
 
@@ -288,6 +342,18 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     setPaymentMethod(PAYMENT_METHODS.PAYPAL);
   }, [setHasPaymentError, isConfirmingPayment, clearStripeData]);
 
+  // Built fresh from the live cart on every click, so editing products/quantities and
+  // downloading again always reflects the current cart — nothing to invalidate.
+  const onDownloadQuoteClick = useCallback(() => {
+    const quoteData = buildQuoteData({
+      cart: activeCart,
+      personalInformation,
+      organizationName: shopperContext?.organization?.name || personalInformation?.employer,
+    });
+
+    downloadQuote({ data: quoteData, labels: quoteLabels });
+  }, [activeCart, personalInformation, shopperContext, downloadQuote, quoteLabels]);
+
   const onFormSubmit = isFreeOrder
     ? onFreeOrderFormSubmit
     : isBusinessMethodSelected
@@ -425,7 +491,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
   );
 
   return (
-    <form className="w-full space-y-5" onSubmit={onFormSubmit}>
+    <form id={PAYMENT_FORM_ID} className="w-full space-y-5" onSubmit={onFormSubmit}>
       <label className="headline-s">{stepTwoLabels.stepTitle}</label>
 
       {staleBusinessPaymentMessage && (
@@ -556,21 +622,57 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
           onClick={onGoBackButtonClick}
           label={stepTwoLabels.previousStepCtaLabel}
         />
-
-        {paymentMethod !== PAYMENT_METHODS.PAYPAL && (
-          <Button
-            type="submit"
-            variant="primary"
-            disabled={
-              isBusy || (!isBusinessMethodSelected && !isFreeOrder && isGettingPaymentIntent)
-            }
-            isLoading={
-              isBusy || (!isBusinessMethodSelected && !isFreeOrder && isGettingPaymentIntent)
-            }
-            label={fields.confirmPurchaseCta.value.text!}
-          />
-        )}
       </footer>
+
+      {/*
+        Download Quote / Confirm Purchase render under the order summary box, per the
+        prototype, via a portal into the anchor OrderSummary renders on this step — see
+        PAYMENT_FORM_ID above for why Confirm Purchase still works once moved out of
+        this form's DOM subtree. Both stay full-width so they read as the same length
+        stacked, matching CartButtons' primary/secondary pairing on the Cart page.
+      */}
+      {actionsAnchor &&
+        createPortal(
+          <>
+            {/*
+              Not offered for free B2B orders — that path skips Payment Information
+              entirely (see isPaymentStepSkipped in providers/checkoutProcess), and
+              there is no tax/payment context yet to quote against.
+            */}
+            {!isFreeOrder && (
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={isGeneratingQuote}
+                isLoading={isGeneratingQuote}
+                onClick={onDownloadQuoteClick}
+                label={
+                  quoteLabels.downloadQuoteCtaLabel ||
+                  QUOTE_DOCUMENT_DEFAULT_LABELS.downloadQuoteCtaLabel
+                }
+                Icon={<DownloadIcon size={15} />}
+                className="w-full justify-center"
+              />
+            )}
+
+            {paymentMethod !== PAYMENT_METHODS.PAYPAL && (
+              <Button
+                type="submit"
+                form={PAYMENT_FORM_ID}
+                variant="primary"
+                disabled={
+                  isBusy || (!isBusinessMethodSelected && !isFreeOrder && isGettingPaymentIntent)
+                }
+                isLoading={
+                  isBusy || (!isBusinessMethodSelected && !isFreeOrder && isGettingPaymentIntent)
+                }
+                label={fields.confirmPurchaseCta.value.text!}
+                className="w-full justify-center"
+              />
+            )}
+          </>,
+          actionsAnchor
+        )}
     </form>
   );
 }

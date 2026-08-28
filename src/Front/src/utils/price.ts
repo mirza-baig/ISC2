@@ -53,6 +53,9 @@ export const parsePrice = (amount: string | number = 0, fractionDigits = 0, simp
     : `${absoluteValue.toFixed(fractionDigits)}`;
 };
 
+export const formatMoneyWithCurrencyCode = (currencyCode: string, money?: TypedMoney) =>
+  `${currencyCode} ${parsePrice(money?.centAmount, money?.fractionDigits)}`;
+
 export const parsePriceFromMoney = (
   value: TypedMoney | undefined,
   quantity = 1,

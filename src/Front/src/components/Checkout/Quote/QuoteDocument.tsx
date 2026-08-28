@@ -13,6 +13,8 @@ const COLORS = {
   rule: '#D5D7D9',
 } as const;
 
+const LOGO_WIDTH = 100;
+
 const styles = StyleSheet.create({
   page: {
     paddingTop: 40,
@@ -23,10 +25,10 @@ const styles = StyleSheet.create({
     lineHeight: 1.5,
   },
 
-  /** Logo centered on top, title stacked underneath it — a title reads more like a
-   *  document heading here than tucked in the top-right corner next to the logo. */
-  header: { alignItems: 'center' },
-  title: { fontSize: 20, color: COLORS.ink, marginTop: 14, textAlign: 'center' },
+  header: { flexDirection: 'row', alignItems: 'center' },
+  headerSpacer: { width: LOGO_WIDTH },
+  titleBlock: { flex: 1, alignItems: 'center' },
+  title: { fontSize: 20, color: COLORS.ink, textAlign: 'center' },
   titleRule: { width: 160, height: 2, backgroundColor: COLORS.green, marginTop: 6 },
 
   disclaimer: {
@@ -139,9 +141,12 @@ export const QuoteDocument = ({ data, labels }: QuoteDocumentProps) => {
     <Document title={label('documentTitle')} author="ISC2" subject={label('documentTitle')}>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          <Isc2LogoPdf width={110} />
-          <Text style={styles.title}>{label('documentTitle')}</Text>
-          <View style={styles.titleRule} />
+          <Isc2LogoPdf width={LOGO_WIDTH} />
+          <View style={styles.titleBlock}>
+            <Text style={styles.title}>{label('documentTitle')}</Text>
+            <View style={styles.titleRule} />
+          </View>
+          <View style={styles.headerSpacer} />
         </View>
 
         <View style={styles.metaRow}>
