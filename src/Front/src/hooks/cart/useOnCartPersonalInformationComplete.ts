@@ -22,6 +22,7 @@ import useIsCpqStyleCheckout from './useIsCpqStyleCheckout';
 import useIsBusinessBuyer from './useIsBusinessBuyer';
 import useGetPaymentIntent from '../checkout/useGetPaymentIntent';
 import useConfirmPayment from '../checkout/useConfirmPayment';
+import useEnsureBusinessCartTax from '../checkout/useEnsureBusinessCartTax';
 
 const getFieldsForUserUpdate = (data?: PersonalInformation) => {
   if (!data) {
@@ -56,6 +57,7 @@ export default function useOnCartPersonalInformationComplete(payload: MutationPa
   const { setTaxesAsync } = useUpdateTax();
   const { recalculateCartAsync } = useRecalculateCart();
   const { getPaymentIntentAsync } = useGetPaymentIntent();
+  const { ensureTaxedCart } = useEnsureBusinessCartTax();
   const { updateB2BPersonalInformationAsync } = useUpdateB2BPersonalInformation({
     onError: setErrorState,
   });
@@ -70,6 +72,10 @@ export default function useOnCartPersonalInformationComplete(payload: MutationPa
       if (isCpqStyleCheckout) {
         if (personalInformationChanged) {
           await updateB2BPersonalInformationAsync(newUserData!);
+        }
+
+        if (isBusinessBuyer) {
+          await ensureTaxedCart(data);
         }
 
         return activeCart;
@@ -172,10 +178,10 @@ export default function useOnCartPersonalInformationComplete(payload: MutationPa
 
       return latestCart;
     },
-    onSuccess: (cartAfterCheckoutSetup, variables: PersonalInformation) => {
+    onSuccess: (_data, variables: PersonalInformation) => {
       payload.callbacks.onSuccess(variables);
 
-      if (isBusinessBuyer && isCartTotalFree(cartAfterCheckoutSetup ?? activeCart)) {
+      if (isBusinessBuyer && isCartTotalFree(_data ?? activeCart)) {
         if (activeCart.computed.isB2B && engage && activeCart.lineItems) {
           const cartWithComputedFields = addComputedFieldsToLineItems(activeCart as Cart);
 

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-import { useLoggedUser, useSession } from 'hooks/index';
+import { useAuthorizedBuyer, useLoggedUser, useSession } from 'hooks/index';
 import { getAuthorizedBuyerAccounts, mapAccountsToShopperOrganizations } from 'lib/authorizedBuyer';
 import { useModal, useShopperContext } from 'providers/index';
 import { useFeatureFlag } from 'providers/featureFlags';
@@ -36,7 +36,8 @@ export default function ShopperContextModal() {
   const { setModalContent, closeModal, modalContent } = useModal();
   const { setShopperContext } = useShopperContext();
   const { session, isSessionLoading } = useSession();
-  const { isUserLoggedIn, isGettingUser, isB2BAdminUser, externalID } = useLoggedUser();
+  const { isUserLoggedIn, isGettingUser, externalID, email } = useLoggedUser();
+  const { isAuthorizedBuyer, isResolvingAuthorizedBuyer } = useAuthorizedBuyer();
   const isB2BFlowEnabled = useFeatureFlag('B2B_Company_Flow');
   const hasOpenedRef = useRef(false);
 
@@ -71,11 +72,17 @@ export default function ShopperContextModal() {
   );
 
   useEffect(() => {
-    if (isSessionLoading || isGettingUser || modalContent || hasOpenedRef.current) {
+    if (
+      isSessionLoading ||
+      isGettingUser ||
+      isResolvingAuthorizedBuyer ||
+      modalContent ||
+      hasOpenedRef.current
+    ) {
       return;
     }
 
-    if (!isUserLoggedIn || !isB2BAdminUser || !externalID) {
+    if (!isUserLoggedIn || !isAuthorizedBuyer || !externalID || !email) {
       return;
     }
 
@@ -98,7 +105,7 @@ export default function ShopperContextModal() {
 
     const loadAndPrompt = async () => {
       try {
-        const response = await getAuthorizedBuyerAccounts(externalID);
+        const response = await getAuthorizedBuyerAccounts(externalID, { email });
         if (cancelled) {
           return;
         }
@@ -136,9 +143,11 @@ export default function ShopperContextModal() {
     isSessionLoading,
     isGettingUser,
     isUserLoggedIn,
-    isB2BAdminUser,
+    isAuthorizedBuyer,
+    isResolvingAuthorizedBuyer,
     isB2BFlowEnabled,
     externalID,
+    email,
     modalContent,
     openModalForOrganizations,
     setShopperContext,

@@ -37,10 +37,6 @@ export default function useCartValidity({ isCheckout }: UseCartValidityProps) {
       return [{ message: 'CUSTOMER_EMAIL_MISMATCH' }];
     }
 
-    if (isCheckout && activeCart.computed.isB2B && activeCart.taxedPrice === null) {
-      return [{ message: 'CART_INFO_INCOMPLETE' }];
-    }
-
     return null;
   }, [getCartSuccess, activeCart, isIdURLParamDefined, isCheckout, user?.email]);
 

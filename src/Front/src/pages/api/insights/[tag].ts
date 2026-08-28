@@ -14,10 +14,6 @@ type CachedData = {
   cachedAt: string;
 };
 
-// Cache TTL guard (F4 - Algolia usage): fall back to the 1-hour default when the
-// configured value is missing or implausibly low (e.g. a stray "5"), so a misconfig
-// can't defeat the read cache. Insights articles change rarely; sub-minute caching
-// here is never intended. Set a value >= 60 to override.
 const INSIGHTS_TTL_DEFAULT = 3600;
 const parsedInsightsTtl = parseInt(process.env.INSIGHTS_CACHE_TTL || '', 10);
 const CACHE_TTL =

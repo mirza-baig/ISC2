@@ -14,6 +14,7 @@ import {
   useAnalyticsTracking,
   useIsCpqStyleCheckout,
   useHandleStripeReturn,
+  useIsBusinessBuyer,
 } from 'hooks/index';
 import {
   LineItemsProvider,
@@ -116,6 +117,7 @@ export default function CheckoutContent({ algoliaSettings, rendering }: Checkout
   const { errorState, taxErrorLabels } = useCheckoutProcess();
   const { activeCart, getCartSuccess, cartError, isFreeOrder } = useCart();
   const isCpqStyleCheckout = useIsCpqStyleCheckout();
+  const isBusinessBuyer = useIsBusinessBuyer();
   const { externalID, user } = useLoggedUser();
   const { engage } = usePersonalize();
 
@@ -348,8 +350,20 @@ export default function CheckoutContent({ algoliaSettings, rendering }: Checkout
     <main className="py-10 md:py-15 max-width-container">
       <CheckoutTitle />
 
-      <div className="flex flex-col-reverse gap-8 lg:flex-row lg:gap-9">
-        <div className="max-lg:w-full lg:flex-1 flex flex-col gap-y-5">
+      <div
+        className={
+          isBusinessBuyer
+            ? 'flex flex-col gap-8 md:flex-row md:items-start md:gap-9'
+            : 'flex flex-col-reverse gap-8 lg:flex-row lg:gap-9'
+        }
+      >
+        <div
+          className={
+            isBusinessBuyer
+              ? 'w-full md:flex-1 flex flex-col gap-y-5'
+              : 'max-lg:w-full lg:flex-1 flex flex-col gap-y-5'
+          }
+        >
           <CheckoutStepsIndicator />
 
           {!user ||
@@ -368,7 +382,13 @@ export default function CheckoutContent({ algoliaSettings, rendering }: Checkout
         </div>
 
         <LineItemsProvider algoliaSettings={algoliaSettings!}>
-          <div className="w-full lg:w-462 xl:w-520 space-y-10">
+          <div
+            className={
+              isBusinessBuyer
+                ? 'w-full md:w-462 xl:w-520 space-y-10 md:sticky md:top-8'
+                : 'w-full lg:w-462 xl:w-520 space-y-10'
+            }
+          >
             <Placeholder
               name="checkout-content-right-column"
               rendering={rendering}

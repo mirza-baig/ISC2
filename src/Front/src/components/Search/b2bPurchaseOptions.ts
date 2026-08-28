@@ -15,12 +15,11 @@ import type { SearchResultHit } from 'types/index';
  * that vanish under any refinement, so most of the offer is unreachable.
  *
  * **This is not an OIL-only rule and the expansion below is not gated on modality or productType** —
- * any record with resolvable refs expands. Measured on the live index 2026-08-06, of the 38 records
- * that actually expand on the PLP, 24 are scheduled live-online sessions (47 rows) and 14 are not
- * (29 rows): undated live-online parents, a self-paced course whose options are five language
- * variants (EDU-EXP-CC-OSP-180DAY-PH), and a `pt-exams` record with a kit bundle
- * (EXM-EXM-CISSP-AIM-EXM). The only modality-scoped rule in this file is `isRegionlessOilSession`,
- * which hides rows; it never decides what expands.
+ * any record with resolvable refs expands, EXCEPT a `liveonline` record is required to be a real,
+ * dated session first (see `isInvalidOilSession`). Measured on the live index 2026-08-06, of the 38
+ * records that then expanded on the PLP, 24 were scheduled live-online sessions (47 rows) and 14 were
+ * not (29 rows): a self-paced course whose options are five language variants
+ * (EDU-EXP-CC-OSP-180DAY-PH), a `pt-exams` record with a kit bundle (EXM-EXM-CISSP-AIM-EXM).
  *
  * This expands the cross product **at render time** instead of at index time. The alternative was a
  * generated third index (`shared/b2bListing.ts` in the commerce-tools repo, plus a scheduled full
@@ -102,20 +101,24 @@ export const resolvableBundleRefs = (
 };
 
 /**
- * An instructor-led session with no region must not be listed at all, and must not be used as the
- * class half of a purchase-option row (user decision, 2026-08-05: "if an OIL class does not have a
- * region value then we don't use or show it").
+ * An instructor-led session that is not a real, dated, regioned instance must not be listed at all,
+ * and must not be used as the class half of a purchase-option row: no region (user decision,
+ * 2026-08-05: "if an OIL class does not have a region value then we don't use or show it"), or no
+ * `startDate` at all — a placeholder/parent catalog record impersonating a session rather than an
+ * actual scheduled instance.
  *
- * Scoped strictly to online instructor-led — a `startDate` **and** `modality.key === 'liveonline'`.
- * Widening it to every scheduled record would erase the in-person ones, none of which carry a region
- * (0 of 11, measured). Region coverage on OIL is the limiting factor on how much this listing shows:
- * only 64 of 244 dated live-online records had one on 2026-08-06.
+ * Scoped strictly to online instructor-led — `modality.key === 'liveonline'`. Widening either rule to
+ * every scheduled record would erase the in-person ones, none of which carry a region (0 of 11,
+ * measured), and would erase the legitimately dateless non-OIL expansions (a self-paced course's
+ * language-variant options, an exam kit bundle) that have no session to date in the first place.
+ * Region coverage on OIL is the limiting factor on how much this listing shows: only 64 of 244 dated
+ * live-online records had one on 2026-08-06.
  */
-export const isRegionlessOilSession = (hit: {
+export const isInvalidOilSession = (hit: {
   startDate?: string;
   modality?: { key?: string };
   region?: { key?: string };
-}): boolean => Boolean(hit?.startDate) && hit?.modality?.key === 'liveonline' && !hit?.region?.key;
+}): boolean => hit?.modality?.key === 'liveonline' && (!hit?.startDate || !hit?.region?.key);
 
 /**
  * One generated row: the **bundle's** identity and money (it is what gets priced and added to the

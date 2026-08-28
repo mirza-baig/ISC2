@@ -14,12 +14,14 @@ import useUpdateLineItemQuantity from 'hooks/cart/useUpdateLineItemQuantity';
 import B2BProductLineHit, { B2BProductHit } from './B2BProductLineHit';
 import { getProductTypeLabel } from '../SearchFacets/productTypeLabels';
 import {
-  buildAnswersKey,
-  useB2BPrivateClass,
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out rather
+  // than deleted so they can be restored by uncommenting when the feature ships.
+  // buildAnswersKey,
+  // useB2BPrivateClass,
   useB2BRowLabels,
   useB2BCurrencyModalLabels,
 } from '../B2BPrivateClassContext';
-import { useB2BPrivateClassDraft } from '../useB2BPrivateClassDraft';
+// import { useB2BPrivateClassDraft } from '../useB2BPrivateClassDraft';
 import { useB2BInventory } from '../B2BInventoryContext';
 import { useB2BCpqCart } from '../useB2BCpqCart';
 
@@ -126,7 +128,9 @@ const B2BProductLineHitContainer = ({
   const { updateQuantity, isUpdatingQuantity } = useUpdateLineItemQuantity();
   const { productPrices, addSkuToPricingQueue } = useStandalonePrices();
   const { inventory, addSkuToInventoryQueue } = useB2BInventory();
-  const { getAnswers, setAnswers, clearAnswers, openLocationModal } = useB2BPrivateClass();
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out rather
+  // than deleted so it can be restored by uncommenting when the feature ships.
+  // const { getAnswers, setAnswers, clearAnswers, openLocationModal } = useB2BPrivateClass();
   // CPQ (quoted) cart → this row is read-only, the same way the cart page treats a quoted line
   // (CTX-5). See `useB2BCpqCart`.
   const { isCpq } = useB2BCpqCart();
@@ -155,8 +159,11 @@ const B2BProductLineHitContainer = ({
   // Committed (saved) answers for this OCCURRENCE — the source of truth we init/re-sync the draft
   // from. Keyed per occurrence, not per SKU: two dates of one class are two groups of employees,
   // each with its own start date and its own location.
-  const answersKey = buildAnswersKey(sku, pickedSku);
-  const committed = getAnswers(answersKey);
+  //
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out rather
+  // than deleted so it can be restored by uncommenting when the feature ships.
+  // const answersKey = buildAnswersKey(sku, pickedSku);
+  // const committed = getAnswers(answersKey);
 
   // Prices come from commercetools standalone prices by SKU (same mechanism as the product
   // cards) — the Algolia index carries no price. Queue the SKU as soon as the row mounts
@@ -237,24 +244,28 @@ const B2BProductLineHitContainer = ({
     setQuantity(lineItem?.quantity ?? 0);
   }, [lineItem?.id, lineItem?.quantity]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — the clear-on-remove
+  // effect and the draft hook below are commented out rather than deleted so they can be restored
+  // by uncommenting when the feature ships.
+  //
   // When the item leaves the cart (removed), drop its saved answers so the row fully resets
   // (no shade / left border, fields cleared).
-  const wasInCartRef = useRef(isInCart);
-  useEffect(() => {
-    if (wasInCartRef.current && !isInCart) {
-      clearAnswers(answersKey);
-    }
-    wasInCartRef.current = isInCart;
-  }, [isInCart, answersKey, clearAnswers]);
+  // const wasInCartRef = useRef(isInCart);
+  // useEffect(() => {
+  //   if (wasInCartRef.current && !isInCart) {
+  //     clearAnswers(answersKey);
+  //   }
+  //   wasInCartRef.current = isInCart;
+  // }, [isInCart, answersKey, clearAnswers]);
 
-  const { draft, setDraft, areAnswersDirty, openAddressModal } = useB2BPrivateClassDraft(
-    committed,
-    openLocationModal
-  );
+  // const { draft, setDraft, areAnswersDirty, openAddressModal } = useB2BPrivateClassDraft(
+  //   committed,
+  //   openLocationModal
+  // );
 
   // "Dirty" = the draft (or quantity) differs from what's committed — drives the editing shade
   // (#2) and gates Update (#3).
-  const isDirty = areAnswersDirty || quantity !== (lineItem?.quantity ?? 0);
+  const isDirty = quantity !== (lineItem?.quantity ?? 0);
 
   const quantityLabel = isTrainingProduct(hit.productType)
     ? resolvedLabels.attendeesLabel
@@ -307,8 +318,10 @@ const B2BProductLineHitContainer = ({
         )
       : undefined;
 
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out rather
+  // than deleted so it can be restored by uncommenting when the feature ships.
   // Commit the draft answers to the shared store (so the cart line picks them up).
-  const commitAnswers = () => setAnswers(answersKey, draft);
+  // const commitAnswers = () => setAnswers(answersKey, draft);
 
   // Re-price the whole cart in the currently selected currency, exactly the way the PDP does it
   // (ProductFormButton's currency-mismatch branch): ONE mutation carrying the target SKU *and*
@@ -414,7 +427,7 @@ const B2BProductLineHitContainer = ({
           quantity: quantity,
         });
       }
-      commitAnswers();
+      // commitAnswers();
     });
   };
 
@@ -430,7 +443,7 @@ const B2BProductLineHitContainer = ({
       } else if (lineItem) {
         updateQuantity(lineItem, quantity);
       }
-      commitAnswers();
+      // commitAnswers();
     });
   };
 
@@ -443,16 +456,18 @@ const B2BProductLineHitContainer = ({
     }
   };
 
-  // Private-class scheduling handlers (PRIV-1) — edit the local DRAFT only.
-  const handleStartDateChange = (value: string) =>
-    setDraft((d) => ({ ...d, requestedStartDate: value }));
-  const handleLocationModeChange = (mode: '' | 'online' | 'at-location') => {
-    setDraft((d) => ({ ...d, locationMode: mode }));
-    if (mode === 'at-location' && !draft.eventAddress) {
-      openAddressModal();
-    }
-  };
-  const handleEditLocation = () => openAddressModal();
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — these scheduling
+  // handlers (PRIV-1) are commented out rather than deleted so they can be restored by
+  // uncommenting when the feature ships.
+  // const handleStartDateChange = (value: string) =>
+  //   setDraft((d) => ({ ...d, requestedStartDate: value }));
+  // const handleLocationModeChange = (mode: '' | 'online' | 'at-location') => {
+  //   setDraft((d) => ({ ...d, locationMode: mode }));
+  //   if (mode === 'at-location' && !draft.eventAddress) {
+  //     openAddressModal();
+  //   }
+  // };
+  // const handleEditLocation = () => openAddressModal();
 
   // Stagger each row's fade-in (see `.b2b-row-enter`) so a freshly lazy-loaded page eases in
   // one-by-one instead of the whole batch popping in together. `__position` is Algolia's 1-based
@@ -486,12 +501,14 @@ const B2BProductLineHitContainer = ({
         readOnlyTooltip={resolvedLabels.cpqReadOnlyTooltip}
         notAvailableLabel={resolvedLabels.notAvailableLabel}
         fewSeatsLabel={resolvedLabels.fewSeatsLabel}
-        requestedStartDate={draft.requestedStartDate}
-        locationMode={draft.locationMode}
-        eventAddress={draft.eventAddress}
-        onStartDateChange={handleStartDateChange}
-        onLocationModeChange={handleLocationModeChange}
-        onEditLocation={handleEditLocation}
+        // Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out
+        // rather than deleted so they can be restored by uncommenting when the feature ships.
+        // requestedStartDate={draft.requestedStartDate}
+        // locationMode={draft.locationMode}
+        // eventAddress={draft.eventAddress}
+        // onStartDateChange={handleStartDateChange}
+        // onLocationModeChange={handleLocationModeChange}
+        // onEditLocation={handleEditLocation}
         addToCartLabel={resolvedLabels.addToCartLabel}
         updateQuantityLabel={resolvedLabels.updateQuantityLabel}
         removeFromCartLabel={resolvedLabels.removeFromCartLabel}

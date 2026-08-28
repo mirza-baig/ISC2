@@ -11,11 +11,14 @@ import ProductFormModal from 'components/ProductForm/ProductFormModal';
 import { buildProductFormModal } from 'utils/product-form';
 
 import {
-  useB2BPrivateClassLabels,
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out rather
+  // than deleted so it can be restored by uncommenting when the feature ships.
+  // useB2BPrivateClassLabels,
   useB2BProductMessageModal,
   useB2BRegionLabels,
 } from '../B2BPrivateClassContext';
-import { hasSessionStarted, isPastCalendarDay, todayISODate } from '../b2bDates';
+import { hasSessionStarted } from '../b2bDates';
+// import { isPastCalendarDay, todayISODate } from '../b2bDates';
 
 /** Inline pending spinner — inherits the button's text color (border-current). */
 const Spinner = (): JSX.Element => (
@@ -143,12 +146,14 @@ export interface B2BProductLineHitProps {
   readOnlyTooltip?: string;
   notAvailableLabel?: string;
   fewSeatsLabel?: string;
-  requestedStartDate?: string;
-  locationMode?: '' | 'online' | 'at-location';
-  eventAddress?: string;
-  onStartDateChange?: (value: string) => void;
-  onLocationModeChange?: (value: '' | 'online' | 'at-location') => void;
-  onEditLocation?: () => void;
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out rather
+  // than deleted so they can be restored by uncommenting when the feature ships.
+  // requestedStartDate?: string;
+  // locationMode?: '' | 'online' | 'at-location';
+  // eventAddress?: string;
+  // onStartDateChange?: (value: string) => void;
+  // onLocationModeChange?: (value: '' | 'online' | 'at-location') => void;
+  // onEditLocation?: () => void;
   addToCartLabel: string;
   updateQuantityLabel: string;
   removeFromCartLabel: string;
@@ -183,12 +188,12 @@ const B2BProductLineHit = ({
   readOnlyTooltip,
   notAvailableLabel,
   fewSeatsLabel,
-  requestedStartDate = '',
-  locationMode = '',
-  eventAddress = '',
-  onStartDateChange,
-  onLocationModeChange,
-  onEditLocation,
+  // requestedStartDate = '',
+  // locationMode = '',
+  // eventAddress = '',
+  // onStartDateChange,
+  // onLocationModeChange,
+  // onEditLocation,
   addToCartLabel,
   updateQuantityLabel,
   removeFromCartLabel,
@@ -203,9 +208,11 @@ const B2BProductLineHit = ({
   onRemove,
 }: B2BProductLineHitProps): JSX.Element => {
   const [showDetails, setShowDetails] = useState(false);
-  const L = useB2BPrivateClassLabels();
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out rather
+  // than deleted so they can be restored by uncommenting when the feature ships.
+  // const L = useB2BPrivateClassLabels();
   // Requested Start Date can't be in the past — today onward only (local date).
-  const minDate = todayISODate();
+  // const minDate = todayISODate();
 
   // The product detail sits inline under the title on every row. Standard rows clamp it to a couple
   // of lines so they keep a uniform default height; "Show Details" expands it in place to the full
@@ -223,9 +230,10 @@ const B2BProductLineHit = ({
     displayOriginalPrice && displayPrice && displayOriginalPrice !== displayPrice
   );
 
-  // Scheduled-session line (date/time + region), shown above the description — only for variants
-  // that actually carry these fields (instructor-led/live-online sessions); self-paced/on-demand
-  // variants have neither and the line is skipped entirely (SAFE-1).
+  // Scheduled-session line (date/time only — region moved to the grey meta line below so the two
+  // never duplicate), shown above the description — only for variants that actually carry these
+  // fields (instructor-led/live-online sessions); self-paced/on-demand variants have neither and
+  // the line is skipped entirely (SAFE-1).
   // Resolved the same way the PDP resolves it: the IANA zone when the record carries one, else the
   // short code, both handled by the shared `getUTCTime`.
   const scheduleTimeZone = hit.timeZoneIana?.key?.replace(/_/g, '/') || hit.timeZone;
@@ -254,16 +262,18 @@ const B2BProductLineHit = ({
     [scheduleIso, hit.startTime, hit.endTime]
   );
   // Region facet value re-labeled the same way the filter does (Sitecore-managed, falls back to
-  // Algolia's own label for unmapped codes) so the two stay consistent.
+  // Algolia's own label for unmapped codes) so the two stay consistent. Shown for ANY row that
+  // carries one, not only scheduled sessions — a generated purchase-option row ("combo") inherits
+  // its own session's `region` via the spread in `buildOptionRow` (b2bPurchaseOptions.ts), so each
+  // combo already shows the region of the specific session it was expanded from.
   const regionLabels = useB2BRegionLabels();
   const regionLabel = hit.region?.key
     ? regionLabels[hit.region.key] ?? hit.region.label
     : hit.region?.label;
   const scheduleLine = isStartDateInPast
     ? ''
-    : [scheduleDateRange && `${scheduleDateRange}${scheduleTimeRange}`, regionLabel]
-        .filter(Boolean)
-        .join(' • ');
+    : scheduleDateRange && `${scheduleDateRange}${scheduleTimeRange}`;
+  const displayMetaLine = [metaLine, regionLabel].filter(Boolean).join(' • ');
 
   // The detail is the richer `moreInfo` when the index carries one, otherwise the plain description
   // (DATA-1: the current crawler index has no `moreInfo`, so this is usually the description). It is
@@ -375,18 +385,22 @@ const B2BProductLineHit = ({
       />
     );
 
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — this completeness
+  // check is commented out rather than deleted so it can be restored by uncommenting when the
+  // feature ships.
+  //
   // Private/classroom: every scheduling field must be filled before Add/Update enable. An event
   // address is required only when the class is held "At Location" — Online needs no address.
   // The date must also not be in the past: `min` already greys out earlier days in the picker, but
   // it does not stop a typed/pasted value (nor a stale draft left over from before midnight), and
   // the browser only enforces `min` on form submit — this row has no form. So the past-date case is
   // treated as "not filled in yet" and Add/Update stay disabled.
-  const privateComplete =
-    requestedStartDate.trim() !== '' &&
-    !isPastCalendarDay(requestedStartDate) &&
-    locationMode !== '' &&
-    quantity >= 1 &&
-    (locationMode !== 'at-location' || eventAddress.trim() !== '');
+  // const privateComplete =
+  //   requestedStartDate.trim() !== '' &&
+  //   !isPastCalendarDay(requestedStartDate) &&
+  //   locationMode !== '' &&
+  //   quantity >= 1 &&
+  //   (locationMode !== 'at-location' || eventAddress.trim() !== '');
 
   return (
     <div
@@ -426,12 +440,13 @@ const B2BProductLineHit = ({
         <div className="min-w-0 flex-1">
           <p className="body-l font-bold text-black-100">{rowTitle}</p>
 
-          {/* Short meta line (duration • modality) — always a single short line, so it is neither
-              clamped nor measured; it sits above the detail text. */}
-          {metaLine && <p className="mt-1 text-xs-sm text-[#888]">{metaLine}</p>}
+          {/* Short meta line (duration • modality • region when available) — always a single short
+              line, so it is neither clamped nor measured; it sits above the detail text. Region is
+              appended here (not in scheduleLine below) so it never duplicates across the two lines. */}
+          {displayMetaLine && <p className="mt-1 text-xs-sm text-[#888]">{displayMetaLine}</p>}
 
-          {/* Scheduled date/time + region, above the description — bolder than the meta line since
-              it's actionable scheduling info, not just a category summary. */}
+          {/* Scheduled date/time, above the description — bolder than the meta line since it's
+              actionable scheduling info, not just a category summary. */}
           {scheduleLine && (
             <p className="mt-1 text-xs-sm font-medium text-gray-90">{scheduleLine}</p>
           )}
@@ -529,10 +544,15 @@ const B2BProductLineHit = ({
         </div>
       </div>
 
-      {/* Private/classroom: scheduling questions shown up front (PRIV-1). Add/Update stay disabled
+      {/* Private classes are deferred to a later phase (bug sweep 2026-08-19) — this whole
+          scheduling-questions block is commented out rather than deleted so it can be restored by
+          uncommenting when the feature ships.
+
+          Private/classroom: scheduling questions shown up front (PRIV-1). Add/Update stay disabled
           until every field is filled and (for At Location) an address is confirmed via the pop-up.
-          Content is indented (sm:pl-44 = w-40 pill + gap-4) to align with the title/detail column. */}
-      {isPrivate ? (
+          Content is indented (sm:pl-44 = w-40 pill + gap-4) to align with the title/detail column.
+
+      {isPrivate && (
         <div className="mt-4 sm:pl-44">
           <div className="flex flex-wrap items-end gap-4">
             <label className="flex flex-col gap-1">
@@ -561,14 +581,14 @@ const B2BProductLineHit = ({
                 <option value="at-location">{L.locationAtLocation}</option>
               </select>
             </label>
-            {/* Attendees + actions share the right-aligned group so the field lines up with the
-                Quantity column on the non-private rows. */}
+            Attendees + actions share the right-aligned group so the field lines up with the
+                Quantity column on the non-private rows.
             <div className="ml-auto flex items-center gap-3">
               <label className="flex items-center gap-2">
                 <span className="text-xs text-gray-70">{quantityLabel}</span>
                 {renderQuantityControl()}
               </label>
-              {/* A quoted line shows no controls at all — see `addDisabled`. */}
+              A quoted line shows no controls at all — see `addDisabled`.
               {isInCart ? (
                 isCartReadOnly ? null : (
                   <>
@@ -576,10 +596,10 @@ const B2BProductLineHit = ({
                       type="button"
                       onClick={onUpdateQuantity}
                       disabled={isBusy || !isDirty || !privateComplete}
-                      // Same three-state treatment as Add to Cart below, so a disabled Update reads
-                      // identically to a disabled Add: flat `bg-gray-50` at full opacity rather than
-                      // the dark button dimmed. Order matches Add's too — the not-allowed state wins
-                      // over the busy state when both are true.
+                      Same three-state treatment as Add to Cart below, so a disabled Update reads
+                      identically to a disabled Add: flat `bg-gray-50` at full opacity rather than
+                      the dark button dimmed. Order matches Add's too — the not-allowed state wins
+                      over the busy state when both are true.
                       className={clsx(
                         'flex items-center rounded px-4 py-2 text-sm font-semibold text-white-00 transition-colors',
                         !isDirty || !privateComplete
@@ -624,7 +644,7 @@ const B2BProductLineHit = ({
             </div>
           </div>
 
-          {/* Event Location applies only when the class is held "At Location" — Online needs none. */}
+          Event Location applies only when the class is held "At Location" — Online needs none.
           {locationMode === 'at-location' && (
             <div className="mt-3 text-sm">
               <span className="font-semibold text-black-100">{L.eventLocation}</span>
@@ -639,68 +659,67 @@ const B2BProductLineHit = ({
             </div>
           )}
         </div>
-      ) : (
-        <div className="mt-4 flex flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end sm:gap-3">
-          <label className="flex items-center gap-2 max-sm:self-end">
-            <span className="text-xs text-gray-70">{quantityLabel}</span>
-            {renderQuantityControl()}
-          </label>
+      )} */}
+      <div className="mt-4 flex flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end sm:gap-3">
+        <label className="flex items-center gap-2 max-sm:self-end">
+          <span className="text-xs text-gray-70">{quantityLabel}</span>
+          {renderQuantityControl()}
+        </label>
 
-          {/* A quoted line shows no controls at all — see `addDisabled`. */}
-          {isInCart ? (
-            isCartReadOnly ? null : (
-              <>
-                <button
-                  type="button"
-                  onClick={onUpdateQuantity}
-                  disabled={isBusy || !isDirty}
-                  // Same three-state treatment as Add to Cart below — see the private-class variant of
-                  // this button above. Right-aligned at its own content width on mobile, not full-width.
-                  className={clsx(
-                    'flex w-auto items-center justify-center self-end rounded px-4 py-2 text-sm font-semibold text-white-00 transition-colors',
-                    !isDirty
-                      ? 'cursor-not-allowed bg-gray-50'
-                      : isBusy
-                      ? 'cursor-wait bg-dark-green opacity-80'
-                      : 'cursor-pointer bg-dark-green'
-                  )}
-                >
-                  {updateQuantityLabel}
-                  {isBusy && <Spinner />}
-                </button>
-                <button
-                  type="button"
-                  onClick={onRemove}
-                  disabled={isBusy}
-                  className="w-auto self-end rounded border border-gray-50 px-4 py-2 text-sm text-black-100 disabled:cursor-wait disabled:opacity-70 enabled:cursor-pointer"
-                >
-                  {removeFromCartLabel}
-                </button>
-              </>
-            )
-          ) : (
-            <button
-              type="button"
-              disabled={addDisabled || isAdding}
-              title={isCartReadOnly ? readOnlyTooltip : undefined}
-              onClick={onAddToCart}
-              // Right-aligned at its own content width (not full-width like Update/Remove above) —
-              // `self-end` overrides the row's `items-stretch` on mobile so it doesn't get stretched.
-              className={clsx(
-                'flex w-auto items-center justify-center self-end rounded px-4 py-2 text-sm font-semibold text-white-00 transition-colors',
-                addDisabled
-                  ? 'cursor-not-allowed bg-gray-50'
-                  : isAdding
-                  ? 'cursor-wait bg-dark-green opacity-80'
-                  : 'cursor-pointer bg-dark-green'
-              )}
-            >
-              {addToCartLabel}
-              {isAdding && <Spinner />}
-            </button>
-          )}
-        </div>
-      )}
+        {/* A quoted line shows no controls at all — see `addDisabled`. */}
+        {isInCart ? (
+          isCartReadOnly ? null : (
+            <>
+              <button
+                type="button"
+                onClick={onUpdateQuantity}
+                disabled={isBusy || !isDirty}
+                // Same three-state treatment as Add to Cart below — see the private-class variant of
+                // this button above. Right-aligned at its own content width on mobile, not full-width.
+                className={clsx(
+                  'flex w-auto items-center justify-center self-end rounded px-4 py-2 text-sm font-semibold text-white-00 transition-colors',
+                  !isDirty
+                    ? 'cursor-not-allowed bg-gray-50'
+                    : isBusy
+                    ? 'cursor-wait bg-dark-green opacity-80'
+                    : 'cursor-pointer bg-dark-green'
+                )}
+              >
+                {updateQuantityLabel}
+                {isBusy && <Spinner />}
+              </button>
+              <button
+                type="button"
+                onClick={onRemove}
+                disabled={isBusy}
+                className="w-auto self-end rounded border border-gray-50 px-4 py-2 text-sm text-black-100 disabled:cursor-wait disabled:opacity-70 enabled:cursor-pointer"
+              >
+                {removeFromCartLabel}
+              </button>
+            </>
+          )
+        ) : (
+          <button
+            type="button"
+            disabled={addDisabled || isAdding}
+            title={isCartReadOnly ? readOnlyTooltip : undefined}
+            onClick={onAddToCart}
+            // Right-aligned at its own content width (not full-width like Update/Remove above) —
+            // `self-end` overrides the row's `items-stretch` on mobile so it doesn't get stretched.
+            className={clsx(
+              'flex w-auto items-center justify-center self-end rounded px-4 py-2 text-sm font-semibold text-white-00 transition-colors',
+              addDisabled
+                ? 'cursor-not-allowed bg-gray-50'
+                : isAdding
+                ? 'cursor-wait bg-dark-green opacity-80'
+                : 'cursor-pointer bg-dark-green'
+            )}
+          >
+            {addToCartLabel}
+            {isAdding && <Spinner />}
+          </button>
+        )}
+      </div>
     </div>
   );
 };

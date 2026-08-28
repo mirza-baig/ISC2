@@ -5,7 +5,7 @@ import {
   useSitecoreContext,
 } from '@sitecore-jss/sitecore-jss-nextjs';
 
-import { useLoggedUser } from 'hooks/index';
+import { useAuthorizedBuyer, useLoggedUser } from 'hooks/index';
 import BuildingIcon from 'icons/BuildingIcon';
 import { useCart, useShopperContext } from 'providers/index';
 
@@ -43,12 +43,13 @@ const resolveOrganizationName = (
 const BuyerContextBanner = ({ fields }: BuyerContextBannerProps) => {
   const { sitecoreContext } = useSitecoreContext();
   const { isB2BAdminUser } = useLoggedUser();
+  const { isAuthorizedBuyer } = useAuthorizedBuyer();
   const { activeCart } = useCart();
   const { shopperContext } = useShopperContext();
 
   const isEnabled = fields?.enabled?.value ?? true;
   const isPageEditing = Boolean(sitecoreContext?.pageEditing);
-  const isB2BContext = isB2BAdminUser || Boolean(activeCart?.computed?.isB2B);
+  const isB2BContext = isAuthorizedBuyer || isB2BAdminUser || Boolean(activeCart?.computed?.isB2B);
   // "Myself" (or no org selection) must never show the banner on storefront pages.
   const isShoppingForMyself = shopperContext?.type === 'myself';
   const isShoppingForOrganization =

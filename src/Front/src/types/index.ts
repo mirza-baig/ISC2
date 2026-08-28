@@ -29,7 +29,6 @@ export * from './cart';
 export * from './profile';
 export * from './order';
 export * from './profile';
-export * from './quote';
 export * from './learningJourney';
 export * from './product';
 export * from './allocations';
@@ -447,6 +446,8 @@ export type BusinessAccountCredit = {
 export type BusinessAccountPrepaid = {
   expirationDate?: string;
   balance?: number;
+  type?: string | null;
+  discountPercentage?: number | null;
 };
 
 export type AccountContactRelation = {

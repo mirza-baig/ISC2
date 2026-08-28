@@ -3,7 +3,9 @@ import { useEffect, useMemo, useRef, type ReactNode } from 'react';
 import { CloseIcon } from 'icons/index';
 import type { CartLineItem } from 'types/index';
 
-import { useB2BCartLabels, useB2BPrivateClass } from '../Search/B2BPrivateClassContext';
+import { useB2BCartLabels } from '../Search/B2BPrivateClassContext';
+// Private classes are deferred to a later phase (bug sweep 2026-08-19) — see the destructure below.
+// import { useB2BPrivateClass } from '../Search/B2BPrivateClassContext';
 
 import B2BCartLineRow, { type B2BCartLineRowProps } from './B2BCartLineRow';
 import B2BCartTotalsBlock, {
@@ -85,7 +87,9 @@ const B2BCartPanel = ({
   className = DOCK_CLASSNAME,
 }: B2BCartPanelProps): JSX.Element => {
   const labels = useB2BCartLabels();
-  const { getAnswers, setAnswers, clearAnswers, openLocationModal } = useB2BPrivateClass();
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out rather
+  // than deleted so this can be restored by uncommenting when the feature ships.
+  // const { getAnswers, setAnswers, clearAnswers, openLocationModal } = useB2BPrivateClass();
 
   // `useUpdateLineItemQuantity` has no native commercetools "set quantity" operation to call, so a
   // DECREASE (and any change to a bundle) is a remove followed by a re-add. Both write the cart
@@ -192,8 +196,10 @@ const B2BCartPanel = ({
         {leadingRows}
 
         {visibleItems.map((li) => {
-          const lineSku = getLineAnswersKey(li);
-          const answers = getAnswers(lineSku);
+          // Private classes are deferred to a later phase (bug sweep 2026-08-19) — `lineSku` was
+          // also used to key the private-class answers store; that usage is commented out below.
+          // const lineSku = getLineAnswersKey(li);
+          // const answers = getAnswers(lineSku);
           return (
             <B2BCartLineRow
               key={li.id}
@@ -207,10 +213,11 @@ const B2BCartPanel = ({
                   : labels.quantity
               }
               onUpdate={onUpdateQuantity}
-              onRemove={(item) => {
-                onRemoveLine(item);
-                clearAnswers(lineSku);
-              }}
+              // onRemove={(item) => {
+              //   onRemoveLine(item);
+              //   clearAnswers(lineSku);
+              // }}
+              onRemove={onRemoveLine}
               isBusy={isBusy}
               isPrivate={false}
               hasStarted={startedLineIds.has(li.id)}
@@ -223,9 +230,9 @@ const B2BCartPanel = ({
               quantityLabelAlign={quantityLabelAlign}
               showThumbnail={showThumbnail(li) && !thumbnailsLoading}
               thumbnailSrc={getThumbnail(li)}
-              committedAnswers={answers}
-              onCommitAnswers={(a) => setAnswers(lineSku, a)}
-              openLocationModal={openLocationModal}
+              // committedAnswers={answers}
+              // onCommitAnswers={(a) => setAnswers(lineSku, a)}
+              // openLocationModal={openLocationModal}
             />
           );
         })}

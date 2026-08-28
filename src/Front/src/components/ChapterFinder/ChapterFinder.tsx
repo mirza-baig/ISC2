@@ -48,11 +48,6 @@ const ChapterFinder = ({
     }
 
     const base = algoliasearch(algoliaAppId?.value, algoliaApiKey?.value);
-
-    // F4 (Algolia usage): the Chapter Finder only browses (country/state dropdowns, no search box) and
-    // the chapter directory is identical for every visitor, so serve its queries from the shared
-    // server cache (/api/algolia/browse) instead of firing browser->Algolia on every page load. Any
-    // failure falls back to the live Algolia call.
     return {
       ...base,
       search(...args: Parameters<typeof base.search>) {
@@ -91,10 +86,7 @@ const ChapterFinder = ({
 
   return (
     <InstantSearch searchClient={searchClient} indexName={algoliaChapterFilderIndexName?.value}>
-      {/* F4 (Algolia usage): don't pull the full chapter set on load. The country/state dropdowns are
-          populated from facets (returned even at hitsPerPage 0), so we only fetch the 1000 records
-          once the user actually engages - selects a country/state, or triggers location detection. */}
-      <Configure hitsPerPage={isSelect !== '' || locationDetectionInitiated ? 1000 : 0} />
+      <Configure hitsPerPage={1000} />
       <div className="flex flex-col w-full md:flex-row px-6 sm:px-16">
         <div className="flex flex-col">
           {fields.heading && (

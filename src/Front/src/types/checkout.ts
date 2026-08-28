@@ -1,5 +1,5 @@
 import { Field, ImageField, LinkField, RichTextField } from '@sitecore-jss/sitecore-jss-nextjs';
-import { CHECKOUT_STEPS, PAYMENT_METHODS } from 'constants/index';
+import { BUSINESS_PAYMENT_METHODS, CHECKOUT_STEPS, PAYMENT_METHODS } from 'constants/index';
 
 export type PaymentIntent = {
   intentPaymentId: string;
@@ -82,6 +82,17 @@ export type StepTwoLabels = {
   productsNotAvailableModalDescription: string;
   productsNotAvailableModalButtonLabel: string;
   freeOrderLabel: string;
+  paymentMethodSelectLabel?: string;
+  creditCardOptionLabel?: string;
+  prepaidAccountLabel?: string;
+  prepaidAccountDescription?: string;
+  preapprovedCreditLabel?: string;
+  preapprovedCreditDescription?: string;
+  prepaidAvailableBalanceLabel?: string;
+  creditAvailableBalanceLabel?: string;
+  prepaidDiscountLabel?: string;
+  prepaidAmountDueLabel?: string;
+  staleBusinessPaymentMessage?: string;
 };
 
 export type ErrorLabels = {
@@ -116,7 +127,9 @@ export type ConfirmPaymentPayload =
         | PAYMENT_METHODS.STRIPE
         | PAYMENT_METHODS.KLARNA
         | PAYMENT_METHODS.IDEAL
-        | PAYMENT_METHODS.BLIK;
+        | PAYMENT_METHODS.BLIK
+        | BUSINESS_PAYMENT_METHODS.PREAPPROVED_CREDIT
+        | BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT;
     }
   | { paymentMethod: PAYMENT_METHODS.PAYPAL; paymentMethodNonce: string };
 

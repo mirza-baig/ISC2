@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { useCart, useShopperContext } from 'providers/index';
@@ -6,6 +6,7 @@ import { Address } from 'types/index';
 import { COURSE_DELIVERY_PRODUCT_TYPES, OTP_ACCOUNT_TYPE, QUERY_KEYS } from 'constants/index';
 import {
   getAuthorizedBuyerAccounts,
+  isAccountFlagSet,
   resolveBuyerMockScenario,
   type AuthorizedBuyerAccount,
   type AuthorizedBuyerResponse,
@@ -22,30 +23,23 @@ type ActiveBusinessAccount = {
   isPoRequired: boolean;
   isPoAttachmentRequired: boolean;
   isCourseDeliveryDateRequired: boolean;
-};
-
-/**
- * Reads an account purchase control that may arrive as a Salesforce Boolean or as a
- * Yes/No picklist — `PO_Required__c` is a picklist while `PO_Attachment_Required__c` is
- * a checkbox, so a plain truthiness check would read the string "No" as true.
- */
-const isAccountFlagSet = (value?: boolean | string) => {
-  if (typeof value === 'string') {
-    return ['true', 'yes', '1'].includes(value.trim().toLowerCase());
-  }
-
-  return Boolean(value);
+  /** Re-reads Mule + mocks. `ok` is false when the refresh fails (submit must not place). */
+  refetchAccount: () => Promise<{
+    account?: AuthorizedBuyerAccount;
+    ok: boolean;
+  }>;
 };
 
 /**
  * Resolves the business account the current checkout is being made against — the one the
  * buyer picked in the shopper context modal — and the purchase controls derived from it.
  *
- * Accounts come from the Authorized Buyer service, which is mocked in `lib/authorizedBuyer`
- * until MuleSoft is ready; swapping in the real call leaves this hook untouched.
+ * Accounts are live `getAccountData` relations (first) plus the mock playbook.
+ * Balances refresh on checkout step mount and window focus. There is no frontend
+ * reservation; Salesforce must reject a second debit if two buyers confirm together.
  */
 export default function useActiveBusinessAccount(): ActiveBusinessAccount {
-  const { externalID } = useLoggedUser();
+  const { externalID, email } = useLoggedUser();
   const { activeCart } = useCart();
   const { shopperContext } = useShopperContext();
 
@@ -53,12 +47,13 @@ export default function useActiveBusinessAccount(): ActiveBusinessAccount {
 
   const mockScenario = resolveBuyerMockScenario();
 
-  const { data } = useQuery<AuthorizedBuyerResponse>({
-    queryKey: [QUERY_KEYS.AUTHORIZED_BUYER_ACCOUNTS, externalID, mockScenario],
-    queryFn: () => getAuthorizedBuyerAccounts(externalID!),
-    enabled: Boolean(externalID) && Boolean(selectedAccountId),
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
+  const { data, refetch } = useQuery<AuthorizedBuyerResponse>({
+    queryKey: [QUERY_KEYS.AUTHORIZED_BUYER_ACCOUNTS, externalID, email, mockScenario],
+    queryFn: () => getAuthorizedBuyerAccounts(externalID!, { email }),
+    enabled: Boolean(externalID) && Boolean(email) && Boolean(selectedAccountId),
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
     retry: false,
   });
 
@@ -99,6 +94,16 @@ export default function useActiveBusinessAccount(): ActiveBusinessAccount {
   const accountType = account?.accountType || shopperContext?.organization?.accountType || '';
   const isOtpAccount = accountType.toLowerCase() === OTP_ACCOUNT_TYPE;
 
+  const refetchAccount = useCallback(async () => {
+    const result = await refetch();
+    const account = result.data?.accounts.find(({ accountId }) => accountId === selectedAccountId);
+
+    return {
+      account,
+      ok: !result.isError && Boolean(result.data),
+    };
+  }, [refetch, selectedAccountId]);
+
   return {
     account,
     accountName: account?.accountName || shopperContext?.organization?.name || '',
@@ -106,5 +111,6 @@ export default function useActiveBusinessAccount(): ActiveBusinessAccount {
     isPoRequired: isAccountFlagSet(account?.purchaseControls?.poRequired),
     isPoAttachmentRequired: isAccountFlagSet(account?.purchaseControls?.poAttachmentRequired),
     isCourseDeliveryDateRequired: isOtpAccount && hasCourseDeliveryProduct,
+    refetchAccount,
   };
 }

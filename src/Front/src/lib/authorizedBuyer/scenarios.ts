@@ -7,9 +7,16 @@ import {
   ACCOUNT_INITECH_HOLD,
   ACCOUNT_NORTHWIND,
   ACCOUNT_OTP,
+  ACCOUNT_OTP_SF_HOLD,
+  ACCOUNT_OTP_SF_PARTIAL,
   ACCOUNT_STARK,
   ACCOUNT_TYPE_VARIANT,
   ACCOUNT_UMBRELLA,
+  ACCOUNT_DEMO_BOTH,
+  ACCOUNT_DEMO_PREPAID_INVESTMENT,
+  ACCOUNT_DEMO_PREPAID_DEPOSIT,
+  ACCOUNT_DEMO_CREDIT_ONLY,
+  ACCOUNT_DEMO_NEITHER,
 } from './accounts';
 import type { AuthorizedBuyerAccount, BuyerMockScenario } from './types';
 
@@ -22,6 +29,11 @@ export const BUYER_SCENARIO_ACCOUNTS: Record<BuyerMockScenario, AuthorizedBuyerA
   single: [ACCOUNT_ACME],
   'single-credit-hold': [ACCOUNT_ACME_HOLD],
   many: [
+    ACCOUNT_DEMO_BOTH,
+    ACCOUNT_DEMO_PREPAID_INVESTMENT,
+    ACCOUNT_DEMO_PREPAID_DEPOSIT,
+    ACCOUNT_DEMO_CREDIT_ONLY,
+    ACCOUNT_DEMO_NEITHER,
     ACCOUNT_BUSINESS_CO_CANADA,
     ACCOUNT_ACME_HOLD,
     ACCOUNT_NORTHWIND,
@@ -50,4 +62,8 @@ export const BUYER_SCENARIO_ACCOUNTS: Record<BuyerMockScenario, AuthorizedBuyerA
     ACCOUNT_GLOBEX, // poRequired true,  poAttachmentRequired true
     ACCOUNT_OTP, // OTP account type + both controls on
   ],
+  // Live Salesforce payload: fields present, values null.
+  'sf-nulls': [ACCOUNT_OTP_SF_PARTIAL, ACCOUNT_OTP_SF_HOLD],
+  // Same funds as BrightPath. Recheck on Confirm purchase zeros balances (two-buyer race).
+  race: [ACCOUNT_DEMO_BOTH],
 };

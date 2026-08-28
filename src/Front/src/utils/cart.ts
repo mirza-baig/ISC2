@@ -209,7 +209,9 @@ export const getComputedFieldsFromCart = (cart: Cart | null, isSuccess: boolean)
   const lineItemsSummary = getLineItemsSummary(cart?.lineItems);
   const isEmpty = !cart?.totalLineItemQuantity;
   const isFetchedAndEmpty = isSuccess && isEmpty;
-  const cartType = (cart?.custom.customFieldsRaw || []).find(({ name }) => name === CART_TYPE_ATTR);
+  const cartType = (cart?.custom?.customFieldsRaw || []).find(
+    ({ name }) => name === CART_TYPE_ATTR
+  );
 
   const includesSubscription = (cart?.lineItems || []).some((item) =>
     SUBSCRIPTION_PRODUCT_TYPES.includes((item.productType?.name || '').toLowerCase())
@@ -237,11 +239,11 @@ export const getComputedFieldsFromCart = (cart: Cart | null, isSuccess: boolean)
   return {
     isEmpty,
     isFetchedAndEmpty,
-    currencyCode: cart?.totalPrice.currencyCode,
+    currencyCode: cart?.totalPrice?.currencyCode,
     isCheckoutDisabled:
       isSuccess &&
       (isEmpty || lineItemsSummary.notAvailableItemsQuantity === lineItemsSummary.itemsQuantity),
-    currencySymbol: getCurrencySymbol(cart?.totalPrice.currencyCode || 'USD'),
+    currencySymbol: getCurrencySymbol(cart?.totalPrice?.currencyCode || 'USD'),
     totalPrice: parsePrice(totalPriceToUse?.centAmount, totalPriceToUse?.fractionDigits),
     taxValue: parsePrice(totalTax?.centAmount, totalTax?.fractionDigits),
     isB2B: cartType?.value === CART_TYPE_CPQ,

@@ -10,10 +10,6 @@ const algoliaAppId = process.env.ALGOLIA_APP_ID || '';
 const searchClient = algoliasearch(algoliaAppId, algoliaApiKey);
 const algoliaIndex = searchClient.initIndex(algoliaIndexName);
 
-// Cache TTL guard (F4 - Algolia usage): fall back to the 1-hour default when the
-// configured value is missing or implausibly low (e.g. a stray "5"), so a misconfig
-// can't defeat the read cache. Product data changes rarely; sub-minute caching here
-// is never intended. Set a value >= 60 to override.
 const PRODUCT_SEARCH_TTL_DEFAULT = 3600;
 const parsedProductSearchTtl = parseInt(process.env.PRODUCT_SEARCH_CACHE_TTL || '', 10);
 const CACHE_TTL =
@@ -21,11 +17,6 @@ const CACHE_TTL =
     ? parsedProductSearchTtl
     : PRODUCT_SEARCH_TTL_DEFAULT;
 
-// Algolia returns every indexed attribute plus a `_highlightResult` block by default, which is how a
-// single product-form search grew to ~1.5MB. These are the only hit fields the product-form
-// experience reads (`ProductHit` in types/forms, plus the `region`/`city`/`state`/`country` location
-// attributes the classroom scaffold filters on). `objectID` always comes back and duplicates `sku`;
-// `isoStart`/`isoEnd` on `ProductHit` are computed client-side, not indexed.
 const PRODUCT_FORM_ATTRIBUTES = [
   'sku',
   'productID',
@@ -57,16 +48,11 @@ const PRODUCT_FORM_ATTRIBUTES = [
   'itemsRef',
   'itemVariantSkuList',
   'itemProductKeyList',
-  // Indexed on bundle records only, and read off `bundlePdpData` to decide whether the bundle's
-  // items are rendered expanded (ProductFormRadioGroup).
   'expand',
   'skuReferencesProduct',
   'skuReferencesVariant',
 ];
 
-// Facet counts seed the form's option lists, so each name here has to match a form field name in
-// scaffolds/forms (`region.key`, `duration.key`, ...). `sku` is also required: the provider reads it
-// off the facet list to build the SKU set for the inventory lookup.
 const PRODUCT_FORM_FACETS = [
   'sku',
   'region.key',
@@ -79,9 +65,6 @@ const PRODUCT_FORM_FACETS = [
   'endDate',
 ];
 
-// Every caller scopes the search to an explicit set of products, so the page size follows that set
-// rather than the index-wide ceiling. The widest product in the index carries ~66 variants, so 100
-// per entity leaves headroom without ever paging back the whole index.
 const MAX_VARIANTS_PER_PRODUCT = 100;
 const MAX_HITS_PER_PAGE = 1000;
 
@@ -155,24 +138,7 @@ const getProductSearchResults = async ({
 const getCachedProductSearch = unstable_cache(
   async (_cacheKey: string, params: SearchParams): Promise<CachedData> => {
     const cachedAt = new Date().toISOString();
-    const fetchStartTime = Date.now();
-
-    console.log('[CACHE] Fetching from Algolia | Product Search', {
-      facets: params.facets,
-      productIds: params.productIds?.length || 0,
-      skus: params.skus?.length || 0,
-      productKeys: params.productKeys?.length || 0,
-    });
-
     const results = await getProductSearchResults(params);
-    const fetchDuration = Date.now() - fetchStartTime;
-
-    const dataSize = JSON.stringify(results).length;
-    const sizeKB = (dataSize / 1024).toFixed(2);
-
-    console.log(
-      `[CACHE] Algolia fetch complete | Product Search | Results: ${results.hits.length} products | Size: ${sizeKB}KB | Time: ${fetchDuration}ms`
-    );
 
     return { results, cachedAt };
   },
@@ -208,13 +174,6 @@ export default async function productFormSearch(req: NextApiRequest, res: NextAp
 
     const isCached = totalDuration < 200;
     const cacheStatus = isCached ? 'CACHED' : 'FRESH';
-
-    const dataSize = JSON.stringify(cachedData.results).length;
-    const sizeKB = (dataSize / 1024).toFixed(2);
-
-    console.log(
-      `[PRODUCT-SEARCH-API] ${cacheStatus} | Request ID: ${requestId} | Results: ${cachedData.results.hits.length} products | Size: ${sizeKB}KB | Time: ${totalDuration}ms`
-    );
 
     const now = new Date();
     const expiresAt = new Date(now.getTime() + CACHE_TTL * 1000);

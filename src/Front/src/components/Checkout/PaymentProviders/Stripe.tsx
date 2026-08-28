@@ -13,25 +13,33 @@ export default function StripeProvider({ children }: StripeProviderProps) {
   const { paymentIntent, isStripeInfoIncomplete } = useGetPaymentIntent();
   const { isFreeOrder } = useCart();
 
+  const stripeClientSecret = paymentIntent?.stripeClientSecret;
+  const canUseStripe = !isFreeOrder && !isStripeInfoIncomplete && Boolean(stripeClientSecret);
+
   const stripePromise = useMemo(() => {
-    if (paymentIntent?.stripePublishableKey) {
+    if (canUseStripe && paymentIntent?.stripePublishableKey) {
       return getStripe(paymentIntent.stripePublishableKey);
     }
 
     return Promise.resolve(null);
-  }, [paymentIntent?.stripePublishableKey]);
+  }, [canUseStripe, paymentIntent?.stripePublishableKey]);
 
-  // If order is free, return an empty Stripe config to avoid errors on the useElements hook
-  if (!isFreeOrder && (isStripeInfoIncomplete || !paymentIntent)) {
-    return children;
+  // Always provide Elements so useElements() in payment/confirm hooks does not crash
+  // when the intent has no card secrets (free orders, B2B prepaid/credit).
+  if (!stripeClientSecret || !canUseStripe) {
+    return (
+      <Elements stripe={stripePromise} options={{}}>
+        {children}
+      </Elements>
+    );
   }
 
   return (
     <Elements
-      key={paymentIntent?.stripeClientSecret || 'no-client-secret'}
+      key={stripeClientSecret}
       stripe={stripePromise}
       options={{
-        clientSecret: paymentIntent?.stripeClientSecret,
+        clientSecret: stripeClientSecret,
       }}
     >
       {children}

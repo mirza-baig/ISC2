@@ -10,7 +10,8 @@ import OrderStatus from './OrderStatus';
 import ChevronDownIcon from 'icons/ChevronDownIcon';
 import clsx from 'clsx';
 import OrderPrintButton from './OrderPrintButton';
-import { useLoggedUser } from 'hooks/index';
+import { BUSINESS_RECEIPT_DEFAULT_LABELS } from 'constants/order';
+import { useLoggedUser, useIsBusinessBuyer } from 'hooks/index';
 
 type OrderHistoryComponentProps = {
   fields: {
@@ -24,6 +25,7 @@ type OrderHistoryComponentProps = {
 const Order = ({ fields }: OrderHistoryComponentProps) => {
   const { user } = useLoggedUser();
   const { order, orderLabels, printLabels, logo } = fields;
+  const isBusinessBuyer = useIsBusinessBuyer();
   const [isOpen, setIsOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const hasMoreThanOneLineItem = order.lineItems && order.lineItems.length > 1;
@@ -51,59 +53,137 @@ const Order = ({ fields }: OrderHistoryComponentProps) => {
   };
 
   const OrderInformation = () => {
+    const printCtaLabel = isBusinessBuyer
+      ? BUSINESS_RECEIPT_DEFAULT_LABELS.downloadReceiptCtaLabel
+      : orderLabels.printInvoiceCtaLabel;
+
     return (
       <div className="flex flex-col-reverse gap-y-3 sm:flex-row print:flex-row justify-between bg-gray-10 p-5">
         <div className="w-full space-y-2 print:space-y-5">
           <h5 className="text-lg sm:text-xl font-bold">{`${orderLabels.orderLabel} #${order.orderId}`}</h5>
+
           <div className="hidden print:flex">
             <OrderUserInformation order={order} labels={printLabels} />
           </div>
-          <div className="flex flex-col sm:flex-row print:flex-col text-sm-base">
-            {user?.fullName && (
-              <div className="hidden print:flex space-x-1">
-                <strong>{`${printLabels.nameLabel}: `}</strong>
-                <span>{user?.fullName}</span>
-              </div>
-            )}
-            {user?.email && (
-              <div className="hidden print:flex space-x-1">
-                <strong>{`${printLabels.emailLabel}: `}</strong>
-                <span>{user?.email}</span>
-              </div>
-            )}
-            <span className="sm:pr-4 print:pr-0">
-              <strong>{`${orderLabels.dateLabel}: `}</strong>
-              <span>{order.orderDate.replace(/-/g, '/')}</span>
-            </span>
-            {order.paymentType && (
-              <span className="sm:px-4 sm:border-x print:px-0 print:border-none border-gray-50">
-                <strong>{`${orderLabels.paymentLabel}: `}</strong>
-                <span>{order.paymentType}</span>
-              </span>
-            )}
-            <span
-              className={clsx(
-                'sm:pl-4 print:hidden',
-                !Boolean(order.paymentType) && 'sm:border-s border-gray-50'
-              )}
-            >
-              <strong>{`${orderLabels.orderTotalLabel}: `}</strong>
-              <span className="space-x-0.5">
-                <span>{getCurrencySymbol(order.orderTotal.currencyCode)}</span>
+
+          {isBusinessBuyer ? (
+            <>
+              <div className="flex items-center gap-3 flex-wrap mb-1 text-sm text-gray-70">
+                <span>{order.orderDate.replace(/-/g, '/')}</span>
+                <span className="text-black-100">·</span>
                 <span>
+                  {getCurrencySymbol(order.orderTotal.currencyCode)}{' '}
                   {parsePrice(order.orderTotal.centAmount, order.orderTotal.fractionDigits)}
                 </span>
+                {order.accountName && (
+                  <>
+                    <span className="text-black-100">·</span>
+                    <span>{order.accountName}</span>
+                  </>
+                )}
+                {order.buyerFullName && (
+                  <>
+                    <span className="text-black-100">·</span>
+                    <span>{order.buyerFullName}</span>
+                  </>
+                )}
+              </div>
+
+              {(order.poNumber || order.customerOrderReference) && (
+                <div className="flex items-center gap-3 flex-wrap text-gray-70">
+                  {order.poNumber && (
+                    <span className="text-xs">
+                      {BUSINESS_RECEIPT_DEFAULT_LABELS.poNumberLabel}:{' '}
+                      <span className="text-gray-70">{order.poNumber}</span>
+                    </span>
+                  )}
+                  {order.poNumber && order.customerOrderReference && (
+                    <span className="text-xs text-gray-50">·</span>
+                  )}
+                  {order.customerOrderReference && (
+                    <span className="text-xs">
+                      {BUSINESS_RECEIPT_DEFAULT_LABELS.customerOrderReferenceLabel}:{' '}
+                      <span className="text-gray-70">{order.customerOrderReference}</span>
+                    </span>
+                  )}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-sm-base space-y-1">
+              {order.accountName && (
+                <div>
+                  <strong>{`${BUSINESS_RECEIPT_DEFAULT_LABELS.organizationLabel}: `}</strong>
+                  <span>{order.accountName}</span>
+                </div>
+              )}
+              {order.buyerFullName && (
+                <div>
+                  <strong>{`${BUSINESS_RECEIPT_DEFAULT_LABELS.buyerNameLabel}: `}</strong>
+                  <span>{order.buyerFullName}</span>
+                </div>
+              )}
+              {order.poNumber && (
+                <div>
+                  <strong>{`${BUSINESS_RECEIPT_DEFAULT_LABELS.poNumberLabel}: `}</strong>
+                  <span>{order.poNumber}</span>
+                </div>
+              )}
+              {order.customerOrderReference && (
+                <div>
+                  <strong>{`${BUSINESS_RECEIPT_DEFAULT_LABELS.customerOrderReferenceLabel}: `}</strong>
+                  <span>{order.customerOrderReference}</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Non-business/print contact & totals */}
+          {!isBusinessBuyer && (
+            <div className="flex flex-col sm:flex-row print:flex-col text-sm-base">
+              {user?.fullName && (
+                <div className="hidden print:flex space-x-1">
+                  <strong>{`${printLabels.nameLabel}: `}</strong>
+                  <span>{user?.fullName}</span>
+                </div>
+              )}
+              {user?.email && (
+                <div className="hidden print:flex space-x-1">
+                  <strong>{`${printLabels.emailLabel}: `}</strong>
+                  <span>{user?.email}</span>
+                </div>
+              )}
+              <span className="sm:pr-4 print:pr-0">
+                <strong>{`${orderLabels.dateLabel}: `}</strong>
+                <span>{order.orderDate.replace(/-/g, '/')}</span>
               </span>
-            </span>
-          </div>
+              {order.paymentType && (
+                <span className="sm:px-4 sm:border-x print:px-0 print:border-none border-gray-50">
+                  <strong>{`${orderLabels.paymentLabel}: `}</strong>
+                  <span>{order.paymentType}</span>
+                </span>
+              )}
+              <span
+                className={clsx(
+                  'sm:pl-4 print:hidden',
+                  !Boolean(order.paymentType) && 'sm:border-s border-gray-50'
+                )}
+              >
+                <strong>{`${orderLabels.orderTotalLabel}: `}</strong>
+                <span className="space-x-0.5">
+                  <span>{getCurrencySymbol(order.orderTotal.currencyCode)}</span>
+                  <span>
+                    {parsePrice(order.orderTotal.centAmount, order.orderTotal.fractionDigits)}
+                  </span>
+                </span>
+              </span>
+            </div>
+          )}
         </div>
         <div className="flex flex-row sm:w-48 sm:flex-col justify-between sm:space-y-3 sm:items-end">
           <OrderStatus fields={{ orderStatus: order.orderStatus }} />
           <div>
-            <OrderPrintButton
-              contentRef={contentRef}
-              printInvoiceCtaLabel={orderLabels.printInvoiceCtaLabel}
-            />
+            <OrderPrintButton contentRef={contentRef} printInvoiceCtaLabel={printCtaLabel} />
           </div>
         </div>
       </div>

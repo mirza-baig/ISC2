@@ -10,6 +10,7 @@ import {
 } from 'react';
 
 import { useLoggedUser, useSession } from 'hooks/index';
+import { SHOPPER_CONTEXT_COOKIE } from 'constants/index';
 
 export type ShoppingContextType = 'myself' | 'organization';
 
@@ -39,6 +40,24 @@ type ShopperContextProps = {
 };
 
 const STORAGE_KEY = 'b2b-shopper-context';
+
+const writeContextCookie = (type: ShoppingContextType) => {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
+  document.cookie = `${SHOPPER_CONTEXT_COOKIE}=${type}; path=/; SameSite=Lax${
+    window.location.protocol === 'https:' ? '; Secure' : ''
+  }`;
+};
+
+const removeContextCookie = () => {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
+  document.cookie = `${SHOPPER_CONTEXT_COOKIE}=; path=/; Max-Age=0; SameSite=Lax`;
+};
 
 const ShopperContext = createContext<ShopperContextProps>({
   shopperContext: null,
@@ -83,6 +102,7 @@ const writeStoredContext = (userId: string, selection: ShopperContextSelection) 
   };
 
   sessionStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  writeContextCookie(selection.type);
 };
 
 const removeStoredContext = () => {
@@ -91,6 +111,7 @@ const removeStoredContext = () => {
   }
 
   sessionStorage.removeItem(STORAGE_KEY);
+  removeContextCookie();
 };
 
 type ShopperContextProviderProps = {
@@ -120,7 +141,13 @@ const ShopperContextProvider = ({ children }: ShopperContextProviderProps) => {
         return current;
       }
 
-      return readStoredContext(externalID);
+      const stored = readStoredContext(externalID);
+
+      if (stored) {
+        writeContextCookie(stored.type);
+      }
+
+      return stored;
     });
   }, [isUserLoggedIn, externalID]);
 

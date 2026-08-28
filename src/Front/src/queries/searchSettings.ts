@@ -306,6 +306,9 @@ export const middlewareApiForLayout = (path: string): string => `
           b2bAccount: field(name: "b2bAccount") {
             value
           }
+          hideForB2B: field(name: "hideForB2B") {
+            value
+          }
         }
       }
     }

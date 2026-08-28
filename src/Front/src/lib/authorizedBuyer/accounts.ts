@@ -48,6 +48,7 @@ export const ACCOUNT_ACME: AuthorizedBuyerAccount = {
   prepaid: {
     expirationDate: '2026-12-31',
     balance: 15000,
+    type: 'Investment',
   },
 };
 
@@ -150,6 +151,7 @@ export const ACCOUNT_UMBRELLA: AuthorizedBuyerAccount = {
   prepaid: {
     expirationDate: '2027-06-30',
     balance: 5000,
+    type: 'Deposit',
   },
 };
 
@@ -194,6 +196,7 @@ export const ACCOUNT_CREDIT_EDGE: AuthorizedBuyerAccount = {
   prepaid: {
     expirationDate: '2026-08-15',
     balance: 250,
+    type: 'Investment',
   },
 };
 
@@ -217,6 +220,47 @@ export const ACCOUNT_OTP: AuthorizedBuyerAccount = {
   credit: defaultCredit(),
 };
 
+/**
+ * Live CloudHub shape for turbobusinessbuyer5000@mailinator.com.
+ * prepaidAuthorized is still null, so prepaid stays hidden.
+ * availableCredit is still null. discountPercentage is not mocked.
+ */
+export const ACCOUNT_OTP_SF_PARTIAL: AuthorizedBuyerAccount = {
+  ...ACCOUNT_OTP,
+  accountId: '001Ek000027iJTJIA2',
+  accountName: 'Test OTP Business Account',
+  creditHold: false,
+  purchaseControls: defaultPurchaseControls({
+    poRequired: true,
+    poAttachmentRequired: null,
+    prepaidAuthorized: null,
+  }),
+  credit: {
+    paymentTerms: 'Net 30',
+    creditLimit: 25000,
+    creditBalance: null,
+    availableCredit: null,
+  },
+  prepaid: {
+    expirationDate: '2026-12-31',
+    balance: 15000,
+    type: 'Investment',
+  },
+};
+
+export const ACCOUNT_OTP_SF_HOLD: AuthorizedBuyerAccount = {
+  ...ACCOUNT_OTP_SF_PARTIAL,
+  accountId: '001Ek000027j0y5IAA',
+  accountName: 'Another Test OTP Business Account',
+  creditHold: true,
+  credit: {
+    paymentTerms: 'Net 60',
+    creditLimit: 10000,
+    creditBalance: null,
+    availableCredit: null,
+  },
+};
+
 /** Non-standard account type for catalog-by-account-type scenarios. */
 export const ACCOUNT_TYPE_VARIANT: AuthorizedBuyerAccount = {
   accountId: '001xx0000acctype',
@@ -233,4 +277,113 @@ export const ACCOUNT_TYPE_VARIANT: AuthorizedBuyerAccount = {
     creditBalance: 0,
     availableCredit: 10000,
   }),
+};
+
+/** Payment-eligibility demo orgs. Shown in the default `many` picker. */
+export const ACCOUNT_DEMO_BOTH: AuthorizedBuyerAccount = {
+  accountId: 'org-demo-both',
+  accountName: 'BrightPath Training Inc',
+  accountType: 'B2B',
+  currency: 'USD',
+  pricingTier: 'ENTERPRISE_1',
+  creditHold: false,
+  taxExempt: false,
+  shippingAddress: usAddress('10 Lake Shore Dr', 'Chicago', 'IL', '60601'),
+  purchaseControls: defaultPurchaseControls({ poRequired: false }),
+  credit: defaultCredit({
+    creditLimit: 50000,
+    creditBalance: 10000,
+    availableCredit: 40000,
+  }),
+  prepaid: {
+    expirationDate: '2026-12-31',
+    balance: 15000,
+    type: 'Investment',
+  },
+};
+
+export const ACCOUNT_DEMO_PREPAID_INVESTMENT: AuthorizedBuyerAccount = {
+  accountId: 'org-demo-prepaid-investment',
+  accountName: 'Meridian Partners LLC',
+  accountType: 'B2B',
+  currency: 'USD',
+  pricingTier: 'ENTERPRISE_1',
+  creditHold: false,
+  taxExempt: false,
+  shippingAddress: usAddress('200 Market Street', 'San Francisco', 'CA', '94105'),
+  purchaseControls: defaultPurchaseControls({ poRequired: false }),
+  credit: defaultCredit({
+    creditLimit: 500,
+    creditBalance: 0,
+    availableCredit: 500,
+  }),
+  prepaid: {
+    expirationDate: '2026-12-31',
+    balance: 10000,
+    type: 'Investment',
+    discountPercentage: 10,
+  },
+};
+
+export const ACCOUNT_DEMO_PREPAID_DEPOSIT: AuthorizedBuyerAccount = {
+  accountId: 'org-demo-prepaid-deposit',
+  accountName: 'Harbor Deposit Group',
+  accountType: 'B2B',
+  currency: 'USD',
+  pricingTier: 'ENTERPRISE_1',
+  creditHold: false,
+  taxExempt: false,
+  shippingAddress: usAddress('88 Harbor Blvd', 'Tampa', 'FL', '33602'),
+  purchaseControls: defaultPurchaseControls({ poRequired: false }),
+  credit: defaultCredit({
+    creditLimit: 500,
+    creditBalance: 0,
+    availableCredit: 500,
+  }),
+  prepaid: {
+    expirationDate: '2027-06-30',
+    balance: 10000,
+    type: 'Deposit',
+    discountPercentage: 10,
+  },
+};
+
+export const ACCOUNT_DEMO_CREDIT_ONLY: AuthorizedBuyerAccount = {
+  accountId: 'org-demo-credit-only',
+  accountName: 'Northstar Enterprises',
+  accountType: 'B2B',
+  currency: 'USD',
+  pricingTier: 'ENTERPRISE_1',
+  creditHold: false,
+  taxExempt: false,
+  shippingAddress: usAddress('1 Northstar Plaza', 'Minneapolis', 'MN', '55402'),
+  purchaseControls: defaultPurchaseControls({ poRequired: false }),
+  credit: defaultCredit({
+    creditLimit: 30000,
+    creditBalance: 5000,
+    availableCredit: 25000,
+  }),
+};
+
+export const ACCOUNT_DEMO_NEITHER: AuthorizedBuyerAccount = {
+  accountId: 'org-demo-neither',
+  accountName: 'Atlas Holdings Inc',
+  accountType: 'B2B',
+  currency: 'USD',
+  pricingTier: 'ENTERPRISE_2',
+  creditHold: true,
+  taxExempt: false,
+  shippingAddress: usAddress('400 Atlas Ave', 'Denver', 'CO', '80202'),
+  purchaseControls: defaultPurchaseControls({ poRequired: false }),
+  credit: defaultCredit({
+    paymentTerms: 'NET_15',
+    creditLimit: 1000,
+    creditBalance: 1000,
+    availableCredit: 0,
+  }),
+  prepaid: {
+    expirationDate: '2026-08-15',
+    balance: 250,
+    type: 'Investment',
+  },
 };

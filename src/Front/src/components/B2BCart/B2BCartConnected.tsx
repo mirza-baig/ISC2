@@ -9,13 +9,14 @@ import type { CartLineItem } from 'types/index';
 import { useB2BCartLabels } from '../Search/B2BPrivateClassContext';
 import { useB2BCpqCart } from '../Search/useB2BCpqCart';
 
-// ⛔ PRIVATE CLASSES ARE NOT SHIPPING ON THESE TWO SURFACES (bug B-15).
+// ⛔ PRIVATE CLASSES ARE NOT SHIPPING ANYWHERE (bug B-15, extended bug sweep 2026-08-19).
 //
-// The decision is to hold private classes back from the cart page and the mini cart *for now*, so
-// every private-class line below is commented rather than deleted: uncommenting these blocks (and
-// the two `useHasB2BCartExtraLines` call sites in `ShoppingCart` and `B2BMiniCart`, and the modal in
-// `B2BCartSurface`) is the whole switch back on. The **PLP dock is deliberately untouched** — it
-// keeps the demo row, the scheduling questions and the location picker.
+// The decision is to hold private classes back *for now*, so every private-class line below is
+// commented rather than deleted: uncommenting these blocks (and the two `useHasB2BCartExtraLines`
+// call sites in `ShoppingCart` and `B2BMiniCart`, the modal in `B2BCartSurface`, and the matching
+// blocks in `B2BPlpCart.tsx`/`B2BCartLineRow.tsx`/`B2BCartPanel.tsx`) is the whole switch back on.
+// The PLP dock, which originally kept the demo row, the scheduling questions and the location
+// picker, is now deferred the same way as this cart page and the mini cart.
 //
 // Nothing real is hidden by this: no commercetools line is ever marked private today (PC-1), so the
 // only thing these blocks could render is the temporary demo line.

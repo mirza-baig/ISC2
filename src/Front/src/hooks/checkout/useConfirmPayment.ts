@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useCart, useCheckoutProcess, usePersonalize } from 'providers/index';
 import { ConfirmPaymentPayload, Cart, CartLineItem } from 'types/index';
@@ -8,11 +8,14 @@ import { parsePriceFromMoney } from 'utils/index';
 import useCreateOrderFromCart from './useCreateOrderFromCart';
 import useHandleStripePayment from './useHandleStripePayment';
 import useHandlePaypalPayment from './useHandlePaypalPayment';
-import { PAYMENT_METHODS } from 'constants/checkout';
+import useGetPaymentIntent from './useGetPaymentIntent';
+import { PAYMENT_METHODS, isBusinessAccountPaymentMethod } from 'constants/checkout';
+import { B2B_FEATURE_FLAG } from 'constants/b2b';
 import { ANALYTICS_EVENTS } from 'constants/analytics';
 import { buildPurchaseEcommercePayload, formatAnalyticsCouponCodes } from 'utils/analytics';
-import { LOCALSTORAGE_KEYS } from 'constants/index';
+import { LOCALSTORAGE_KEYS, QUERY_KEYS } from 'constants/index';
 import { buildConfirmationRedirectUrl, withRedirectStatus } from 'utils/checkoutReturnUrl';
+import { useFeatureFlag } from 'providers/featureFlags';
 
 const sendEngagePurchaseEvent = (
   cartLineItems: CartLineItem[],
@@ -89,15 +92,18 @@ type PlaceOrderResponse = {
 };
 
 export default function useConfirmPayment() {
+  const queryClient = useQueryClient();
   const { activeCart } = useCart();
   const { track } = useAnalyticsTracking();
   const mappedItems = useAnalyticsItems();
   const { engage } = usePersonalize();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
 
   const { fields } = useCheckoutProcess();
   const { createOrderAsync, createOrderError } = useCreateOrderFromCart();
   const { handleStripePayment } = useHandleStripePayment();
   const { handlePaypalPayment } = useHandlePaypalPayment();
+  const { getPaymentIntentAsync } = useGetPaymentIntent();
 
   const trackPaymentInfo = (paymentMethod: string) => {
     const coupon = formatAnalyticsCouponCodes(activeCart?.discountCodes);
@@ -173,7 +179,21 @@ export default function useConfirmPayment() {
       let paymentResult = null;
 
       try {
-        if (payload.paymentMethod !== PAYMENT_METHODS.FREE) {
+        if (isB2BFeatureEnabled && isBusinessAccountPaymentMethod(payload.paymentMethod)) {
+          const intent = await getPaymentIntentAsync({
+            cart: activeCart,
+            paymentMethodType: payload.paymentMethod,
+          });
+
+          if (!intent?.intentPaymentId) {
+            throw new Error('Business payment intent is missing');
+          }
+
+          paymentResult = {
+            status: 'succeeded' as const,
+            orderPayload: { intentPaymentId: intent.intentPaymentId },
+          };
+        } else if (payload.paymentMethod !== PAYMENT_METHODS.FREE) {
           const isStripe = payload.paymentMethod === PAYMENT_METHODS.STRIPE;
 
           if (isStripe) {
@@ -204,6 +224,10 @@ export default function useConfirmPayment() {
     },
     onSuccess: async ({ redirectURL, status }: PlaceOrderResponse) => {
       if (status === 'succeeded') {
+        await queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.AUTHORIZED_BUYER_ACCOUNTS],
+        });
+
         track({ ecommerce: null });
         track({
           event: ANALYTICS_EVENTS.PURCHASE,

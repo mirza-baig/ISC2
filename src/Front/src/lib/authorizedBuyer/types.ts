@@ -11,20 +11,22 @@ export type AuthorizedBuyerAddress = {
 
 export type AuthorizedBuyerPurchaseControls = {
   poRequired: boolean;
-  poAttachmentRequired: boolean;
-  prepaidAuthorized: boolean;
+  poAttachmentRequired: boolean | null;
+  prepaidAuthorized: boolean | null;
 };
 
 export type AuthorizedBuyerCredit = {
   paymentTerms: string;
-  creditLimit: number;
-  creditBalance: number;
-  availableCredit: number;
+  creditLimit: number | null;
+  creditBalance: number | null;
+  availableCredit: number | null;
 };
 
 export type AuthorizedBuyerPrepaid = {
-  expirationDate: string;
-  balance: number;
+  expirationDate: string | null;
+  balance: number | null;
+  type?: string | null;
+  discountPercentage?: number | null;
 };
 
 export type AuthorizedBuyerAccount = {
@@ -60,6 +62,9 @@ export const BUYER_MOCK_SCENARIOS = [
   'account-type-variants',
   'credit-edge',
   'purchase-controls',
+  'sf-nulls',
+  /** BrightPath-style org; Confirm purchase recheck simulates another buyer draining the balance. */
+  'race',
 ] as const;
 
 export type BuyerMockScenario = (typeof BUYER_MOCK_SCENARIOS)[number];

@@ -12,14 +12,6 @@ export enum CHECKOUT_STEPS {
   PAYMENT_INFORMATION = 'payment-information',
 }
 
-/**
- * DOM id OrderSummary renders on the Payment Information step, and
- * PaymentInformationForm portals its Download Quote / Confirm Purchase buttons into —
- * putting them under the order summary box like the prototype, without lifting that
- * form's state into the (separately placed, Sitecore-composed) OrderSummary component.
- */
-export const CHECKOUT_STEP_TWO_ACTIONS_ANCHOR_ID = 'checkout-step-two-actions';
-
 export const PO_NUMBER_MAX_LENGTH = 30;
 
 export const CUSTOMER_ORDER_REFERENCE_MAX_LENGTH = 75;
@@ -77,3 +69,28 @@ export enum BUSINESS_PAYMENT_METHODS {
   PREAPPROVED_CREDIT = 'preapproved-credit',
   PREPAID_ACCOUNT = 'prepaid-account',
 }
+
+export const isBusinessAccountPaymentMethod = (
+  method?: string
+): method is BUSINESS_PAYMENT_METHODS =>
+  method === BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT ||
+  method === BUSINESS_PAYMENT_METHODS.PREAPPROVED_CREDIT;
+
+/**
+ * Fallbacks for business payment-method copy on checkout step two.
+ */
+export const BUSINESS_STEP_TWO_DEFAULT_LABELS = {
+  paymentMethodSelectLabel: 'Please choose a payment method',
+  creditCardOptionLabel: 'Credit Card',
+  prepaidAccountLabel: 'Prepaid Account Payment',
+  prepaidAccountDescription: 'Process this order from a prepaid investment or deposit account.',
+  preapprovedCreditLabel: 'Preapproved Credit Payment',
+  preapprovedCreditDescription:
+    "Request an invoice subject to your account's pre-approved credit terms.",
+  prepaidAvailableBalanceLabel: 'Available prepaid balance',
+  creditAvailableBalanceLabel: 'Available credit',
+  prepaidDiscountLabel: 'Discount',
+  prepaidAmountDueLabel: 'Amount due with prepaid',
+  staleBusinessPaymentMessage:
+    'This payment method is no longer available. Please choose another payment method and try again.',
+} as const;

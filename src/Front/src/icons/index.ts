@@ -1,5 +1,4 @@
 export { default as BuildingIcon } from './BuildingIcon';
-export { default as DownloadIcon } from './DownloadIcon';
 export { default as CartIcon } from './CartIcon';
 export { default as ShoppingCartIcon } from './ShoppingCartIcon';
 export { default as CloseIcon } from './CloseIcon';

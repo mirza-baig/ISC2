@@ -1,15 +1,13 @@
 import { useRouter } from 'next/router';
 import clsx from 'clsx';
-import { ComponentProps, useCallback, useEffect, useMemo, useState } from 'react';
+import { ComponentProps, useCallback, useEffect, useState } from 'react';
 import { ComponentParams, Field, ImageField, LinkField } from '@sitecore-jss/sitecore-jss-nextjs';
 
 import { ChevronSquaredDownIcon } from 'icons/index';
-import { mapQuoteLabelsFromSitecoreFields, parseFieldsFromURLString } from 'utils/index';
+import { parseFieldsFromURLString } from 'utils/index';
 import { useBreakpoint } from 'hooks/index';
 import { useCart, useCheckoutProcess } from 'providers/index';
 import { CartSummaryPrices, LineItemPrice, LoadingIndicator } from 'ui/index';
-import { CHECKOUT_STEP_TWO_ACTIONS_ANCHOR_ID, CHECKOUT_STEPS } from 'constants/index';
-import { QuoteSitecoreFields } from 'types/index';
 
 import CartCoupon from './CartCoupon';
 import { OrderSummaryItems } from './OrderSummary/OrderSummaryItems';
@@ -48,7 +46,7 @@ const MENU_OPEN_BREAKPOINTS = ['md', 'lg', 'xl'];
 const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
   const router = useRouter();
   const breakpoint = useBreakpoint();
-  const { activeStep, setTaxErrorLabels, setQuoteLabels } = useCheckoutProcess();
+  const { setTaxErrorLabels } = useCheckoutProcess();
   const [isOpen, setIsOpen] = useState<boolean>(MENU_OPEN_BREAKPOINTS.includes(breakpoint));
 
   const { activeCart, isGettingCart } = useCart();
@@ -58,24 +56,11 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
     setIsMounted(true);
   }, []);
 
-  // Memoized so this only changes reference when the underlying field does — it feeds
-  // the quote-labels effect below, and a fresh object every render would re-fire that
-  // effect (and its setQuoteLabels call) on every render instead of only on real change.
-  const labels = useMemo(
-    () =>
-      parseFieldsFromURLString<SectionHeadingAndLabels & QuoteSitecoreFields>(
-        fields.sectionHeadingAndLabels
-      ),
-    [fields.sectionHeadingAndLabels]
-  );
+  const labels = parseFieldsFromURLString<SectionHeadingAndLabels>(fields.sectionHeadingAndLabels);
 
   useEffect(() => {
     setTaxErrorLabels(fields.taxCalculationErrorPopup?.fields);
   }, [fields.taxCalculationErrorPopup?.fields, setTaxErrorLabels]);
-
-  useEffect(() => {
-    setQuoteLabels(mapQuoteLabelsFromSitecoreFields(labels));
-  }, [labels, setQuoteLabels]);
 
   useEffect(() => {
     const shouldBeMenuOpen = MENU_OPEN_BREAKPOINTS.includes(breakpoint);
@@ -159,17 +144,6 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
             text: labels.secondaryCtaLabel,
             onClick: onBackClick,
           }}
-        />
-      )}
-
-      {/*
-        PaymentInformationForm portals its Download Quote / Confirm Purchase buttons
-        here,.
-      */}
-      {activeStep === CHECKOUT_STEPS.PAYMENT_INFORMATION && (
-        <div
-          id={CHECKOUT_STEP_TWO_ACTIONS_ANCHOR_ID}
-          className="flex flex-col items-center gap-4 md:gap-2 mt-4 md:mt-8"
         />
       )}
     </section>

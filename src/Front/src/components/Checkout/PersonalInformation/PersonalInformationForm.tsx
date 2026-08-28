@@ -59,11 +59,11 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
   const mappedItems = useAnalyticsItems();
 
   const [isBillingPostalCodeRequired, setIsBillingPostalCodeRequired] = useState<boolean>(
-    isPostalCodeRequiredForCountry(user?.billingAddress.countryCode)
+    isPostalCodeRequiredForCountry(user?.billingAddress?.countryCode)
   );
 
   const [isMailingPostalCodeRequired, setIsMailingPostalCodeRequired] = useState<boolean>(
-    isPostalCodeRequiredForCountry(user?.mailingAddress.countryCode)
+    isPostalCodeRequiredForCountry(user?.mailingAddress?.countryCode)
   );
 
   const [previousBillingStates, setPreviousBillingStates] = useState<Record<string, string>>({});

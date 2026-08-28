@@ -10,3 +10,13 @@ export const B2B_LISTING_TEMPLATE_NAME = 'B2BProductListingPage';
 // whole B2B experience off rather than erroring). That data item is per-environment and is NOT
 // serialized, so each env owns its own value; see docs/B2B-EnvLocal-Sitecore-Items.md §5.
 export const B2B_FEATURE_FLAG = 'B2B_Company_Flow';
+
+export const SHOPPER_CONTEXT_COOKIE = 'b2b-shopper-context-type';
+
+export const B2B_HIDDEN_NAV_LINKS = [
+  'Benefits',
+  'My Certifications',
+  'Courses and Exams',
+  'CPE Credits',
+  'My Learning Journey',
+];

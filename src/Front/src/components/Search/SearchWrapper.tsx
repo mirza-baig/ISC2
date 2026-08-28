@@ -57,7 +57,7 @@ import B2BPlpSort, { B2BSortKey, SORT_KEYS } from './B2BPlpSort';
 import { B2BPrivateClassProvider, useB2BCartLabels } from './B2BPrivateClassContext';
 import { hasSessionStarted, type SessionScheduleFields } from './b2bDates';
 import { filterRawQueryParts } from './b2bQueryString';
-import { isRegionlessOilSession } from './b2bPurchaseOptions';
+import { isInvalidOilSession } from './b2bPurchaseOptions';
 import { B2B_STARTDATE_MAX_FACET_VALUES } from './useB2BPastSessionCount';
 import {
   getPriceBuckets,
@@ -381,8 +381,11 @@ const B2BCartBubble = ({ count, onOpen }: { count: number; onOpen: () => void })
     </button>
   );
 };
-import B2BClassroomLocationModal from './B2BClassroomLocationModal';
-import { useB2BDemoCart } from './b2bDemoCart'; // TEMP demo private-class cart
+// Private classes are deferred to a later phase (bug sweep 2026-08-19) — the classroom location
+// modal and the TEMP demo private-class cart are commented out rather than deleted so they can be
+// restored by uncommenting when the feature ships.
+// import B2BClassroomLocationModal from './B2BClassroomLocationModal';
+// import { useB2BDemoCart } from './b2bDemoCart';
 import type { Hit as AlgoliaHit } from 'instantsearch.js';
 import SearchFiltersMenu from './SearchFiltersMenu';
 import SearchNonEditableNotice from './SearchNonEditableNotice';
@@ -476,7 +479,10 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
   // is a cheap global-context subscription; the value is only used for the B2B PLP.
   const { activeCart } = useCart();
   const cartCount = activeCart?.totalLineItemQuantity ?? 0;
-  const demoCart = useB2BDemoCart(); // TEMP demo private-class cart
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — the TEMP demo
+  // private-class cart hook/effect are commented out rather than deleted so they can be restored
+  // by uncommenting when the feature ships.
+  // const demoCart = useB2BDemoCart();
   const [cartDismissed, setCartDismissed] = useState(false);
   const prevCartCount = useRef(cartCount);
   useEffect(() => {
@@ -485,12 +491,11 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
     }
     prevCartCount.current = cartCount;
   }, [cartCount]);
-  // TEMP: re-open the cart when the demo product is added.
-  useEffect(() => {
-    if (demoCart.inCart) {
-      setCartDismissed(false);
-    }
-  }, [demoCart.inCart]);
+  // useEffect(() => {
+  //   if (demoCart.inCart) {
+  //     setCartDismissed(false);
+  //   }
+  // }, [demoCart.inCart]);
   // `?cart-sku=` link pre-fill state (CART-3), reported by B2BPlpCartPreload below. A `useCallback`
   // because the child reports through an effect — a fresh function each render would re-fire it.
   const [isCartPreloading, setIsCartPreloading] = useState(false);
@@ -500,10 +505,9 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
   );
   // The panel opens while the pre-fill is still running, so a link-driven arrival shows the cart
   // filling up rather than nothing at all followed by a cart that appears on its own.
-  const isCartOpen =
-    isB2BListing && (cartCount > 0 || demoCart.inCart || isCartPreloading) && !cartDismissed;
-  // Total item count for the collapsed floating cart bubble (folds in the temp demo line).
-  const badgeCount = cartCount + (demoCart.inCart ? demoCart.quantity : 0);
+  const isCartOpen = isB2BListing && (cartCount > 0 || isCartPreloading) && !cartDismissed;
+  // Total item count for the collapsed floating cart bubble.
+  const badgeCount = cartCount;
 
   // The bubble is not only a "cart is closed" affordance — it also stands in for the docked panel
   // whenever that panel is open but scrolled out of view, so the cart is always one tap away.
@@ -758,12 +762,13 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
         modality?: { key?: string };
         region?: { key?: string };
       };
-      // An online instructor-led session with no region is not sellable from the listing, so it is
-      // hidden here rather than shown as a row that cannot be added (decision 2026-08-05). Applied
-      // alongside the past-session rule, not instead of it — a row has to clear both. The header
-      // total subtracts these too; see `useB2BListingRowModel`, which counts them only among
-      // not-yet-started sessions so the two rules never subtract the same row twice.
-      return !hasSessionStarted(record) && !isRegionlessOilSession(record);
+      // An online instructor-led session with no region, or no real scheduled date at all, is not
+      // sellable from the listing, so it is hidden here rather than shown as a row that cannot be
+      // added (decision 2026-08-05; see `isInvalidOilSession`). Applied alongside the past-session
+      // rule, not instead of it — a row has to clear both. The header total subtracts these too; see
+      // `useB2BListingRowModel`, which counts them only among not-yet-started sessions so the two
+      // rules never subtract the same row twice.
+      return !hasSessionStarted(record) && !isInvalidOilSession(record);
     };
   }, [isB2BListing]);
 
@@ -892,14 +897,6 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
           }) as ReturnType<AlgoliaSearchClient['search']>;
         }
 
-        // F4 (Algolia usage): the initial unfiltered "browse everything" query is identical for every
-        // visitor, so serve it from a shared server cache (/api/algolia/browse) instead of firing
-        // browser->Algolia on every page load (and every bot hit). Real searches, filters, sort and
-        // pagination still go live. B2B PLP is excluded (personalized). Any failure falls back to live.
-        // A "browse" = no search term typed. Default filters, facet clicks, and pagination are all
-        // fine to cache because the cache key is the full request (each filter/page combo is its own
-        // entry), and empty-query results are identical for every visitor. Only actual term searches
-        // (query set) stay live. B2B PLP is excluded (personalized).
         const isBrowse =
           typeof window !== 'undefined' &&
           !isB2BListing &&
@@ -1275,7 +1272,9 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
                   ) : undefined
                 }
               />
-              {isB2BListing && <B2BClassroomLocationModal />}
+              {/* Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented
+                  out rather than deleted so it can be restored by uncommenting when the feature
+                  ships. {isB2BListing && <B2BClassroomLocationModal />} */}
               {/* Collapsed cart bubble (prototype): shows whenever the cart holds something and
                   the docked panel is not actually on screen — either because it is closed, or
                   because it is open but scrolled out of view (long lists put it far above the

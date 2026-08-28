@@ -59,27 +59,34 @@ export default function useGetPaymentIntent() {
           `[PAYMENT-INTENT-DEBUG] ${requestId} - Service layer API obtained, making request`
         );
 
-        const { data } = await api.post<MutationResponse>('', {
-          query: 'CREATE_PAYMENT_INTENT',
-          variables: {
-            cartId: cart.id,
-            cartVersion: cart.version,
-            ...(paymentMethodType && { paymentMethodType }),
-          },
-        });
+        const { data } = await api.post<MutationResponse & { errors?: { message?: string }[] }>(
+          '',
+          {
+            query: 'CREATE_PAYMENT_INTENT',
+            variables: {
+              cartId: cart.id,
+              cartVersion: cart.version,
+              ...(paymentMethodType && { paymentMethodType }),
+            },
+          }
+        );
 
         const requestEndTime = performance.now();
         const duration = requestEndTime - requestStartTime;
+        const paymentIntent = data.data?.isc2CreatePaymentIntent;
+
+        if (data.errors?.length || !paymentIntent) {
+          throw data.errors?.[0] || new Error('Payment intent response was empty');
+        }
 
         console.log(`[PAYMENT-INTENT-DEBUG] ${requestId} - Payment intent request successful`, {
           duration: `${duration.toFixed(2)}ms`,
           responseData: {
-            hasStripeClientSecret: !!data.data.isc2CreatePaymentIntent?.stripeClientSecret,
-            hasStripePublishableKey: !!data.data.isc2CreatePaymentIntent?.stripePublishableKey,
-            hasBraintreeClientSecret: !!data.data.isc2CreatePaymentIntent?.braintreeClientSecret,
-            hasBraintreePaypalClientId:
-              !!data.data.isc2CreatePaymentIntent?.branintreePaypalClientId,
-            intentPaymentId: data.data.isc2CreatePaymentIntent?.intentPaymentId,
+            hasStripeClientSecret: !!paymentIntent.stripeClientSecret,
+            hasStripePublishableKey: !!paymentIntent.stripePublishableKey,
+            hasBraintreeClientSecret: !!paymentIntent.braintreeClientSecret,
+            hasBraintreePaypalClientId: !!paymentIntent.branintreePaypalClientId,
+            intentPaymentId: paymentIntent.intentPaymentId,
           },
           timestamp: new Date().toISOString(),
         });
@@ -88,13 +95,13 @@ export default function useGetPaymentIntent() {
           console.log(
             `[PAYMENT-INTENT-DEBUG] ${requestId} - Currency supports PayPal, returning full payment intent`
           );
-          return data.data.isc2CreatePaymentIntent;
+          return paymentIntent;
         }
 
         console.log(
           `[PAYMENT-INTENT-DEBUG] ${requestId} - Currency does not support PayPal, removing PayPal info`
         );
-        return removePaypalInfo(data.data.isc2CreatePaymentIntent);
+        return removePaypalInfo(paymentIntent);
       } catch (err) {
         const requestEndTime = performance.now();
         const duration = requestEndTime - requestStartTime;
@@ -154,7 +161,13 @@ export default function useGetPaymentIntent() {
   );
 
   useEffect(() => {
-    if (data && isStripeInfoIncomplete && isPaypalInfoIncomplete && !isFreeOrder) {
+    if (
+      data &&
+      isStripeInfoIncomplete &&
+      isPaypalInfoIncomplete &&
+      !isFreeOrder &&
+      !data.intentPaymentId
+    ) {
       console.error('[PAYMENT-INTENT-DEBUG] Payment information incomplete - setting error state', {
         paymentIntentData: {
           hasStripeClientSecret: !!data?.stripeClientSecret,

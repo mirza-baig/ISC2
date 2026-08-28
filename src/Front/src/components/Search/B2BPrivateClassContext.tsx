@@ -1,17 +1,21 @@
 import {
   createContext,
-  useCallback,
+  // useCallback, // only used by the private-class callbacks below, commented out for now
   useContext,
   useEffect,
   useMemo,
-  useRef,
+  // useRef, // only used by the private-class location-modal state below, commented out for now
   useState,
-  useSyncExternalStore,
+  // useSyncExternalStore, // only used by the private-class answers store below, commented out for now
   type ReactNode,
 } from 'react';
 import { fetchB2BLabels } from 'providers/b2bLabels';
 import { B2BInventoryProvider } from './B2BInventoryContext';
-import { EMPTY_CUSTOM_ADDRESS, type AddressCustomFields } from './b2bAddress';
+// Private classes are deferred to a later phase (bug sweep 2026-08-19) — the address import and
+// everything it feeds (isPrivateClass, answer keys/types, the answers store, the location-modal
+// state below) are commented out rather than deleted so they can be restored by uncommenting when
+// the feature ships.
+// import { EMPTY_CUSTOM_ADDRESS, type AddressCustomFields } from './b2bAddress';
 import type { B2BLabelGroups, B2BProductMessageModal } from 'types/b2bLabels';
 
 /**
@@ -29,103 +33,109 @@ import type { B2BLabelGroups, B2BProductMessageModal } from 'types/b2bLabels';
  * (PRIV-1) and the Make prototype's CheckoutPrivateCourses (the old checkout-step equivalent).
  */
 
-// DATA (PRIV-1): the crawler index has no "is private/classroom" flag, so we detect from the
-// product's type/title. In-person / classroom / private courses need an event location; online
-// and self-paced products do not. Interim until a real product flag exists (see DATA-1).
-const PRIVATE_CLASS_PATTERN = /classroom|in[-\s]?person|private/i;
-
-export const isPrivateClass = (...values: (string | undefined)[]): boolean =>
-  values.some((value) => value && PRIVATE_CLASS_PATTERN.test(value));
-
 /**
- * The key a row's scheduling answers are stored under.
- *
- * A plain SKU is not enough for a purchase option. A B2B buyer can hold the same class twice for
- * two groups running on different dates, and those two rows share a bundle SKU — so keying on it
- * alone would give both occurrences one shared date and one shared location, which is the opposite
- * of what buying for two groups means. The picked session is what tells them apart, so it is part
- * of the key. Anything with no picked session keys exactly as it did before.
+ * The key a bundle cart line's identity is tracked under (also the key private-class answers used
+ * to be stored under — kept live after the deferral below because `B2BCart/b2bCartLine.ts`'s
+ * `getLineAnswersKey` still needs it for generic bundle-line identity: a buyer can hold the same
+ * bundle SKU twice with two different picked sessions, and this is what tells those rows apart
+ * across the remove-then-re-add cycle a quantity write does).
  */
 export const buildAnswersKey = (sku: string, pickedSku?: string): string =>
   pickedSku ? `${sku}::${pickedSku}` : sku;
 
-export type LocationMode = '' | 'online' | 'at-location';
-export type AddressChoice = '' | 'mailing' | 'billing' | 'other';
+// Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out rather than
+// deleted so this detection + the answers/address types below can be restored by uncommenting when
+// the feature ships.
+//
+// DATA (PRIV-1): the crawler index has no "is private/classroom" flag, so we detect from the
+// product's type/title. In-person / classroom / private courses need an event location; online
+// and self-paced products do not. Interim until a real product flag exists (see DATA-1).
+// const PRIVATE_CLASS_PATTERN = /classroom|in[-\s]?person|private/i;
+//
+// export const isPrivateClass = (...values: (string | undefined)[]): boolean =>
+//   values.some((value) => value && PRIVATE_CLASS_PATTERN.test(value));
+//
+// export type LocationMode = '' | 'online' | 'at-location';
+// export type AddressChoice = '' | 'mailing' | 'billing' | 'other';
+//
+// // The custom-address shape and its rules live in `b2bAddress.ts`, which defers to checkout's own
+// // country/state lists, postal-code patterns and required-state rule so an international address can
+// // be entered here exactly as it can at checkout. Re-exported so existing import sites keep working.
+// export { EMPTY_CUSTOM_ADDRESS, type AddressCustomFields };
+//
+// /** The Classroom Location pop-up's full selection — carried so it can re-open pre-filled (#8/#9). */
+// export interface AddressSelection {
+//   addressChoice: AddressChoice;
+//   customAddress: AddressCustomFields;
+//   /** Formatted address for display + validation. */
+//   eventAddress: string;
+// }
+//
+// export interface PrivateClassAnswers {
+//   /** ISO date string (yyyy-mm-dd) for the requested class start date. */
+//   requestedStartDate: string;
+//   /** Delivery location choice. */
+//   locationMode: LocationMode;
+//   /** Formatted event address (when locationMode === 'at-location'). */
+//   eventAddress: string;
+//   /** Which address option was chosen in the pop-up (so it re-opens on that selection). */
+//   addressChoice: AddressChoice;
+//   /** The "Other Address" fields (so they persist into the re-opened pop-up). */
+//   customAddress: AddressCustomFields;
+// }
+//
+// const EMPTY_ANSWERS: PrivateClassAnswers = {
+//   requestedStartDate: '',
+//   locationMode: '',
+//   eventAddress: '',
+//   addressChoice: '',
+//   customAddress: EMPTY_CUSTOM_ADDRESS,
+// };
 
-// The custom-address shape and its rules live in `b2bAddress.ts`, which defers to checkout's own
-// country/state lists, postal-code patterns and required-state rule so an international address can
-// be entered here exactly as it can at checkout. Re-exported so existing import sites keep working.
-export { EMPTY_CUSTOM_ADDRESS, type AddressCustomFields };
-
-/** The Classroom Location pop-up's full selection — carried so it can re-open pre-filled (#8/#9). */
-export interface AddressSelection {
-  addressChoice: AddressChoice;
-  customAddress: AddressCustomFields;
-  /** Formatted address for display + validation. */
-  eventAddress: string;
-}
-
-export interface PrivateClassAnswers {
-  /** ISO date string (yyyy-mm-dd) for the requested class start date. */
-  requestedStartDate: string;
-  /** Delivery location choice. */
-  locationMode: LocationMode;
-  /** Formatted event address (when locationMode === 'at-location'). */
-  eventAddress: string;
-  /** Which address option was chosen in the pop-up (so it re-opens on that selection). */
-  addressChoice: AddressChoice;
-  /** The "Other Address" fields (so they persist into the re-opened pop-up). */
-  customAddress: AddressCustomFields;
-}
-
-const EMPTY_ANSWERS: PrivateClassAnswers = {
-  requestedStartDate: '',
-  locationMode: '',
-  eventAddress: '',
-  addressChoice: '',
-  customAddress: EMPTY_CUSTOM_ADDRESS,
-};
-
-type AnswersBySku = Record<string, PrivateClassAnswers>;
-
-const EMPTY_ANSWERS_BY_SKU: AnswersBySku = {};
-
-let answersBySkuStore: AnswersBySku = EMPTY_ANSWERS_BY_SKU;
-const answersListeners = new Set<() => void>();
-
-const emitAnswers = () => answersListeners.forEach((listener) => listener());
-
-const subscribeAnswers = (listener: () => void) => {
-  answersListeners.add(listener);
-  return () => {
-    answersListeners.delete(listener);
-  };
-};
-
-const getAnswersSnapshot = (): AnswersBySku => answersBySkuStore;
-const getAnswersServerSnapshot = (): AnswersBySku => EMPTY_ANSWERS_BY_SKU;
-
-const readAnswers = (store: AnswersBySku, sku: string): PrivateClassAnswers | undefined =>
-  Object.entries(store).find(([key]) => key === sku)?.[1];
-
-const writeAnswers = (sku: string, patch: Partial<PrivateClassAnswers>): void => {
-  answersBySkuStore = {
-    ...answersBySkuStore,
-    [sku]: { ...EMPTY_ANSWERS, ...readAnswers(answersBySkuStore, sku), ...patch },
-  };
-  emitAnswers();
-};
-
-const dropAnswers = (sku: string): void => {
-  if (!(sku in answersBySkuStore)) {
-    return;
-  }
-  answersBySkuStore = Object.entries(answersBySkuStore).reduce<AnswersBySku>(
-    (next, [key, answers]) => (key === sku ? next : { ...next, [key]: answers }),
-    {}
-  );
-  emitAnswers();
-};
+// Private classes are deferred to a later phase (bug sweep 2026-08-19) — this module-level answers
+// store is commented out rather than deleted so it can be restored by uncommenting when the
+// feature ships.
+//
+// type AnswersBySku = Record<string, PrivateClassAnswers>;
+//
+// const EMPTY_ANSWERS_BY_SKU: AnswersBySku = {};
+//
+// let answersBySkuStore: AnswersBySku = EMPTY_ANSWERS_BY_SKU;
+// const answersListeners = new Set<() => void>();
+//
+// const emitAnswers = () => answersListeners.forEach((listener) => listener());
+//
+// const subscribeAnswers = (listener: () => void) => {
+//   answersListeners.add(listener);
+//   return () => {
+//     answersListeners.delete(listener);
+//   };
+// };
+//
+// const getAnswersSnapshot = (): AnswersBySku => answersBySkuStore;
+// const getAnswersServerSnapshot = (): AnswersBySku => EMPTY_ANSWERS_BY_SKU;
+//
+// const readAnswers = (store: AnswersBySku, sku: string): PrivateClassAnswers | undefined =>
+//   Object.entries(store).find(([key]) => key === sku)?.[1];
+//
+// const writeAnswers = (sku: string, patch: Partial<PrivateClassAnswers>): void => {
+//   answersBySkuStore = {
+//     ...answersBySkuStore,
+//     [sku]: { ...EMPTY_ANSWERS, ...readAnswers(answersBySkuStore, sku), ...patch },
+//   };
+//   emitAnswers();
+// };
+//
+// const dropAnswers = (sku: string): void => {
+//   if (!(sku in answersBySkuStore)) {
+//     return;
+//   }
+//   answersBySkuStore = Object.entries(answersBySkuStore).reduce<AnswersBySku>(
+//     (next, [key, answers]) => (key === sku ? next : { ...next, [key]: answers }),
+//     {}
+//   );
+//   emitAnswers();
+// };
 
 const EMPTY_LABEL_GROUPS: B2BLabelGroups = {
   privateClass: {},
@@ -142,23 +152,25 @@ export interface B2BPrivateClassContextValue {
   /** Sitecore-managed label groups (/Data/B2B Product List Labels), fetched once. Empty until
    *  loaded — the label hooks always fall back to code defaults. */
   labelGroups: B2BLabelGroups;
-  /** Committed (saved) answers per SKU — the source of truth each surface inits/re-syncs from. */
-  getAnswers: (sku: string) => PrivateClassAnswers;
-  setAnswers: (sku: string, patch: Partial<PrivateClassAnswers>) => void;
-  /** Drop a SKU's committed answers (e.g. when the item is removed from the cart) so the row
-   *  resets to its blank state. */
-  clearAnswers: (sku: string) => void;
-  /** Classroom Location modal — callback-based so the confirmed selection flows to the DRAFT of
-   *  whichever surface (row or cart line) opened it, not straight into the committed store. Opens
-   *  pre-filled from `initial` so an existing address is shown when editing (#8/#9). */
-  locationModalOpen: boolean;
-  locationModalInitial: AddressSelection | null;
-  openLocationModal: (
-    initial: AddressSelection,
-    onConfirm: (result: AddressSelection) => void
-  ) => void;
-  closeLocationModal: () => void;
-  confirmLocation: (result: AddressSelection) => void;
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out along
+  // with the state/callbacks below so this can be restored by uncommenting when the feature ships.
+  // /** Committed (saved) answers per SKU — the source of truth each surface inits/re-syncs from. */
+  // getAnswers: (sku: string) => PrivateClassAnswers;
+  // setAnswers: (sku: string, patch: Partial<PrivateClassAnswers>) => void;
+  // /** Drop a SKU's committed answers (e.g. when the item is removed from the cart) so the row
+  //  *  resets to its blank state. */
+  // clearAnswers: (sku: string) => void;
+  // /** Classroom Location modal — callback-based so the confirmed selection flows to the DRAFT of
+  //  *  whichever surface (row or cart line) opened it, not straight into the committed store. Opens
+  //  *  pre-filled from `initial` so an existing address is shown when editing (#8/#9). */
+  // locationModalOpen: boolean;
+  // locationModalInitial: AddressSelection | null;
+  // openLocationModal: (
+  //   initial: AddressSelection,
+  //   onConfirm: (result: AddressSelection) => void
+  // ) => void;
+  // closeLocationModal: () => void;
+  // confirmLocation: (result: AddressSelection) => void;
 }
 
 const B2BPrivateClassContext = createContext<B2BPrivateClassContextValue | null>(null);
@@ -174,15 +186,18 @@ export const B2BPrivateClassProvider = ({
    *  is skipped and the nested inventory queue is already inert until a row registers a SKU. */
   enabled?: boolean;
 }): JSX.Element => {
-  const answersBySku = useSyncExternalStore(
-    subscribeAnswers,
-    getAnswersSnapshot,
-    getAnswersServerSnapshot
-  );
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — this state and the
+  // callbacks/value entries built from it below are commented out rather than deleted so they can
+  // be restored by uncommenting when the feature ships.
+  // const answersBySku = useSyncExternalStore(
+  //   subscribeAnswers,
+  //   getAnswersSnapshot,
+  //   getAnswersServerSnapshot
+  // );
   const [labelGroups, setLabelGroups] = useState<B2BLabelGroups>(EMPTY_LABEL_GROUPS);
-  const [locationModalOpen, setLocationModalOpen] = useState(false);
-  const [locationModalInitial, setLocationModalInitial] = useState<AddressSelection | null>(null);
-  const onConfirmRef = useRef<((result: AddressSelection) => void) | null>(null);
+  // const [locationModalOpen, setLocationModalOpen] = useState(false);
+  // const [locationModalInitial, setLocationModalInitial] = useState<AddressSelection | null>(null);
+  // const onConfirmRef = useRef<((result: AddressSelection) => void) | null>(null);
 
   // Load the Sitecore-managed labels once on mount (client-side, like the Algolia settings). Any
   // failure resolves to empty groups, so the label hooks keep rendering their code fallbacks.
@@ -205,55 +220,37 @@ export const B2BPrivateClassProvider = ({
     };
   }, [enabled]);
 
-  const getAnswers = useCallback(
-    (sku: string): PrivateClassAnswers => readAnswers(answersBySku, sku) ?? EMPTY_ANSWERS,
-    [answersBySku]
-  );
+  // const getAnswers = useCallback(
+  //   (sku: string): PrivateClassAnswers => readAnswers(answersBySku, sku) ?? EMPTY_ANSWERS,
+  //   [answersBySku]
+  // );
 
-  const setAnswers = writeAnswers;
-  const clearAnswers = dropAnswers;
+  // const setAnswers = writeAnswers;
+  // const clearAnswers = dropAnswers;
 
-  const openLocationModal = useCallback(
-    (initial: AddressSelection, onConfirm: (result: AddressSelection) => void) => {
-      onConfirmRef.current = onConfirm;
-      setLocationModalInitial(initial);
-      setLocationModalOpen(true);
-    },
-    []
-  );
-  const closeLocationModal = useCallback(() => {
-    onConfirmRef.current = null;
-    setLocationModalOpen(false);
-  }, []);
-  const confirmLocation = useCallback((result: AddressSelection) => {
-    onConfirmRef.current?.(result);
-    onConfirmRef.current = null;
-    setLocationModalOpen(false);
-  }, []);
+  // const openLocationModal = useCallback(
+  //   (initial: AddressSelection, onConfirm: (result: AddressSelection) => void) => {
+  //     onConfirmRef.current = onConfirm;
+  //     setLocationModalInitial(initial);
+  //     setLocationModalOpen(true);
+  //   },
+  //   []
+  // );
+  // const closeLocationModal = useCallback(() => {
+  //   onConfirmRef.current = null;
+  //   setLocationModalOpen(false);
+  // }, []);
+  // const confirmLocation = useCallback((result: AddressSelection) => {
+  //   onConfirmRef.current?.(result);
+  //   onConfirmRef.current = null;
+  //   setLocationModalOpen(false);
+  // }, []);
 
   const value = useMemo(
     () => ({
       labelGroups,
-      getAnswers,
-      setAnswers,
-      clearAnswers,
-      locationModalOpen,
-      locationModalInitial,
-      openLocationModal,
-      closeLocationModal,
-      confirmLocation,
     }),
-    [
-      labelGroups,
-      getAnswers,
-      setAnswers,
-      clearAnswers,
-      locationModalOpen,
-      locationModalInitial,
-      openLocationModal,
-      closeLocationModal,
-      confirmLocation,
-    ]
+    [labelGroups]
   );
 
   // The inventory queue is nested here rather than mounted separately in SearchWrapper: it needs
@@ -266,13 +263,15 @@ export const B2BPrivateClassProvider = ({
   );
 };
 
-export const useB2BPrivateClass = (): B2BPrivateClassContextValue => {
-  const ctx = useContext(B2BPrivateClassContext);
-  if (!ctx) {
-    throw new Error('useB2BPrivateClass must be used within a B2BPrivateClassProvider');
-  }
-  return ctx;
-};
+// Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out rather than
+// deleted so this hook can be restored by uncommenting when the feature ships.
+// export const useB2BPrivateClass = (): B2BPrivateClassContextValue => {
+//   const ctx = useContext(B2BPrivateClassContext);
+//   if (!ctx) {
+//     throw new Error('useB2BPrivateClass must be used within a B2BPrivateClassProvider');
+//   }
+//   return ctx;
+// };
 
 /**
  * Reads the fetched Sitecore label groups from context WITHOUT throwing when used outside a
@@ -282,54 +281,57 @@ export const useB2BPrivateClass = (): B2BPrivateClassContextValue => {
 const useLabelGroups = (): B2BLabelGroups =>
   useContext(B2BPrivateClassContext)?.labelGroups ?? EMPTY_LABEL_GROUPS;
 
-/**
- * Private-class + address-modal UI labels, resolved from the Sitecore-managed items under
- * /Data/B2B Product List Labels (groups "Private Class" and "Address Modal"). Each has a safe
- * fallback so nothing renders blank before the items load / if a key is missing. Keys are
- * catalogued in docs/B2B-EnvLocal-Sitecore-Items.md.
- */
-export const useB2BPrivateClassLabels = () => {
-  const groups = useLabelGroups();
-  const pc = groups.privateClass;
-  const am = groups.addressModal;
-  return {
-    requestedStartDate: pc.requestedStartDate || 'Requested Start Date',
-    location: pc.location || 'Course Format',
-    // Location-type field values
-    locationChoose: pc.locationChoose || 'Please Choose',
-    locationOnline: pc.locationOnline || 'Online',
-    locationAtLocation: pc.locationAtLocation || 'In Person',
-    eventLocation: pc.eventLocation || 'Event Location',
-    editAddress: pc.editAddress || 'Edit',
-    selectAddress: pc.selectAddress || 'Select address',
-    noAddress: pc.noAddress || 'No address selected yet.',
-    // Address-type choices (Classroom Location modal)
-    addressChoose: am.addressChoose || 'Please Choose',
-    addressMailing: am.addressMailing || 'My Mailing Address',
-    addressBilling: am.addressBilling || 'My Billing Address',
-    addressOther: am.addressOther || 'Other Address',
-    // Classroom Location modal chrome + Other-Address form fields
-    modalTitle: am.modalTitle || 'Classroom Location',
-    addressPrompt: am.addressPrompt || 'Please choose an address:',
-    addressField1: am.addressField1 || 'Address 1',
-    addressField2: am.addressField2 || 'Address 2',
-    addressCity: am.addressCity || 'City',
-    addressState: am.addressState || 'State',
-    addressCountry: am.addressCountry || 'Country/Region',
-    addressZip: am.addressZip || 'Zip Code',
-    // Placeholder row for the two dropdowns, matching the "Please Choose" pattern already used by
-    // the address-type and course-format selects.
-    addressSelect: am.addressSelect || 'Please Choose',
-    // Shown under Zip when the entered code doesn't match the selected country's postal format —
-    // the same failure checkout reports as `incorrect_postal_code`.
-    addressZipInvalid: am.addressZipInvalid || 'Please enter a valid postal code for this country.',
-    // Stand-in for the mailing/billing address line before the signed-in account's addresses have
-    // loaded, or when there is no signed-in user (PRIV-1).
-    addressNoneOnFile: am.addressNoneOnFile || 'No address on file for this account.',
-    cancel: am.cancel || 'Cancel',
-    confirmLocation: am.confirmLocation || 'Confirm Location',
-  };
-};
+// Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out rather than
+// deleted so this hook can be restored by uncommenting when the feature ships.
+//
+// /**
+//  * Private-class + address-modal UI labels, resolved from the Sitecore-managed items under
+//  * /Data/B2B Product List Labels (groups "Private Class" and "Address Modal"). Each has a safe
+//  * fallback so nothing renders blank before the items load / if a key is missing. Keys are
+//  * catalogued in docs/B2B-EnvLocal-Sitecore-Items.md.
+//  */
+// export const useB2BPrivateClassLabels = () => {
+//   const groups = useLabelGroups();
+//   const pc = groups.privateClass;
+//   const am = groups.addressModal;
+//   return {
+//     requestedStartDate: pc.requestedStartDate || 'Requested Start Date',
+//     location: pc.location || 'Course Format',
+//     // Location-type field values
+//     locationChoose: pc.locationChoose || 'Please Choose',
+//     locationOnline: pc.locationOnline || 'Online',
+//     locationAtLocation: pc.locationAtLocation || 'In Person',
+//     eventLocation: pc.eventLocation || 'Event Location',
+//     editAddress: pc.editAddress || 'Edit',
+//     selectAddress: pc.selectAddress || 'Select address',
+//     noAddress: pc.noAddress || 'No address selected yet.',
+//     // Address-type choices (Classroom Location modal)
+//     addressChoose: am.addressChoose || 'Please Choose',
+//     addressMailing: am.addressMailing || 'My Mailing Address',
+//     addressBilling: am.addressBilling || 'My Billing Address',
+//     addressOther: am.addressOther || 'Other Address',
+//     // Classroom Location modal chrome + Other-Address form fields
+//     modalTitle: am.modalTitle || 'Classroom Location',
+//     addressPrompt: am.addressPrompt || 'Please choose an address:',
+//     addressField1: am.addressField1 || 'Address 1',
+//     addressField2: am.addressField2 || 'Address 2',
+//     addressCity: am.addressCity || 'City',
+//     addressState: am.addressState || 'State',
+//     addressCountry: am.addressCountry || 'Country/Region',
+//     addressZip: am.addressZip || 'Zip Code',
+//     // Placeholder row for the two dropdowns, matching the "Please Choose" pattern already used by
+//     // the address-type and course-format selects.
+//     addressSelect: am.addressSelect || 'Please Choose',
+//     // Shown under Zip when the entered code doesn't match the selected country's postal format —
+//     // the same failure checkout reports as `incorrect_postal_code`.
+//     addressZipInvalid: am.addressZipInvalid || 'Please enter a valid postal code for this country.',
+//     // Stand-in for the mailing/billing address line before the signed-in account's addresses have
+//     // loaded, or when there is no signed-in user (PRIV-1).
+//     addressNoneOnFile: am.addressNoneOnFile || 'No address on file for this account.',
+//     cancel: am.cancel || 'Cancel',
+//     confirmLocation: am.confirmLocation || 'Confirm Location',
+//   };
+// };
 
 /**
  * B2B mini-cart labels, from the Sitecore "Cart" group under /Data/B2B Product List Labels,

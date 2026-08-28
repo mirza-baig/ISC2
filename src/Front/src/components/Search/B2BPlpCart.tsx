@@ -3,23 +3,25 @@ import { useEffect, useRef, useState } from 'react';
 import { useCart } from 'providers/index';
 import useUpdateLineItemQuantity from 'hooks/cart/useUpdateLineItemQuantity';
 import { clampToAtLeastOne } from 'hooks/cart/b2bLineQuantity';
+import { parsePrice } from 'utils/index';
 import type { CartLineItem } from 'types/index';
 
-import B2BCartLineRow from '../B2BCart/B2BCartLineRow';
+// import B2BCartLineRow from '../B2BCart/B2BCartLineRow'; // only used by the demo line below, commented out for now
 import B2BCartPanel from '../B2BCart/B2BCartPanel';
 import useB2BCartCheckout from '../B2BCart/useB2BCartCheckout';
 import { DEFAULT_FRACTION_DIGITS, buildB2BCartTotals } from '../B2BCart/b2bCartTotals';
 
-import { useB2BPrivateClass, useB2BCartLabels } from './B2BPrivateClassContext';
+import { /* useB2BPrivateClass, */ useB2BCartLabels } from './B2BPrivateClassContext';
 import { useB2BCpqCart } from './useB2BCpqCart';
-// TEMP: demo private-class cart line (remove before release — see b2bDemoCart.ts)
-import {
-  DEMO_SKU,
-  DEMO_TITLE,
-  DEMO_UNIT_PRICE,
-  useB2BDemoCart,
-  b2bDemoCartActions,
-} from './b2bDemoCart';
+// Private classes are deferred to a later phase (bug sweep 2026-08-19) — the TEMP demo
+// private-class cart line is commented out to match (see b2bDemoCart.ts).
+// import {
+//   DEMO_SKU,
+//   DEMO_TITLE,
+//   DEMO_UNIT_PRICE,
+//   useB2BDemoCart,
+//   b2bDemoCartActions,
+// } from './b2bDemoCart';
 
 /**
  * B2B PLP on-page cart (CART-2). Docked in the sticky right column beside the product list.
@@ -62,17 +64,17 @@ const B2BPlpCart = ({
   const { activeCart } = useCart();
   const { updateQuantity, isUpdatingQuantity } = useUpdateLineItemQuantity();
   const { isCpq, quote } = useB2BCpqCart();
-  const { getAnswers, setAnswers, clearAnswers, openLocationModal } = useB2BPrivateClass();
-  const demoCart = useB2BDemoCart(); // TEMP demo private-class line
+  // const { getAnswers, setAnswers, clearAnswers, openLocationModal } = useB2BPrivateClass();
+  // const demoCart = useB2BDemoCart(); // TEMP demo private-class line
   const labels = useB2BCartLabels();
   const { checkout } = useB2BCartCheckout(isCpq);
 
   const liveItems: CartLineItem[] = activeCart?.lineItems ?? [];
-  const showDemo = demoCart.inCart; // TEMP
+  // const showDemo = demoCart.inCart; // TEMP
   const hasItems = liveItems.length > 0;
   // A running link pre-fill counts as content: the panel has to be mounted to show its status line
   // in the moment before the first line item lands.
-  const hasContent = hasItems || showDemo || isPreloading;
+  const hasContent = hasItems || isPreloading;
 
   // Keep content mounted while open, and briefly after it closes (emptied or dismissed) so it
   // stays visible while the parent slot animates shut; then unmount.
@@ -99,6 +101,16 @@ const B2BPlpCart = ({
     // Empty unless the cart actually carries taxes — the same `taxedPrice` guard the cart summary
     // uses before it prints a tax figure instead of "TBD".
     taxValue: activeCart?.taxedPrice ? activeCart?.computed?.taxValue ?? '' : '',
+    discounts: (activeCart?.discountOnTotalPrice?.includedDiscounts ?? []).map(
+      ({ discount, discountedAmount }) => ({
+        key: discount.id || discount.name,
+        label: discount.name,
+        display: `${activeCart?.computed?.currencySymbol || '$'}${parsePrice(
+          discountedAmount.centAmount,
+          discountedAmount.fractionDigits
+        )}`,
+      })
+    ),
   });
   const snapshotRef = useRef(buildSnapshot());
   if (hasItems) {
@@ -109,16 +121,17 @@ const B2BPlpCart = ({
     return null;
   }
 
-  const { items, count, currencySymbol, total, subtotal, fractionDigits, taxValue } =
+  const { items, count, currencySymbol, total, subtotal, fractionDigits, taxValue, discounts } =
     snapshotRef.current;
 
-  // TEMP demo line: fold the fake private-class product into the count + totals for preview.
-  const demoQty = showDemo ? demoCart.quantity : 0;
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — the TEMP demo line's
+  // fold-in to the count + totals is commented out to match.
+  // const demoQty = showDemo ? demoCart.quantity : 0;
   const symbol = currencySymbol || '$';
   const realTotalNumber = parseFloat(String(total).replace(/[^0-9.]/g, '')) || 0;
-  const combinedTotal = realTotalNumber + DEMO_UNIT_PRICE * demoQty;
+  const combinedTotal = realTotalNumber; // + DEMO_UNIT_PRICE * demoQty;
   const totalDisplay = `${symbol}${combinedTotal.toLocaleString('en-US')}`;
-  const displayCount = count + demoQty;
+  const displayCount = count; // + demoQty;
 
   const totals = buildB2BCartTotals({
     isCpq,
@@ -131,22 +144,22 @@ const B2BPlpCart = ({
     taxesTbdLabel: labels.taxesTbd,
   });
 
-  const money = (amount: number) => ({
-    type: 'centPrecision' as const,
-    centAmount: Math.round(amount * 100),
-    currencyCode: 'USD',
-    fractionDigits: 2,
-  });
-  const demoLineItem = {
-    id: DEMO_SKU,
-    name: DEMO_TITLE,
-    quantity: demoCart.quantity,
-    price: { value: money(DEMO_UNIT_PRICE) },
-    totalPrice: money(DEMO_UNIT_PRICE * demoCart.quantity),
-    variant: { sku: DEMO_SKU },
-    productType: { name: 'training-classroom' },
-  } as unknown as CartLineItem;
-  const demoAnswers = getAnswers(DEMO_SKU);
+  // const money = (amount: number) => ({
+  //   type: 'centPrecision' as const,
+  //   centAmount: Math.round(amount * 100),
+  //   currencyCode: 'USD',
+  //   fractionDigits: 2,
+  // });
+  // const demoLineItem = {
+  //   id: DEMO_SKU,
+  //   name: DEMO_TITLE,
+  //   quantity: demoCart.quantity,
+  //   price: { value: money(DEMO_UNIT_PRICE) },
+  //   totalPrice: money(DEMO_UNIT_PRICE * demoCart.quantity),
+  //   variant: { sku: DEMO_SKU },
+  //   productType: { name: 'training-classroom' },
+  // } as unknown as CartLineItem;
+  // const demoAnswers = getAnswers(DEMO_SKU);
 
   return (
     <B2BCartPanel
@@ -157,9 +170,11 @@ const B2BPlpCart = ({
       taxesDisplay={totals.taxesDisplay}
       totalDisplay={totals.totalDisplay}
       showTaxNote={totals.showTaxNote}
+      discounts={discounts}
       canEditQuantity
       maxLineQuantity={null}
       clampQuantity={clampToAtLeastOne}
+      quantityLabelAlign="right"
       isCpq={isCpq}
       quote={quote}
       isPreloading={isPreloading}
@@ -168,6 +183,9 @@ const B2BPlpCart = ({
       onUpdateQuantity={updateQuantity}
       onRemoveLine={(item) => updateQuantity(item, 0)}
       isBusy={isUpdatingQuantity}
+      leadingRows={null}
+      /* Private classes are deferred to a later phase (bug sweep 2026-08-19) — the TEMP demo
+         private-class row is commented out to match (see b2bDemoCart.ts).
       leadingRows={
         showDemo ? (
           <B2BCartLineRow
@@ -195,6 +213,7 @@ const B2BPlpCart = ({
           />
         ) : null
       }
+      */
     />
   );
 };

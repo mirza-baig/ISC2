@@ -5,7 +5,7 @@ import { useUserSession } from 'providers/index';
 import { useQueryClient } from '@tanstack/react-query';
 import { SESSION_STORAGE_KEYS, SESSION_LOCALSTORAGE_KEYS } from 'constants/sessionTimeout';
 
-import { BUYER_MOCK_SCENARIO_SESSION_KEY } from 'lib/authorizedBuyer';
+import { BUYER_MOCK_SCENARIO_SESSION_KEY, clearBuyerMockRaceDeplete } from 'lib/authorizedBuyer';
 const B2B_SHOPPER_CONTEXT_KEY = 'b2b-shopper-context';
 
 export default function Logout() {
@@ -22,6 +22,7 @@ export default function Logout() {
       sessionStorage.removeItem('allocation-sort-isc2');
       sessionStorage.removeItem('allocation-sort-dir-isc2');
       sessionStorage.removeItem(BUYER_MOCK_SCENARIO_SESSION_KEY);
+      clearBuyerMockRaceDeplete();
       sessionStorage.removeItem('allocation-filters-isc2');
       localStorage.removeItem(SESSION_LOCALSTORAGE_KEYS.LAST_ACTIVITY);
       queryClient.clear();

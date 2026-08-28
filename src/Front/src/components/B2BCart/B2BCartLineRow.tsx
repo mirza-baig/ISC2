@@ -6,15 +6,18 @@ import type { ClampQuantity } from 'hooks/cart/b2bLineQuantity';
 import { ProductThumbnail } from 'ui/ProductThumbnail';
 import type { CartLineItem } from 'types/index';
 
-import {
-  useB2BPrivateClassLabels,
-  useB2BCartLabels,
-  type LocationMode,
-  type PrivateClassAnswers,
-  type B2BPrivateClassContextValue,
-} from '../Search/B2BPrivateClassContext';
-import { useB2BPrivateClassDraft } from '../Search/useB2BPrivateClassDraft';
-import { isPastCalendarDay, todayISODate } from '../Search/b2bDates';
+import { useB2BCartLabels } from '../Search/B2BPrivateClassContext';
+// Private classes are deferred to a later phase (bug sweep 2026-08-19) — the questions block below
+// and everything that fed it are commented out rather than deleted so they can be restored by
+// uncommenting when the feature ships.
+// import {
+//   useB2BPrivateClassLabels,
+//   type LocationMode,
+//   type PrivateClassAnswers,
+//   type B2BPrivateClassContextValue,
+// } from '../Search/B2BPrivateClassContext';
+// import { useB2BPrivateClassDraft } from '../Search/useB2BPrivateClassDraft';
+// import { isPastCalendarDay, todayISODate } from '../Search/b2bDates';
 
 import { getLineDisplayName } from './b2bCartLine';
 import UpdateSpinner from './UpdateSpinner';
@@ -39,9 +42,11 @@ export interface B2BCartLineRowProps {
   quantityLabelAlign?: 'left' | 'right';
   showThumbnail?: boolean;
   thumbnailSrc?: string;
-  committedAnswers: PrivateClassAnswers;
-  onCommitAnswers: (answers: PrivateClassAnswers) => void;
-  openLocationModal: B2BPrivateClassContextValue['openLocationModal'];
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — see the import comment
+  // above.
+  // committedAnswers: PrivateClassAnswers;
+  // onCommitAnswers: (answers: PrivateClassAnswers) => void;
+  // openLocationModal: B2BPrivateClassContextValue['openLocationModal'];
 }
 
 const B2BCartLineRow = ({
@@ -64,39 +69,42 @@ const B2BCartLineRow = ({
   quantityLabelAlign = 'left',
   showThumbnail = false,
   thumbnailSrc,
-  committedAnswers,
-  onCommitAnswers,
-  openLocationModal,
 }: B2BCartLineRowProps): JSX.Element => {
   const [qty, setQty] = useState(item.quantity);
-  const { draft, setDraft, areAnswersDirty, openAddressModal } = useB2BPrivateClassDraft(
-    committedAnswers,
-    openLocationModal
-  );
-  const L = useB2BPrivateClassLabels();
+  // Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out along with
+  // the questions block below so they can be restored by uncommenting when the feature ships.
+  // const { draft, setDraft, areAnswersDirty, openAddressModal } = useB2BPrivateClassDraft(
+  //   committedAnswers,
+  //   openLocationModal
+  // );
+  // const L = useB2BPrivateClassLabels();
   const cartLabels = useB2BCartLabels();
-  const minDate = todayISODate();
+  // const minDate = todayISODate();
   const displayName = getLineDisplayName(item);
 
   useEffect(() => {
     setQty(item.quantity);
   }, [item.quantity]);
 
-  const isDirty = areAnswersDirty || (canEditQuantity && qty !== item.quantity);
+  // const isDirty = areAnswersDirty || (canEditQuantity && qty !== item.quantity);
+  const isDirty = canEditQuantity && qty !== item.quantity;
 
-  const privateComplete =
-    !isPrivate ||
-    (draft.requestedStartDate.trim() !== '' &&
-      !isPastCalendarDay(draft.requestedStartDate) &&
-      draft.locationMode !== '' &&
-      qty >= 1 &&
-      (draft.locationMode !== 'at-location' || draft.eventAddress.trim() !== ''));
+  // Private classes are deferred (bug sweep 2026-08-19): `isPrivate` is always false at every call
+  // site today, so this always resolves true; the real check is commented out below.
+  const privateComplete = true;
+  // const privateComplete =
+  //   !isPrivate ||
+  //   (draft.requestedStartDate.trim() !== '' &&
+  //     !isPastCalendarDay(draft.requestedStartDate) &&
+  //     draft.locationMode !== '' &&
+  //     qty >= 1 &&
+  //     (draft.locationMode !== 'at-location' || draft.eventAddress.trim() !== ''));
 
   const commitQuantity = (value: number) => (clampQuantity ? clampQuantity(value) : value);
 
   const handleUpdate = () => {
     onUpdate(item, commitQuantity(qty));
-    onCommitAnswers(draft);
+    // onCommitAnswers(draft);
   };
 
   const unitMoney = item.price?.discounted?.value ?? item.price?.value;
@@ -178,6 +186,9 @@ const B2BCartLineRow = ({
         </p>
       )}
 
+      {/* Private classes are deferred to a later phase (bug sweep 2026-08-19) — `isPrivate` is
+          always false at every call site today, so this never rendered anyway; kept commented
+          rather than deleted so it can be restored by uncommenting when the feature ships.
       {isPrivate && !readOnly && (
         <div className="mb-3 space-y-2">
           <label className="block">
@@ -225,6 +236,7 @@ const B2BCartLineRow = ({
           )}
         </div>
       )}
+      */}
 
       {readOnly ? (
         <div className={quantityRowClassName}>

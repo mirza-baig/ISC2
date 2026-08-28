@@ -10,6 +10,8 @@ import {
   useToggle,
   useUserRoleValue,
 } from 'hooks/index';
+import { useShopperContext } from 'providers/shopperContext';
+import { B2B_HIDDEN_NAV_LINKS } from 'constants/index';
 
 type HeaderNavigationContextProps = {
   isOpen: boolean;
@@ -90,6 +92,7 @@ const HeaderNavigationProvider: React.FC<HeaderNavigationProviderProps> = ({ chi
   const [isCurrencyBannerOnPage, setIsCurrencyBannerOnPage] = useState(false);
 
   const { isUserLoggedIn, isGettingUser, isB2BAdminUser } = useLoggedUser();
+  const { shopperContext } = useShopperContext();
   const breakpoint = useBreakpoint();
 
   const setUserHeaderLinks = useCallback(
@@ -247,14 +250,18 @@ const HeaderNavigationProvider: React.FC<HeaderNavigationProviderProps> = ({ chi
     }
 
     const [linksInfo] = userLinksForRole.children;
+    const isBusinessBuyingSession = shopperContext?.type === 'organization';
 
     return {
       sectionTitle: linksInfo?.fields?.userSectionName?.value || '',
       userLinks: linksInfo?.children.filter(
-        (item) => item?.fields?.link?.value?.text && item?.fields?.link?.value?.href
+        (item) =>
+          item?.fields?.link?.value?.text &&
+          item?.fields?.link?.value?.href &&
+          !(isBusinessBuyingSession && B2B_HIDDEN_NAV_LINKS.includes(item.name))
       ),
     };
-  }, [userLinksForRole]);
+  }, [userLinksForRole, shopperContext?.type]);
 
   return (
     <HeaderNavigationContext.Provider

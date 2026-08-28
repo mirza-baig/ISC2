@@ -5,7 +5,7 @@ import { MiddlewarePlugin } from '..';
 
 import { getIsUserB2bAdmin, getUserFlag } from 'utils/userRoles';
 import { UserRole, UserSession } from 'types/index';
-import { USER_ROLES } from 'constants/index';
+import { SHOPPER_CONTEXT_COOKIE, USER_ROLES } from 'constants/index';
 
 interface LayoutFields {
   membersOnly: { value: string };
@@ -14,6 +14,7 @@ interface LayoutFields {
   b2bAdminOnly: { value: string };
   associateOnly: { value: string };
   b2bAccount: { value: string };
+  hideForB2B: { value: string };
 }
 
 interface ApiResponse {
@@ -50,6 +51,9 @@ const DEFAULT_RESPONSE: LayoutFields = {
     value: '',
   },
   b2bAccount: {
+    value: '',
+  },
+  hideForB2B: {
     value: '',
   },
 };
@@ -170,7 +174,19 @@ class AccessControlPlugin implements MiddlewarePlugin {
     const pageFields = await this.fetchPageFields(req);
     const rolesForPage = this.getRolesForPage(pageFields);
 
-    if (!rolesForPage.length || process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development') {
+      return res;
+    }
+
+    const shopperContextType = req.cookies.get(SHOPPER_CONTEXT_COOKIE)?.value;
+    const isBusinessBuyingSession = shopperContextType === 'organization';
+    const isIndividualBuyingSession = shopperContextType === 'myself';
+
+    if (pageFields?.hideForB2B?.value === '1' && isBusinessBuyingSession) {
+      return this.redirectToNotAuthorized();
+    }
+
+    if (!rolesForPage.length) {
       return res;
     }
 
@@ -180,6 +196,10 @@ class AccessControlPlugin implements MiddlewarePlugin {
 
     const userFlag = getUserFlag({ user: token.profile } as UserSession);
     const userIsB2BAdmin = getIsUserB2bAdmin({ user: token.profile } as UserSession);
+
+    if (rolesForPage.includes(USER_ROLES.B2B_AUTHORIZED_BUYER) && isIndividualBuyingSession) {
+      return this.redirectToNotAuthorized();
+    }
 
     if (
       rolesForPage.includes(USER_ROLES.B2B_AUTHORIZED_BUYER) &&

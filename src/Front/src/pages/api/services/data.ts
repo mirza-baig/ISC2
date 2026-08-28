@@ -88,7 +88,12 @@ const data = async (req: NextApiRequest, res: NextApiResponse): Promise<void> =>
           const errorCorrelationId = err.extensions?.correlationId as string | undefined;
 
           console.error(
-            `[SERVICE_LAYER_ERROR] ${JSON.stringify({ correlationId: errorCorrelationId, code })}`
+            `[SERVICE_LAYER_ERROR] ${JSON.stringify({
+              query,
+              correlationId: errorCorrelationId,
+              code,
+              ...(process.env.NODE_ENV === 'development' && { message: err.message }),
+            })}`
           );
 
           return {
@@ -107,7 +112,15 @@ const data = async (req: NextApiRequest, res: NextApiResponse): Promise<void> =>
     return res.status(200).send(axiosResult?.data);
   } catch (err) {
     const code = classifyServiceLayerError(err instanceof Error ? err.message : undefined);
-    console.error(`[SERVICE_LAYER_ERROR] ${JSON.stringify({ code })}`);
+    console.error(
+      `[SERVICE_LAYER_ERROR] ${JSON.stringify({
+        query,
+        code,
+        ...(process.env.NODE_ENV === 'development' && {
+          message: err instanceof Error ? err.message : undefined,
+        }),
+      })}`
+    );
 
     return res.status(500).send(GENERIC_ERROR_MESSAGE);
   }

@@ -21,8 +21,10 @@ import { useI18n } from 'next-localization';
 import { buildProductResultsFilter } from 'utils/search';
 
 import SearchFilters from './SearchFilters';
-// TEMPORARY: demo private-class product at the top of the B2B PLP (remove before release).
-import B2BDemoPrivateClassRow from './B2BDemoPrivateClassRow';
+// Private classes are deferred to a later phase (bug sweep 2026-08-19) — the TEMPORARY demo
+// private-class product row is commented out rather than deleted so it can be restored by
+// uncommenting when the feature ships.
+// import B2BDemoPrivateClassRow from './B2BDemoPrivateClassRow';
 import NoResultsBoundary from './NoResultsBoundary';
 import SearchInfiniteHits, {
   type HitComparator,
@@ -281,8 +283,8 @@ const SearchResults = ({
   //     double-count.
   //  2. Otherwise, start from `nbHits` and apply each rule:
   //       − past-dated sessions the row filter hides (counted off the `startDate` facet),
-  //       − region-less instructor-led sessions, also hidden (counted among not-yet-started ones
-  //         only, so it never overlaps the term above),
+  //       − invalid instructor-led sessions (no region, or no real scheduled date), also hidden
+  //         (counted among not-yet-started ones only, so it never overlaps the term above),
   //       + one generated row per resolvable purchase-option reference,
   //       − bare bundle rows suppressed because a generated row now represents them.
   //     The last three are `null` together whenever the row model can't be trusted (no bundle map,
@@ -303,7 +305,7 @@ const SearchResults = ({
     }
 
     const rowDelta = rowModel
-      ? rowModel.addedOptionRows - rowModel.hiddenRegionless - rowModel.hiddenBundleRows
+      ? rowModel.addedOptionRows - rowModel.hiddenInvalidOilSessions - rowModel.hiddenBundleRows
       : 0;
 
     return Math.max(searchResultsCount - pastSessionCount + rowDelta, 0);
@@ -365,9 +367,10 @@ const SearchResults = ({
           // `setPriceFilteredCount` is a stable setter, so this can't loop.
           onFilteredCountChange={overlayFilters ? setPriceFilteredCount : undefined}
           disableHitsSessionCache={overlayFilters}
-          // TEMPORARY demo private-class product — rendered as the first row *inside* the hits
-          // list so it sits in the same column/spacing as the real rows (remove before release).
-          leadingItem={overlayFilters ? <B2BDemoPrivateClassRow /> : undefined}
+          // Private classes are deferred to a later phase (bug sweep 2026-08-19) — the demo
+          // private-class leading row is commented out rather than deleted so it can be restored
+          // by uncommenting when the feature ships.
+          // leadingItem={overlayFilters ? <B2BDemoPrivateClassRow /> : undefined}
         />
       )}
     </div>

@@ -24,7 +24,11 @@ export {
 } from './accounts';
 export {
   BUYER_MOCK_SCENARIO_SESSION_KEY,
+  BUYER_MOCK_RACE_DEPLETE_KEY,
+  clearBuyerMockRaceDeplete,
+  depleteMockBalancesForRace,
   getAuthorizedBuyerAccounts,
+  markBuyerMockRaceDeplete,
   resolveBuyerMockScenario,
 } from './getAuthorizedBuyerAccounts';
 export type { GetAuthorizedBuyerAccountsOptions } from './getAuthorizedBuyerAccounts';
@@ -32,6 +36,12 @@ export {
   mapAccountToShopperOrganization,
   mapAccountsToShopperOrganizations,
 } from './mapToShopperOrganization';
+export {
+  mapAccountContactRelationsToAccounts,
+  mapLiveRelationToAccount,
+  mergeLiveAndMockAccounts,
+} from './mapFromAccountContactRelations';
+export type { LiveAccountContactRelation } from './mapFromAccountContactRelations';
 export type { AccountContactRelation } from './accountContactRelations';
 export {
   AUTHORIZED_BUYER_ROLE,
@@ -41,3 +51,19 @@ export {
   rolesContain,
   toAccountContactRelations,
 } from './accountContactRelations';
+export {
+  amountDueWithPrepaid,
+  hasEnoughAccountFunds,
+  isAccountFlagSet,
+  isBusinessPaymentMethodEligible,
+  isCreditPreapproved,
+  isPreapprovedCreditEligible,
+  isPrepaidAccountEligible,
+  isPrepaidDiscountType,
+  isPrepaidUnexpired,
+  resolveAvailableCredit,
+  resolvePrepaidDiscount,
+  prepaidDiscountValue,
+  toFiniteNumber,
+} from './paymentEligibility';
+export type { PaymentEligibilityAccount } from './paymentEligibility';

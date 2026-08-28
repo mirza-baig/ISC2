@@ -9,7 +9,7 @@ import {
 import { hasSessionStarted, type SessionScheduleFields } from './b2bDates';
 import {
   collectSuppressedBundleSkus,
-  isRegionlessOilSession,
+  isInvalidOilSession,
   resolvableBundleRefs,
   type B2BBundleMap,
 } from './b2bPurchaseOptions';
@@ -44,9 +44,10 @@ type RowModelHit = SessionScheduleFields & {
 };
 
 export interface B2BListingRowModel {
-  /** Rows hidden because an instructor-led session carries no region. Counted only among sessions
-   *  that have NOT already started, so it never overlaps the past-session tally. */
-  hiddenRegionless: number;
+  /** Rows hidden because an instructor-led session is not a real, dated, regioned instance (see
+   *  `isInvalidOilSession`). Counted only among sessions that have NOT already started, so it never
+   *  overlaps the past-session tally. */
+  hiddenInvalidOilSessions: number;
   /** Generated purchase-option rows added across the whole refined result set. */
   addedOptionRows: number;
   /** Bare `product-bundle` rows hidden because a generated row already represents them. */
@@ -136,11 +137,11 @@ export const useB2BListingRowModel = ({
     }
 
     // Rows the listing keeps, in the same order the row filters apply them: a started session is
-    // already gone (counted separately, off the `startDate` facet), then the region rule, and only
-    // what survives both can carry purchase options.
+    // already gone (counted separately, off the `startDate` facet), then the invalid-session rule,
+    // and only what survives both can carry purchase options.
     const live = records.filter((record) => !hasSessionStarted(record));
-    const regionless = live.filter((record) => isRegionlessOilSession(record));
-    const expandable = live.filter((record) => !isRegionlessOilSession(record));
+    const invalidOilSessions = live.filter((record) => isInvalidOilSession(record));
+    const expandable = live.filter((record) => !isInvalidOilSession(record));
 
     const addedOptionRows = expandable.reduce(
       (total, record) => total + resolvableBundleRefs(record, bundles).length,
@@ -156,7 +157,7 @@ export const useB2BListingRowModel = ({
     ).length;
 
     return {
-      hiddenRegionless: regionless.length,
+      hiddenInvalidOilSessions: invalidOilSessions.length,
       addedOptionRows,
       hiddenBundleRows,
       suppressedBundleSkus,

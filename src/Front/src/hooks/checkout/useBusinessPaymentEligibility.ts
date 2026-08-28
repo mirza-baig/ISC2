@@ -5,6 +5,7 @@ import { B2B_FEATURE_FLAG } from 'constants/b2b';
 import {
   isPreapprovedCreditEligible,
   isPrepaidAccountEligible,
+  markBuyerMockRaceDeplete,
   resolveAvailableCredit,
   resolvePrepaidDiscount,
   amountDueWithPrepaid,
@@ -23,6 +24,8 @@ const toCartTotal = (value: number | string | undefined) => {
   return Number.isFinite(total) ? total : 0;
 };
 
+const toOptionalAmount = (value: number | null): number | undefined => value ?? undefined;
+
 export default function useBusinessPaymentEligibility() {
   const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   const isBusinessBuyer = useIsBusinessBuyer();
@@ -30,7 +33,8 @@ export default function useBusinessPaymentEligibility() {
   const { account, refetchAccount } = useActiveBusinessAccount();
 
   const hasTaxedTotal = Boolean(activeCart?.taxedPrice);
-  // Prepaid / credit stay hidden until tax is on the cart so the compare is cart + tax.
+  // Same compare for catalog and CPQ carts. CPQ draw-down is visible after Mule/SF updates
+  // because this hook re-reads account data on payment-step mount, window focus, and submit.
   const canOfferBusinessPayment = isB2BFeatureEnabled && isBusinessBuyer && hasTaxedTotal;
   const cartTotal = toCartTotal(activeCart?.computed?.totalPrice);
 
@@ -40,13 +44,16 @@ export default function useBusinessPaymentEligibility() {
     canOfferBusinessPayment && isPreapprovedCreditEligible(account, cartTotal);
 
   const prepaidBalance = canOfferBusinessPayment
-    ? toFiniteNumber(account?.prepaid?.balance) ?? undefined
+    ? toOptionalAmount(toFiniteNumber(account?.prepaid?.balance))
+    : undefined;
+  const creditLimit = canOfferBusinessPayment
+    ? toOptionalAmount(toFiniteNumber(account?.credit?.creditLimit))
     : undefined;
   const availableCredit = canOfferBusinessPayment
-    ? resolveAvailableCredit(account?.credit) ?? undefined
+    ? toOptionalAmount(resolveAvailableCredit(account?.credit))
     : undefined;
   const prepaidDiscount = canOfferBusinessPayment
-    ? resolvePrepaidDiscount(account?.prepaid) ?? undefined
+    ? toOptionalAmount(resolvePrepaidDiscount(account?.prepaid))
     : undefined;
   const prepaidAmountDue = canOfferBusinessPayment
     ? amountDueWithPrepaid(cartTotal, account?.prepaid)
@@ -58,8 +65,15 @@ export default function useBusinessPaymentEligibility() {
         return false;
       }
 
-      const freshAccount: AuthorizedBuyerAccount | undefined = await refetchAccount();
-      const latest = freshAccount ?? account;
+      markBuyerMockRaceDeplete();
+
+      const { account: freshAccount, ok } = await refetchAccount();
+
+      if (!ok) {
+        return false;
+      }
+
+      const latest: AuthorizedBuyerAccount | undefined = freshAccount ?? account;
       const latestTotal = toCartTotal(activeCart?.computed?.totalPrice);
 
       if (method === BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT) {
@@ -78,6 +92,7 @@ export default function useBusinessPaymentEligibility() {
       isPrepaidEligible,
       isCreditEligible,
       prepaidBalance,
+      creditLimit,
       availableCredit,
       prepaidDiscount,
       prepaidAmountDue,
@@ -89,6 +104,7 @@ export default function useBusinessPaymentEligibility() {
       isPrepaidEligible,
       isCreditEligible,
       prepaidBalance,
+      creditLimit,
       availableCredit,
       prepaidDiscount,
       prepaidAmountDue,

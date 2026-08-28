@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 
 import { useCart, useCheckoutProcess } from 'providers/index';
 import { isTaxAddressDefined } from 'utils/index';
-import { PersonalInformation } from 'types/index';
+import { Cart, CartWithComputedData, PersonalInformation } from 'types/index';
 
 import useIsBusinessBuyer from '../cart/useIsBusinessBuyer';
 import useSetCartAddress from '../cart/useSetCartAddress';
@@ -33,11 +33,13 @@ export default function useEnsureBusinessCartTax() {
       setIsEnsuringTax(true);
 
       try {
-        let cart = activeCart;
+        let cart: Cart | CartWithComputedData | undefined = activeCart;
 
         if (personalInformation) {
           const updated = await setCartAddressAsync({ personalInformation });
-          cart = updated || cart;
+          if (updated) {
+            cart = { ...cart, ...updated };
+          }
         }
 
         if (!cart?.id || !isTaxAddressDefined(cart.shippingAddress)) {
