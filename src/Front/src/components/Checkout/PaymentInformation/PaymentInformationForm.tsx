@@ -43,8 +43,17 @@ import { ConfirmPaymentPayload, Cart, PersonalInformation, StepTwoLabels } from 
 import {
   addComputedFieldsToLineItems,
   buildQuoteData,
-  sendEngageB2BPaymentConfirmationEvents,
+  sendEngageAddToCartEvents,
+  sendEngageBeginCheckoutEvent,
 } from 'utils/index';
+
+const B2B_ENGAGE_OPTIONS = {
+  source: 'b2bPaymentConfirmation',
+  extensionData: {
+    userType: 'B2B User',
+    isB2BTransaction: true,
+  },
+};
 
 const SHOW_BUSINESS_PAYMENT_TEST_DETAILS = true;
 
@@ -232,7 +241,14 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
         const cartWithComputedFields = addComputedFieldsToLineItems(activeCart as Cart);
         const currency = activeCart.computed.currencyCode || 'USD';
 
-        sendEngageB2BPaymentConfirmationEvents(cartWithComputedFields.lineItems, currency, engage);
+        sendEngageAddToCartEvents(cartWithComputedFields.lineItems, currency, engage, {
+          ...B2B_ENGAGE_OPTIONS,
+          errorMessage: 'Error sending B2B add to cart CDP event:',
+        });
+        sendEngageBeginCheckoutEvent(cartWithComputedFields.lineItems, currency, engage, {
+          ...B2B_ENGAGE_OPTIONS,
+          errorMessage: 'Error sending B2B begin checkout CDP event:',
+        });
       }
 
       confirmPayment({ paymentMethod });

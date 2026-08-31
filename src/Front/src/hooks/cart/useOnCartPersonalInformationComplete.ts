@@ -2,26 +2,19 @@
 import { useMutation } from '@tanstack/react-query';
 import isEqual from 'lodash.isequal';
 
-import { useCart, useCheckoutProcess, usePersonalize } from 'providers/index';
-import {
-  addComputedFieldsToLineItems,
-  getMailingAddress,
-  isCartTotalFree,
-  isTaxAddressDefined,
-  sendEngageB2BPaymentConfirmationEvents,
-} from 'utils/index';
-import { Cart, PersonalInformation } from 'types/index';
+import { useCheckoutProcess } from 'providers/index';
+import { getMailingAddress, isTaxAddressDefined } from 'utils/index';
+import { PersonalInformation } from 'types/index';
 
 import useUpdateTax from './useUpdateTax';
 import useSetCartAddress from './useSetCartAddress';
 import useUpdateUserData from '../useUpdateUserData';
 import useUpdateB2BPersonalInformation from './useUpdateB2BPersonalInformation';
-import { CHECKOUT_STEPS, PAYMENT_METHODS } from 'constants/checkout';
+import { CHECKOUT_STEPS } from 'constants/checkout';
 import useRecalculateCart from './useRecalculateCart';
 import useIsCpqStyleCheckout from './useIsCpqStyleCheckout';
 import useIsBusinessBuyer from './useIsBusinessBuyer';
 import useGetPaymentIntent from '../checkout/useGetPaymentIntent';
-import useConfirmPayment from '../checkout/useConfirmPayment';
 import useEnsureBusinessCartTax from '../checkout/useEnsureBusinessCartTax';
 
 const getFieldsForUserUpdate = (data?: PersonalInformation) => {
@@ -48,9 +41,6 @@ export default function useOnCartPersonalInformationComplete(payload: MutationPa
   const isCpqStyleCheckout = useIsCpqStyleCheckout();
   const isBusinessBuyer = useIsBusinessBuyer();
   const { setActiveStep, setErrorState, setHasInventoryError } = useCheckoutProcess();
-  const { activeCart } = useCart();
-  const { engage } = usePersonalize();
-  const { confirmPayment, isConfirmingPayment } = useConfirmPayment();
 
   const { setCartAddressAsync } = useSetCartAddress({ onError: setErrorState });
   const { updateUserAsync } = useUpdateUserData({ onError: setErrorState });
@@ -78,7 +68,7 @@ export default function useOnCartPersonalInformationComplete(payload: MutationPa
           await ensureTaxedCart(data);
         }
 
-        return activeCart;
+        return;
       }
 
       if (personalInformationChanged) {
@@ -144,8 +134,6 @@ export default function useOnCartPersonalInformationComplete(payload: MutationPa
 
       const cartForPaymentIntent = taxedCart || recalculatedCart || updatedAddressCart;
 
-      let latestCart = cartForPaymentIntent;
-
       // Address/country changes can invalidate the payment intent created at checkout setup
       // (amount/tax/version). Refresh it from the post-tax cart before the payment step.
       if (cartForPaymentIntent) {
@@ -169,33 +157,11 @@ export default function useOnCartPersonalInformationComplete(payload: MutationPa
           if (totalChanged && syncedCart) {
             await getPaymentIntentAsync({ cart: syncedCart });
           }
-
-          if (syncedCart) {
-            latestCart = syncedCart;
-          }
         }
       }
-
-      return latestCart;
     },
     onSuccess: (_data, variables: PersonalInformation) => {
       payload.callbacks.onSuccess(variables);
-
-      if (isBusinessBuyer && isCartTotalFree(_data ?? activeCart)) {
-        if (activeCart.computed.isB2B && engage && activeCart.lineItems) {
-          const cartWithComputedFields = addComputedFieldsToLineItems(activeCart as Cart);
-
-          sendEngageB2BPaymentConfirmationEvents(
-            cartWithComputedFields.lineItems,
-            activeCart.computed.currencyCode || 'USD',
-            engage
-          );
-        }
-
-        confirmPayment({ paymentMethod: PAYMENT_METHODS.FREE });
-
-        return;
-      }
 
       setActiveStep(CHECKOUT_STEPS.PAYMENT_INFORMATION);
     },
@@ -203,7 +169,7 @@ export default function useOnCartPersonalInformationComplete(payload: MutationPa
 
   return {
     onCartPersonalInformationComplete: mutate,
-    isSettingInfo: isPending || isConfirmingPayment,
+    isSettingInfo: isPending,
     cartPersonalInformationError: error,
     cartPersonalInformationSuccess: isSuccess,
   };

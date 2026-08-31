@@ -115,29 +115,3 @@ export const sendEngageBeginCheckoutEvent = (
     options
   );
 };
-
-const B2B_ENGAGE_OPTIONS = {
-  source: 'b2bPaymentConfirmation',
-  extensionData: {
-    userType: 'B2B User',
-    isB2BTransaction: true,
-  },
-};
-
-// Sent right before a B2B order is placed, from the payment step and from the
-// $0.00 shortcut that skips it.
-export const sendEngageB2BPaymentConfirmationEvents = (
-  cartLineItems: CartLineItem[],
-  currency: string,
-  engage: EngageClient | null
-): void => {
-  sendEngageAddToCartEvents(cartLineItems, currency, engage, {
-    ...B2B_ENGAGE_OPTIONS,
-    errorMessage: 'Error sending B2B add to cart CDP event:',
-  });
-
-  sendEngageBeginCheckoutEvent(cartLineItems, currency, engage, {
-    ...B2B_ENGAGE_OPTIONS,
-    errorMessage: 'Error sending B2B begin checkout CDP event:',
-  });
-};
