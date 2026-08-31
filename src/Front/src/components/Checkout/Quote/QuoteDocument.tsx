@@ -1,9 +1,10 @@
-import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { Document, Link, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 
 import { QuoteDocumentData, QuoteDocumentLabels } from 'types/index';
 import { QUOTE_DOCUMENT_DEFAULT_LABELS } from 'constants/index';
 
 import { Isc2LogoPdf } from './Isc2LogoPdf';
+const DISCLAIMER_LINK_URL = 'https://www.isc2.org/policies-procedures/terms-conditions';
 
 const COLORS = {
   green: '#468145',
@@ -218,13 +219,11 @@ export const QuoteDocument = ({ data, labels }: QuoteDocumentProps) => {
         </View>
 
         {Boolean(label('disclaimerText')) && (
-          <a
-            href="https://www.isc2.org/policies-procedures/terms-conditions"
-            style={styles.disclaimer}
-          >
+          <Link src={DISCLAIMER_LINK_URL} style={styles.disclaimer}>
             {label('disclaimerText')}
-          </a>
+          </Link>
         )}
+
         <View style={styles.footer} fixed>
           <Text>{label('footerNote')}</Text>
           <Text render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} />
