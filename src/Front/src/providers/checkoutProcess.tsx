@@ -3,13 +3,11 @@ import { BUSINESS_STEP_ONE_DEFAULT_LABELS, CHECKOUT_STEPS } from 'constants/chec
 import { createContext, Dispatch, SetStateAction, useContext, useMemo, useState } from 'react';
 
 import { useIsBusinessBuyer } from 'hooks/index';
-import { useCart } from './cart';
 
 import {
   CheckoutFields,
   CheckoutStep,
   ErrorLabels,
-  QuoteDocumentLabels,
   ServiceLayerError,
   StepOneLabels,
   StepTwoLabels,
@@ -22,8 +20,6 @@ type CheckoutContextProps = {
   checkoutSteps: CheckoutStep[];
   stepOneLabels: StepOneLabels;
   stepTwoLabels: StepTwoLabels;
-  quoteLabels: QuoteDocumentLabels;
-  setQuoteLabels: Dispatch<SetStateAction<QuoteDocumentLabels>>;
   errorLabels: ErrorLabels;
   activeStep: CheckoutStep['id'];
   setActiveStep: Dispatch<SetStateAction<CheckoutStep['id']>>;
@@ -42,8 +38,6 @@ const CheckoutProcessContext = createContext<CheckoutContextProps>({
   checkoutSteps: [],
   stepOneLabels: {} as StepOneLabels,
   stepTwoLabels: {} as StepTwoLabels,
-  quoteLabels: {} as QuoteDocumentLabels,
-  setQuoteLabels: () => {},
   errorLabels: {} as ErrorLabels,
   activeStep: CHECKOUT_STEPS.PERSONAL_INFORMATION,
   setActiveStep: () => {},
@@ -64,11 +58,6 @@ type CheckoutProcessProviderProps = {
 
 const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ fields, children }) => {
   const isBusinessBuyer = useIsBusinessBuyer();
-  const { isFreeOrder } = useCart();
-
-  const [activeStep, setActiveStep] = useState<CheckoutStep['id']>(
-    CHECKOUT_STEPS.PERSONAL_INFORMATION
-  );
 
   const [taxErrorLabels, setTaxErrorLabels] = useState<TaxErrorPopupLabels>({
     heading: null,
@@ -87,21 +76,10 @@ const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ field
     [fields.stepTwoLabelsTooltipsAndMore]
   );
 
-  // Not derived from this component's own `fields` — the Quote* keys are authored onto
-  // OrderSummary's sectionHeadingAndLabels field instead (a separately-placed sibling
-  // component), which pushes them here via setQuoteLabels once it parses them.
-  const [quoteLabels, setQuoteLabels] = useState<QuoteDocumentLabels>({});
-
   const errorLabels = useMemo(
     () => parseFieldsFromURLString<ErrorLabels>(fields.errorLabels),
     [fields.errorLabels]
   );
-
-  // A business buyer's $0.00 cart goes straight from step one to the confirmation page,
-  // so the payment step is not part of the flow. It stays listed if it is somehow the
-  // active step (e.g. the total stopped being free), since the indicator needs it.
-  const isPaymentStepSkipped =
-    isBusinessBuyer && isFreeOrder && activeStep !== CHECKOUT_STEPS.PAYMENT_INFORMATION;
 
   const checkoutSteps: CheckoutStep[] = useMemo(
     () => [
@@ -111,19 +89,17 @@ const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ field
           ? stepOneLabels.businessStepTitle || BUSINESS_STEP_ONE_DEFAULT_LABELS.stepTitle
           : stepOneLabels.stepTitle,
       },
-      ...(isPaymentStepSkipped
-        ? []
-        : [{ id: CHECKOUT_STEPS.PAYMENT_INFORMATION, label: stepTwoLabels.stepTitle }]),
+      { id: CHECKOUT_STEPS.PAYMENT_INFORMATION, label: stepTwoLabels.stepTitle },
     ],
     [
       isBusinessBuyer,
-      isPaymentStepSkipped,
       stepOneLabels.businessStepTitle,
       stepOneLabels.stepTitle,
       stepTwoLabels.stepTitle,
     ]
   );
 
+  const [activeStep, setActiveStep] = useState<CheckoutStep['id']>(checkoutSteps[0].id);
   const [errorState, setErrorState] = useState<ServiceLayerError[] | null>(null);
   const [hasPaymentError, setHasPaymentError] = useState<boolean>(false);
   const [hasInventoryError, setHasInventoryError] = useState<boolean>(false);
@@ -137,8 +113,6 @@ const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ field
         setActiveStep,
         stepOneLabels,
         stepTwoLabels,
-        quoteLabels,
-        setQuoteLabels,
         errorLabels,
         errorState,
         setErrorState,
