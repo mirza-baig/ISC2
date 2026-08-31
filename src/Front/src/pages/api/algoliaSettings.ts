@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { TRAINING_FINDER_SEARCH_SETTINGS } from 'queries/searchSettings';
+import { SEARCH_WRAPPER_SETTINGS_BY_PATH } from 'queries/searchSettings';
 import { handledApiPreamble, postSitecoreGraphQL } from 'utils/sitecoreApiRoute';
 import {
   FetchedSearchWrapperWithQueryStringFields,
@@ -57,18 +57,55 @@ const parseDefaultFilterKeyValues = (str: string): SearchDefaultFilter[] => {
   return defaultFilters;
 };
 
+const SETTINGS_REF_MAX_LENGTH = 200;
+
+const SETTINGS_PATH_PREFIX = '/sitecore/content/ISC2/Main/Settings/';
+
+const isGuidRef = (ref: string): boolean =>
+  /^\{?[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}\}?$/i.test(ref);
+
+const isContentPathRef = (ref: string): boolean => {
+  if (!ref.startsWith(SETTINGS_PATH_PREFIX)) {
+    return false;
+  }
+
+  if (!/^\/sitecore\/content\/[\w\-/ &.']+$/i.test(ref)) {
+    return false;
+  }
+
+  return ref
+    .split('/')
+    .every((segment) => segment !== '..' && segment !== '.' && !segment.startsWith('..'));
+};
+
+const isAllowedSettingsRef = (ref: string): boolean =>
+  ref.length <= SETTINGS_REF_MAX_LENGTH && (isGuidRef(ref) || isContentPathRef(ref));
+
+const resolveSettingsRef = (req: NextApiRequest): string | null => {
+  const raw = req.query.id;
+  const ref = (Array.isArray(raw) ? raw[0] : raw)?.trim();
+
+  return ref && isAllowedSettingsRef(ref) ? ref : null;
+};
+
 const algoliaSettings = async (req: NextApiRequest, res: NextApiResponse) => {
   if (handledApiPreamble(req, res)) {
     return;
   }
 
+  const settingsRef = resolveSettingsRef(req);
+
+  if (!settingsRef) {
+    return res.status(400).json({ error: 'A valid Algolia settings item reference is required.' });
+  }
+
   try {
     const response = await postSitecoreGraphQL<GraphQLSearchWrapperSettingsResponse>(
-      TRAINING_FINDER_SEARCH_SETTINGS
+      SEARCH_WRAPPER_SETTINGS_BY_PATH,
+      { path: settingsRef }
     );
 
-    const { data } = response;
-    const settings = data.data.searchWrapperSettings;
+    const settings = response.data?.data?.searchWrapperSettings;
 
     if (!settings) {
       throw new Error('Search Wrapper Settings not found.');
@@ -195,6 +232,7 @@ const algoliaSettings = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Cache-Control', 'private, max-age=300');
     res.status(200).json(parsedSettings);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch algolia settings.' });

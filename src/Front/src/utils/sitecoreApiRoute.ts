@@ -35,14 +35,13 @@ export const handledApiPreamble = (req: NextApiRequest, res: NextApiResponse): b
   return false;
 };
 
-export const postSitecoreGraphQL = <TResponse>(query: string): Promise<AxiosResponse<TResponse>> =>
-  axios.post<TResponse>(
-    config.graphQLEndpoint,
-    { query },
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        sc_apikey: config.sitecoreApiKey,
-      },
-    }
-  );
+export const postSitecoreGraphQL = <TResponse>(
+  query: string,
+  variables?: Record<string, unknown>
+): Promise<AxiosResponse<TResponse>> =>
+  axios.post<TResponse>(config.graphQLEndpoint, variables ? { query, variables } : { query }, {
+    headers: {
+      'Content-Type': 'application/json',
+      sc_apikey: config.sitecoreApiKey,
+    },
+  });

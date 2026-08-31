@@ -1,4 +1,5 @@
 import { Path, Svg } from '@react-pdf/renderer';
+import React from 'react';
 
 /** ISC2 wordmark as an inline `@react-pdf/renderer` vector — no image asset needed. */
 export const Isc2LogoPdf = ({ width = 90 }: { width?: number }) => (

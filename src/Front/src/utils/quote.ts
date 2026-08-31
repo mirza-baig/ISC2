@@ -26,8 +26,6 @@ const buildQuoteLineItem = (lineItem: CartLineItem, currencyCode: string): Quote
     name: lineItem.name,
     quantity: lineItem.quantity ?? 1,
     listPrice: formatMoney(currencyCode, listPrice),
-    // Always populated — same as listPrice when there's no discount, so "Your Price"
-    // shows a real number instead of a dash.
     discountedPrice: formatMoney(currencyCode, discounted ?? listPrice),
     hasDiscount: Boolean(discounted),
     tax: formatMoney(currencyCode, tax),
@@ -35,10 +33,6 @@ const buildQuoteLineItem = (lineItem: CartLineItem, currencyCode: string): Quote
   };
 };
 
-/**
- * Flattens a bundle into its nested products so every printed row is a real product — a
- * bundle line item carries the `bundle` product type and no price of its own.
- */
 const flattenLineItems = (lineItems: CartLineItem[]): LineItem[] =>
   lineItems.flatMap((lineItem) =>
     'products' in lineItem ? flattenLineItems(lineItem.products) : [lineItem]
@@ -80,12 +74,6 @@ type BuildQuoteDataInput = {
   organizationName?: string;
 };
 
-/**
- * Assembles everything the quote PDF renders from the current cart and checkout Step
- * One data. Called fresh on every "Download Quote" click, so a buyer who edits products
- * or quantities and downloads again always gets a quote reflecting the live cart —
- * there is no separate "stale quote" state to invalidate.
- */
 export const buildQuoteData = ({
   cart,
   personalInformation,
@@ -111,9 +99,6 @@ export const buildQuoteData = ({
     lineItems: flattenLineItems(cart.lineItems ?? []).map((lineItem) =>
       buildQuoteLineItem(lineItem, currencyCode)
     ),
-    // computed.subtotal/taxValue/totalPrice are already display-ready decimal strings
-    // (see getComputedFieldsFromCart in utils/cart) — not cent amounts, so they're
-    // prefixed directly rather than run back through formatMoney.
     subtotal: `${currencyCode} ${(cart.computed.subtotal ?? 0).toFixed(2)}`,
     tax: `${currencyCode} ${cart.computed.taxValue ?? '0.00'}`,
     total: `${currencyCode} ${cart.computed.totalPrice ?? '0.00'}`,

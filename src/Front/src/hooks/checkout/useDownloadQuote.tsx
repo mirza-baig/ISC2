@@ -7,13 +7,6 @@ type DownloadPayload = {
   labels?: QuoteDocumentLabels;
 };
 
-/**
- * Generates and downloads the eCommerce quote PDF.
- *
- * `@react-pdf/renderer` and the quote document are imported on click rather than at
- * module scope — the renderer is a large dependency and nothing on the Payment
- * Information step needs it until the buyer asks for the file.
- */
 export default function useDownloadQuote() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<Error | null>(null);

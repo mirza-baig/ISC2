@@ -18,6 +18,7 @@ export * from './fields';
 export * from './getServiceLayerAPI';
 export * from './cart';
 export * from './order';
+export * from './quote';
 export * from './goToTop';
 export * from './htmlStrings';
 export * from './graphQLFunctions';

@@ -3,8 +3,11 @@ interface DefaultFilterKeyValue {
   FilterValue: string;
 }
 
+const quoteFilterValue = (value: string): string =>
+  `"${String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+
 export const buildFilterGroup = (attribute: string, values: string[]): string =>
-  `(${values.map((value) => `${attribute}:${value}`).join(' OR ')})`;
+  `(${values.map((value) => `${attribute}:${quoteFilterValue(value)}`).join(' OR ')})`;
 
 export const buildDefaultFilterGroups = (
   defaultFilters: DefaultFilterKeyValue[] | undefined
@@ -13,9 +16,17 @@ export const buildDefaultFilterGroups = (
     return [];
   }
 
-  const groups = defaultFilters.map((filter) =>
-    buildFilterGroup(filter.FilterKey, filter.FilterValue.split(','))
-  );
+  const groups = defaultFilters
+    .filter((filter) => filter?.FilterKey?.trim() && filter?.FilterValue?.trim())
+    .map((filter) =>
+      buildFilterGroup(
+        filter.FilterKey.trim(),
+        filter.FilterValue.split(',')
+          .map((value) => value.trim())
+          .filter(Boolean)
+      )
+    )
+    .filter((group) => group !== '()');
 
-  return groups[0] === '(:)' ? [] : groups;
+  return groups;
 };

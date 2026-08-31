@@ -7,110 +7,120 @@ import { ComponentProps } from 'lib/component-props';
 
 import { SearchResultHit } from 'types/index';
 import { FetchedSearchWrapperWithQueryStringFields } from 'types/algoliaSearch';
-import { useSearch, useLayout } from 'providers/index';
-import { LoadingIndicator, ScrollToTop } from 'ui/index';
+import { useLayout } from 'providers/index';
+import { LoadingIndicator } from 'ui/index';
 
 import SearchHit from './SearchHits/SearchHit';
 import TrainingFinderHit from './SearchHits/TrainingFinderHit';
 import VolunteerSearchHit from './SearchHits/VolunteerSearchHit';
 import SearchInfiniteHits from './SearchHits/SearchInfiniteHits';
-import SearchFacet from './SearchFacets/SearchFacet';
 import SearchNonEditableNotice from './SearchNonEditableNotice';
-import { buildDefaultFilterGroups, buildFilterGroup } from './searchFilterGroups';
+import NoResultsBoundary from './NoResultsBoundary';
+import { buildDefaultFilterGroups } from './searchFilterGroups';
+import { parseAlgoliaSearchState, type AlgoliaSearchState } from './parseAlgoliaSearchState';
 
 import { fetchSearchWrapperSettings } from 'providers/algoliaSettings';
+
+type SitecoreItemRef =
+  | Field<string>
+  | { id?: string; value?: string | { id?: string } }
+  | string
+  | undefined;
 
 type SearchWrapperWithQueryStringProps = ComponentProps & {
   rendering: ComponentRendering | RouteData;
   fields: {
     QueryString: Field<string>;
+    AlgoliaSettings?: SitecoreItemRef;
   };
 };
 
-function parseAlgoliaSearchState(searchString: string) {
-  try {
-    let queryPart = searchString;
-    if (searchString.includes('?')) {
-      queryPart = searchString.split('?')[1];
-    }
+const resolveSettingsRef = (field: SitecoreItemRef): string | undefined => {
+  if (!field) return undefined;
+  if (typeof field === 'string') return field.trim() || undefined;
 
-    const decodedSearchString = decodeURIComponent(queryPart);
-    const params = new URLSearchParams(decodedSearchString);
-    let indexName = '';
-    const refinements: Record<string, string[]> = {};
-    let query = '';
+  const asObject = field as { id?: string; value?: string | { id?: string } };
 
-    const firstParam = Array.from(params.keys())[0];
-    if (firstParam) {
-      indexName = firstParam.split('[')[0];
-    }
-
-    for (const [key, value] of params.entries()) {
-      const refinementMatch = key.match(/^(.+?)\[refinementList\]\[(.+?)\]\[(\d+)\]$/);
-      if (refinementMatch) {
-        const [, , attribute] = refinementMatch;
-
-        if (!refinements[attribute]) {
-          refinements[attribute] = [];
-        }
-        refinements[attribute].push(value);
-      }
-
-      const queryMatch = key.match(/^(.+?)\[query\]$/);
-      if (queryMatch && value) {
-        query = value;
-      }
-    }
-
-    return { indexName, refinements, query };
-  } catch (error) {
-    return { indexName: '', refinements: {}, query: '' };
+  if (typeof asObject.value === 'string') {
+    return asObject.value.trim() || undefined;
   }
-}
+  if (asObject.value && typeof asObject.value === 'object') {
+    return asObject.value.id?.trim() || undefined;
+  }
+
+  return asObject.id?.trim() || undefined;
+};
+
+const buildSearchParameters = (
+  algoliaState: AlgoliaSearchState,
+  settings: FetchedSearchWrapperWithQueryStringFields | null
+) => {
+  const facetFilters: string[][] = Object.entries(algoliaState.refinements)
+    .filter(([, values]) => values.length > 0)
+    .map(([attribute, values]) => values.map((value) => `${attribute}:${value}`));
+
+  Object.entries(algoliaState.menus).forEach(([attribute, value]) => {
+    facetFilters.push([`${attribute}:${value}`]);
+  });
+
+  algoliaState.toggles.forEach((attribute) => {
+    facetFilters.push([`${attribute}:true`]);
+  });
+
+  const numericFilters: string[] = [];
+  Object.entries(algoliaState.ranges).forEach(([attribute, range]) => {
+    if (range.min !== undefined) numericFilters.push(`${attribute}>=${range.min}`);
+    if (range.max !== undefined) numericFilters.push(`${attribute}<=${range.max}`);
+  });
+
+  const filters = buildDefaultFilterGroups(settings?.defaultFilterKeyValues).join(' AND ');
+
+  return { facetFilters, numericFilters, filters };
+};
 
 const SearchWrapperWithQueryString = ({ fields }: SearchWrapperWithQueryStringProps) => {
-  const { setAlgoliaIndexName } = useSearch();
   const { isEditing } = useLayout();
 
   const [settings, setSettings] = useState<FetchedSearchWrapperWithQueryStringFields | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [hasError, setHasError] = useState(false);
 
-  const [algoliaState, setAlgoliaState] = useState<{
-    indexName: string;
-    refinements: Record<string, string[]>;
-    query: string;
-  }>({ indexName: '', refinements: {}, query: '' });
+  const settingsRef = useMemo(() => resolveSettingsRef(fields?.AlgoliaSettings), [fields]);
+
+  const algoliaState = useMemo(
+    () => parseAlgoliaSearchState(fields?.QueryString?.value),
+    [fields?.QueryString?.value]
+  );
 
   useEffect(() => {
-    setIsLoading(true);
-    setError(null);
+    let cancelled = false;
 
-    fetchSearchWrapperSettings()
+    if (!settingsRef) {
+      setSettings(null);
+      setHasError(true);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setHasError(false);
+
+    fetchSearchWrapperSettings(settingsRef)
       .then((fetchedSettings) => {
+        if (cancelled) return;
         setSettings(fetchedSettings);
         setIsLoading(false);
       })
       .catch(() => {
-        setError('Failed to load search settings');
+        if (cancelled) return;
+        setHasError(true);
         setIsLoading(false);
       });
-  }, []);
 
-  useEffect(() => {
-    if (fields?.QueryString?.value) {
-      const parsedState = parseAlgoliaSearchState(fields.QueryString.value);
-      setAlgoliaState(parsedState);
-
-      if (parsedState.indexName) {
-        setAlgoliaIndexName(parsedState.indexName);
-      } else if (settings?.algoliaIndexName) {
-        setAlgoliaIndexName(settings.algoliaIndexName);
-      }
-    } else if (settings?.algoliaIndexName) {
-      setAlgoliaIndexName(settings.algoliaIndexName);
-    }
-  }, [fields, settings, setAlgoliaIndexName]);
+    return () => {
+      cancelled = true;
+    };
+  }, [settingsRef]);
 
   const searchClient = useMemo(() => {
     if (!settings?.algoliaApiKey || !settings?.algoliaAppId) {
@@ -122,38 +132,22 @@ const SearchWrapperWithQueryString = ({ fields }: SearchWrapperWithQueryStringPr
 
   const renderSearchHit = useCallback(
     (hit: Hit<SearchResultHit>, index: number, isFeatured: boolean) => {
+      const labels = {
+        trainingProviderLabel: settings?.trainingProviderLabel || '',
+        trainingMethodLabel: settings?.trainingMethodLabel || '',
+        startDateLabel: settings?.startDateLabel || '',
+        endDateLabel: settings?.endDateLabel || '',
+        locationLabel: settings?.locationLabel || '',
+        buttonLabel: settings?.buttonLabel || '',
+        tooltipValue: settings?.tooltipValue || '',
+      };
+
       if (settings?.searchResultPageType === 'Training Finder') {
-        return (
-          <TrainingFinderHit
-            hit={hit}
-            labels={{
-              trainingProviderLabel: settings.trainingProviderLabel || '',
-              trainingMethodLabel: settings.trainingMethodLabel || '',
-              startDateLabel: settings.startDateLabel || '',
-              endDateLabel: settings.endDateLabel || '',
-              locationLabel: settings.locationLabel || '',
-              buttonLabel: settings.buttonLabel || '',
-              tooltipValue: settings.tooltipValue || '',
-            }}
-          />
-        );
+        return <TrainingFinderHit hit={hit} labels={labels} />;
       }
 
       if (settings?.searchResultPageType === 'Volunteer Page') {
-        return (
-          <VolunteerSearchHit
-            hit={hit}
-            labels={{
-              trainingProviderLabel: settings.trainingProviderLabel || '',
-              trainingMethodLabel: settings.trainingMethodLabel || '',
-              startDateLabel: settings.startDateLabel || '',
-              endDateLabel: settings.endDateLabel || '',
-              locationLabel: settings.locationLabel || '',
-              buttonLabel: settings.buttonLabel || '',
-              tooltipValue: settings.tooltipValue || '',
-            }}
-          />
-        );
+        return <VolunteerSearchHit hit={hit} labels={labels} />;
       }
 
       return <SearchHit hit={hit} index={index} isFeatured={isFeatured} />;
@@ -161,100 +155,102 @@ const SearchWrapperWithQueryString = ({ fields }: SearchWrapperWithQueryStringPr
     [settings]
   );
 
-  const filters = useMemo(() => {
-    const filterParts: string[] = [];
+  const { facetFilters, numericFilters, filters } = useMemo(
+    () => buildSearchParameters(algoliaState, settings),
+    [algoliaState, settings]
+  );
 
-    Object.entries(algoliaState.refinements).forEach(([attribute, values]) => {
-      if (values.length > 0) {
-        filterParts.push(buildFilterGroup(attribute, values));
-      }
-    });
+  const indexName =
+    algoliaState.sortByIndexName || algoliaState.indexName || settings?.algoliaIndexName || '';
 
-    filterParts.push(...buildDefaultFilterGroups(settings?.defaultFilterKeyValues));
+  if (isEditing) {
+    return (
+      <div>
+        <SearchNonEditableNotice />
+        <dl className="mx-auto max-w-3xl body-s text-gray-70">
+          {!settingsRef && (
+            <>
+              <dt className="eyebrow text-red-60">Algolia settings</dt>
+              <dd className="mb-2">
+                Not selected — set the AlgoliaSettings field on this component&apos;s datasource.
+              </dd>
+            </>
+          )}
 
-    return filterParts.join(' AND ');
-  }, [algoliaState.refinements, settings?.defaultFilterKeyValues]);
+          <dt className="eyebrow">Index</dt>
+          <dd className="mb-2">{indexName || '— none resolved —'}</dd>
 
-  const indexName = useMemo(() => {
-    return algoliaState.indexName || settings?.algoliaIndexName || '';
-  }, [algoliaState.indexName, settings]);
+          <dt className="eyebrow">Refinements</dt>
+          <dd className="mb-2">
+            {Object.entries(algoliaState.refinements)
+              .map(([attribute, values]) => `${attribute}: ${values.join(', ')}`)
+              .join(' · ') || '— none —'}
+          </dd>
 
-  const initialSearchState = useMemo(() => {
-    const state: Record<string, unknown> = {};
+          {algoliaState.query && (
+            <>
+              <dt className="eyebrow">Query</dt>
+              <dd className="mb-2">{algoliaState.query}</dd>
+            </>
+          )}
 
-    if (algoliaState.query) {
-      state.query = algoliaState.query;
-    }
-
-    if (Object.keys(algoliaState.refinements).length > 0) {
-      state.refinementList = algoliaState.refinements;
-    }
-
-    if (filters) {
-      state.configure = {
-        filters: filters,
-      };
-    }
-
-    return state;
-  }, [algoliaState.query, algoliaState.refinements, filters]);
+          {algoliaState.unsupported.length > 0 && (
+            <>
+              <dt className="eyebrow text-red-60">Ignored parameters</dt>
+              <dd className="mb-2">{algoliaState.unsupported.join(', ')}</dd>
+            </>
+          )}
+        </dl>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return <LoadingIndicator />;
   }
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  if (!searchClient || !settings || !indexName) {
-    return <div>Missing search configuration. Check console for details.</div>;
-  }
-
-  if (isEditing) {
-    return <SearchNonEditableNotice />;
+  if (hasError || !searchClient || !settings || !indexName) {
+    return null;
   }
 
   return (
-    <InstantSearch
-      searchClient={searchClient}
-      indexName={indexName}
-      initialUiState={{
-        [indexName]: initialSearchState,
-      }}
-    >
-      <main data-insights-index={indexName}>
+    <InstantSearch searchClient={searchClient} indexName={indexName}>
+      <section data-insights-index={indexName}>
         <Configure
           {...({
-            filters,
+            query: algoliaState.query || undefined,
+            filters: filters || undefined,
+            facetFilters: facetFilters.length ? facetFilters : undefined,
+            numericFilters: numericFilters.length ? numericFilters : undefined,
             hitsPerPage: 20,
             clickAnalytics: true,
             getRankingInfo: true,
           } as unknown as UseConfigureProps)}
         />
 
-        <div style={{ display: 'none' }}>
-          {settings?.facetKeyValues?.map((filter) => (
-            <SearchFacet
-              key={filter.key}
-              type="Checkbox"
-              attribute={filter.key}
-              label={filter.value}
-              openByDefault={false}
-              showMoreLabel=""
-            />
-          ))}
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:px-8 lg:px-16 sm:items-start sm:pb-20">
+          <NoResultsBoundary
+            fallback={
+              settings.noResultsFoundText ? (
+                <p className="body-m py-6 mx-5 sm:mx-0">{settings.noResultsFoundText}</p>
+              ) : (
+                <></>
+              )
+            }
+          >
+            <div className="flex flex-col grow mx-5 sm:mx-0 sm:w-full lg:w-full">
+              <div className="space-y-10 relative">
+                <SearchInfiniteHits
+                  renderHit={renderSearchHit}
+                  loadMoreButtonLabel={settings.showLoadMore ? settings.loadMoreLabel || '' : ''}
+                  hideProductSuggestions={true}
+                  disableHitsSessionCache
+                />
+              </div>
+            </div>
+          </NoResultsBoundary>
         </div>
-
-        <div className="flex flex-col mx-5 sm:mx-8 lg:mx-16 py-10">
-          <SearchInfiniteHits
-            renderHit={renderSearchHit}
-            loadMoreButtonLabel={settings?.showLoadMore ? settings.loadMoreLabel || '' : ''}
-            hideProductSuggestions={true}
-          />
-        </div>
-        <ScrollToTop />
-      </main>
+      </section>
     </InstantSearch>
   );
 };

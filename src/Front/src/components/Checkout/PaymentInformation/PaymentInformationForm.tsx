@@ -17,6 +17,7 @@ import {
   useIsBusinessBuyer,
   useRecalculateCart,
 } from 'hooks/index';
+
 import {
   useCart,
   useCheckoutProcess,
@@ -83,10 +84,6 @@ type Props = {
 };
 
 type CheckoutPaymentMethod = PAYMENT_METHODS | BUSINESS_PAYMENT_METHODS;
-
-/** Associates the portaled Confirm Purchase button with this form via the HTML `form`
- *  attribute — a `type="submit"` button only submits its nearest DOM-ancestor form, and
- *  a portal moves it out of that ancestry, so this is required, not just tidy. */
 const PAYMENT_FORM_ID = 'payment-information-form';
 
 export default function PaymentInformationForm({ personalInformation }: Props) {
@@ -128,9 +125,6 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
   const [staleBusinessPaymentMessage, setStaleBusinessPaymentMessage] = useState<string>();
   const [actionsAnchor, setActionsAnchor] = useState<HTMLElement | null>(null);
 
-  // OrderSummary (a separately-placed, Sitecore-composed component) renders the anchor
-  // this portals into. It can still be showing its own loading state on first render, so
-  // this watches for the anchor to appear rather than assuming one effect pass finds it.
   useEffect(() => {
     const existing = document.getElementById(CHECKOUT_STEP_TWO_ACTIONS_ANCHOR_ID);
 
@@ -149,7 +143,6 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
-
     return () => observer.disconnect();
   }, []);
 
@@ -342,12 +335,12 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     setPaymentMethod(PAYMENT_METHODS.PAYPAL);
   }, [setHasPaymentError, isConfirmingPayment, clearStripeData]);
 
-  // Built fresh from the live cart on every click, so editing products/quantities and
-  // downloading again always reflects the current cart — nothing to invalidate.
   const onDownloadQuoteClick = useCallback(() => {
     const quoteData = buildQuoteData({
       cart: activeCart,
+
       personalInformation,
+
       organizationName: shopperContext?.organization?.name || personalInformation?.employer,
     });
 
@@ -361,6 +354,10 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     : onStripeFormSubmit;
 
   const isBusy = isRecalculating || isEnsuringTax || isConfirmingPayment || isOrderSubmitted;
+
+  const isConfirmPurchaseBusy =
+    isBusy || (!isBusinessMethodSelected && !isFreeOrder && isGettingPaymentIntent);
+
   const didEnsureTaxRef = useRef(false);
 
   useEffect(() => {
@@ -622,23 +619,22 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
           onClick={onGoBackButtonClick}
           label={stepTwoLabels.previousStepCtaLabel}
         />
+
+        {!isBusinessBuyer && paymentMethod !== PAYMENT_METHODS.PAYPAL && (
+          <Button
+            type="submit"
+            variant="primary"
+            disabled={isConfirmPurchaseBusy}
+            isLoading={isConfirmPurchaseBusy}
+            label={fields.confirmPurchaseCta.value.text!}
+          />
+        )}
       </footer>
 
-      {/*
-        Download Quote / Confirm Purchase render under the order summary box, per the
-        prototype, via a portal into the anchor OrderSummary renders on this step — see
-        PAYMENT_FORM_ID above for why Confirm Purchase still works once moved out of
-        this form's DOM subtree. Both stay full-width so they read as the same length
-        stacked, matching CartButtons' primary/secondary pairing on the Cart page.
-      */}
       {actionsAnchor &&
+        isBusinessBuyer &&
         createPortal(
           <>
-            {/*
-              Not offered for free B2B orders — that path skips Payment Information
-              entirely (see isPaymentStepSkipped in providers/checkoutProcess), and
-              there is no tax/payment context yet to quote against.
-            */}
             {!isFreeOrder && (
               <Button
                 type="button"
@@ -660,17 +656,14 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
                 type="submit"
                 form={PAYMENT_FORM_ID}
                 variant="primary"
-                disabled={
-                  isBusy || (!isBusinessMethodSelected && !isFreeOrder && isGettingPaymentIntent)
-                }
-                isLoading={
-                  isBusy || (!isBusinessMethodSelected && !isFreeOrder && isGettingPaymentIntent)
-                }
+                disabled={isConfirmPurchaseBusy}
+                isLoading={isConfirmPurchaseBusy}
                 label={fields.confirmPurchaseCta.value.text!}
                 className="w-full justify-center"
               />
             )}
           </>,
+
           actionsAnchor
         )}
     </form>

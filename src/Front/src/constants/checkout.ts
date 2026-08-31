@@ -11,6 +11,7 @@ export enum CHECKOUT_STEPS {
   PERSONAL_INFORMATION = 'personal-information',
   PAYMENT_INFORMATION = 'payment-information',
 }
+export const CHECKOUT_STEP_TWO_ACTIONS_ANCHOR_ID = 'checkout-step-two-actions';
 
 export const PO_NUMBER_MAX_LENGTH = 30;
 

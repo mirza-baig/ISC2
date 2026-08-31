@@ -218,9 +218,13 @@ export const QuoteDocument = ({ data, labels }: QuoteDocumentProps) => {
         </View>
 
         {Boolean(label('disclaimerText')) && (
-          <Text style={styles.disclaimer}>{label('disclaimerText')}</Text>
+          <a
+            href="https://www.isc2.org/policies-procedures/terms-conditions"
+            style={styles.disclaimer}
+          >
+            {label('disclaimerText')}
+          </a>
         )}
-
         <View style={styles.footer} fixed>
           <Text>{label('footerNote')}</Text>
           <Text render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} />

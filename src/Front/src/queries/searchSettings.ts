@@ -383,9 +383,22 @@ export const B2B_PRODUCT_LIST_LABELS = `
 export const TRAINING_FINDER_SEARCH_SETTINGS = `
   query {
     searchWrapperSettings: item(
-      path: "/sitecore/content/ISC2/Main/Settings/Training Finder Algolia Settings", 
+      path: "/sitecore/content/ISC2/Main/Settings/Training Finder Algolia Settings",
       language: "en"
     ) {
+      id
+      name
+      fields {
+        name
+        jsonValue
+      }
+    }
+  }
+`;
+
+export const SEARCH_WRAPPER_SETTINGS_BY_PATH = `
+  query SearchWrapperSettings($path: String!) {
+    searchWrapperSettings: item(path: $path, language: "en") {
       id
       name
       fields {
