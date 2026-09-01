@@ -41,6 +41,7 @@ export { default as useGetProduct } from './product/useGetProduct';
 
 // CARTS
 export { default as useUpdateB2BPersonalInformation } from './cart/useUpdateB2BPersonalInformation';
+export { default as useSetCartAccountOwnerEmail } from './cart/useSetCartAccountOwnerEmail';
 export { default as useGetCart } from './cart/useGetCart';
 export { default as useRemoveFromCart } from './cart/useRemoveFromCart';
 export { default as useApplyCouponCode } from './cart/useApplyCouponCode';

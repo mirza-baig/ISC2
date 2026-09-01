@@ -5,6 +5,7 @@ import type { AuthorizedBuyerAccount, AuthorizedBuyerAddress } from './types';
 export type LiveAccountContactRelation = {
   accountId?: string | null;
   accountName?: string | null;
+  accountOwnerEmail?: string | null;
   accountType?: string | null;
   currency?: string | null;
   pricingTier?: string | null;
@@ -118,6 +119,7 @@ export const mapLiveRelationToAccount = (
   return {
     accountId,
     accountName,
+    accountOwnerEmail: relation.accountOwnerEmail?.trim() || undefined,
     accountType: relation.accountType || 'B2B',
     currency: relation.currency || 'USD',
     pricingTier: relation.pricingTier || 'ENTERPRISE_1',

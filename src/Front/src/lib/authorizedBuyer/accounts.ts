@@ -37,6 +37,7 @@ const defaultCredit = (
 export const ACCOUNT_ACME: AuthorizedBuyerAccount = {
   accountId: '001xx0000654321',
   accountName: 'Acme Corporation',
+  accountOwnerEmail: 'acme.owner@isc2.org',
   accountType: 'B2B',
   currency: 'USD',
   pricingTier: 'ENTERPRISE_1',
@@ -283,6 +284,7 @@ export const ACCOUNT_TYPE_VARIANT: AuthorizedBuyerAccount = {
 export const ACCOUNT_DEMO_BOTH: AuthorizedBuyerAccount = {
   accountId: 'org-demo-both',
   accountName: 'BrightPath Training Inc',
+  accountOwnerEmail: 'brightpath.owner@isc2.org',
   accountType: 'B2B',
   currency: 'USD',
   pricingTier: 'ENTERPRISE_1',

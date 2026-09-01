@@ -17,6 +17,7 @@ import useLoggedUser from '../useLoggedUser';
 type ActiveBusinessAccount = {
   account?: AuthorizedBuyerAccount;
   accountName: string;
+  accountOwnerEmail?: string;
   /** The account's shipping address, or undefined while the payload has none. */
   shippingAddress?: Address;
   /** Account purchase controls. Default to false so a missing payload never blocks checkout. */
@@ -107,6 +108,7 @@ export default function useActiveBusinessAccount(): ActiveBusinessAccount {
   return {
     account,
     accountName: account?.accountName || shopperContext?.organization?.name || '',
+    accountOwnerEmail: account?.accountOwnerEmail,
     shippingAddress,
     isPoRequired: isAccountFlagSet(account?.purchaseControls?.poRequired),
     isPoAttachmentRequired: isAccountFlagSet(account?.purchaseControls?.poAttachmentRequired),

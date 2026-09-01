@@ -32,6 +32,7 @@ export type AuthorizedBuyerPrepaid = {
 export type AuthorizedBuyerAccount = {
   accountId: string;
   accountName: string;
+  accountOwnerEmail?: string;
   accountType: string;
   currency: string;
   pricingTier: string;

@@ -16,6 +16,8 @@ import useIsCpqStyleCheckout from './useIsCpqStyleCheckout';
 import useIsBusinessBuyer from './useIsBusinessBuyer';
 import useGetPaymentIntent from '../checkout/useGetPaymentIntent';
 import useEnsureBusinessCartTax from '../checkout/useEnsureBusinessCartTax';
+import useSetCartAccountOwnerEmail from './useSetCartAccountOwnerEmail';
+import useActiveBusinessAccount from '../user/useActiveBusinessAccount';
 
 const getFieldsForUserUpdate = (data?: PersonalInformation) => {
   if (!data) {
@@ -51,9 +53,26 @@ export default function useOnCartPersonalInformationComplete(payload: MutationPa
   const { updateB2BPersonalInformationAsync } = useUpdateB2BPersonalInformation({
     onError: setErrorState,
   });
+  const { accountOwnerEmail, account } = useActiveBusinessAccount();
+  const { setCartAccountOwnerEmailAsync } = useSetCartAccountOwnerEmail({
+    onError: setErrorState,
+  });
 
   const { mutate, isPending, error, isSuccess } = useMutation({
     mutationFn: async (data: PersonalInformation) => {
+      // Mule BCCs the account owner on the order confirmation email, so their address has
+      // to be on the cart before the order is placed.
+      if (isBusinessBuyer) {
+        // TEMP debug
+        console.log('[ACCOUNT-OWNER-EMAIL-DEBUG] active account', {
+          accountId: account?.accountId,
+          accountName: account?.accountName,
+          accountOwnerEmail,
+        });
+
+        await setCartAccountOwnerEmailAsync({ accountOwnerEmail });
+      }
+
       const oldUserData = getFieldsForUserUpdate(payload.initialData);
       const newUserData = getFieldsForUserUpdate(data);
 
