@@ -9,6 +9,7 @@ import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 're
 import { createPortal } from 'react-dom';
 
 import {
+  useActiveBusinessAccount,
   useBusinessPaymentEligibility,
   useConfirmPayment,
   useDownloadQuote,
@@ -115,6 +116,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
   const { engage } = usePersonalize();
   const { shopperContext } = useShopperContext();
   const { downloadQuote, isGeneratingQuote } = useDownloadQuote();
+  const { shippingAddress: accountShippingAddress } = useActiveBusinessAccount();
   const isBusinessBuyer = useIsBusinessBuyer();
   const { ensureTaxedCart, hasTaxedTotal, isEnsuringTax } = useEnsureBusinessCartTax();
   const {
@@ -354,14 +356,20 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
   const onDownloadQuoteClick = useCallback(() => {
     const quoteData = buildQuoteData({
       cart: activeCart,
-
       personalInformation,
-
       organizationName: shopperContext?.organization?.name || personalInformation?.employer,
+      accountShippingAddress,
     });
 
     downloadQuote({ data: quoteData, labels: quoteLabels });
-  }, [activeCart, personalInformation, shopperContext, downloadQuote, quoteLabels]);
+  }, [
+    activeCart,
+    personalInformation,
+    shopperContext,
+    accountShippingAddress,
+    downloadQuote,
+    quoteLabels,
+  ]);
 
   const onFormSubmit = isFreeOrder
     ? onFreeOrderFormSubmit

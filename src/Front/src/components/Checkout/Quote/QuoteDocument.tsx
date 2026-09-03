@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
   colProduct: { flex: 3 },
   colQty: { width: 30, textAlign: 'center' },
   colMoney: { width: 62, textAlign: 'right' },
+  colMoneyWide: { width: 84, textAlign: 'right' },
   productName: { fontSize: 9, color: COLORS.ink },
   strike: { textDecoration: 'line-through', color: COLORS.muted },
 
@@ -186,7 +187,9 @@ export const QuoteDocument = ({ data, labels }: QuoteDocumentProps) => {
               {label('discountedPriceColumnLabel')}
             </Text>
             <Text style={[styles.headCell, styles.colMoney]}>{label('taxColumnLabel')}</Text>
-            <Text style={[styles.headCell, styles.colMoney]}>{label('subtotalColumnLabel')}</Text>
+            <Text style={[styles.headCell, styles.colMoneyWide]}>
+              {label('subtotalColumnLabel')}
+            </Text>
           </View>
 
           {data.lineItems.map((lineItem, index) => (
@@ -198,7 +201,7 @@ export const QuoteDocument = ({ data, labels }: QuoteDocumentProps) => {
               </Text>
               <Text style={styles.colMoney}>{lineItem.discountedPrice}</Text>
               <Text style={styles.colMoney}>{lineItem.tax}</Text>
-              <Text style={styles.colMoney}>{lineItem.subtotal}</Text>
+              <Text style={styles.colMoneyWide}>{lineItem.subtotal}</Text>
             </View>
           ))}
         </View>

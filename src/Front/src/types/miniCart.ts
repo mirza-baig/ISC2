@@ -143,6 +143,15 @@ export type Bundle = {
 
 export type CartLineItem = LineItem | BundleLineItem;
 
+export type CartAddress = {
+  city?: string;
+  country?: string;
+  phone?: string;
+  postalCode?: string;
+  state?: string;
+  streetName?: string;
+};
+
 export type Cart = {
   id: string;
   bundles: Record<string, Bundle>;
@@ -171,14 +180,7 @@ export type Cart = {
   discountOnTotalPrice?: {
     includedDiscounts: CartDiscount[];
   };
-  shippingAddress?: {
-    city?: string;
-    country?: string;
-    phone?: string;
-    postalCode?: string;
-    state?: string;
-    streetName?: string;
-  };
+  shippingAddress?: CartAddress;
   taxedPrice?: {
     totalGross: TypedMoney;
     totalNet: TypedMoney;
