@@ -183,7 +183,11 @@ const Order = ({ fields }: OrderHistoryComponentProps) => {
         <div className="flex flex-row sm:w-48 sm:flex-col justify-between sm:space-y-3 sm:items-end">
           <OrderStatus fields={{ orderStatus: order.orderStatus }} />
           <div>
-            <OrderPrintButton contentRef={contentRef} printInvoiceCtaLabel={printCtaLabel} />
+            <OrderPrintButton
+              contentRef={contentRef}
+              printInvoiceCtaLabel={printCtaLabel}
+              order={order}
+            />
           </div>
         </div>
       </div>

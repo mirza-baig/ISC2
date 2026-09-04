@@ -1,9 +1,14 @@
 import { useMemo } from 'react';
 import { useRouter } from 'next/router';
 
-import { useCart } from 'providers/index';
-import { useHasAllocatorRelationship } from 'hooks/index';
+import { useCart, useShopperContext } from 'providers/index';
 import {
+  useDownloadBusinessReceipt,
+  useHasAllocatorRelationship,
+  useLoggedUser,
+} from 'hooks/index';
+import {
+  buildBusinessReceiptData,
   formatDate,
   parseFieldsFromURLString,
   parsePrice,
@@ -48,6 +53,9 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
   const router = useRouter();
   const { activeCart } = useCart();
   const { hasAllocatorRelationship } = useHasAllocatorRelationship();
+  const { shopperContext } = useShopperContext();
+  const { downloadReceipt, isGeneratingReceipt } = useDownloadBusinessReceipt();
+  const { user } = useLoggedUser();
 
   const labels = parseFieldsFromURLString<BusinessOrderConfirmationLabels>(
     fields.labelsTooltipsAndMore
@@ -130,6 +138,25 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
     : fields.orderHistoryUrl?.value;
 
   const dashboardDestination = dashboardLink?.href;
+
+  /**
+   * Business buyers get a generated Transaction Receipt PDF rather than the browser
+   * print dialog the individual confirmation uses.
+   */
+  const onPrintReceipt = () => {
+    const receiptData = buildBusinessReceiptData({
+      order,
+      cart: activeCart,
+      // The B2B checkout flow never writes a personal shippingAddress name onto the cart
+      // (it only sets billing), so order.shippingAddress carries no name to read here —
+      // the logged-in user is the reliable source, same as the order history print path.
+      buyerName: user?.fullName || [user?.firstName, user?.lastName].filter(Boolean).join(' '),
+      organizationName: shopperContext?.organization?.name,
+      paymentMethod: paymentMethodName,
+    });
+
+    downloadReceipt({ data: receiptData, labels });
+  };
 
   const onOpenDashboard = () => {
     if (!dashboardDestination) {
@@ -266,6 +293,8 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
           type="button"
           variant="secondary"
           label={label('printReceiptCtaLabel')}
+          onClick={onPrintReceipt}
+          isLoading={isGeneratingReceipt}
           className="!self-auto flex-1 justify-center"
         />
         {Boolean(dashboardDestination) && (
