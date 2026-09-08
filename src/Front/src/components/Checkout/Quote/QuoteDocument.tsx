@@ -4,7 +4,6 @@ import { QuoteDocumentData, QuoteDocumentLabels } from 'types/index';
 import { QUOTE_DOCUMENT_DEFAULT_LABELS } from 'constants/index';
 
 import { Isc2LogoPdf } from './Isc2LogoPdf';
-const DISCLAIMER_LINK_URL = 'https://www.isc2.org/policies-procedures/terms-conditions';
 
 const COLORS = {
   green: '#468145',
@@ -222,7 +221,7 @@ export const QuoteDocument = ({ data, labels }: QuoteDocumentProps) => {
         </View>
 
         {Boolean(label('disclaimerText')) && (
-          <Link src={DISCLAIMER_LINK_URL} style={styles.disclaimer}>
+          <Link src={label('disclaimerLinkUrl')} style={styles.disclaimer}>
             {label('disclaimerText')}
           </Link>
         )}

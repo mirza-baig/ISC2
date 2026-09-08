@@ -67,7 +67,6 @@ export const mapQuoteLabelsFromSitecoreFields = (
   totalLabel: fields.QuoteTotalLabel,
   footerNote: fields.QuoteFooterNote,
   downloadQuoteCtaLabel: fields.QuoteDownloadQuoteCtaLabel,
-  disclaimerText: fields.QuoteDisclaimerText,
 });
 
 const resolveCountryName = (countryCode?: string): string | undefined => {

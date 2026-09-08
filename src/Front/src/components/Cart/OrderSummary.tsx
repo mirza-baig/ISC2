@@ -39,6 +39,7 @@ type OrderSummaryProps = {
     };
     enableCartOnlyFeatures: Field<boolean>;
     icon: ImageField;
+    quoteTermsAndConditionsLink: LinkField;
   };
   params: ComponentParams;
 };
@@ -73,14 +74,21 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
     setTaxErrorLabels(fields.taxCalculationErrorPopup?.fields);
   }, [fields.taxCalculationErrorPopup?.fields, setTaxErrorLabels]);
 
+  const termsAndConditionsText = fields.quoteTermsAndConditionsLink?.value?.text;
+  const termsAndConditionsUrl = fields.quoteTermsAndConditionsLink?.value?.href;
+
   // Quote PDF labels are authored onto this same field (as `Quote`-prefixed keys)
   // rather than a dedicated field on the Checkout component, since that's where content
   // authors already had a URL-encoded labels blob to add to. Pushed into checkout
   // context so PaymentInformationForm — a separately-placed sibling component with no
   // access to this component's `fields` — can read them.
   useEffect(() => {
-    setQuoteLabels(mapQuoteLabelsFromSitecoreFields(labels));
-  }, [labels, setQuoteLabels]);
+    setQuoteLabels({
+      ...mapQuoteLabelsFromSitecoreFields(labels),
+      disclaimerText: termsAndConditionsText,
+      disclaimerLinkUrl: termsAndConditionsUrl,
+    });
+  }, [labels, termsAndConditionsText, termsAndConditionsUrl, setQuoteLabels]);
 
   useEffect(() => {
     const shouldBeMenuOpen = MENU_OPEN_BREAKPOINTS.includes(breakpoint);
