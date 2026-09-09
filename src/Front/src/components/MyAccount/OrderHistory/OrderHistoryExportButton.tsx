@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import clsx from 'clsx';
 
 import { useLoggedUser } from 'hooks/index';
 import { useShopperContext } from 'providers/index';
@@ -11,6 +12,7 @@ import { Button } from 'ui/index';
 type OrderHistoryExportButtonProps = {
   orders: PrintableOrder[];
   exportExcelCtaLabel?: string;
+  className?: string;
 };
 
 /**
@@ -24,6 +26,7 @@ type OrderHistoryExportButtonProps = {
 const OrderHistoryExportButton = ({
   orders,
   exportExcelCtaLabel,
+  className,
 }: OrderHistoryExportButtonProps) => {
   const { user } = useLoggedUser();
   const { shopperContext } = useShopperContext();
@@ -52,7 +55,7 @@ const OrderHistoryExportButton = ({
       onClick={exportOrders}
       isLoading={isExporting}
       Icon={<SheetIcon size={15} />}
-      className="whitespace-nowrap !self-start sm:!self-center print:hidden"
+      className={clsx('whitespace-nowrap !self-start sm:!self-center print:hidden', className)}
     />
   );
 };

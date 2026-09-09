@@ -7,6 +7,7 @@ import useGetAllOrders from 'hooks/order/useGetAllOrders';
 import { useLoggedUser, useIsBusinessBuyer, useOnEventOutside } from 'hooks/index';
 import ChevronDownIcon from 'icons/ChevronDownIcon';
 import Order from './Order';
+import OrderHistoryExportButton from './OrderHistoryExportButton';
 import LoadingIndicator from 'ui/LoadingIndicator';
 
 interface OrderHistoryPageProps {
@@ -28,6 +29,7 @@ export interface OrderHistoryPageLabels {
   viewMoreCtaLabel: string;
   viewLessCtaLabel: string;
   shippedByLabel: string;
+  exportExcelCtaLabel?: string;
 }
 
 export interface OrderPrintLabels {
@@ -357,30 +359,11 @@ const OrderHistory = ({ fields }: OrderHistoryPageProps) => {
             onToggle={() => toggleFilter('orderNumber')}
           />
 
-          <button
-            type="button"
-            disabled
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs ml-auto border border-gray-50 bg-gray-10 text-gray-70 cursor-not-allowed"
-            title="Export generation in ITDEV-970"
-          >
-            <svg
-              width="11"
-              height="11"
-              viewBox="0 0 16.5 16.5"
-              fill="none"
-              aria-hidden="true"
-              className="mr-1"
-            >
-              <path
-                d="M15 10.5V13.5C15 13.8978 14.842 14.2794 14.5607 14.5607C14.2794 14.842 13.8978 15 13.5 15H3C2.60218 15 2.22064 14.842 1.93934 14.5607C1.65804 14.2794 1.5 13.8978 1.5 13.5V10.5M12 6.75L8.25 10.5L4.5 6.75M8.25 10.5V1.5"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="3"
-              />
-            </svg>
-            Export to Excel
-          </button>
+          <OrderHistoryExportButton
+            orders={filteredOrders}
+            exportExcelCtaLabel={orderLabels.exportExcelCtaLabel}
+            className="ml-auto"
+          />
         </div>
       )}
       {hasOrders && filteredOrders.length === 0 ? (

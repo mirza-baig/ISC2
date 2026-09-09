@@ -11,6 +11,9 @@ import { getShortIsoDate } from './date';
  * logged-in user. `PO Number` and `Customer Order Reference` are optional on
  * `PrintableOrder` because `salesforceGetOrders` does not return them yet — the columns
  * are written either way so the file shape does not change once it does.
+ *
+ * Nothing is ever left blank: any value the payload does not carry is written as `N/A`,
+ * so a reader can tell a missing value apart from an empty cell.
  */
 const EXPORT_COLUMNS = [
   { header: 'Organization', key: 'organization', width: 30 },
@@ -29,6 +32,9 @@ const EXPORT_COLUMNS = [
 /** Columns holding one line per product, so the two stay readable side by side. */
 const MULTILINE_COLUMN_KEYS: string[] = ['products', 'productQuantities'];
 
+/** Written into every cell whose value the payload does not carry. */
+const NOT_AVAILABLE = 'N/A';
+
 const WORKSHEET_NAME = 'Order History';
 const FILE_NAME_PREFIX = 'Order-History';
 const XLSX_MIME_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -38,6 +44,13 @@ export type OrderHistoryExportContext = {
   organization?: string;
   /** The logged-in user's full name. */
   buyer?: string;
+};
+
+/** Any text column, falling back to `N/A` rather than an empty cell. */
+const orNotAvailable = (value?: string | number | null) => {
+  const text = value === undefined || value === null ? '' : String(value).trim();
+
+  return text || NOT_AVAILABLE;
 };
 
 /**
@@ -63,18 +76,27 @@ const toCurrencyFormat = (money?: TypedMoney) => {
 const toExportRow = (order: PrintableOrder, { organization, buyer }: OrderHistoryExportContext) => {
   const products = order.products || [];
 
+  const tax = toAmount(order.tax);
+  const orderTotal = toAmount(order.orderTotal);
+
   return {
-    organization: organization || '',
-    buyer: buyer || '',
-    poNumber: order.poNumber || '',
-    customerOrderReference: order.customerOrderReference || '',
-    orderNumber: order.orderId || '',
-    orderDate: order.orderDate || '',
-    tax: toAmount(order.tax),
-    orderTotal: toAmount(order.orderTotal),
-    orderStatus: order.orderStatus || '',
-    products: products.map(({ productItemName }) => productItemName || '').join('\n'),
-    productQuantities: products.map(({ productQuantity }) => productQuantity ?? '').join('\n'),
+    organization: orNotAvailable(organization),
+    buyer: orNotAvailable(buyer),
+    poNumber: orNotAvailable(order.poNumber),
+    customerOrderReference: orNotAvailable(order.customerOrderReference),
+    orderNumber: orNotAvailable(order.orderId),
+    orderDate: orNotAvailable(order.orderDate),
+    // Kept as numbers when present, so Excel can still sum and sort the money columns.
+    tax: tax ?? NOT_AVAILABLE,
+    orderTotal: orderTotal ?? NOT_AVAILABLE,
+    orderStatus: orNotAvailable(order.orderStatus),
+    // One line per product, so a gap in either column stays lined up with its product.
+    products: products.length
+      ? products.map(({ productItemName }) => orNotAvailable(productItemName)).join('\n')
+      : NOT_AVAILABLE,
+    productQuantities: products.length
+      ? products.map(({ productQuantity }) => orNotAvailable(productQuantity)).join('\n')
+      : NOT_AVAILABLE,
   };
 };
 
@@ -118,8 +140,15 @@ export const exportOrderHistoryToExcel = async (
       row.getCell(key).alignment = { wrapText: true, vertical: 'top' };
     });
 
-    row.getCell('tax').numFmt = toCurrencyFormat(order.tax);
-    row.getCell('orderTotal').numFmt = toCurrencyFormat(order.orderTotal);
+    // A currency format on an `N/A` cell would render it as `"$"N/A`, so only the cells
+    // holding a real amount get one.
+    if (typeof row.getCell('tax').value === 'number') {
+      row.getCell('tax').numFmt = toCurrencyFormat(order.tax);
+    }
+
+    if (typeof row.getCell('orderTotal').value === 'number') {
+      row.getCell('orderTotal').numFmt = toCurrencyFormat(order.orderTotal);
+    }
   });
 
   const buffer = await workbook.xlsx.writeBuffer();

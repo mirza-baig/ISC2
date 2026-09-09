@@ -100,5 +100,9 @@ export const BUSINESS_RECEIPT_DEFAULT_LABELS = {
   footerNote: 'ISC2 · Thank you for your business.',
 } as const;
 
+export const ORDER_HISTORY_EXPORT_DEFAULT_LABELS = {
+  exportExcelCtaLabel: 'Export to Excel',
+} as const;
+
 /** Product types that make the in-person class location relevant on the receipt. */
 export const IN_PERSON_MODALITIES = ['in person', 'in-person', 'classroom', 'onsite', 'on-site'];
