@@ -65,19 +65,19 @@ export const BUSINESS_PAYMENT_METHOD_DEFAULT_STEPS = {
  * "labels, tooltips and more" field the confirmation screen reads; until then the PDF
  * renders the agreed wording.
  *
- * The disclaimer is required by the story — the receipt has to be unambiguously
+ * `ReceiptConfirmText` is required by the story — the receipt has to be unambiguously
  * distinguishable from a payment invoice — so it is deliberately not optional here.
+ * It keeps the authored PascalCase key, since label lookups use the Sitecore key as-is.
  */
 export const BUSINESS_RECEIPT_DEFAULT_LABELS = {
   documentTitle: 'Transaction Receipt',
-  disclaimer:
+  ReceiptConfirmText:
     'This document is a transaction receipt confirming payment and is not a payment invoice or a request for payment.',
   orderNumberLabel: 'Order Number',
   orderDateLabel: 'Order Date',
   orderStatusLabel: 'Status',
   currencyLabel: 'Currency',
   organizationLabel: 'Organization',
-  isc2EntityLabel: 'ISC2 Entity',
   billToLabel: 'Bill To',
   purchaseDetailsLabel: 'Purchase Details',
   buyerNameLabel: 'Buyer',
@@ -86,12 +86,12 @@ export const BUSINESS_RECEIPT_DEFAULT_LABELS = {
   customerOrderReferenceLabel: 'Customer Order Reference',
   taxIdLabel: 'Tax ID Number',
   intacctCustomerIdLabel: 'Customer ID',
-  productColumnLabel: 'Product',
+  productColumnLabel: 'Line Item',
   locationColumnLabel: 'Location',
   quantityColumnLabel: 'Qty',
   listPriceColumnLabel: 'List Price',
-  discountedPriceColumnLabel: 'Discounted',
-  subtotalColumnLabel: 'Subtotal',
+  discountedPriceColumnLabel: 'Your Price',
+  subtotalColumnLabel: 'Line Total',
   subtotalLabel: 'Subtotal',
   taxLabel: 'Tax',
   totalLabel: 'Total',

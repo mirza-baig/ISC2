@@ -13,6 +13,7 @@ import {
   parseFieldsFromURLString,
   parsePrice,
   resolveBusinessPaymentMethod,
+  toReceiptPlainText,
 } from 'utils/index';
 import {
   BUSINESS_ORDER_CONFIRMATION_DEFAULT_LABELS,
@@ -21,6 +22,7 @@ import {
 } from 'constants/index';
 import {
   BusinessOrderConfirmationLabels,
+  BusinessReceiptLabels,
   CartLineItem,
   OrderWithComputedData,
   TypedMoney,
@@ -57,7 +59,7 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
   const { downloadReceipt, isGeneratingReceipt } = useDownloadBusinessReceipt();
   const { user } = useLoggedUser();
 
-  const labels = parseFieldsFromURLString<BusinessOrderConfirmationLabels>(
+  const labels = parseFieldsFromURLString<BusinessOrderConfirmationLabels & BusinessReceiptLabels>(
     fields.labelsTooltipsAndMore
   );
 
@@ -139,6 +141,13 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
 
   const dashboardDestination = dashboardLink?.href;
 
+  const receiptLabels = useMemo<BusinessReceiptLabels>(() => {
+    const confirmText = toReceiptPlainText(labels?.ReceiptConfirmText);
+
+    return { ...labels, ...(confirmText ? { ReceiptConfirmText: confirmText } : {}) };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [labels]);
+
   /**
    * Business buyers get a generated Transaction Receipt PDF rather than the browser
    * print dialog the individual confirmation uses.
@@ -155,7 +164,7 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
       paymentMethod: paymentMethodName,
     });
 
-    downloadReceipt({ data: receiptData, labels });
+    downloadReceipt({ data: receiptData, labels: receiptLabels });
   };
 
   const onOpenDashboard = () => {

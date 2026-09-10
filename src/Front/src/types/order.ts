@@ -24,9 +24,7 @@ export type Order = {
     }[];
   };
   custom?: {
-    customFieldsRaw?: {
-      [name: string]: string;
-    };
+    /** commercetools returns custom fields as a name/value list, not a keyed map. */
   };
   paymentState: string | null;
   shippingAddress: {
@@ -145,8 +143,8 @@ export type ReceiptLineItem = {
   quantity: number;
   /** Undiscounted unit price, pre-formatted for display. */
   listPrice: string;
-  /** Discounted unit price, present only when the line actually carries a discount. */
-  discountedPrice?: string;
+  discountedPrice: string;
+  hasDiscount: boolean;
   subtotal: string;
 };
 
@@ -165,7 +163,6 @@ export type BusinessReceiptData = {
   orderStatus: string;
   currencyCode: string;
   organizationName?: string;
-  isc2EntityName?: string;
   buyerName: string;
   buyerEmail: string;
   billingAddressLines: string[];
@@ -182,13 +179,17 @@ export type BusinessReceiptData = {
 
 export type BusinessReceiptLabels = {
   documentTitle?: string;
-  disclaimer?: string;
+  /**
+   * The confirmation band under the title. PascalCase because
+   * `parseFieldsFromURLString` reads the authored keys verbatim, and this one is
+   * authored as `ReceiptConfirmText` in "labels, tooltips and more".
+   */
+  ReceiptConfirmText?: string;
   orderNumberLabel?: string;
   orderDateLabel?: string;
   orderStatusLabel?: string;
   currencyLabel?: string;
   organizationLabel?: string;
-  isc2EntityLabel?: string;
   billToLabel?: string;
   purchaseDetailsLabel?: string;
   buyerNameLabel?: string;

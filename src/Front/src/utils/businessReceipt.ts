@@ -29,7 +29,6 @@ type BuildReceiptInput = {
   organizationName?: string;
   taxIdNumber?: string;
   intacctCustomerId?: string;
-  isc2EntityName?: string;
   paymentMethod?: string;
 };
 
@@ -42,6 +41,32 @@ const resolveLocation = (attributes: Record<string, string>): string | undefined
   }
 
   return LOCATION_ATTRIBUTES.map((name) => attributes[name]).find(Boolean);
+};
+
+const HTML_ENTITIES: Record<string, string> = {
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+  '&quot;': '"',
+  '&#39;': "'",
+  '&apos;': "'",
+  '&nbsp;': ' ',
+};
+
+export const toReceiptPlainText = (value?: string): string | undefined => {
+  if (!value) {
+    return undefined;
+  }
+
+  const text = value
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<\/(p|div|li|h[1-6])>/gi, ' ')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&[a-z]+;|&#\d+;/gi, (entity) => HTML_ENTITIES[entity.toLowerCase()] ?? entity)
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return text || undefined;
 };
 
 const formatMoney = (currencySymbol: string, money?: TypedMoney) =>
@@ -69,7 +94,8 @@ const buildLineItem = (lineItem: CartLineItem, currencySymbol: string): ReceiptL
     location: resolveLocation(attributes),
     quantity: lineItem.quantity ?? 1,
     listPrice: formatMoney(currencySymbol, listPrice),
-    ...(discounted && { discountedPrice: formatMoney(currencySymbol, discounted) }),
+    discountedPrice: formatMoney(currencySymbol, discounted ?? listPrice),
+    hasDiscount: Boolean(discounted),
     subtotal: formatMoney(currencySymbol, total ?? discounted ?? listPrice),
   };
 };
@@ -85,7 +111,7 @@ const flattenLineItems = (lineItems: CartLineItem[]): CartLineItem[] =>
 
 /** Order custom fields are the only place the checkout-entered PO details could land. */
 const customField = (order: OrderWithComputedData, name: string): string | undefined =>
-  order.custom?.customFieldsRaw?.[name] || undefined;
+  order.custom?.customFieldsRaw?.find((field) => field.name === name)?.value || undefined;
 
 export const buildBusinessReceiptData = ({
   order,
@@ -94,7 +120,6 @@ export const buildBusinessReceiptData = ({
   organizationName,
   taxIdNumber,
   intacctCustomerId,
-  isc2EntityName,
   paymentMethod,
 }: BuildReceiptInput): BusinessReceiptData => {
   const currencySymbol = order.computed.currencySymbol;
@@ -113,7 +138,6 @@ export const buildBusinessReceiptData = ({
     orderStatus: order.orderState,
     currencyCode: order.totalPrice?.currencyCode ?? '',
     organizationName,
-    isc2EntityName,
     buyerName,
     buyerEmail: order.customerEmail,
     billingAddressLines,
@@ -148,16 +172,20 @@ type BuildFromPrintableOrderInput = {
   organizationName?: string;
   taxIdNumber?: string;
   intacctCustomerId?: string;
-  isc2EntityName?: string;
 };
 
 /**
  * Order history variant.
  *
- * `PrintableOrder` is a flatter shape than the confirmation screen's order and carries no
- * organization, PO, or tax identifiers at all — those rows stay hidden here until the
- * order history API returns business order data. Everything it does carry (number, date,
- * status, currency, addresses, products, totals, payment type) maps straight across.
+ * `PrintableOrder` is a flatter shape than the confirmation screen's order. Everything it
+ * carries (number, date, status, currency, addresses, products, totals, payment type, PO
+ * number, customer order reference) maps straight across; the organization and identifier
+ * rows come from the caller, since they live outside the order payload.
+ *
+ * `salesforceGetOrders` does not return `poNumber` / `customerOrderReference` yet, so those
+ * rows fall back to the receipt's placeholder until it does. The mapping is written either
+ * way, so the receipt fills in with no further change — the same reason the Order History
+ * export writes those columns regardless.
  */
 export const buildBusinessReceiptDataFromPrintableOrder = ({
   order,
@@ -166,7 +194,6 @@ export const buildBusinessReceiptDataFromPrintableOrder = ({
   organizationName,
   taxIdNumber,
   intacctCustomerId,
-  isc2EntityName,
 }: BuildFromPrintableOrderInput): BusinessReceiptData => {
   const currencyCode = order.orderTotal?.currencyCode ?? '';
   const currencySymbol = getCurrencySymbol(currencyCode || 'USD');
@@ -178,16 +205,19 @@ export const buildBusinessReceiptDataFromPrintableOrder = ({
     orderStatus: order.orderStatus,
     currencyCode,
     organizationName,
-    isc2EntityName,
     buyerName,
     buyerEmail,
     billingAddressLines: addressLines(billingAddress ?? order.mailingAddress),
+    poNumber: order.poNumber,
+    customerOrderReference: order.customerOrderReference,
     taxIdNumber,
     intacctCustomerId,
     lineItems: (order.products ?? []).map((product) => ({
       name: product.productItemName,
       quantity: product.productQuantity ?? 1,
       listPrice: formatMoney(currencySymbol, product.productItemPrice),
+      discountedPrice: formatMoney(currencySymbol, product.productItemPrice),
+      hasDiscount: false,
       subtotal: formatMoney(currencySymbol, product.productItemPrice),
     })),
     subtotal: formatMoney(currencySymbol, order.subTotal),

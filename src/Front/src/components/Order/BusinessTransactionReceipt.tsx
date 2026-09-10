@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   /** Spans the title because the block shrinks to its content. */
   titleRule: { width: '100%', height: 2, backgroundColor: COLORS.green, marginTop: 6 },
 
-  disclaimer: {
+  confirmText: {
     marginTop: 18,
     padding: 8,
     backgroundColor: COLORS.band,
@@ -58,7 +58,12 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.rule,
   },
   detailRow: { flexDirection: 'row', marginBottom: 2 },
-  detailLabel: { width: 104, color: COLORS.muted },
+  /**
+   * Wide enough for the longest label to stay on one line: "Customer Order Reference"
+   * measures ~108.5pt at this size in Helvetica, so a narrower column wraps and
+   * hyphenates it. The value beside it is flex, so the extra width costs nothing.
+   */
+  detailLabel: { width: 120, color: COLORS.muted },
   detailValue: { flex: 1, color: COLORS.ink },
   /** Standalone lines in Bill To: `detailValue` carries flex:1 and collapses here. */
   billToOrganization: { color: COLORS.ink, marginBottom: 1 },
@@ -173,7 +178,7 @@ export const BusinessTransactionReceipt = ({ data, labels }: BusinessTransaction
           </View>
         </View>
 
-        <Text style={styles.disclaimer}>{label('disclaimer')}</Text>
+        <Text style={styles.confirmText}>{label('ReceiptConfirmText')}</Text>
 
         <View style={styles.metaRow}>
           <MetaCell label={label('orderNumberLabel')} value={data.orderNumber} />
@@ -197,7 +202,6 @@ export const BusinessTransactionReceipt = ({ data, labels }: BusinessTransaction
 
           <View style={styles.column}>
             <Text style={styles.sectionHeading}>{label('purchaseDetailsLabel')}</Text>
-            <DetailRow label={label('isc2EntityLabel')} value={data.isc2EntityName} />
             <DetailRow label={label('poNumberLabel')} value={data.poNumber} />
             <DetailRow
               label={label('customerOrderReferenceLabel')}
@@ -230,10 +234,10 @@ export const BusinessTransactionReceipt = ({ data, labels }: BusinessTransaction
                 )}
               </View>
               <Text style={styles.colQty}>{lineItem.quantity}</Text>
-              <Text style={[styles.colMoney, ...(lineItem.discountedPrice ? [styles.strike] : [])]}>
+              <Text style={[styles.colMoney, ...(lineItem.hasDiscount ? [styles.strike] : [])]}>
                 {lineItem.listPrice}
               </Text>
-              <Text style={styles.colMoney}>{lineItem.discountedPrice || NO_VALUE}</Text>
+              <Text style={styles.colMoney}>{lineItem.discountedPrice}</Text>
               <Text style={styles.colMoney}>{lineItem.subtotal}</Text>
             </View>
           ))}
