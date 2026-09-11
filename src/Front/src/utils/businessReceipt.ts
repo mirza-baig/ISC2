@@ -23,7 +23,6 @@ const RECEIPT_ATTRIBUTES = [MODALITY_ATTRIBUTE, ...LOCATION_ATTRIBUTES];
 
 type BuildReceiptInput = {
   order: OrderWithComputedData;
-  /** Totals come from the checked-out cart, matching the confirmation screen. */
   cart: CartWithComputedData;
   buyerName: string;
   organizationName?: string;
@@ -32,7 +31,6 @@ type BuildReceiptInput = {
   paymentMethod?: string;
 };
 
-/** Only in-person classes carry a venue worth printing; everything else omits the row. */
 const resolveLocation = (attributes: Record<string, string>): string | undefined => {
   const modality = (attributes[MODALITY_ATTRIBUTE] || '').toLowerCase();
 
@@ -100,18 +98,13 @@ const buildLineItem = (lineItem: CartLineItem, currencySymbol: string): ReceiptL
   };
 };
 
-/**
- * Flattens a bundle into its nested products so every printed row is a real product — a
- * bundle line item carries the `bundle` product type and no price of its own.
- */
 const flattenLineItems = (lineItems: CartLineItem[]): CartLineItem[] =>
   lineItems.flatMap((lineItem) =>
     'products' in lineItem ? flattenLineItems(lineItem.products) : [lineItem]
   );
 
-/** Order custom fields are the only place the checkout-entered PO details could land. */
 const customField = (order: OrderWithComputedData, name: string): string | undefined =>
-  order.custom?.customFieldsRaw?.find((field) => field.name === name)?.value || undefined;
+  order.custom?.customFieldsRaw?.[name] || undefined;
 
 export const buildBusinessReceiptData = ({
   order,
@@ -174,19 +167,6 @@ type BuildFromPrintableOrderInput = {
   intacctCustomerId?: string;
 };
 
-/**
- * Order history variant.
- *
- * `PrintableOrder` is a flatter shape than the confirmation screen's order. Everything it
- * carries (number, date, status, currency, addresses, products, totals, payment type, PO
- * number, customer order reference) maps straight across; the organization and identifier
- * rows come from the caller, since they live outside the order payload.
- *
- * `salesforceGetOrders` does not return `poNumber` / `customerOrderReference` yet, so those
- * rows fall back to the receipt's placeholder until it does. The mapping is written either
- * way, so the receipt fills in with no further change — the same reason the Order History
- * export writes those columns regardless.
- */
 export const buildBusinessReceiptDataFromPrintableOrder = ({
   order,
   buyerName,

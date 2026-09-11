@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
+import { Link, RichText, Text } from '@sitecore-jss/sitecore-jss-nextjs';
 
 import {
   FormAdditionalData,
@@ -34,7 +35,7 @@ import {
 } from 'constants/index';
 
 import { useRouter } from 'next/router';
-import { useAcceptOilAllocation } from 'hooks/index';
+import { useAcceptOilAllocation, useB2BCartAccess } from 'hooks/index';
 import useAnalyticsTracking from 'hooks/useAnalyticsTracking';
 import { ProductFormPropsFields } from './ProductForm';
 import { formatAnalyticsPrice } from 'utils/analytics';
@@ -104,6 +105,11 @@ const ProductFormContent = ({
   const { showPriceForRole, productPrices, isGettingPricesForRole, addSkuToPricingQueue } =
     useStandalonePrices();
   const { acceptOilAllocationAsync } = useAcceptOilAllocation();
+  const {
+    isFeatureEnabled: isB2BFeatureEnabled,
+    isAuthorizedBuyer,
+    isResolvingAccess,
+  } = useB2BCartAccess();
 
   const {
     selectedOptionSkus,
@@ -169,6 +175,14 @@ const ProductFormContent = ({
     };
   }, [formLabels, formLabelsMap]);
   const peaceOfMindTermsModalContent = fields?.formLabelsAndTooltips?.fields?.peaceOfMindTermsModal;
+
+  const viewPricingCta = fields?.formLabelsAndTooltips?.fields?.viewPricingCta;
+  const viewPricingTitle = fields?.formLabelsAndTooltips?.fields?.viewPricingTitle;
+  const viewPricingDescription = fields?.formLabelsAndTooltips?.fields?.viewPricingDescription;
+  const showViewPricingCta =
+    isB2BFeatureEnabled && isAuthorizedBuyer && Boolean(viewPricingCta?.value?.href);
+  const viewPricingCtaLabel =
+    formLabels?.[formLabelsMap.ViewPricingCta.key] || FormFields.ViewPricingCta.label;
 
   const productForm = useMemo(() => {
     return buildProductForm({
@@ -259,7 +273,7 @@ const ProductFormContent = ({
     const thirdPartyLink =
       productVariants?.length === 1 && (productVariants[0].link as string[])?.[0];
     const thirdPartyLinkWithProtocol =
-      thirdPartyLink && /^(http|https):\/\//i.test(thirdPartyLink)
+      thirdPartyLink && /^(?:http|https):\/\//i.test(thirdPartyLink)
         ? thirdPartyLink
         : thirdPartyLink
         ? `https://${thirdPartyLink}`
@@ -509,6 +523,53 @@ const ProductFormContent = ({
 
   if (!productForm) {
     return null;
+  }
+
+  if (isB2BFeatureEnabled && isResolvingAccess) {
+    const resolvingContent = <LoadingIndicator className="m-auto" />;
+
+    if (noWrapper) {
+      return <>{resolvingContent}</>;
+    }
+
+    return (
+      <section id="product-form" className="space-y-8 sm:space-y-10">
+        <div className="w-full flex flex-wrap p-6 bg-transparent rounded-lg border border-gray-500 text-black-100 space-y-4">
+          {resolvingContent}
+        </div>
+      </section>
+    );
+  }
+
+  if (showViewPricingCta && viewPricingCta) {
+    const viewPricingContent = (
+      <>
+        {Boolean(viewPricingTitle?.value) && (
+          <Text tag="p" field={viewPricingTitle} className="body-l font-bold w-full" />
+        )}
+        {Boolean(viewPricingDescription?.value) && (
+          <RichText field={viewPricingDescription} className="body-m w-full" />
+        )}
+        <Link
+          field={viewPricingCta}
+          className="primary-cta w-full h-full p-4 page-link bold-link text-center inline-block !mt-7"
+        >
+          {viewPricingCtaLabel}
+        </Link>
+      </>
+    );
+
+    if (noWrapper) {
+      return <>{viewPricingContent}</>;
+    }
+
+    return (
+      <section id="product-form" className="space-y-8 sm:space-y-10">
+        <div className="w-full flex flex-wrap p-6 bg-transparent rounded-lg border border-gray-500 text-black-100 space-y-4">
+          {viewPricingContent}
+        </div>
+      </section>
+    );
   }
 
   // Render fields content

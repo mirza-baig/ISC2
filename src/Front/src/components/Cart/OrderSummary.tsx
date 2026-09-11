@@ -5,7 +5,7 @@ import { ComponentParams, Field, ImageField, LinkField } from '@sitecore-jss/sit
 
 import { ChevronSquaredDownIcon } from 'icons/index';
 import { mapQuoteLabelsFromSitecoreFields, parseFieldsFromURLString } from 'utils/index';
-import { useBreakpoint } from 'hooks/index';
+import { useBreakpoint, usePrepaidCheckoutSummary } from 'hooks/index';
 import { useCart, useCheckoutProcess } from 'providers/index';
 import { CartSummaryPrices, LineItemPrice, LoadingIndicator } from 'ui/index';
 import { CHECKOUT_STEP_TWO_ACTIONS_ANCHOR_ID, CHECKOUT_STEPS } from 'constants/index';
@@ -39,6 +39,7 @@ type OrderSummaryProps = {
     };
     enableCartOnlyFeatures: Field<boolean>;
     icon: ImageField;
+    quoteTermsAndConditionsLink: LinkField;
   };
   params: ComponentParams;
 };
@@ -49,6 +50,7 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
   const router = useRouter();
   const breakpoint = useBreakpoint();
   const { activeStep, setTaxErrorLabels, setQuoteLabels } = useCheckoutProcess();
+  const prepaidSummary = usePrepaidCheckoutSummary();
   const [isOpen, setIsOpen] = useState<boolean>(MENU_OPEN_BREAKPOINTS.includes(breakpoint));
 
   const { activeCart, isGettingCart } = useCart();
@@ -73,14 +75,21 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
     setTaxErrorLabels(fields.taxCalculationErrorPopup?.fields);
   }, [fields.taxCalculationErrorPopup?.fields, setTaxErrorLabels]);
 
+  const termsAndConditionsText = fields.quoteTermsAndConditionsLink?.value?.text;
+  const termsAndConditionsUrl = fields.quoteTermsAndConditionsLink?.value?.href;
+
   // Quote PDF labels are authored onto this same field (as `Quote`-prefixed keys)
   // rather than a dedicated field on the Checkout component, since that's where content
   // authors already had a URL-encoded labels blob to add to. Pushed into checkout
   // context so PaymentInformationForm — a separately-placed sibling component with no
   // access to this component's `fields` — can read them.
   useEffect(() => {
-    setQuoteLabels(mapQuoteLabelsFromSitecoreFields(labels));
-  }, [labels, setQuoteLabels]);
+    setQuoteLabels({
+      ...mapQuoteLabelsFromSitecoreFields(labels),
+      disclaimerText: termsAndConditionsText,
+      disclaimerLinkUrl: termsAndConditionsUrl,
+    });
+  }, [labels, termsAndConditionsText, termsAndConditionsUrl, setQuoteLabels]);
 
   useEffect(() => {
     const shouldBeMenuOpen = MENU_OPEN_BREAKPOINTS.includes(breakpoint);
@@ -142,7 +151,16 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
             )}
 
             <div className="flex flex-col gap-3 md:gap-2 !mb-4">
-              <CartSummaryPrices labels={labels} showTaxes={params?.showTaxes === 'true'} />
+              <CartSummaryPrices
+                labels={labels}
+                showTaxes={params?.showTaxes === 'true'}
+                prepaidDiscount={
+                  prepaidSummary
+                    ? { title: prepaidSummary.title, amount: prepaidSummary.discountAmount }
+                    : undefined
+                }
+                totalOverride={prepaidSummary?.total}
+              />
             </div>
           </div>
         </section>
@@ -152,7 +170,7 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
         <LineItemPrice
           textClassName="body-l font-bold text-gray-90"
           title={labels.totalAmountLabel}
-          value={activeCart.computed.totalPrice!}
+          value={prepaidSummary?.total ?? activeCart.computed.totalPrice!}
           currency={activeCart.computed.currencySymbol}
         />
       </div>
@@ -179,6 +197,35 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
           id={CHECKOUT_STEP_TWO_ACTIONS_ANCHOR_ID}
           className="flex flex-col items-center gap-4 md:gap-2 mt-4 md:mt-8"
         />
+      )}
+      {activeStep === CHECKOUT_STEPS.PERSONAL_INFORMATION && (
+        <div
+          id="checkout-step-two-actions"
+          className="flex flex-col items-center gap-4 md:gap-2 mt-4 md:mt-8"
+        >
+          <button
+            type="button"
+            className="border border-gray-50 bg-gray-100 px-4 py-2 text-gray-400 opacity-60 cta relative flex space-x-2 self-end !text-xs w-full justify-center cursor-default"
+            aria-label="Download Quote"
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M8 0.888916V10.2222M8 10.2222L11.5556 6.66669M8 10.2222L4.44444 6.66669M1.33333 12.4445V13.7778C1.33333 14.5142 1.93028 15.1112 2.66667 15.1112H13.3333C14.0697 15.1112 14.6667 14.5142 14.6667 13.7778V12.4445"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span>Download Quote</span>
+          </button>
+        </div>
       )}
     </section>
   );

@@ -89,10 +89,19 @@ const StandalonePricesProvider: React.FC<StandalonePricesProviderProps> = ({ chi
   const router = useRouter();
 
   useEffect(() => {
+    // Only `pendingSkus` (rows currently asking for a price) gets cleared here. `skusToBeFetched`
+    // must NOT be reset: it is the `skuList` behind useGetStandalonePrices' query key, and since
+    // that hook is always called with `enabled: false`, `isGettingStandalonePrices` reflects
+    // whichever query key is *currently* active. Clearing it while a fetch for the previous batch
+    // is still in flight swaps the active key to an empty one before the in-flight request
+    // resolves, so react-query updates a cache entry nothing is subscribed to any more — the
+    // response (with real prices) lands, but `standalonePrices` never changes and those SKUs are
+    // never marked resolved. Leaving `skusToBeFetched` alone lets that fetch settle against its own
+    // unchanged key first; the picker effect below then naturally moves on to whatever is next in
+    // `pendingSkus` once it does.
     const handleRouteChange = () => {
       isFetchQueued.current = false;
       setPendingSkus([]);
-      setSkusToBeFetched([]);
     };
     router.events.on('routeChangeStart', handleRouteChange);
     return () => router.events.off('routeChangeStart', handleRouteChange);

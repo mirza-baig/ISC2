@@ -32,3 +32,9 @@ export const hasAccountRole = (
 
 export const getIsAuthorizedBuyer = (relations?: AccountContactRelation[]): boolean =>
   hasAccountRole(relations, ACCOUNT_CONTACT_ROLES.AUTHORIZED_BUYER);
+
+export const getAuthorizedBuyerAccountIds = (relations?: AccountContactRelation[]): string[] =>
+  (relations ?? [])
+    .filter((relation) => hasAccountRole([relation], ACCOUNT_CONTACT_ROLES.AUTHORIZED_BUYER))
+    .map((relation) => relation.accountId)
+    .filter((accountId): accountId is string => Boolean(accountId));

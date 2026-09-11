@@ -6,7 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { SESSION_STORAGE_KEYS, SESSION_LOCALSTORAGE_KEYS } from 'constants/sessionTimeout';
 
 import { BUYER_MOCK_SCENARIO_SESSION_KEY, clearBuyerMockRaceDeplete } from 'lib/authorizedBuyer';
-const B2B_SHOPPER_CONTEXT_KEY = 'b2b-shopper-context';
+import { SHOPPER_CONTEXT_PROMPTED_KEY, SHOPPER_CONTEXT_STORAGE_KEY } from 'constants/index';
 
 export default function Logout() {
   const { setCartId, setIsCurrencyManualOverride, setIsConsentAllocation } = useUserSession();
@@ -18,7 +18,10 @@ export default function Logout() {
       setIsCurrencyManualOverride(false);
       setIsConsentAllocation(false);
       sessionStorage.removeItem(SESSION_STORAGE_KEYS.SESSION_ACTIVE);
-      sessionStorage.removeItem(B2B_SHOPPER_CONTEXT_KEY);
+      localStorage.removeItem(SHOPPER_CONTEXT_STORAGE_KEY);
+      sessionStorage.removeItem(SHOPPER_CONTEXT_STORAGE_KEY);
+      localStorage.removeItem(SHOPPER_CONTEXT_PROMPTED_KEY);
+      sessionStorage.removeItem(SHOPPER_CONTEXT_PROMPTED_KEY);
       sessionStorage.removeItem('allocation-sort-isc2');
       sessionStorage.removeItem('allocation-sort-dir-isc2');
       sessionStorage.removeItem(BUYER_MOCK_SCENARIO_SESSION_KEY);

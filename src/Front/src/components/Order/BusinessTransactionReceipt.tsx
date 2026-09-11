@@ -27,7 +27,6 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
   titleBlock: { alignItems: 'flex-end' },
   title: { fontSize: 20, color: COLORS.ink },
-  /** Spans the title because the block shrinks to its content. */
   titleRule: { width: '100%', height: 2, backgroundColor: COLORS.green, marginTop: 6 },
 
   confirmText: {
@@ -58,11 +57,7 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.rule,
   },
   detailRow: { flexDirection: 'row', marginBottom: 2 },
-  /**
-   * Wide enough for the longest label to stay on one line: "Customer Order Reference"
-   * measures ~108.5pt at this size in Helvetica, so a narrower column wraps and
-   * hyphenates it. The value beside it is flex, so the extra width costs nothing.
-   */
+
   detailLabel: { width: 120, color: COLORS.muted },
   detailValue: { flex: 1, color: COLORS.ink },
   /** Standalone lines in Bill To: `detailValue` carries flex:1 and collapses here. */

@@ -1,80 +1,219 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
-import { useCart, useCheckoutProcess } from 'providers/index';
-import { isTaxAddressDefined } from 'utils/index';
-import { Cart, CartWithComputedData, PersonalInformation } from 'types/index';
+import { B2B_FEATURE_FLAG } from 'constants/b2b';
+import { QUERY_KEYS } from 'constants/index';
+import {
+  buildZeroTaxCartActions,
+  isBusinessTaxExempt,
+  withZeroTaxedPrice,
+} from 'lib/authorizedBuyer';
+import { useCart, useCheckoutProcess, useModal, useUserSession } from 'providers/index';
+import { useFeatureFlag } from 'providers/featureFlags';
+import { getServiceLayerAPI, isTaxAddressDefined } from 'utils/index';
+import { Cart, CartWithComputedData, PersonalInformation, UpdateCartResponse } from 'types/index';
 
 import useIsBusinessBuyer from '../cart/useIsBusinessBuyer';
 import useSetCartAddress from '../cart/useSetCartAddress';
 import useUpdateTax from '../cart/useUpdateTax';
+import useActiveBusinessAccount from '../user/useActiveBusinessAccount';
 import useGetPaymentIntent from './useGetPaymentIntent';
 
-/**
- * B2B prepaid/credit eligibility must use cart + tax. Recalculate is a no-op on
- * B2B carts, so this sets the shipping address and calls tax directly.
- */
+type EnsureBusinessCartTaxOptions = {
+  paymentMethodType?: string;
+  cart?: Cart | CartWithComputedData;
+  throwOnError?: boolean;
+  preservePaymentIntent?: boolean;
+};
+
 export default function useEnsureBusinessCartTax() {
+  const queryClient = useQueryClient();
+  const { cartId } = useUserSession();
+  const { closeModal } = useModal();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   const isBusinessBuyer = useIsBusinessBuyer();
   const { activeCart } = useCart();
+  const { taxExempt } = useActiveBusinessAccount();
   const { setErrorState } = useCheckoutProcess();
   const { setCartAddressAsync } = useSetCartAddress({ onError: setErrorState });
   const { setTaxesAsync } = useUpdateTax();
-  const { getPaymentIntentAsync } = useGetPaymentIntent();
+  const { getPaymentIntentAsync, paymentIntent } = useGetPaymentIntent();
   const [isEnsuringTax, setIsEnsuringTax] = useState(false);
+  const inFlightRef = useRef<Promise<Cart | CartWithComputedData | undefined> | null>(null);
+  const isLockedRef = useRef(false);
 
   const hasTaxedTotal = Boolean(activeCart?.taxedPrice);
+  const isTaxExempt = isBusinessTaxExempt(isB2BFeatureEnabled, taxExempt);
 
-  const ensureTaxedCart = useCallback(
-    async (personalInformation?: PersonalInformation) => {
-      if (!isBusinessBuyer) {
-        return activeCart;
+  const clearTaxError = useCallback(() => {
+    queryClient.setQueryData(['CustomMutationError', [QUERY_KEYS.TAXES, cartId]], null);
+    closeModal();
+  }, [cartId, closeModal, queryClient]);
+
+  const applyExemptTax = useCallback(
+    async (cart: Cart | CartWithComputedData) => {
+      if (!cart?.id) {
+        return cart;
       }
 
-      setIsEnsuringTax(true);
+      const cachedCart = queryClient.getQueryData<Cart>([QUERY_KEYS.ACTIVE_CART, cart.id]);
+      const actions = buildZeroTaxCartActions(cart);
+
+      const storeExemptCart = (nextCart: Cart | CartWithComputedData) => {
+        queryClient.setQueryData([QUERY_KEYS.ACTIVE_CART, nextCart.id], nextCart);
+        return nextCart;
+      };
+
+      if (!actions.length) {
+        return storeExemptCart(withZeroTaxedPrice(cachedCart || cart));
+      }
 
       try {
-        let cart: Cart | CartWithComputedData | undefined = activeCart;
+        const api = await getServiceLayerAPI();
+        const { data } = await api.post<UpdateCartResponse>('', {
+          query: 'UPDATE_CART',
+          variables: {
+            cartId: cart.id,
+            actions,
+          },
+        });
 
-        if (personalInformation) {
-          const updated = await setCartAddressAsync({ personalInformation });
-          if (updated) {
-            cart = { ...cart, ...updated };
-          }
+        if ((data.errors || []).length || !data.data.isc2CartUpdate) {
+          return storeExemptCart(withZeroTaxedPrice(cachedCart || cart));
         }
 
-        if (!cart?.id || !isTaxAddressDefined(cart.shippingAddress)) {
-          return cart;
+        const updatedCart = data.data.isc2CartUpdate;
+
+        if (!updatedCart.taxedPrice) {
+          return storeExemptCart(withZeroTaxedPrice(updatedCart));
         }
+
+        return storeExemptCart(updatedCart);
+      } catch {
+        return storeExemptCart(withZeroTaxedPrice(cachedCart || cart));
+      }
+    },
+    [queryClient]
+  );
+
+  const ensureTaxedCart = useCallback(
+    async (personalInformation?: PersonalInformation, options?: EnsureBusinessCartTaxOptions) => {
+      if (!isB2BFeatureEnabled || !isBusinessBuyer) {
+        return options?.cart || activeCart;
+      }
+
+      if (isLockedRef.current && inFlightRef.current) {
+        return inFlightRef.current;
+      }
+
+      isLockedRef.current = true;
+
+      const run = (async () => {
+        setIsEnsuringTax(true);
+        clearTaxError();
 
         try {
-          const taxedCart = await setTaxesAsync({ cartId: cart.id });
-          const cartForPaymentIntent = taxedCart || cart;
+          let cart: Cart | CartWithComputedData | undefined = options?.cart || activeCart;
 
-          if (!cartForPaymentIntent) {
+          if (personalInformation) {
+            const updated = await setCartAddressAsync({ personalInformation });
+            if (updated) {
+              cart = { ...cart, ...updated };
+            }
+          }
+
+          if (!cart?.id || !isTaxAddressDefined(cart.shippingAddress)) {
             return cart;
           }
 
-          const paymentIntent = await getPaymentIntentAsync({ cart: cartForPaymentIntent });
+          if (isTaxExempt) {
+            const exemptCart = await applyExemptTax(cart);
 
-          if (!paymentIntent?.intentPaymentId) {
-            return cartForPaymentIntent;
+            if (exemptCart && !options?.preservePaymentIntent) {
+              await getPaymentIntentAsync({
+                cart: exemptCart,
+                paymentMethodType: options?.paymentMethodType,
+              });
+            }
+
+            clearTaxError();
+            return exemptCart || cart;
           }
 
-          const syncedCart = await setTaxesAsync({
-            cartId: cartForPaymentIntent.id,
-            paymentIntentId: paymentIntent.intentPaymentId,
-          });
+          try {
+            if (options?.preservePaymentIntent) {
+              const existingPaymentIntentId = paymentIntent?.intentPaymentId ?? null;
+              const syncedCart = await setTaxesAsync({
+                cartId: cart.id,
+                paymentIntentId: existingPaymentIntentId,
+              });
 
-          return syncedCart || cartForPaymentIntent;
-        } catch {
-          return cart;
+              clearTaxError();
+              return syncedCart || cart;
+            }
+
+            const taxedCart = await setTaxesAsync({
+              cartId: cart.id,
+              paymentIntentId: null,
+            });
+            const cartForPaymentIntent = taxedCart || cart;
+
+            if (!cartForPaymentIntent) {
+              return cart;
+            }
+
+            const nextPaymentIntent = await getPaymentIntentAsync({
+              cart: cartForPaymentIntent,
+              paymentMethodType: options?.paymentMethodType,
+            });
+
+            if (!nextPaymentIntent?.intentPaymentId) {
+              return cartForPaymentIntent;
+            }
+
+            try {
+              const syncedCart = await setTaxesAsync({
+                cartId: cartForPaymentIntent.id,
+                paymentIntentId: nextPaymentIntent.intentPaymentId,
+              });
+
+              clearTaxError();
+              return syncedCart || cartForPaymentIntent;
+            } catch {
+              clearTaxError();
+              return cartForPaymentIntent;
+            }
+          } catch (error) {
+            if (options?.throwOnError) {
+              throw error;
+            }
+
+            clearTaxError();
+            return cart;
+          }
+        } finally {
+          setIsEnsuringTax(false);
+          isLockedRef.current = false;
+          inFlightRef.current = null;
         }
-      } finally {
-        setIsEnsuringTax(false);
-      }
+      })();
+
+      inFlightRef.current = run;
+      return run;
     },
-    [activeCart, getPaymentIntentAsync, isBusinessBuyer, setCartAddressAsync, setTaxesAsync]
+    [
+      activeCart,
+      applyExemptTax,
+      clearTaxError,
+      getPaymentIntentAsync,
+      isB2BFeatureEnabled,
+      isBusinessBuyer,
+      isTaxExempt,
+      paymentIntent?.intentPaymentId,
+      setCartAddressAsync,
+      setTaxesAsync,
+    ]
   );
 
-  return { ensureTaxedCart, hasTaxedTotal, isEnsuringTax };
+  return { ensureTaxedCart, hasTaxedTotal, isEnsuringTax, isTaxExempt };
 }

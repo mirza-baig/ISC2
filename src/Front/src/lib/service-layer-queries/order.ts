@@ -54,6 +54,8 @@ export const GET_ALL_ORDERS = `
       orderDate
       orderStatus
       paymentType
+      poNumber
+      customerOrderReference
       orderTotal {
         centAmount
         currencyCode

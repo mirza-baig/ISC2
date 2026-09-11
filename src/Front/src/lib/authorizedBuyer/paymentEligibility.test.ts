@@ -2,6 +2,7 @@ import { BUSINESS_PAYMENT_METHODS } from 'constants/checkout';
 
 import {
   amountDueWithPrepaid,
+  buildPrepaidOrderSummary,
   isBusinessPaymentMethodEligible,
   isCreditPreapproved,
   isPreapprovedCreditEligible,
@@ -276,6 +277,22 @@ describe('paymentEligibility', () => {
           balance: null,
         })
       ).toBe(90);
+    });
+
+    it('rounds prepaid order-summary totals so discount plus amount due equals cart total', () => {
+      const summary = buildPrepaidOrderSummary(1287.85, {
+        type: 'Investment',
+        discountPercentage: 10,
+        expirationDate: null,
+        balance: null,
+      });
+
+      expect(summary).toEqual({
+        discountPercent: 10,
+        discountAmount: '128.79',
+        amountDue: '1159.06',
+      });
+      expect(Number(summary?.discountAmount) + Number(summary?.amountDue)).toBe(1287.85);
     });
   });
 });

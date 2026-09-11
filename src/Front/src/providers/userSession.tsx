@@ -19,6 +19,7 @@ type UserSessionContextProps = {
   cartId?: string;
   setCartId: (cartId: string) => void;
   setUserCountry: (country: string) => void;
+  isCurrencyManualOverride?: boolean;
   setIsCurrencyManualOverride: (override: boolean) => void;
   isConsentAllocation?: boolean;
   setIsConsentAllocation: (consent: boolean) => void;
@@ -36,6 +37,7 @@ const UserSessionContext = createContext<UserSessionContextProps>({
   cartId: undefined,
   setCartId: () => {},
   setUserCountry: () => {},
+  isCurrencyManualOverride: false,
   setIsCurrencyManualOverride: () => {},
   isConsentAllocation: false,
   setIsConsentAllocation: () => {},
@@ -150,6 +152,7 @@ const UserSessionProvider: React.FC<UserSessionProviderProps> = ({ children }) =
         cartId,
         setCartId,
         setUserCountry,
+        isCurrencyManualOverride,
         setIsCurrencyManualOverride,
         isConsentAllocation,
         setIsConsentAllocation,

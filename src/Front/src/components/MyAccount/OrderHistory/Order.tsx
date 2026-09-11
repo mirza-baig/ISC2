@@ -1,5 +1,9 @@
 import { useRef, useState } from 'react';
-import { OrderHistoryPageLabels, OrderPrintLabels } from './OrderHistory';
+import {
+  OrderHistoryPageLabels,
+  OrderPrintLabels,
+  sitecoreOrderHistoryLabel,
+} from './OrderHistory';
 import { PrintableOrder } from 'types/index';
 import { getCurrencySymbol, parsePrice } from 'utils/index';
 import { ImageField } from '@sitecore-jss/sitecore-jss-nextjs';
@@ -10,7 +14,6 @@ import OrderStatus from './OrderStatus';
 import ChevronDownIcon from 'icons/ChevronDownIcon';
 import clsx from 'clsx';
 import OrderPrintButton from './OrderPrintButton';
-import { BUSINESS_RECEIPT_DEFAULT_LABELS } from 'constants/order';
 import { useLoggedUser, useIsBusinessBuyer } from 'hooks/index';
 
 type OrderHistoryComponentProps = {
@@ -29,6 +32,20 @@ const Order = ({ fields }: OrderHistoryComponentProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const hasMoreThanOneLineItem = order.lineItems && order.lineItems.length > 1;
+  const quantityLabel =
+    sitecoreOrderHistoryLabel(orderLabels, 'quantityLabel', '') || printLabels.quantityLabel;
+  const accountNameLabel = sitecoreOrderHistoryLabel(
+    orderLabels,
+    'accountNameLabel',
+    'Organization'
+  );
+  const buyerNameLabel = sitecoreOrderHistoryLabel(orderLabels, 'buyerNameLabel', 'Buyer');
+  const poNumberLabel = sitecoreOrderHistoryLabel(orderLabels, 'poNumberLabel', 'PO Number');
+  const customerOrderReferenceLabel = sitecoreOrderHistoryLabel(
+    orderLabels,
+    'customerOrderReferenceLabel',
+    'Customer Order Reference'
+  );
 
   const restLineItems = (order.lineItems || [])
     .slice(1, order.lineItems?.length)
@@ -39,7 +56,8 @@ const Order = ({ fields }: OrderHistoryComponentProps) => {
           ...lineItem,
           id: `${order.orderId}-${x}`,
           isHidden: !isOpen,
-          quantityLabel: printLabels.quantityLabel,
+          quantityLabel,
+          showQuantity: isBusinessBuyer,
         }}
       />
     ));
@@ -54,7 +72,11 @@ const Order = ({ fields }: OrderHistoryComponentProps) => {
 
   const OrderInformation = () => {
     const printCtaLabel = isBusinessBuyer
-      ? BUSINESS_RECEIPT_DEFAULT_LABELS.downloadReceiptCtaLabel
+      ? sitecoreOrderHistoryLabel(
+          orderLabels,
+          'printReceiptCtaLabel',
+          orderLabels.printInvoiceCtaLabel
+        )
       : orderLabels.printInvoiceCtaLabel;
 
     return (
@@ -93,8 +115,7 @@ const Order = ({ fields }: OrderHistoryComponentProps) => {
                 <div className="flex items-center gap-3 flex-wrap text-gray-70">
                   {order.poNumber && (
                     <span className="text-xs">
-                      {BUSINESS_RECEIPT_DEFAULT_LABELS.poNumberLabel}:{' '}
-                      <span className="text-gray-70">{order.poNumber}</span>
+                      {poNumberLabel}: <span className="text-gray-70">{order.poNumber}</span>
                     </span>
                   )}
                   {order.poNumber && order.customerOrderReference && (
@@ -102,7 +123,7 @@ const Order = ({ fields }: OrderHistoryComponentProps) => {
                   )}
                   {order.customerOrderReference && (
                     <span className="text-xs">
-                      {BUSINESS_RECEIPT_DEFAULT_LABELS.customerOrderReferenceLabel}:{' '}
+                      {customerOrderReferenceLabel}:{' '}
                       <span className="text-gray-70">{order.customerOrderReference}</span>
                     </span>
                   )}
@@ -113,25 +134,25 @@ const Order = ({ fields }: OrderHistoryComponentProps) => {
             <div className="text-sm-base space-y-1">
               {order.accountName && (
                 <div>
-                  <strong>{`${BUSINESS_RECEIPT_DEFAULT_LABELS.organizationLabel}: `}</strong>
+                  <strong>{`${accountNameLabel}: `}</strong>
                   <span>{order.accountName}</span>
                 </div>
               )}
               {order.buyerFullName && (
                 <div>
-                  <strong>{`${BUSINESS_RECEIPT_DEFAULT_LABELS.buyerNameLabel}: `}</strong>
+                  <strong>{`${buyerNameLabel}: `}</strong>
                   <span>{order.buyerFullName}</span>
                 </div>
               )}
               {order.poNumber && (
                 <div>
-                  <strong>{`${BUSINESS_RECEIPT_DEFAULT_LABELS.poNumberLabel}: `}</strong>
+                  <strong>{`${poNumberLabel}: `}</strong>
                   <span>{order.poNumber}</span>
                 </div>
               )}
               {order.customerOrderReference && (
                 <div>
-                  <strong>{`${BUSINESS_RECEIPT_DEFAULT_LABELS.customerOrderReferenceLabel}: `}</strong>
+                  <strong>{`${customerOrderReferenceLabel}: `}</strong>
                   <span>{order.customerOrderReference}</span>
                 </div>
               )}
@@ -203,7 +224,8 @@ const Order = ({ fields }: OrderHistoryComponentProps) => {
             ...order.lineItems[0],
             id: `${order.orderId}-0`,
             additionalClasses: clsx(!hasMoreThanOneLineItem && 'border-none'),
-            quantityLabel: printLabels.quantityLabel,
+            quantityLabel,
+            showQuantity: isBusinessBuyer,
           }}
         />
         {hasMoreThanOneLineItem && restLineItems && (

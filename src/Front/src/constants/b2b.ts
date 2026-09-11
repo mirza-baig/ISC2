@@ -13,6 +13,9 @@ export const B2B_FEATURE_FLAG = 'B2B_Company_Flow';
 
 export const SHOPPER_CONTEXT_COOKIE = 'b2b-shopper-context-type';
 
+export const SHOPPER_CONTEXT_STORAGE_KEY = 'b2b-shopper-context';
+export const SHOPPER_CONTEXT_PROMPTED_KEY = 'b2b-shopper-context-prompted';
+
 export const B2B_HIDDEN_NAV_LINKS = [
   'Benefits',
   'My Certifications',

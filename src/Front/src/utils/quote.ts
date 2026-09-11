@@ -26,9 +26,16 @@ const resolveLineItemName = (lineItem: CartLineItem): string => {
   return attributes.copy_name || attributes.name || lineItem.name;
 };
 
+const resolveChildSku = (lineItem: LineItem): string =>
+  (lineItem as { variant?: { sku?: string } }).variant?.sku ?? resolveLineItemName(lineItem);
+
 const buildQuoteLineItem = (lineItem: CartLineItem, currencyCode: string): QuoteLineItem => {
   const listPrice = 'price' in lineItem ? lineItem.price.value : undefined;
-  const discounted = 'price' in lineItem ? lineItem.price.discounted?.value : undefined;
+  const discountedPerQuantity =
+    'discountedPricePerQuantity' in lineItem ? lineItem.discountedPricePerQuantity : undefined;
+  const discounted =
+    ('price' in lineItem ? lineItem.price.discounted?.value : undefined) ??
+    discountedPerQuantity?.[0]?.discountedPrice?.value;
   const tax = 'taxedPrice' in lineItem ? lineItem.taxedPrice?.totalTax : undefined;
   const total = 'totalPrice' in lineItem ? lineItem.totalPrice : undefined;
 
@@ -43,9 +50,52 @@ const buildQuoteLineItem = (lineItem: CartLineItem, currencyCode: string): Quote
   };
 };
 
-const flattenLineItems = (lineItems: CartLineItem[]): LineItem[] =>
-  lineItems.flatMap((lineItem) =>
-    'products' in lineItem ? flattenLineItems(lineItem.products) : [lineItem]
+const buildBundleQuoteLineItem = (
+  bundleLineItem: CartLineItem & { products: LineItem[] },
+  currencyCode: string
+): QuoteLineItem => {
+  const listPrice = 'price' in bundleLineItem ? bundleLineItem.price.value : undefined;
+  const discounted = 'price' in bundleLineItem ? bundleLineItem.price.discounted?.value : undefined;
+  const bundleTotal = 'totalPrice' in bundleLineItem ? bundleLineItem.totalPrice : undefined;
+
+  const bundleTaxCents = bundleLineItem.products.reduce((sum, child) => {
+    const childTax = 'taxedPrice' in child ? child.taxedPrice?.totalTax?.centAmount ?? 0 : 0;
+    return sum + childTax;
+  }, 0);
+
+  const taxMoney: TypedMoney | undefined = bundleTaxCents
+    ? ({
+        type: 'centPrecision',
+        centAmount: bundleTaxCents,
+        currencyCode,
+        fractionDigits: bundleLineItem.products[0]
+          ? 'taxedPrice' in bundleLineItem.products[0]
+            ? bundleLineItem.products[0].taxedPrice?.totalTax?.fractionDigits ?? 2
+            : 2
+          : 2,
+      } as TypedMoney)
+    : undefined;
+
+  return {
+    name: resolveLineItemName(bundleLineItem),
+    quantity: bundleLineItem.quantity ?? 1,
+    listPrice: formatMoney(currencyCode, listPrice),
+    discountedPrice: formatMoney(currencyCode, discounted ?? listPrice),
+    hasDiscount: Boolean(discounted),
+    tax: formatMoney(currencyCode, taxMoney),
+    subtotal: formatMoney(currencyCode, bundleTotal ?? discounted ?? listPrice),
+    children: bundleLineItem.products.map((child) => ({
+      name: resolveLineItemName(child as CartLineItem),
+      sku: resolveChildSku(child),
+    })),
+  };
+};
+
+const buildQuoteLineItems = (lineItems: CartLineItem[], currencyCode: string): QuoteLineItem[] =>
+  lineItems.map((lineItem) =>
+    'products' in lineItem
+      ? buildBundleQuoteLineItem(lineItem as CartLineItem & { products: LineItem[] }, currencyCode)
+      : buildQuoteLineItem(lineItem, currencyCode)
   );
 
 export const mapQuoteLabelsFromSitecoreFields = (
@@ -67,7 +117,6 @@ export const mapQuoteLabelsFromSitecoreFields = (
   totalLabel: fields.QuoteTotalLabel,
   footerNote: fields.QuoteFooterNote,
   downloadQuoteCtaLabel: fields.QuoteDownloadQuoteCtaLabel,
-  disclaimerText: fields.QuoteDisclaimerText,
 });
 
 const resolveCountryName = (countryCode?: string): string | undefined => {
@@ -165,9 +214,7 @@ export const buildQuoteData = ({
     shippingAddressLines,
     createdDate: formatDate({ value: new Date().toISOString() }),
     currencyCode,
-    lineItems: flattenLineItems(cart.lineItems ?? []).map((lineItem) =>
-      buildQuoteLineItem(lineItem, currencyCode)
-    ),
+    lineItems: buildQuoteLineItems(cart.lineItems ?? [], currencyCode),
     subtotal: `${currencyCode} ${(cart.computed.subtotal ?? 0).toFixed(2)}`,
     tax: `${currencyCode} ${cart.computed.taxValue ?? '0.00'}`,
     total: `${currencyCode} ${cart.computed.totalPrice ?? '0.00'}`,

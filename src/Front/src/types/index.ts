@@ -451,6 +451,12 @@ export type BusinessAccountPrepaid = {
   discountPercentage?: number | null;
 };
 
+export type AuthorizedBuyerAccountPricingTier = {
+  productCategory: string;
+  discountTier: string;
+  discountPercent: number;
+};
+
 export type AccountContactRelation = {
   accountId?: string;
   accountName?: string;
@@ -464,6 +470,7 @@ export type AccountContactRelation = {
   purchaseControls?: BusinessAccountPurchaseControls;
   credit?: BusinessAccountCredit;
   prepaid?: BusinessAccountPrepaid;
+  pricingTiers?: AuthorizedBuyerAccountPricingTier[] | null;
 };
 
 export type BusinessAccount = {

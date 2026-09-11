@@ -3,11 +3,11 @@ export type QuoteLineItem = {
   quantity: number;
   listPrice: string;
   discountedPrice: string;
-  hasDiscount: boolean;
   tax: string;
   subtotal: string;
+  hasDiscount: boolean;
+  children?: Array<{ name: string; sku: string }>;
 };
-
 export type QuoteDocumentData = {
   organizationName?: string;
   buyerName: string;
@@ -39,6 +39,7 @@ export type QuoteDocumentLabels = {
   footerNote?: string;
   downloadQuoteCtaLabel?: string;
   disclaimerText?: string;
+  disclaimerLinkUrl?: string;
 };
 
 export type QuoteSitecoreFields = {
@@ -58,5 +59,4 @@ export type QuoteSitecoreFields = {
   QuoteTotalLabel?: string;
   QuoteFooterNote?: string;
   QuoteDownloadQuoteCtaLabel?: string;
-  QuoteDisclaimerText?: string;
 };

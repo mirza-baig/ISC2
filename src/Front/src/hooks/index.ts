@@ -18,6 +18,8 @@ export { default as useUserRoleValue } from './useUserRoleValue';
 export { default as useGetCurrencies } from './useGetCurrencies';
 export { default as useGetCountryFromCoords } from './useGetCountryFromCoords';
 export { default as useGetStandalonePrices } from './prices/useGetStandalonePrices';
+export { default as useAuthorizedBuyerCategoryPricing } from './prices/useAuthorizedBuyerCategoryPricing';
+export { default as useAuthorizedBuyerCompanyPricing } from './prices/useAuthorizedBuyerCompanyPricing';
 export { default as useGetDistributionChannel } from './prices/useGetDistributionChannel';
 export { default as useGetOrder } from './order/useGetOrder';
 export { default as useDownloadBusinessReceipt } from './order/useDownloadBusinessReceipt';
@@ -42,7 +44,6 @@ export { default as useGetProduct } from './product/useGetProduct';
 
 // CARTS
 export { default as useUpdateB2BPersonalInformation } from './cart/useUpdateB2BPersonalInformation';
-export { default as useSetCartAccountOwnerEmail } from './cart/useSetCartAccountOwnerEmail';
 export { default as useGetCart } from './cart/useGetCart';
 export { default as useRemoveFromCart } from './cart/useRemoveFromCart';
 export { default as useApplyCouponCode } from './cart/useApplyCouponCode';
@@ -57,6 +58,7 @@ export { default as useCartValidity } from './cart/useCartValidity';
 export { default as useOnCartPersonalInformationComplete } from './cart/useOnCartPersonalInformationComplete';
 export { default as useIsCpqStyleCheckout } from './cart/useIsCpqStyleCheckout';
 export { default as useIsBusinessBuyer } from './cart/useIsBusinessBuyer';
+export { default as useAuthorizedBuyerPricingVoucher } from './cart/useAuthorizedBuyerPricingVoucher';
 export { default as useB2BCartAccess } from './cart/useB2BCartAccess';
 
 // ALLOCATIONS
@@ -77,6 +79,7 @@ export { default as useHandleStripeReturn } from './checkout/useHandleStripeRetu
 export { default as useCreateOrderFromCart } from './checkout/useCreateOrderFromCart';
 export { default as useDownloadQuote } from './checkout/useDownloadQuote';
 export { default as useBusinessPaymentEligibility } from './checkout/useBusinessPaymentEligibility';
+export { default as usePrepaidCheckoutSummary } from './checkout/usePrepaidCheckoutSummary';
 export { default as useEnsureBusinessCartTax } from './checkout/useEnsureBusinessCartTax';
 
 // PREFERENCES

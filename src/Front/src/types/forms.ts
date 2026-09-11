@@ -47,6 +47,7 @@ export const FormFields: { [key: string]: { key: string; label?: string } } = {
   Button: { label: 'Buy now', key: 'buyNowCta' },
   ThirdPartyCta: { key: 'thirdPartyCta' },
   FormNotice: { key: 'form-notice' },
+  ViewPricingCta: { label: 'View pricing', key: 'viewPricingCta' },
 };
 
 export const FormAdditionalData = {

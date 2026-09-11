@@ -5,17 +5,30 @@ import { getAuthorizedBuyerAccounts, mapAccountsToShopperOrganizations } from 'l
 import { useModal, useShopperContext } from 'providers/index';
 import { useFeatureFlag } from 'providers/featureFlags';
 import type { ShopperOrganization } from 'providers/shopperContext';
+import {
+  B2B_FEATURE_FLAG,
+  SHOPPER_CONTEXT_PROMPTED_KEY,
+  SHOPPER_CONTEXT_STORAGE_KEY,
+} from 'constants/index';
 
 import ShopperContextModalContent from './ShopperContextModalContent';
-
-const PROMPTED_SESSION_KEY = 'b2b-shopper-context-prompted';
 
 const hasPromptedForUser = (userId?: string) => {
   if (typeof window === 'undefined' || !userId) {
     return false;
   }
 
-  return sessionStorage.getItem(PROMPTED_SESSION_KEY) === userId;
+  if (localStorage.getItem(SHOPPER_CONTEXT_PROMPTED_KEY) === userId) {
+    return true;
+  }
+
+  if (sessionStorage.getItem(SHOPPER_CONTEXT_PROMPTED_KEY) === userId) {
+    localStorage.setItem(SHOPPER_CONTEXT_PROMPTED_KEY, userId);
+    sessionStorage.removeItem(SHOPPER_CONTEXT_PROMPTED_KEY);
+    return true;
+  }
+
+  return false;
 };
 
 const markPromptedForUser = (userId?: string) => {
@@ -23,22 +36,37 @@ const markPromptedForUser = (userId?: string) => {
     return;
   }
 
-  sessionStorage.setItem(PROMPTED_SESSION_KEY, userId);
+  localStorage.setItem(SHOPPER_CONTEXT_PROMPTED_KEY, userId);
+  sessionStorage.removeItem(SHOPPER_CONTEXT_PROMPTED_KEY);
 };
 
-/**
- * Shows the B2B shopper-context modal once after login when the buyer has
- * 1+ authorized organizations. Zero relationships skip the modal and keep
- * the existing individual shopping experience.
- * Purchase enforcement remains out of scope for this story.
- */
+const hasStoredSelectionForUser = (userId?: string) => {
+  if (typeof window === 'undefined' || !userId) {
+    return false;
+  }
+
+  try {
+    const raw =
+      localStorage.getItem(SHOPPER_CONTEXT_STORAGE_KEY) ||
+      sessionStorage.getItem(SHOPPER_CONTEXT_STORAGE_KEY);
+    if (!raw) {
+      return false;
+    }
+
+    const parsed = JSON.parse(raw) as { userId?: string };
+    return parsed.userId === userId;
+  } catch {
+    return false;
+  }
+};
+
 export default function ShopperContextModal() {
   const { setModalContent, closeModal, modalContent } = useModal();
   const { setShopperContext } = useShopperContext();
   const { session, isSessionLoading } = useSession();
   const { isUserLoggedIn, isGettingUser, externalID, email } = useLoggedUser();
   const { isAuthorizedBuyer, isResolvingAuthorizedBuyer } = useAuthorizedBuyer();
-  const isB2BFlowEnabled = useFeatureFlag('B2B_Company_Flow');
+  const isB2BFlowEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   const hasOpenedRef = useRef(false);
 
   const dismissModal = useCallback(() => {
@@ -53,7 +81,6 @@ export default function ShopperContextModal() {
         return;
       }
 
-      // Mark as soon as we open so a refresh does not show the modal again.
       markPromptedForUser(externalID);
       hasOpenedRef.current = true;
 
@@ -72,23 +99,14 @@ export default function ShopperContextModal() {
   );
 
   useEffect(() => {
-    if (
-      isSessionLoading ||
-      isGettingUser ||
-      isResolvingAuthorizedBuyer ||
-      modalContent ||
-      hasOpenedRef.current
-    ) {
+    if (isSessionLoading || isGettingUser || modalContent || hasOpenedRef.current) {
       return;
     }
 
-    if (!isUserLoggedIn || !isAuthorizedBuyer || !externalID || !email) {
+    if (!isUserLoggedIn || !externalID) {
       return;
     }
 
-    // Flag off: never prompt, and fail closed to individual shopping the same way the
-    // zero-accounts and error paths do. Checked before the prompted guard so an
-    // organization stored while the flag was on cannot survive it being turned off.
     if (!isB2BFlowEnabled) {
       markPromptedForUser(externalID);
       hasOpenedRef.current = true;
@@ -96,7 +114,15 @@ export default function ShopperContextModal() {
       return;
     }
 
-    if (hasPromptedForUser(externalID)) {
+    if (isResolvingAuthorizedBuyer) {
+      return;
+    }
+
+    if (!isAuthorizedBuyer || !email) {
+      return;
+    }
+
+    if (hasPromptedForUser(externalID) || hasStoredSelectionForUser(externalID)) {
       hasOpenedRef.current = true;
       return;
     }
@@ -112,7 +138,6 @@ export default function ShopperContextModal() {
 
         const organizations = mapAccountsToShopperOrganizations(response.accounts);
 
-        // Ticket #1: 0 authorized buyer relationships → individual experience unchanged.
         if (organizations.length === 0) {
           markPromptedForUser(externalID);
           hasOpenedRef.current = true;
@@ -127,7 +152,6 @@ export default function ShopperContextModal() {
           return;
         }
 
-        // Fail closed to individual shopping so login is never blocked.
         markPromptedForUser(externalID);
         hasOpenedRef.current = true;
         setShopperContext({ type: 'myself', organization: null });
@@ -153,7 +177,6 @@ export default function ShopperContextModal() {
     setShopperContext,
   ]);
 
-  // Clear only on real NextAuth logout — not while Salesforce profile is still loading.
   useEffect(() => {
     if (isSessionLoading) {
       return;
@@ -163,7 +186,8 @@ export default function ShopperContextModal() {
 
     if (!sessionUserId) {
       hasOpenedRef.current = false;
-      sessionStorage.removeItem(PROMPTED_SESSION_KEY);
+      localStorage.removeItem(SHOPPER_CONTEXT_PROMPTED_KEY);
+      sessionStorage.removeItem(SHOPPER_CONTEXT_PROMPTED_KEY);
     }
   }, [isSessionLoading, session?.user?.custom_attributes?.user_id]);
 

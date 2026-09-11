@@ -107,7 +107,12 @@ const B2BCartLineRow = ({
     // onCommitAnswers(draft);
   };
 
-  const unitMoney = item.price?.discounted?.value ?? item.price?.value;
+  const discountedPerQuantity =
+    'discountedPricePerQuantity' in item ? item.discountedPricePerQuantity : null;
+  const unitMoney =
+    item.price?.discounted?.value ??
+    discountedPerQuantity?.[0]?.discountedPrice?.value ??
+    item.price?.value;
   const unit = unitMoney ? `${currencySymbol}${parsePriceFromMoney(unitMoney, 1, false)}` : '—';
   const totalMoney = item.totalPrice ?? item.price?.value;
   const total = totalMoney

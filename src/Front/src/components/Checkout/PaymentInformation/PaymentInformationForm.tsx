@@ -18,6 +18,12 @@ import {
   useIsBusinessBuyer,
   useRecalculateCart,
 } from 'hooks/index';
+import {
+  shouldRecalculateTaxForPaymentMethod,
+  shouldRefreshPaymentIntentForPaymentMethod,
+} from 'lib/authorizedBuyer';
+import { B2B_FEATURE_FLAG } from 'constants/b2b';
+import { useFeatureFlag } from 'providers/featureFlags';
 
 import {
   useCart,
@@ -38,6 +44,7 @@ import {
   CHECKOUT_STEPS,
   isBusinessAccountPaymentMethod,
   PAYMENT_METHODS,
+  type CheckoutPaymentMethod,
   QUOTE_DOCUMENT_DEFAULT_LABELS,
 } from 'constants/index';
 import { ConfirmPaymentPayload, Cart, PersonalInformation, StepTwoLabels } from 'types/index';
@@ -93,7 +100,6 @@ type Props = {
   personalInformation?: PersonalInformation;
 };
 
-type CheckoutPaymentMethod = PAYMENT_METHODS | BUSINESS_PAYMENT_METHODS;
 const PAYMENT_FORM_ID = 'payment-information-form';
 
 export default function PaymentInformationForm({ personalInformation }: Props) {
@@ -109,6 +115,8 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     setActiveStep,
     setHasPaymentError,
     hasInventoryError,
+    selectedPaymentMethod: paymentMethod,
+    setSelectedPaymentMethod,
   } = useCheckoutProcess();
   const { isRecalculating } = useRecalculateCart();
   const { setModalContent } = useModal();
@@ -118,7 +126,14 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
   const { downloadQuote, isGeneratingQuote } = useDownloadQuote();
   const { shippingAddress: accountShippingAddress } = useActiveBusinessAccount();
   const isBusinessBuyer = useIsBusinessBuyer();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   const { ensureTaxedCart, hasTaxedTotal, isEnsuringTax } = useEnsureBusinessCartTax();
+  const lastTaxedPaymentMethodRef = useRef<CheckoutPaymentMethod | undefined>(undefined);
+  const stripeBillingCountryRef = useRef<string | undefined>(
+    personalInformation?.billingAddress?.countryCode || 'US'
+  );
+  const stripeBillingPostalRef = useRef<string | undefined>(undefined);
+  const stripeAddressTaxTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const {
     isPrepaidEligible,
     isCreditEligible,
@@ -130,7 +145,6 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     recheckMethod,
   } = useBusinessPaymentEligibility();
 
-  const [paymentMethod, setPaymentMethod] = useState<CheckoutPaymentMethod>();
   const [isStripeFormComplete, setIsStripeFormComplete] = useState(false);
   const [isOrderSubmitted, setIsOrderSubmitted] = useState<boolean>(false);
   const [staleBusinessPaymentMessage, setStaleBusinessPaymentMessage] = useState<string>();
@@ -224,13 +238,60 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
   }, [elements]);
 
   const selectPaymentMethod = useCallback(
-    (method: CheckoutPaymentMethod) => {
+    (
+      method: CheckoutPaymentMethod,
+      options?: {
+        recalculateTax?: boolean;
+      }
+    ) => {
       setHasPaymentError(false);
       setStaleBusinessPaymentMessage(undefined);
-      setPaymentMethod(method);
+      setSelectedPaymentMethod(method);
+
+      const previousMethod = lastTaxedPaymentMethodRef.current;
+      const shouldRecalculate =
+        options?.recalculateTax === true &&
+        shouldRecalculateTaxForPaymentMethod(
+          isB2BFeatureEnabled && isBusinessBuyer,
+          previousMethod,
+          method
+        );
+
+      lastTaxedPaymentMethodRef.current = method;
+
+      if (!shouldRecalculate) {
+        return;
+      }
+
+      const preservePaymentIntent = !shouldRefreshPaymentIntentForPaymentMethod(
+        previousMethod,
+        method
+      );
+
+      void ensureTaxedCart(undefined, {
+        paymentMethodType: method,
+        preservePaymentIntent,
+      });
     },
-    [setHasPaymentError]
+    [
+      ensureTaxedCart,
+      isB2BFeatureEnabled,
+      isBusinessBuyer,
+      setHasPaymentError,
+      setSelectedPaymentMethod,
+    ]
   );
+
+  const refreshTaxPreservingStripe = useCallback(() => {
+    if (!(isB2BFeatureEnabled && isBusinessBuyer) || isEnsuringTax) {
+      return;
+    }
+
+    void ensureTaxedCart(undefined, {
+      paymentMethodType: paymentMethod || PAYMENT_METHODS.STRIPE,
+      preservePaymentIntent: true,
+    });
+  }, [ensureTaxedCart, isB2BFeatureEnabled, isBusinessBuyer, isEnsuringTax, paymentMethod]);
 
   const validateOrder = useCallback(
     async ({ paymentMethod }: ConfirmPaymentPayload) => {
@@ -263,12 +324,12 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
       ev.preventDefault();
       setHasPaymentError(false);
       setStaleBusinessPaymentMessage(undefined);
-      setPaymentMethod(PAYMENT_METHODS.FREE);
+      setSelectedPaymentMethod(PAYMENT_METHODS.FREE);
       setIsOrderSubmitted(true);
 
       validateOrder({ paymentMethod: PAYMENT_METHODS.FREE });
     },
-    [setHasPaymentError, validateOrder]
+    [setHasPaymentError, setSelectedPaymentMethod, validateOrder]
   );
 
   const onBusinessFormSubmit = useCallback(
@@ -291,7 +352,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
         setHasPaymentError(true);
         setStaleBusinessPaymentMessage(copy.stalePayment);
         setIsOrderSubmitted(false);
-        setPaymentMethod(undefined);
+        setSelectedPaymentMethod(undefined);
         return;
       }
 
@@ -304,6 +365,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
       recheckMethod,
       copy.stalePayment,
       setHasPaymentError,
+      setSelectedPaymentMethod,
       validateOrder,
     ]
   );
@@ -350,8 +412,8 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     }
 
     clearStripeData();
-    setPaymentMethod(PAYMENT_METHODS.PAYPAL);
-  }, [setHasPaymentError, isConfirmingPayment, clearStripeData]);
+    selectPaymentMethod(PAYMENT_METHODS.PAYPAL, { recalculateTax: true });
+  }, [clearStripeData, isConfirmingPayment, selectPaymentMethod, setHasPaymentError]);
 
   const onDownloadQuoteClick = useCallback(() => {
     const quoteData = buildQuoteData({
@@ -409,8 +471,15 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
 
     setHasPaymentError(true);
     setStaleBusinessPaymentMessage(copy.stalePayment);
-    setPaymentMethod(undefined);
-  }, [copy.stalePayment, isCreditEligible, isPrepaidEligible, paymentMethod, setHasPaymentError]);
+    setSelectedPaymentMethod(undefined);
+  }, [
+    copy.stalePayment,
+    isCreditEligible,
+    isPrepaidEligible,
+    paymentMethod,
+    setHasPaymentError,
+    setSelectedPaymentMethod,
+  ]);
 
   useEffect(() => {
     if (!showBusinessPaymentDropdown || paymentMethodOptions.length === 0) {
@@ -422,23 +491,79 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     );
 
     if (!isCurrentAvailable) {
-      setPaymentMethod(paymentMethodOptions[0].value);
+      selectPaymentMethod(paymentMethodOptions[0].value);
     }
-  }, [paymentMethod, paymentMethodOptions, showBusinessPaymentDropdown]);
+  }, [paymentMethod, paymentMethodOptions, selectPaymentMethod, showBusinessPaymentDropdown]);
 
   useEffect(() => {
     const paymentElement = elements?.getElement('payment');
 
-    if (paymentElement) {
-      paymentElement.on('change', (ev) => setIsStripeFormComplete(ev.complete));
+    if (!paymentElement) {
+      return;
     }
 
+    const handleStripeChange = (ev: {
+      complete: boolean;
+      value?: {
+        payment_method?: {
+          billing_details?: {
+            address?: {
+              country?: string | null;
+              postal_code?: string | null;
+            };
+          };
+        };
+      };
+    }) => {
+      setIsStripeFormComplete(ev.complete);
+
+      const address = ev.value?.payment_method?.billing_details?.address;
+      const nextCountry = address?.country || undefined;
+      const nextPostal = address?.postal_code || undefined;
+      const previousCountry = stripeBillingCountryRef.current;
+      const previousPostal = stripeBillingPostalRef.current;
+
+      if (nextCountry) {
+        stripeBillingCountryRef.current = nextCountry;
+      }
+
+      if (typeof nextPostal === 'string') {
+        stripeBillingPostalRef.current = nextPostal;
+      }
+
+      const countryChanged = Boolean(
+        nextCountry && previousCountry && nextCountry !== previousCountry
+      );
+      const postalReady =
+        Boolean(nextPostal) && (ev.complete || (nextPostal?.replace(/\s/g, '').length ?? 0) >= 5);
+      const postalChanged = postalReady && nextPostal !== previousPostal;
+
+      if (!countryChanged && !postalChanged) {
+        return;
+      }
+
+      if (stripeAddressTaxTimeoutRef.current) {
+        clearTimeout(stripeAddressTaxTimeoutRef.current);
+      }
+
+      stripeAddressTaxTimeoutRef.current = setTimeout(
+        () => {
+          refreshTaxPreservingStripe();
+        },
+        countryChanged ? 0 : 500
+      );
+    };
+
+    paymentElement.on('change', handleStripeChange);
+
     return () => {
-      if (paymentElement) {
-        paymentElement.off('change');
+      paymentElement.off('change', handleStripeChange);
+
+      if (stripeAddressTaxTimeoutRef.current) {
+        clearTimeout(stripeAddressTaxTimeoutRef.current);
       }
     };
-  }, [elements]);
+  }, [elements, refreshTaxPreservingStripe]);
 
   useEffect(() => {
     // Bypass inventory validation if B2B cart
@@ -470,7 +595,9 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     <PaymentElement
       className="bg-gray-10 p-5"
       onFocus={() => {
-        selectPaymentMethod(PAYMENT_METHODS.STRIPE);
+        setHasPaymentError(false);
+        setStaleBusinessPaymentMessage(undefined);
+        setSelectedPaymentMethod(PAYMENT_METHODS.STRIPE);
       }}
       options={{
         layout: 'tabs',
@@ -533,7 +660,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
               onChange={(event) => {
                 const nextMethod = event.target.value as CheckoutPaymentMethod;
                 clearStripeData();
-                selectPaymentMethod(nextMethod);
+                selectPaymentMethod(nextMethod, { recalculateTax: true });
               }}
             >
               {paymentMethodOptions.map((option) => (
@@ -590,7 +717,9 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
               amountDueLabel={copy.prepaidAmountDue}
               onSelect={() => {
                 clearStripeData();
-                selectPaymentMethod(BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT);
+                selectPaymentMethod(BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT, {
+                  recalculateTax: true,
+                });
               }}
             />
           )}
@@ -604,7 +733,9 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
               isActive={paymentMethod === BUSINESS_PAYMENT_METHODS.PREAPPROVED_CREDIT}
               onSelect={() => {
                 clearStripeData();
-                selectPaymentMethod(BUSINESS_PAYMENT_METHODS.PREAPPROVED_CREDIT);
+                selectPaymentMethod(BUSINESS_PAYMENT_METHODS.PREAPPROVED_CREDIT, {
+                  recalculateTax: true,
+                });
               }}
             />
           )}

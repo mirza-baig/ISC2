@@ -1,6 +1,7 @@
 export type {
   AuthorizedBuyerAccount,
   AuthorizedBuyerAddress,
+  AuthorizedBuyerCategoryPricing,
   AuthorizedBuyerCredit,
   AuthorizedBuyerPrepaid,
   AuthorizedBuyerPurchaseControls,
@@ -8,6 +9,10 @@ export type {
   BuyerMockScenario,
 } from './types';
 export { BUYER_MOCK_SCENARIOS, DEFAULT_BUYER_MOCK_SCENARIO, isBuyerMockScenario } from './types';
+export { resolveCategoryDiscount } from './categoryPricing';
+export { resolveDisplayPriceCents } from './companyPricing';
+export { decodeAuthorizedBuyerPricingVoucher } from './pricingVoucher';
+export type { AuthorizedBuyerPricingVoucherPayload } from './pricingVoucher';
 export { BUYER_SCENARIO_ACCOUNTS } from './scenarios';
 export {
   ACCOUNT_ACME,
@@ -64,6 +69,15 @@ export {
   resolveAvailableCredit,
   resolvePrepaidDiscount,
   prepaidDiscountValue,
+  buildPrepaidOrderSummary,
   toFiniteNumber,
 } from './paymentEligibility';
-export type { PaymentEligibilityAccount } from './paymentEligibility';
+export type { PaymentEligibilityAccount, PrepaidOrderSummary } from './paymentEligibility';
+export {
+  buildZeroTaxCartActions,
+  getConcreteLineItems,
+  isBusinessTaxExempt,
+  shouldRecalculateTaxForPaymentMethod,
+  shouldRefreshPaymentIntentForPaymentMethod,
+  withZeroTaxedPrice,
+} from './businessCartTax';

@@ -12,6 +12,7 @@ interface OrderLineItemProps {
     isHidden?: boolean;
     additionalClasses?: string;
     quantityLabel: string;
+    showQuantity?: boolean;
   };
 }
 
@@ -25,6 +26,7 @@ const OrderLineItem = ({ fields }: OrderLineItemProps) => {
     isHidden = false,
     quantityLabel,
     additionalClasses,
+    showQuantity = false,
   } = fields;
 
   return (
@@ -52,7 +54,7 @@ const OrderLineItem = ({ fields }: OrderLineItemProps) => {
             </div>
           )}
         </div>
-        {quantity > 1 && (
+        {showQuantity && quantity >= 1 && (
           <div className="text-xs mt-3 sm:mt-5">{`${quantityLabel}: ${quantity}`}</div>
         )}
       </div>

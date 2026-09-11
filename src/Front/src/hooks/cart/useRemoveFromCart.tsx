@@ -1,9 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useUserSession } from 'providers/index';
-import { getServiceLayerAPI, isBundleLineItem } from 'utils/index';
+import { isBundleLineItem } from 'utils/index';
 import { QUERY_KEYS } from 'constants/queryKeys';
-import { Cart, CartLineItem, MutationCallbacks, UpdateCartResponse } from 'types/index';
+import { Cart, CartLineItem, MutationCallbacks } from 'types/index';
+
+import useAuthorizedBuyerPricingVoucher from './useAuthorizedBuyerPricingVoucher';
+import postCartUpdate from './postCartUpdate';
 
 type RemoveFromCartProps = {
   lineItems: CartLineItem[];
@@ -23,25 +26,21 @@ const getActions = (payload: RemoveFromCartProps) =>
 export default function useRemoveFromCart(callbacks?: MutationCallbacks<Cart>) {
   const { cartId, setCartId } = useUserSession();
   const queryClient = useQueryClient();
+  const { voucher: authorizedBuyerPricingVoucher } = useAuthorizedBuyerPricingVoucher();
 
   const { mutate, mutateAsync, isPending, error, isSuccess } = useMutation({
     mutationKey: [QUERY_KEYS.REMOVE_FROM_CART],
     mutationFn: async (payload: RemoveFromCartProps) => {
-      const api = await getServiceLayerAPI();
-
-      const { data } = await api.post<UpdateCartResponse>('', {
-        query: 'UPDATE_CART',
-        variables: {
+      return postCartUpdate(
+        {
           cartId,
           actions: getActions(payload),
+          authorizedBuyerPricingVoucher,
         },
-      });
-
-      if ((data.errors || []).length) {
-        throw data.errors[0].message;
-      }
-
-      return data.data.isc2CartUpdate;
+        (errors) => {
+          throw errors[0].message;
+        }
+      );
     },
     onSuccess: (updatedCart) => {
       if (updatedCart.id !== cartId) {

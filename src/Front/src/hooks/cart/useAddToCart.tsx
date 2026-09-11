@@ -23,6 +23,7 @@ import {
 import { usePersonalize } from 'providers/index';
 
 import useCreateCart from './useCreateCart';
+import useAuthorizedBuyerPricingVoucher from './useAuthorizedBuyerPricingVoucher';
 
 type AddToCartProps = {
   items: (AddToCartHit | ProductHit)[];
@@ -93,6 +94,7 @@ export default function useAddToCart(callbacks?: MutationCallbacks) {
   const queryClient = useQueryClient();
   const { cartId, setCartId, currencyCode, userCountry } = useUserSession();
   const { createCartAsync, createCartError } = useCreateCart();
+  const { voucher: authorizedBuyerPricingVoucher } = useAuthorizedBuyerPricingVoucher();
   const { track } = useAnalyticsTracking();
   const { engage } = usePersonalize();
 
@@ -118,6 +120,7 @@ export default function useAddToCart(callbacks?: MutationCallbacks) {
             cartId: userCartId,
             country: userCountry,
             actions: getActions(payload, currencyCode),
+            authorizedBuyerPricingVoucher,
           },
         });
 
@@ -186,6 +189,7 @@ export default function useAddToCart(callbacks?: MutationCallbacks) {
             cartId: newCartId,
             country: userCountry,
             actions: getActions(payload, currencyCode),
+            authorizedBuyerPricingVoucher,
           },
         });
 

@@ -33,14 +33,12 @@ interface AccountData {
 }
 
 export default function useGetAccountData() {
-  const { externalID, email } = useLoggedUser();
+  const { externalID } = useLoggedUser();
 
   return useQuery<AccountData>({
     queryKey: ['accountData', externalID],
     queryFn: async () => {
-      const response = await fetch(
-        `/api/salesforce/user/getAccountData?externalID=${externalID}&email=${email}`
-      );
+      const response = await fetch('/api/salesforce/user/getAccountData');
       if (!response.ok) {
         throw new Error('Failed to fetch account data');
       }

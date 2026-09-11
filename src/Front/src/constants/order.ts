@@ -1,25 +1,10 @@
-/**
- * Fallbacks for the business order confirmation copy. Sitecore authors override these by
- * adding the matching keys to the Order Details item's "Labels, Tooltips And More" field;
- * until then the confirmation renders the agreed copy.
- *
- * Same arrangement as the business keys on StepOneLabels in types/checkout.
- *
- * `{userEmail}` and `{orderId}` are replaced at render time, matching how the individual
- * confirmation already substitutes them.
- */
 export const BUSINESS_ORDER_CONFIRMATION_DEFAULT_LABELS = {
-  // Prefixed with `business` because these share the Order Details item's single
-  // "Labels, Tooltips And More" field with the individual confirmation's own keys.
   businessHeadline: 'Order Confirmed!',
   businessSubheadline: 'Thank you for your purchase',
   businessConfirmationCopy:
     'Your order details are below, and an email has been sent to {userEmail} with your purchase information.',
   orderNumberLabel: 'Order Number',
   orderDateLabel: 'Order Date',
-  // "Attendees" comes from the prototype, which shows a classroom course. It reads wrong
-  // against an exam or a kit — if the copy owner wants a per-product-type word, that is a
-  // content change here, not a component change.
   quantitySingularLabel: '{quantity} Attendee',
   quantityLabel: '{quantity} Attendees',
   unitPriceLabel: '{price} ea.',
@@ -45,11 +30,6 @@ export const BUSINESS_ORDER_CONFIRMATION_DEFAULT_LABELS = {
   supportLinkUrl: 'https://www.isc2.org/contact-us',
 } as const;
 
-/**
- * The conditional "Invoice Processing" step, keyed by the payment method the cart was
- * checked out with. A method with no entry here renders no step, which is the intended
- * behaviour for the card/PayPal methods a business buyer can also use.
- */
 export const BUSINESS_PAYMENT_METHOD_DEFAULT_STEPS = {
   'preapproved-credit': {
     title: 'Invoice Processing',
@@ -60,15 +40,6 @@ export const BUSINESS_PAYMENT_METHOD_DEFAULT_STEPS = {
     copy: 'This order has been deducted from your prepaid account balance.',
   },
 } as const;
-/**
- * Business transaction receipt copy. Authors override any of these via the same
- * "labels, tooltips and more" field the confirmation screen reads; until then the PDF
- * renders the agreed wording.
- *
- * `ReceiptConfirmText` is required by the story — the receipt has to be unambiguously
- * distinguishable from a payment invoice — so it is deliberately not optional here.
- * It keeps the authored PascalCase key, since label lookups use the Sitecore key as-is.
- */
 export const BUSINESS_RECEIPT_DEFAULT_LABELS = {
   documentTitle: 'Transaction Receipt',
   ReceiptConfirmText:

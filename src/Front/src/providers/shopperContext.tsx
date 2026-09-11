@@ -10,14 +10,13 @@ import {
 } from 'react';
 
 import { useLoggedUser, useSession } from 'hooks/index';
-import { SHOPPER_CONTEXT_COOKIE } from 'constants/index';
+import { SHOPPER_CONTEXT_COOKIE, SHOPPER_CONTEXT_STORAGE_KEY } from 'constants/index';
 
 export type ShoppingContextType = 'myself' | 'organization';
 
 export type ShopperOrganization = {
   id: string;
   name: string;
-  // From Authorized Buyer account; mocked until MuleSoft is wired.
   creditHold?: boolean;
   accountType?: string;
   currency?: string;
@@ -38,8 +37,6 @@ type ShopperContextProps = {
   setShopperContext: (selection: ShopperContextSelection) => void;
   clearShopperContext: () => void;
 };
-
-const STORAGE_KEY = 'b2b-shopper-context';
 
 const writeContextCookie = (type: ShoppingContextType) => {
   if (typeof document === 'undefined') {
@@ -65,17 +62,12 @@ const ShopperContext = createContext<ShopperContextProps>({
   clearShopperContext: () => {},
 });
 
-const readStoredContext = (userId?: string): ShopperContextSelection | null => {
-  if (typeof window === 'undefined' || !userId) {
+const parseStoredContext = (raw: string | null, userId: string): ShopperContextSelection | null => {
+  if (!raw) {
     return null;
   }
 
   try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      return null;
-    }
-
     const parsed = JSON.parse(raw) as StoredShopperContext;
     if (parsed.userId !== userId) {
       return null;
@@ -90,6 +82,29 @@ const readStoredContext = (userId?: string): ShopperContextSelection | null => {
   }
 };
 
+const readStoredContext = (userId?: string): ShopperContextSelection | null => {
+  if (typeof window === 'undefined' || !userId) {
+    return null;
+  }
+
+  const fromLocal = parseStoredContext(localStorage.getItem(SHOPPER_CONTEXT_STORAGE_KEY), userId);
+  if (fromLocal) {
+    return fromLocal;
+  }
+
+  const fromSession = parseStoredContext(
+    sessionStorage.getItem(SHOPPER_CONTEXT_STORAGE_KEY),
+    userId
+  );
+  if (fromSession) {
+    writeStoredContext(userId, fromSession);
+    sessionStorage.removeItem(SHOPPER_CONTEXT_STORAGE_KEY);
+    return fromSession;
+  }
+
+  return null;
+};
+
 const writeStoredContext = (userId: string, selection: ShopperContextSelection) => {
   if (typeof window === 'undefined') {
     return;
@@ -101,7 +116,8 @@ const writeStoredContext = (userId: string, selection: ShopperContextSelection) 
     organization: selection.organization,
   };
 
-  sessionStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  localStorage.setItem(SHOPPER_CONTEXT_STORAGE_KEY, JSON.stringify(payload));
+  sessionStorage.removeItem(SHOPPER_CONTEXT_STORAGE_KEY);
   writeContextCookie(selection.type);
 };
 
@@ -110,7 +126,8 @@ const removeStoredContext = () => {
     return;
   }
 
-  sessionStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(SHOPPER_CONTEXT_STORAGE_KEY);
+  sessionStorage.removeItem(SHOPPER_CONTEXT_STORAGE_KEY);
   removeContextCookie();
 };
 
@@ -133,8 +150,6 @@ const ShopperContextProvider = ({ children }: ShopperContextProviderProps) => {
       return;
     }
 
-    // Prefer an in-memory selection (e.g. just confirmed "Myself") and persist it once
-    // externalID is available, so a late profile load cannot restore a prior organization.
     setShopperContextState((current) => {
       if (current) {
         writeStoredContext(externalID, current);
@@ -151,7 +166,36 @@ const ShopperContextProvider = ({ children }: ShopperContextProviderProps) => {
     });
   }, [isUserLoggedIn, externalID]);
 
-  // Clear only on real NextAuth logout — not while Salesforce profile is still loading.
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== SHOPPER_CONTEXT_STORAGE_KEY || !externalID) {
+        return;
+      }
+
+      if (event.newValue === null) {
+        setShopperContextState(null);
+        removeContextCookie();
+        return;
+      }
+
+      const next = parseStoredContext(event.newValue, externalID);
+      setShopperContextState(next);
+
+      if (next) {
+        writeContextCookie(next.type);
+      } else {
+        removeContextCookie();
+      }
+    };
+
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, [externalID]);
+
   useEffect(() => {
     if (isSessionLoading) {
       return;

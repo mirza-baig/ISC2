@@ -5,6 +5,11 @@ import { CurrencyMismatchModal } from 'components/Header/HeaderCurrencyDropdown/
 import useGetCart from 'hooks/cart/useGetCart';
 import useAddToCart from 'hooks/cart/useAddToCart';
 import useRemoveFromCart from 'hooks/cart/useRemoveFromCart';
+import useAuthorizedBuyerCategoryPricing, {
+  resolveCategoryDiscount,
+} from 'hooks/prices/useAuthorizedBuyerCategoryPricing';
+import useAuthorizedBuyerCompanyPricing from 'hooks/prices/useAuthorizedBuyerCompanyPricing';
+import { resolveDisplayPriceCents } from 'lib/authorizedBuyer';
 import { parsePriceFromMoney, isBundleLineItem, getPickedProductFromBundleLine } from 'utils/index';
 import { CUSTOMER_PRICING_GROUP_MAP } from 'types/index';
 import { FEW_SEATS_THRESHOLD } from 'constants/index';
@@ -128,6 +133,7 @@ const B2BProductLineHitContainer = ({
   const { updateQuantity, isUpdatingQuantity } = useUpdateLineItemQuantity();
   const { productPrices, addSkuToPricingQueue } = useStandalonePrices();
   const { inventory, addSkuToInventoryQueue } = useB2BInventory();
+  const authorizedBuyerCategoryPricing = useAuthorizedBuyerCategoryPricing();
   // Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out rather
   // than deleted so it can be restored by uncommenting when the feature ships.
   // const { getAnswers, setAnswers, clearAnswers, openLocationModal } = useB2BPrivateClass();
@@ -136,6 +142,9 @@ const B2BProductLineHitContainer = ({
   const { isCpq } = useB2BCpqCart();
 
   const sku = hit.sku ?? hit.objectID;
+  const { companyPriceCentsBySku } = useAuthorizedBuyerCompanyPricing(
+    useMemo(() => (sku ? [sku] : []), [sku])
+  );
 
   // Purchase-option row: one class session × one purchase option, expanded on the client from the
   // session's `skuReferencesProduct` (see `b2bPurchaseOptions.ts`). The row's own SKU is the BUNDLE —
@@ -299,17 +308,42 @@ const B2BProductLineHitContainer = ({
       ? { ...money, centAmount: Math.round(money.centAmount / seats) }
       : money;
 
+  const categoryDiscount = resolveCategoryDiscount(
+    authorizedBuyerCategoryPricing,
+    hit.businessPricingCategory
+  );
+  const applyAuthorizedBuyerDiscount = (money?: TypedMoney): TypedMoney | undefined =>
+    money
+      ? {
+          ...money,
+          centAmount: resolveDisplayPriceCents(
+            money.centAmount,
+            categoryDiscount,
+            companyPriceCentsBySku.get(sku)
+          ),
+        }
+      : money;
+
+  const cartLineDiscountedPerQuantity =
+    lineItem && 'discountedPricePerQuantity' in lineItem
+      ? lineItem.discountedPricePerQuantity
+      : null;
+  const cartUnitValue =
+    cartPrice?.discounted?.value ??
+    cartLineDiscountedPerQuantity?.[0]?.discountedPrice?.value ??
+    cartPrice?.value;
+
   const unitMoney =
-    perSeat(cartPrice?.discounted?.value ?? cartPrice?.value) ??
-    standalonePrice?.discounted?.value ??
-    standalonePrice?.value;
+    perSeat(cartUnitValue) ??
+    applyAuthorizedBuyerDiscount(standalonePrice?.discounted?.value ?? standalonePrice?.value);
   const originalMoney = perSeat(cartPrice?.value) ?? standalonePrice?.value;
 
   //  2. ...and NOT going up again for the total, since a bundle's cart price was already there.
   //     Only when the cart price was unusable (a currency mismatch drops it) is the fallback a
   //     per-seat catalog price that does still need multiplying.
-  const totalUnitMoney = cartPrice?.discounted?.value ?? cartPrice?.value ?? unitMoney;
-  const seatMultiplier = isBundleRow && cartPrice ? 1 : seats;
+  const usesCartLineTotal = Boolean(lineItem && !isBundleRow && !isCartCurrencyMismatch);
+  const totalUnitMoney = usesCartLineTotal ? lineItem?.totalPrice : cartPrice?.value ?? unitMoney;
+  const seatMultiplier = usesCartLineTotal || (isBundleRow && cartPrice) ? 1 : seats;
   const displayTotal =
     totalUnitMoney && lineItem
       ? formatAmount(

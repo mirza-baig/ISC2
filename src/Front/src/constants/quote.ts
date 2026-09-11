@@ -16,4 +16,5 @@ export const QUOTE_DOCUMENT_DEFAULT_LABELS = {
   footerNote: 'ISC2 · Thank you for your business.',
   downloadQuoteCtaLabel: 'Download Quote',
   disclaimerText: 'Legal disclaimer text to be provided by Legal.',
+  disclaimerLinkUrl: 'https://www.isc2.org/policies-procedures/terms-conditions',
 } as const;

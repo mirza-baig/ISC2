@@ -15,10 +15,20 @@ export namespace CartSummaryPrices {
       taxTbd: string;
     };
     showTaxes?: boolean;
+    prepaidDiscount?: {
+      title: string;
+      amount: string;
+    };
+    totalOverride?: string;
   };
 }
 
-export const CartSummaryPrices = ({ labels, showTaxes }: CartSummaryPrices.Props) => {
+export const CartSummaryPrices = ({
+  labels,
+  showTaxes,
+  prepaidDiscount,
+  totalOverride,
+}: CartSummaryPrices.Props) => {
   const { activeCart, isFreeOrder } = useCart();
 
   const taxes = useMemo(() => {
@@ -60,6 +70,15 @@ export const CartSummaryPrices = ({ labels, showTaxes }: CartSummaryPrices.Props
             />
           )
         )}
+
+        {prepaidDiscount && (
+          <LineItemPrice
+            title={prepaidDiscount.title}
+            value={prepaidDiscount.amount}
+            currency={activeCart.computed.currencySymbol}
+            type="discount"
+          />
+        )}
       </div>
 
       {labels?.totalLabel && (
@@ -67,7 +86,7 @@ export const CartSummaryPrices = ({ labels, showTaxes }: CartSummaryPrices.Props
           <LineItemPrice
             textClassName="body-l font-bold text-gray-90"
             title={labels?.totalLabel}
-            value={activeCart.computed.totalPrice!}
+            value={totalOverride ?? activeCart.computed.totalPrice!}
             currency={activeCart.computed.currencySymbol}
           />
         </div>

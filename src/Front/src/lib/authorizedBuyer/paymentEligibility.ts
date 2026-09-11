@@ -169,6 +169,36 @@ export const amountDueWithPrepaid = (
   prepaid?: PaymentEligibilityAccount['prepaid'] | null
 ) => Math.max(0, cartTotal - prepaidDiscountValue(cartTotal, prepaid));
 
+export type PrepaidOrderSummary = {
+  discountPercent: number;
+  discountAmount: string;
+  amountDue: string;
+};
+
+/**
+ * Order-summary figures for a prepaid discount. Amount due is rounded first so
+ * the discount line and total add back to the cart total.
+ */
+export const buildPrepaidOrderSummary = (
+  cartTotal: number,
+  prepaid?: PaymentEligibilityAccount['prepaid'] | null
+): PrepaidOrderSummary | null => {
+  const discountPercent = resolvePrepaidDiscount(prepaid);
+
+  if (discountPercent === null) {
+    return null;
+  }
+
+  const amountDue = amountDueWithPrepaid(cartTotal, prepaid).toFixed(2);
+  const discountAmount = (cartTotal - Number(amountDue)).toFixed(2);
+
+  return {
+    discountPercent,
+    discountAmount,
+    amountDue,
+  };
+};
+
 /**
  * Prepaid is unexpired through the end of its expiration day.
  * A date of today is still usable.

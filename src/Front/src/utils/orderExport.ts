@@ -3,18 +3,6 @@ import { PrintableOrder, TypedMoney } from 'types/index';
 import { getCurrencySymbol } from './currencies';
 import { getShortIsoDate } from './date';
 
-/**
- * The Order History export, one row per order.
- *
- * Columns are fixed and in the order the story lists them. `Organization` and `Buyer` are
- * not part of the orders payload, so they are passed in from the shopper context and the
- * logged-in user. `PO Number` and `Customer Order Reference` are optional on
- * `PrintableOrder` because `salesforceGetOrders` does not return them yet — the columns
- * are written either way so the file shape does not change once it does.
- *
- * Nothing is ever left blank: any value the payload does not carry is written as `N/A`,
- * so a reader can tell a missing value apart from an empty cell.
- */
 const EXPORT_COLUMNS = [
   { header: 'Organization', key: 'organization', width: 30 },
   { header: 'Buyer', key: 'buyer', width: 26 },
@@ -29,10 +17,8 @@ const EXPORT_COLUMNS = [
   { header: 'Product Quantities', key: 'productQuantities', width: 20 },
 ] as const;
 
-/** Columns holding one line per product, so the two stay readable side by side. */
 const MULTILINE_COLUMN_KEYS: string[] = ['products', 'productQuantities'];
 
-/** Written into every cell whose value the payload does not carry. */
 const NOT_AVAILABLE = 'N/A';
 
 const WORKSHEET_NAME = 'Order History';
@@ -40,23 +26,16 @@ const FILE_NAME_PREFIX = 'Order-History';
 const XLSX_MIME_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
 export type OrderHistoryExportContext = {
-  /** From the shopper context; blank when the user is not shopping for an organization. */
   organization?: string;
-  /** The logged-in user's full name. */
   buyer?: string;
 };
 
-/** Any text column, falling back to `N/A` rather than an empty cell. */
 const orNotAvailable = (value?: string | number | null) => {
   const text = value === undefined || value === null ? '' : String(value).trim();
 
   return text || NOT_AVAILABLE;
 };
 
-/**
- * Cent amounts as a real number so Excel can sum and sort them, rather than the display
- * string `parsePrice` builds for the page.
- */
 const toAmount = (money?: TypedMoney) => {
   if (!money || typeof money.centAmount !== 'number') {
     return undefined;
@@ -65,7 +44,6 @@ const toAmount = (money?: TypedMoney) => {
   return money.centAmount / Math.pow(10, money.fractionDigits || 0);
 };
 
-/** Currency number format for the money columns, e.g. `"$"#,##0.00`. */
 const toCurrencyFormat = (money?: TypedMoney) => {
   const symbol = getCurrencySymbol(money?.currencyCode || '');
   const fractionDigits = money?.fractionDigits ?? 2;
@@ -86,11 +64,9 @@ const toExportRow = (order: PrintableOrder, { organization, buyer }: OrderHistor
     customerOrderReference: orNotAvailable(order.customerOrderReference),
     orderNumber: orNotAvailable(order.orderId),
     orderDate: orNotAvailable(order.orderDate),
-    // Kept as numbers when present, so Excel can still sum and sort the money columns.
     tax: tax ?? NOT_AVAILABLE,
     orderTotal: orderTotal ?? NOT_AVAILABLE,
     orderStatus: orNotAvailable(order.orderStatus),
-    // One line per product, so a gap in either column stays lined up with its product.
     products: products.length
       ? products.map(({ productItemName }) => orNotAvailable(productItemName)).join('\n')
       : NOT_AVAILABLE,
@@ -113,13 +89,6 @@ const downloadWorkbook = (buffer: ArrayBuffer, fileName: string) => {
   URL.revokeObjectURL(url);
 };
 
-/**
- * Builds the Order History workbook from the orders already on the page and hands it to
- * the browser as a download.
- *
- * ExcelJS is imported dynamically — it is a large dependency and nothing else on the My
- * Account page needs it, so it stays out of the initial bundle until the user exports.
- */
 export const exportOrderHistoryToExcel = async (
   orders: PrintableOrder[],
   context: OrderHistoryExportContext = {}
@@ -139,9 +108,6 @@ export const exportOrderHistoryToExcel = async (
     MULTILINE_COLUMN_KEYS.forEach((key) => {
       row.getCell(key).alignment = { wrapText: true, vertical: 'top' };
     });
-
-    // A currency format on an `N/A` cell would render it as `"$"N/A`, so only the cells
-    // holding a real amount get one.
     if (typeof row.getCell('tax').value === 'number') {
       row.getCell('tax').numFmt = toCurrencyFormat(order.tax);
     }

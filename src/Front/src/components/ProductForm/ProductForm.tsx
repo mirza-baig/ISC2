@@ -35,6 +35,9 @@ export type FormLabelsAndTooltips = {
     messages: TextField;
     headline: TextField;
     primaryCtaLabel: TextField;
+    viewPricingCta?: LinkField;
+    viewPricingTitle?: TextField;
+    viewPricingDescription?: RichTextField;
   };
 };
 

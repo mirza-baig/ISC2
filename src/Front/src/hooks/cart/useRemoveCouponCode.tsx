@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useUserSession } from 'providers/index';
-import { getServiceLayerAPI } from 'utils/index';
 import { QUERY_KEYS } from 'constants/index';
-import { UpdateCartResponse } from 'types/index';
+
+import useAuthorizedBuyerPricingVoucher from './useAuthorizedBuyerPricingVoucher';
+import postCartUpdate from './postCartUpdate';
 
 type RemoveCouponCodeProps = {
   discountCodeId: string;
@@ -12,18 +13,16 @@ type RemoveCouponCodeProps = {
 export default function useRemoveCouponCode() {
   const queryClient = useQueryClient();
   const { cartId, setCartId } = useUserSession();
+  const { voucher: authorizedBuyerPricingVoucher } = useAuthorizedBuyerPricingVoucher();
 
   const { mutate, isPending, error, isSuccess, data } = useMutation({
     mutationFn: async ({ discountCodeId }: RemoveCouponCodeProps) => {
-      const api = await getServiceLayerAPI();
-
       if (!cartId) {
         throw new Error('No active cart found');
       }
 
-      const { data } = await api.post<UpdateCartResponse>('', {
-        query: 'UPDATE_CART',
-        variables: {
+      return postCartUpdate(
+        {
           cartId,
           actions: [
             {
@@ -35,14 +34,12 @@ export default function useRemoveCouponCode() {
               },
             },
           ],
+          authorizedBuyerPricingVoucher,
         },
-      });
-
-      if ((data.errors || []).length) {
-        throw data.errors[0].message;
-      }
-
-      return data.data.isc2CartUpdate;
+        (errors) => {
+          throw errors[0].message;
+        }
+      );
     },
     onSuccess: (updatedCart) => {
       if (updatedCart.id !== cartId) {

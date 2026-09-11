@@ -5,9 +5,11 @@ import {
   useSitecoreContext,
 } from '@sitecore-jss/sitecore-jss-nextjs';
 
+import { B2B_FEATURE_FLAG } from 'constants/index';
 import { useAuthorizedBuyer, useLoggedUser } from 'hooks/index';
 import BuildingIcon from 'icons/BuildingIcon';
 import { useCart, useShopperContext } from 'providers/index';
+import { useFeatureFlag } from 'providers/featureFlags';
 
 const DEFAULT_SHOPPING_FOR_LABEL = 'Shopping for:';
 const DEFAULT_ORGANIZATION_NAME = 'Business Co. Canada Ltd';
@@ -46,11 +48,11 @@ const BuyerContextBanner = ({ fields }: BuyerContextBannerProps) => {
   const { isAuthorizedBuyer } = useAuthorizedBuyer();
   const { activeCart } = useCart();
   const { shopperContext } = useShopperContext();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
 
   const isEnabled = fields?.enabled?.value ?? true;
   const isPageEditing = Boolean(sitecoreContext?.pageEditing);
   const isB2BContext = isAuthorizedBuyer || isB2BAdminUser || Boolean(activeCart?.computed?.isB2B);
-  // "Myself" (or no org selection) must never show the banner on storefront pages.
   const isShoppingForMyself = shopperContext?.type === 'myself';
   const isShoppingForOrganization =
     shopperContext?.type === 'organization' && Boolean(shopperContext.organization?.name);
@@ -58,7 +60,7 @@ const BuyerContextBanner = ({ fields }: BuyerContextBannerProps) => {
   const shouldShowBanner =
     isEnabled &&
     !isShoppingForMyself &&
-    (isPageEditing || (isB2BContext && isShoppingForOrganization));
+    (isPageEditing || (isB2BFeatureEnabled && isB2BContext && isShoppingForOrganization));
 
   if (!shouldShowBanner) {
     return null;

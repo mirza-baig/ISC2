@@ -74,6 +74,7 @@ export interface B2BProductHit extends Hit {
   modality?: B2BKeyLabel;
   certification?: B2BKeyLabel;
   region?: B2BKeyLabel;
+  businessPricingCategory?: string | null;
   // Scheduled-session fields (only present on instructor-led/live-online variants tied to a
   // specific date, same field names the PDP's commerce-index lookup already uses — see
   // types/forms.ts `ProductHit`). Absent on self-paced/on-demand variants.
@@ -529,8 +530,8 @@ const B2BProductLineHit = ({
           </span>
           {hasDiscount && (
             <>
-              <span className="order-3 text-gray-50 max-sm:order-1">{originallyLabel}</span>
-              <span className="order-4 text-gray-50 line-through max-sm:order-2 max-sm:no-underline">
+              <span className="order-3 text-gray-70 max-sm:order-1">{originallyLabel}</span>
+              <span className="order-4 text-gray-70 line-through max-sm:order-2 max-sm:no-underline">
                 {displayOriginalPrice}
               </span>
             </>

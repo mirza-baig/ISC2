@@ -7,13 +7,6 @@ type DownloadPayload = {
   labels?: BusinessReceiptLabels;
 };
 
-/**
- * Generates and downloads the business transaction receipt PDF.
- *
- * `@react-pdf/renderer` and the receipt document are imported on click rather than at
- * module scope — the renderer is a large dependency and nothing on the confirmation or
- * order history screens needs it until the buyer asks for the file.
- */
 export default function useDownloadBusinessReceipt() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<Error | null>(null);

@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { BUSINESS_STEP_ONE_DEFAULT_LABELS, CHECKOUT_STEPS } from 'constants/checkout';
+import {
+  BUSINESS_STEP_ONE_DEFAULT_LABELS,
+  CHECKOUT_STEPS,
+  type CheckoutPaymentMethod,
+} from 'constants/checkout';
 import { createContext, Dispatch, SetStateAction, useContext, useMemo, useState } from 'react';
 
 import { useIsBusinessBuyer } from 'hooks/index';
@@ -34,6 +38,8 @@ type CheckoutContextProps = {
   setHasPaymentError: Dispatch<SetStateAction<boolean>>;
   hasInventoryError: boolean;
   setHasInventoryError: Dispatch<SetStateAction<boolean>>;
+  selectedPaymentMethod?: CheckoutPaymentMethod;
+  setSelectedPaymentMethod: Dispatch<SetStateAction<CheckoutPaymentMethod | undefined>>;
 };
 
 const CheckoutProcessContext = createContext<CheckoutContextProps>({
@@ -54,6 +60,8 @@ const CheckoutProcessContext = createContext<CheckoutContextProps>({
   setHasPaymentError: () => {},
   hasInventoryError: false,
   setHasInventoryError: () => {},
+  selectedPaymentMethod: undefined,
+  setSelectedPaymentMethod: () => {},
 });
 
 type CheckoutProcessProviderProps = {
@@ -109,6 +117,9 @@ const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ field
   const [errorState, setErrorState] = useState<ServiceLayerError[] | null>(null);
   const [hasPaymentError, setHasPaymentError] = useState<boolean>(false);
   const [hasInventoryError, setHasInventoryError] = useState<boolean>(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
+    CheckoutPaymentMethod | undefined
+  >();
 
   return (
     <CheckoutProcessContext.Provider
@@ -130,6 +141,8 @@ const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ field
         setHasPaymentError,
         hasInventoryError,
         setHasInventoryError,
+        selectedPaymentMethod,
+        setSelectedPaymentMethod,
       }}
     >
       {children}

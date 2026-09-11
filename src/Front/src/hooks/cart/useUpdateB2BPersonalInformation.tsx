@@ -1,8 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 
 import { useCart } from 'providers/index';
-import { getServiceLayerAPI } from 'utils/index';
-import { MutationCallbacks, PersonalInformation, UpdateCartResponse } from 'types/index';
+import { MutationCallbacks, PersonalInformation } from 'types/index';
+
+import useAuthorizedBuyerPricingVoucher from './useAuthorizedBuyerPricingVoucher';
+import postCartUpdate from './postCartUpdate';
 
 type UpdateB2BPersonalInformationProps = Pick<
   PersonalInformation,
@@ -11,6 +13,7 @@ type UpdateB2BPersonalInformationProps = Pick<
 
 export default function useUpdateB2BPersonalInformation(callbacks?: MutationCallbacks) {
   const { activeCart } = useCart();
+  const { voucher: authorizedBuyerPricingVoucher } = useAuthorizedBuyerPricingVoucher();
 
   const { mutate, mutateAsync, isPending, error } = useMutation({
     mutationFn: async ({
@@ -23,11 +26,8 @@ export default function useUpdateB2BPersonalInformation(callbacks?: MutationCall
         return;
       }
 
-      const api = await getServiceLayerAPI();
-
-      const { data } = await api.post<UpdateCartResponse>('', {
-        query: 'UPDATE_CART',
-        variables: {
+      return postCartUpdate(
+        {
           cartId: activeCart?.id,
           actions: [
             {
@@ -45,14 +45,12 @@ export default function useUpdateB2BPersonalInformation(callbacks?: MutationCall
               },
             },
           ],
+          authorizedBuyerPricingVoucher,
         },
-      });
-
-      if ((data.errors || []).length) {
-        throw data.errors;
-      }
-
-      return data.data.isc2CartUpdate;
+        (errors) => {
+          throw errors;
+        }
+      );
     },
     onSuccess: () => {
       if (callbacks?.onSuccess) {

@@ -16,12 +16,15 @@ import {
   useHandleStripeReturn,
   useIsBusinessBuyer,
 } from 'hooks/index';
+import { B2B_FEATURE_FLAG } from 'constants/b2b';
+import { useFeatureFlag } from 'providers/featureFlags';
 import {
   LineItemsProvider,
   useCart,
   useCheckoutProcess,
   useModal,
   usePersonalize,
+  useShopperContext,
 } from 'providers/index';
 import {
   AlgoliaSettings,
@@ -118,8 +121,11 @@ export default function CheckoutContent({ algoliaSettings, rendering }: Checkout
   const { activeCart, getCartSuccess, cartError, isFreeOrder } = useCart();
   const isCpqStyleCheckout = useIsCpqStyleCheckout();
   const isBusinessBuyer = useIsBusinessBuyer();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
+  const { shopperContext } = useShopperContext();
   const { externalID, user } = useLoggedUser();
   const { engage } = usePersonalize();
+  const isOrganizationShopper = shopperContext?.type === 'organization';
 
   const isPaymentReturnUrl = useMemo(() => {
     const [, queryString = ''] = router.asPath.split('?');
@@ -162,10 +168,22 @@ export default function CheckoutContent({ algoliaSettings, rendering }: Checkout
       return recalculatedCart;
     }
 
+    if (isB2BFeatureEnabled && (isBusinessBuyer || isOrganizationShopper)) {
+      return recalculatedCart;
+    }
+
     return setTaxesAsync({ cartId: recalculatedCart?.id })
       .then((cartWithTaxes) => cartWithTaxes)
       .catch(() => recalculatedCart);
-  }, [activeCart, isCpqStyleCheckout, recalculateCartAsync, setTaxesAsync]);
+  }, [
+    activeCart,
+    isB2BFeatureEnabled,
+    isBusinessBuyer,
+    isCpqStyleCheckout,
+    isOrganizationShopper,
+    recalculateCartAsync,
+    setTaxesAsync,
+  ]);
 
   const setupCheckout = useCallback(async () => {
     const cartToUse = await getCartForCheckoutSession();

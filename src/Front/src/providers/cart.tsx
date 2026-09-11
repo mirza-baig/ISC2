@@ -6,6 +6,7 @@ import { Cart, CartWithComputedData } from 'types/index';
 import { CurrencyCodes, getCurrencyByCountryCode } from 'utils/currencies';
 
 import { useUserSession } from './userSession';
+import { useShopperContext } from './shopperContext';
 import { FREE_PRICE } from 'constants/index';
 
 type CartContextProps = {
@@ -45,8 +46,11 @@ const CartProvider: React.FC<CartProviderProps> = ({ id, children, overrideWithC
     userCountry,
     setCartId,
     syncCurrencyCode,
+    isCurrencyManualOverride,
     setIsCurrencyManualOverride,
   } = useUserSession();
+  const { shopperContext } = useShopperContext();
+  const isAuthorizedBuyerSession = shopperContext?.type === 'organization';
 
   const getPayloadForUserActiveCart = useCallback(() => {
     if (Boolean(cartId)) {
@@ -111,10 +115,16 @@ const CartProvider: React.FC<CartProviderProps> = ({ id, children, overrideWithC
           return;
         }
 
+        // Authorized buyers shopping as a company keep their manually chosen
+        // currency on an empty cart (needed for the currency-switch add-to-cart
+        // flow). Every other shopper keeps the original country-derived reset.
+        if (isAuthorizedBuyerSession && isCurrencyManualOverride) {
+          return;
+        }
+
         const countryCurrency = getCurrencyByCountryCode(userCountry);
         if (countryCurrency !== currencyCode) {
           syncCurrencyCode(countryCurrency);
-          // Prior empty-cart syncs used setCurrencyCode and incorrectly locked override.
           setIsCurrencyManualOverride(false);
         }
       },
@@ -124,6 +134,8 @@ const CartProvider: React.FC<CartProviderProps> = ({ id, children, overrideWithC
     currencyCode,
     getPayloadForUserActiveCart,
     id,
+    isAuthorizedBuyerSession,
+    isCurrencyManualOverride,
     overrideWithCart,
     setCartId,
     setIsCurrencyManualOverride,

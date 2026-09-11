@@ -130,8 +130,18 @@ export const GET_ACTIVE_CART = `
 `;
 
 export const UPDATE_CART = `
-  mutation isc2CartUpdate ($cartId: String!, $country: String, $actions: [ISC2_CartUpdateAction!]!) {
-    isc2CartUpdate (cartID: $cartId, country: $country, actions: $actions) {
+  mutation isc2CartUpdate (
+    $cartId: String!
+    $country: String
+    $actions: [ISC2_CartUpdateAction!]!
+    $authorizedBuyerPricingVoucher: String
+  ) {
+    isc2CartUpdate (
+      cartID: $cartId
+      country: $country
+      actions: $actions
+      authorizedBuyerPricingVoucher: $authorizedBuyerPricingVoucher
+    ) {
       ${CART_FIELDS}
     }
   }

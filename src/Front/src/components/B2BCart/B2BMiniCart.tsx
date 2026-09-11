@@ -4,6 +4,7 @@ import clsx from 'clsx';
 
 import { useCart, useLayout, useLineItems, useMiniCartFields } from 'providers/index';
 import { useB2BCartAccess } from 'hooks/index';
+import { resolveMiniCartCartHref, shouldMiniCartGoToCheckout } from 'hooks/cart/b2bBuyerContext';
 import { RichTextUI } from 'ui/index';
 
 import EmptyMiniCartHeader from '../MiniCart/EmptyMiniCartHeader';
@@ -19,7 +20,7 @@ const B2BMiniCart = (): JSX.Element => {
   const { activeCart } = useCart();
   const { fields } = useMiniCartFields();
   const { isFetchingCart, isRemovingFromCart } = useLineItems();
-  const { isAuthorizedBuyer } = useB2BCartAccess();
+  const { isAuthorizedBuyer, buyerContext } = useB2BCartAccess();
   const router = useRouter();
 
   // Private classes are held back on this surface (B-15), so "empty" is once again exactly what
@@ -30,27 +31,28 @@ const B2BMiniCart = (): JSX.Element => {
   // const isEmpty = activeCart.computed.isEmpty && !hasExtraLines;
   const isEmpty = activeCart.computed.isEmpty;
 
-  const ctaHref = fields.checkoutCta.value.href;
+  // ITDEV-1187: Authorized Buyers shopping as Myself must match an individual user — cart page
+  // first, not a skip straight to checkout. Organization buyers keep the existing checkout hop.
+  const skipToCheckout = shouldMiniCartGoToCheckout(isAuthorizedBuyer, buyerContext);
+  const cartHref = resolveMiniCartCartHref(fields.checkoutCta.value.href);
   const isCtaDisabled =
-    isFetchingCart ||
-    isRemovingFromCart ||
-    activeCart.computed.isCheckoutDisabled ||
-    (!isAuthorizedBuyer && !ctaHref);
+    isFetchingCart || isRemovingFromCart || activeCart.computed.isCheckoutDisabled;
 
   const goToCart = useCallback(() => {
-    if (isCtaDisabled || !ctaHref) {
+    if (isCtaDisabled) {
       return;
     }
     closeMiniCart();
-    router.push(ctaHref);
-  }, [closeMiniCart, ctaHref, isCtaDisabled, router]);
+    router.push(cartHref);
+  }, [cartHref, closeMiniCart, isCtaDisabled, router]);
 
   const checkoutCta = useMemo(
     () => ({
       disabled: isCtaDisabled,
-      onClick: isAuthorizedBuyer ? undefined : goToCart,
+      label: skipToCheckout ? undefined : fields.checkoutCta.value.text,
+      onClick: skipToCheckout ? undefined : goToCart,
     }),
-    [goToCart, isAuthorizedBuyer, isCtaDisabled]
+    [fields.checkoutCta.value.text, goToCart, isCtaDisabled, skipToCheckout]
   );
 
   return (

@@ -30,3 +30,4 @@ export * from './browser';
 export * from './print';
 export * from './voting';
 export * from './accountData';
+export * from './orderHistory';

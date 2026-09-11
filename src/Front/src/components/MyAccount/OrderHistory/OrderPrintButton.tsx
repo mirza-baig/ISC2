@@ -10,7 +10,6 @@ export namespace OrderPrintButton {
   export type Props = {
     contentRef: RefObject<HTMLDivElement | null>;
     printInvoiceCtaLabel: string;
-    /** Present on the order history row; without it the button falls back to browser print. */
     order?: PrintableOrder;
   };
 }
@@ -27,14 +26,6 @@ export default function OrderPrintButton({
   const isBusinessBuyer = useIsBusinessBuyer();
   const { downloadReceipt, isGeneratingReceipt } = useDownloadBusinessReceipt();
 
-  /**
-   * Business buyers download a generated Transaction Receipt; everyone else keeps the
-   * browser print behaviour.
-   *
-   * TODO: Decide per order rather than per session once the order history API marks which
-   * orders were placed for an organization — `PrintableOrder` carries no such flag, so a
-   * business buyer currently gets the business receipt for every order in the list.
-   */
   const printDiv = () => {
     if (isBusinessBuyer && order) {
       const data = buildBusinessReceiptDataFromPrintableOrder({

@@ -169,4 +169,23 @@ export const MOCK_ORDERS: PrintableOrder[] = [
       },
     ],
   },
+  {
+    orderId: '142025072146500901',
+    orderNumber: 'ORD-142025072146500901',
+    orderDate: '2027-08-16',
+    orderStatus: 'Confirmed',
+    paymentType: 'Credit Card',
+    orderTotal: usd(51569),
+    tax: usd(0),
+    subTotal: usd(51569),
+    origin: 'Online',
+    products: [
+      {
+        productItemName: 'CISSP Exam',
+        productItemPrice: usd(51569),
+        productQuantity: 1,
+      },
+    ],
+    isSameAddress: true,
+  },
 ];

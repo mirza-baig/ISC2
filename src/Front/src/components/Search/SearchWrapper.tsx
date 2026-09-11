@@ -54,6 +54,11 @@ import B2BPlpCart from './B2BPlpCart';
 import B2BPlpCartPreload from './B2BPlpCartPreload';
 import B2BPlpFilter from './B2BPlpFilter';
 import B2BPlpSort, { B2BSortKey, SORT_KEYS } from './B2BPlpSort';
+import useAuthorizedBuyerCategoryPricing, {
+  resolveCategoryDiscount,
+} from 'hooks/prices/useAuthorizedBuyerCategoryPricing';
+import useAuthorizedBuyerCompanyPricing from 'hooks/prices/useAuthorizedBuyerCompanyPricing';
+import { resolveDisplayPriceCents } from 'lib/authorizedBuyer';
 import { B2BPrivateClassProvider, useB2BCartLabels } from './B2BPrivateClassContext';
 import { hasSessionStarted, type SessionScheduleFields } from './b2bDates';
 import { filterRawQueryParts } from './b2bQueryString';
@@ -561,6 +566,10 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
   //     their price arrives — avoids the "prices out of order while scrolling" jump as new
   //     lazy-loaded pages resolve their prices asynchronously.
   const { productPrices } = useStandalonePrices();
+  const authorizedBuyerCategoryPricing = useAuthorizedBuyerCategoryPricing();
+  const { companyPriceCentsBySku } = useAuthorizedBuyerCompanyPricing(
+    useMemo(() => Object.keys(productPrices ?? {}), [productPrices])
+  );
   const [b2bSort, setB2bSort] = useState<B2BSortKey>(DEFAULT_B2B_SORT);
   const isPriceSort = b2bSort === 'price-asc' || b2bSort === 'price-desc';
 
@@ -613,7 +622,14 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
       const price = productPrices?.[sku]?.[CUSTOMER_PRICING_GROUP_MAP.NON_MEMBERS];
       const money = price?.discounted?.value ?? price?.value;
       const cents = (money as { centAmount?: number } | undefined)?.centAmount;
-      return typeof cents === 'number' ? cents : null;
+      if (typeof cents !== 'number') {
+        return null;
+      }
+      const categoryDiscount = resolveCategoryDiscount(
+        authorizedBuyerCategoryPricing,
+        hit.businessPricingCategory
+      );
+      return resolveDisplayPriceCents(cents, categoryDiscount, companyPriceCentsBySku.get(sku));
     };
 
     const direction = b2bSort === 'price-asc' ? 1 : -1;
@@ -625,7 +641,13 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
       if (pb === null) return -1;
       return (pa - pb) * direction;
     };
-  }, [isB2BListing, b2bSort, productPrices]);
+  }, [
+    isB2BListing,
+    b2bSort,
+    productPrices,
+    authorizedBuyerCategoryPricing,
+    companyPriceCentsBySku,
+  ]);
 
   // B2B PLP price-range FILTER (prototype). Price is not an Algolia facet (it comes per SKU from
   // commercetools — see priceBuckets.ts), so unlike the other facets it can't refine server-side.
@@ -722,15 +744,32 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
       if (typeof cents !== 'number') {
         return false;
       }
+      const categoryDiscount = resolveCategoryDiscount(
+        authorizedBuyerCategoryPricing,
+        hit.businessPricingCategory
+      );
+      const discountedCents = resolveDisplayPriceCents(
+        cents,
+        categoryDiscount,
+        companyPriceCentsBySku.get(sku)
+      );
       // Compare in MAJOR units, honouring the currency's own `fractionDigits` — JPY reports 0, so
       // a fixed /100 would divide yen by 100 and drop every JPY product into the cheapest bucket.
       return priceInAnyBucket(
-        toMajorUnits(cents, fractionDigits),
+        toMajorUnits(discountedCents, fractionDigits),
         b2bPriceBuckets,
         b2bPriceBucketOptions
       );
     };
-  }, [isB2BListing, isPriceFilterActive, productPrices, b2bPriceBuckets, b2bPriceBucketOptions]);
+  }, [
+    isB2BListing,
+    isPriceFilterActive,
+    productPrices,
+    b2bPriceBuckets,
+    b2bPriceBucketOptions,
+    authorizedBuyerCategoryPricing,
+    companyPriceCentsBySku,
+  ]);
 
   // Unconditional row filter for the B2B listing: a variant whose scheduled session has already
   // started must not be listed at all. Only an actual, filled-in, elapsed session hides a row — most

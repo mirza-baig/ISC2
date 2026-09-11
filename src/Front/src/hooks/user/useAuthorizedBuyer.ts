@@ -33,7 +33,7 @@ export type AuthorizedBuyerOptions = {
 export default function useAuthorizedBuyer({
   enabled = true,
 }: AuthorizedBuyerOptions = {}): AuthorizedBuyerState {
-  const { externalID, email } = useLoggedUser();
+  const { externalID } = useLoggedUser();
   const { shopperContext } = useShopperContext();
 
   const isQueryEnabled = enabled && Boolean(externalID);
@@ -41,11 +41,7 @@ export default function useAuthorizedBuyer({
   const { data, isLoading } = useQuery<AccountDataResponse>({
     queryKey: [ACCOUNT_DATA_QUERY_KEY, externalID],
     queryFn: async () => {
-      const response = await fetch(
-        `/api/salesforce/user/getAccountData?externalID=${encodeURIComponent(
-          externalID ?? ''
-        )}&email=${encodeURIComponent(email ?? '')}`
-      );
+      const response = await fetch('/api/salesforce/user/getAccountData');
 
       if (!response.ok) {
         throw new Error('Failed to fetch account data');

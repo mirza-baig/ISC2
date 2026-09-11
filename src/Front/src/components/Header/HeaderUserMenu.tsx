@@ -7,7 +7,9 @@ import { LoadingIndicator, UserDataSummary } from 'ui/index';
 import { useHeaderNavigation } from 'providers/header';
 import { useModal } from 'providers/modal';
 import { useShopperContext } from 'providers/shopperContext';
+import { useFeatureFlag } from 'providers/featureFlags';
 import useLoggedUser from 'hooks/useLoggedUser';
+import { B2B_FEATURE_FLAG } from 'constants/index';
 import { SESSION_STORAGE_KEYS, SESSION_LOCALSTORAGE_KEYS } from 'constants/sessionTimeout';
 import ChangeBuyerModal, { LOG_OUT_CHANGE_BUYER_LABEL } from './ChangeBuyerModal';
 
@@ -36,10 +38,12 @@ export default function HeaderUserMenu({ className, setMenuOpen, fields }: Heade
   const { shopperContext } = useShopperContext();
   const { userRoleMenuLinks, userLinksForRole } = useHeaderNavigation();
   const { setModalContent } = useModal();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   const [isUserSigningOut, setIsUserSigningOut] = useState<boolean>(false);
 
   const labels = parseFieldsFromURLString<HeaderUserMenuLabels>(fields.labelsTitlesAndMore);
-  const showChangeBuyerLogout = isB2BAdminUser && shopperContext?.type === 'organization';
+  const showChangeBuyerLogout =
+    isB2BFeatureEnabled && isB2BAdminUser && shopperContext?.type === 'organization';
   const signOutLabel = showChangeBuyerLogout ? LOG_OUT_CHANGE_BUYER_LABEL : labels.signOutLabel;
 
   const onSignOut = useCallback(() => {

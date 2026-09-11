@@ -1,9 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useCart, useUserSession } from 'providers/index';
-import { getMailingAddress, getServiceLayerAPI } from 'utils/index';
+import { getMailingAddress } from 'utils/index';
 import { QUERY_KEYS } from 'constants/index';
-import { MutationCallbacks, PersonalInformation, UpdateCartResponse } from 'types/index';
+import { MutationCallbacks, PersonalInformation } from 'types/index';
+
+import useAuthorizedBuyerPricingVoucher from './useAuthorizedBuyerPricingVoucher';
+import postCartUpdate from './postCartUpdate';
 
 type SetCartAddressProps = {
   personalInformation: PersonalInformation | undefined;
@@ -14,14 +17,13 @@ export default function useSetCartAddress(callbacks?: MutationCallbacks) {
   const { activeCart } = useCart();
 
   const { cartId, setCartId } = useUserSession();
+  const { voucher: authorizedBuyerPricingVoucher } = useAuthorizedBuyerPricingVoucher();
 
   const { mutate, mutateAsync, isPending, error } = useMutation({
     mutationFn: async ({ personalInformation }: SetCartAddressProps) => {
       if (!personalInformation) {
         return;
       }
-
-      const api = await getServiceLayerAPI();
 
       const billingAddress = personalInformation.billingAddress;
       const mailingAddress = getMailingAddress(personalInformation);
@@ -37,9 +39,8 @@ export default function useSetCartAddress(callbacks?: MutationCallbacks) {
         throw new Error('Missing shipping country while setting cart address');
       }
 
-      const { data } = await api.post<UpdateCartResponse>('', {
-        query: 'UPDATE_CART',
-        variables: {
+      return postCartUpdate(
+        {
           cartId: cartIdForUpdate,
           actions: [
             {
@@ -74,14 +75,12 @@ export default function useSetCartAddress(callbacks?: MutationCallbacks) {
               },
             },
           ],
+          authorizedBuyerPricingVoucher,
         },
-      });
-
-      if ((data.errors || []).length) {
-        throw data.errors;
-      }
-
-      return data.data.isc2CartUpdate;
+        (errors) => {
+          throw errors;
+        }
+      );
     },
     onSuccess: (updatedCart) => {
       if (!activeCart.computed.isB2B && updatedCart && updatedCart.id !== cartId) {

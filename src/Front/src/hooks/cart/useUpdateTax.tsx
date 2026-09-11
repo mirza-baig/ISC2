@@ -26,7 +26,10 @@ export default function useUpdateTax() {
       const requestStartTime = performance.now();
       const requestId = `tax-update-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const cartIdForTaxUpdate = payload?.cartId || cartId;
-      const paymentIntentId = payload?.paymentIntentId ?? paymentIntent?.intentPaymentId ?? null;
+      const paymentIntentId =
+        payload && 'paymentIntentId' in payload
+          ? payload.paymentIntentId ?? null
+          : paymentIntent?.intentPaymentId ?? null;
 
       console.log(`[TAX-UPDATE-DEBUG] ${requestId} - Starting tax update request`, {
         cartId: cartIdForTaxUpdate,

@@ -2,13 +2,15 @@ import { Field, ImageField } from '@sitecore-jss/sitecore-jss-nextjs';
 import { useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { getShortIsoDate, parseFieldsFromURLString } from 'utils/index';
+import { filterOrdersForShopperContext } from 'utils/orderHistory';
 import { PrintableOrder, OrderProduct } from 'types/index';
 import useGetAllOrders from 'hooks/order/useGetAllOrders';
 import { useLoggedUser, useIsBusinessBuyer, useOnEventOutside } from 'hooks/index';
+import { useShopperContext } from 'providers/shopperContext';
 import ChevronDownIcon from 'icons/ChevronDownIcon';
 import Order from './Order';
-import OrderHistoryExportButton from './OrderHistoryExportButton';
 import LoadingIndicator from 'ui/LoadingIndicator';
+import OrderHistoryExportButton from './OrderHistoryExportButton';
 
 interface OrderHistoryPageProps {
   fields: {
@@ -29,8 +31,32 @@ export interface OrderHistoryPageLabels {
   viewMoreCtaLabel: string;
   viewLessCtaLabel: string;
   shippedByLabel: string;
+  printReceiptCtaLabel?: string;
+  accountNameLabel?: string;
+  buyerNameLabel?: string;
+  poNumberLabel?: string;
+  customerOrderReferenceLabel?: string;
+  searchPlaceholder?: string;
+  filterBuyerLabel?: string;
+  filterProductLabel?: string;
+  filterPoNumberLabel?: string;
+  filterOrderNumberLabel?: string;
+  exportButtonLabel?: string;
+  quantityLabel?: string;
+  allFilterOptionLabel?: string;
+  noFilterValuesLabel?: string;
+  noMatchingOrdersMessage?: string;
   exportExcelCtaLabel?: string;
 }
+
+export const sitecoreOrderHistoryLabel = (
+  labels: OrderHistoryPageLabels,
+  key: keyof OrderHistoryPageLabels,
+  fallback: string
+) => {
+  const value = labels[key];
+  return value?.trim() || fallback;
+};
 
 export interface OrderPrintLabels {
   nameLabel: string;
@@ -68,6 +94,8 @@ const FilterDropdown = ({
   onSelect,
   isOpen,
   onToggle,
+  allOptionLabel,
+  noValuesLabel,
 }: {
   label: string;
   value: string;
@@ -75,6 +103,8 @@ const FilterDropdown = ({
   onSelect: (next: string) => void;
   isOpen: boolean;
   onToggle: () => void;
+  allOptionLabel: string;
+  noValuesLabel: string;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -120,11 +150,11 @@ const FilterDropdown = ({
                 onToggle();
               }}
             >
-              All
+              {allOptionLabel}
             </button>
           </li>
           {options.length === 0 ? (
-            <li className="px-3 py-1.5 text-xs text-gray-70">No values</li>
+            <li className="px-3 py-1.5 text-xs text-gray-70">{noValuesLabel}</li>
           ) : (
             options.map((option) => (
               <li key={option}>
@@ -157,6 +187,11 @@ const FilterDropdown = ({
 const OrderHistory = ({ fields }: OrderHistoryPageProps) => {
   const { orders, isGettingAllOrders } = useGetAllOrders();
   const { isGettingUser } = useLoggedUser();
+  const { shopperContext } = useShopperContext();
+  const contextOrders = useMemo(
+    () => filterOrdersForShopperContext(orders, shopperContext),
+    [orders, shopperContext]
+  );
 
   const orderLabels = useMemo(
     () => parseFieldsFromURLString<OrderHistoryPageLabels>(fields?.orderListLabelsAndMore),
@@ -188,7 +223,7 @@ const OrderHistory = ({ fields }: OrderHistoryPageProps) => {
   const [openFilter, setOpenFilter] = useState<FilterKey | null>(null);
 
   const filterOptions = useMemo(() => {
-    if (!orders) {
+    if (!contextOrders) {
       return {
         buyer: [] as string[],
         product: [] as string[],
@@ -199,22 +234,24 @@ const OrderHistory = ({ fields }: OrderHistoryPageProps) => {
     }
 
     return {
-      buyer: uniqueValues(orders.map((order) => order.buyerFullName)),
+      buyer: uniqueValues(contextOrders.map((order) => order.buyerFullName)),
       product: uniqueValues(
-        orders.flatMap((order) => (order.products || []).map((product) => product.productItemName))
+        contextOrders.flatMap((order) =>
+          (order.products || []).map((product) => product.productItemName)
+        )
       ),
-      po: uniqueValues(orders.map((order) => order.poNumber)),
-      customerRef: uniqueValues(orders.map((order) => order.customerOrderReference)),
-      orderNumber: uniqueValues(orders.map((order) => order.orderId || order.orderNumber)),
+      po: uniqueValues(contextOrders.map((order) => order.poNumber)),
+      customerRef: uniqueValues(contextOrders.map((order) => order.customerOrderReference)),
+      orderNumber: uniqueValues(contextOrders.map((order) => order.orderId || order.orderNumber)),
     };
-  }, [orders]);
+  }, [contextOrders]);
 
   const filteredOrders = useMemo(() => {
-    if (!orders) return [];
+    if (!contextOrders) return [];
 
     const query = searchQuery.trim().toLowerCase();
 
-    return orders.filter((order: PrintableOrder) => {
+    return contextOrders.filter((order: PrintableOrder) => {
       const productNames = (order.products || [])
         .map((product) => product.productItemName || '')
         .join(' ');
@@ -244,7 +281,7 @@ const OrderHistory = ({ fields }: OrderHistoryPageProps) => {
       );
     });
   }, [
-    orders,
+    contextOrders,
     searchQuery,
     filterBuyer,
     filterPo,
@@ -302,7 +339,26 @@ const OrderHistory = ({ fields }: OrderHistoryPageProps) => {
     return <LoadingIndicator className="self-center" />;
   }
 
-  const hasOrders = Boolean(orders && orders.length > 0);
+  const hasOrders = Boolean(contextOrders && contextOrders.length > 0);
+  const searchPlaceholder = sitecoreOrderHistoryLabel(
+    orderLabels,
+    'searchPlaceholder',
+    'Search orders...'
+  );
+  const allFilterOptionLabel = sitecoreOrderHistoryLabel(
+    orderLabels,
+    'allFilterOptionLabel',
+    'All'
+  );
+  const noFilterValuesLabel = sitecoreOrderHistoryLabel(
+    orderLabels,
+    'noFilterValuesLabel',
+    'No values'
+  );
+  const filterDropdownLabels = {
+    allOptionLabel: allFilterOptionLabel,
+    noValuesLabel: noFilterValuesLabel,
+  };
 
   return (
     <section className="flex flex-col gap-5 mt-0!">
@@ -311,52 +367,61 @@ const OrderHistory = ({ fields }: OrderHistoryPageProps) => {
         <div className="flex items-center gap-2 flex-wrap mb-6">
           <input
             type="text"
-            placeholder="Search orders…"
+            placeholder={searchPlaceholder}
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
             className="text-xs px-2.5 py-1.5 rounded border border-gray-50 bg-input-disabled text-gray-90 outline-none min-w-40"
-            aria-label="Search orders"
+            aria-label={searchPlaceholder}
           />
 
           <FilterDropdown
-            label="Buyer"
+            label={sitecoreOrderHistoryLabel(orderLabels, 'filterBuyerLabel', 'Buyer')}
             value={filterBuyer}
             options={filterOptions.buyer}
             onSelect={setFilterBuyer}
             isOpen={openFilter === 'buyer'}
             onToggle={() => toggleFilter('buyer')}
+            {...filterDropdownLabels}
           />
           <FilterDropdown
-            label="Product"
+            label={sitecoreOrderHistoryLabel(orderLabels, 'filterProductLabel', 'Product')}
             value={filterProduct}
             options={filterOptions.product}
             onSelect={setFilterProduct}
             isOpen={openFilter === 'product'}
             onToggle={() => toggleFilter('product')}
+            {...filterDropdownLabels}
           />
           <FilterDropdown
-            label="PO Number"
+            label={sitecoreOrderHistoryLabel(orderLabels, 'filterPoNumberLabel', 'PO Number')}
             value={filterPo}
             options={filterOptions.po}
             onSelect={setFilterPo}
             isOpen={openFilter === 'po'}
             onToggle={() => toggleFilter('po')}
+            {...filterDropdownLabels}
           />
           <FilterDropdown
-            label="Customer Order Reference"
+            label={sitecoreOrderHistoryLabel(
+              orderLabels,
+              'customerOrderReferenceLabel',
+              'Customer Order Reference'
+            )}
             value={filterCustomerRef}
             options={filterOptions.customerRef}
             onSelect={setFilterCustomerRef}
             isOpen={openFilter === 'customerRef'}
             onToggle={() => toggleFilter('customerRef')}
+            {...filterDropdownLabels}
           />
           <FilterDropdown
-            label="Order Number"
+            label={sitecoreOrderHistoryLabel(orderLabels, 'filterOrderNumberLabel', 'Order Number')}
             value={filterOrderNumber}
             options={filterOptions.orderNumber}
             onSelect={setFilterOrderNumber}
             isOpen={openFilter === 'orderNumber'}
             onToggle={() => toggleFilter('orderNumber')}
+            {...filterDropdownLabels}
           />
 
           <OrderHistoryExportButton
@@ -367,7 +432,13 @@ const OrderHistory = ({ fields }: OrderHistoryPageProps) => {
         </div>
       )}
       {hasOrders && filteredOrders.length === 0 ? (
-        <p className="text-sm text-gray-70">No orders match the current filters.</p>
+        <p className="text-sm text-gray-70">
+          {sitecoreOrderHistoryLabel(
+            orderLabels,
+            'noMatchingOrdersMessage',
+            'No orders match the current filters.'
+          )}
+        </p>
       ) : (
         ordersElements
       )}

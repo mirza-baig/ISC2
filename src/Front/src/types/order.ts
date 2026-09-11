@@ -24,7 +24,9 @@ export type Order = {
     }[];
   };
   custom?: {
-    /** commercetools returns custom fields as a name/value list, not a keyed map. */
+    customFieldsRaw?: {
+      [name: string]: string;
+    };
   };
   paymentState: string | null;
   shippingAddress: {
@@ -135,7 +137,6 @@ export type OrderCompanyData = {
   country?: string;
 };
 
-/** One product row on the business transaction receipt. */
 export type ReceiptLineItem = {
   name: string;
   /** Venue for an in-person (public or private) class; omitted for every other modality. */
@@ -148,15 +149,6 @@ export type ReceiptLineItem = {
   subtotal: string;
 };
 
-/**
- * Everything the business transaction receipt PDF renders. Assembled once by
- * `buildBusinessReceiptData` so the document component stays free of lookups and can be
- * rendered from the confirmation screen, order history, or a test with the same shape.
- *
- * Optional members are the ones with no source yet: PO number and customer order
- * reference are not persisted onto the order, and the tax / Intacct identifiers are not
- * in the account payload. Each row is hidden when its value is absent.
- */
 export type BusinessReceiptData = {
   orderNumber: string;
   orderDate: string;
@@ -179,11 +171,6 @@ export type BusinessReceiptData = {
 
 export type BusinessReceiptLabels = {
   documentTitle?: string;
-  /**
-   * The confirmation band under the title. PascalCase because
-   * `parseFieldsFromURLString` reads the authored keys verbatim, and this one is
-   * authored as `ReceiptConfirmText` in "labels, tooltips and more".
-   */
   ReceiptConfirmText?: string;
   orderNumberLabel?: string;
   orderDateLabel?: string;

@@ -71,6 +71,8 @@ export enum BUSINESS_PAYMENT_METHODS {
   PREPAID_ACCOUNT = 'prepaid-account',
 }
 
+export type CheckoutPaymentMethod = PAYMENT_METHODS | BUSINESS_PAYMENT_METHODS;
+
 export const isBusinessAccountPaymentMethod = (
   method?: string
 ): method is BUSINESS_PAYMENT_METHODS =>

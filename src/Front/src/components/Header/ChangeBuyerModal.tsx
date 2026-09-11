@@ -27,7 +27,6 @@ const ChangeBuyerModal = ({ onSignOutStarted }: ChangeBuyerModalProps) => {
     sessionStorage.removeItem(SESSION_STORAGE_KEYS.SESSION_ACTIVE);
     localStorage.removeItem(SESSION_LOCALSTORAGE_KEYS.LAST_ACTIVITY);
 
-    // Full navigation so the Salesforce IdP redirect is followed (router.push soft-navigates).
     window.location.assign('/api/auth/federated-sign-out');
   }, [onSignOutStarted]);
 
@@ -38,7 +37,6 @@ const ChangeBuyerModal = ({ onSignOutStarted }: ChangeBuyerModalProps) => {
           <h4 className="headline-s font-normal">{TITLE}</h4>
           <p className="body-l">{DESCRIPTION}</p>
 
-          {/* Match Choose Buyer: Cancel (text) then primary CTA, gap-x-6; left-aligned per QA */}
           <div className="flex justify-start items-center gap-x-6 !mt-8">
             <button
               type="button"

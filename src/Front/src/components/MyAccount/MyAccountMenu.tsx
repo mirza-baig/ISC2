@@ -5,10 +5,12 @@ import { Link, Field } from '@sitecore-jss/sitecore-jss-nextjs';
 
 import { useHeaderNavigation, useShopperContext } from 'providers/index';
 import { useModal } from 'providers/modal';
+import { useFeatureFlag } from 'providers/featureFlags';
 import { parseFieldsFromURLString } from 'utils/index';
 import { ChevronRightIcon } from 'icons/index';
 import { useLoggedUser } from 'hooks/index';
 import { LoadingIndicator } from 'ui/index';
+import { B2B_FEATURE_FLAG } from 'constants/index';
 import { SESSION_STORAGE_KEYS, SESSION_LOCALSTORAGE_KEYS } from 'constants/sessionTimeout';
 import ChangeBuyerModal, { LOG_OUT_CHANGE_BUYER_LABEL } from 'components/Header/ChangeBuyerModal';
 
@@ -30,12 +32,14 @@ const MyAccountMenu = ({ fields }: MyAccountMenuProps) => {
   const { isUserLoggedIn, isB2BAdminUser } = useLoggedUser();
   const { shopperContext } = useShopperContext();
   const { setModalContent } = useModal();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   const [isUserSigningOut, setIsUserSigningOut] = useState<boolean>(false);
 
   const labels = parseFieldsFromURLString<{ signOutLabel: string }>(
     fields?.props?.profileSummaryDataSource?.fields?.labelsTitlesAndMore
   );
-  const showChangeBuyerLogout = isB2BAdminUser && shopperContext?.type === 'organization';
+  const showChangeBuyerLogout =
+    isB2BFeatureEnabled && isB2BAdminUser && shopperContext?.type === 'organization';
   const signOutLabel = showChangeBuyerLogout ? LOG_OUT_CHANGE_BUYER_LABEL : labels?.signOutLabel;
 
   const onSignOut = useCallback(() => {

@@ -2,9 +2,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
 import { useCart, useUserSession } from 'providers/index';
-import { getServiceLayerAPI } from 'utils/index';
 import { QUERY_KEYS } from 'constants/index';
-import { UpdateCartResponse } from 'types/index';
+
+import useAuthorizedBuyerPricingVoucher from './useAuthorizedBuyerPricingVoucher';
+import postCartUpdate from './postCartUpdate';
 
 type RecalculateCartPayload = {
   cartId?: string;
@@ -14,6 +15,7 @@ export default function useRecalculateCart() {
   const queryClient = useQueryClient();
   const { setCartId, userCountry } = useUserSession();
   const { activeCart } = useCart();
+  const { voucher: authorizedBuyerPricingVoucher } = useAuthorizedBuyerPricingVoucher();
 
   const { mutate, mutateAsync, isPending, error, isSuccess } = useMutation({
     mutationFn: async (payload?: RecalculateCartPayload) => {
@@ -27,22 +29,17 @@ export default function useRecalculateCart() {
         throw 'User does not have a CartID set';
       }
 
-      const api = await getServiceLayerAPI();
-
-      const { data } = await api.post<UpdateCartResponse>('', {
-        query: 'UPDATE_CART',
-        variables: {
+      return postCartUpdate(
+        {
           cartId: cartIdForRecalculation,
           country: userCountry,
           actions: [{ recalculate: {} }],
+          authorizedBuyerPricingVoucher,
         },
-      });
-
-      if ((data.errors || []).length) {
-        throw data.errors;
-      }
-
-      return data.data.isc2CartUpdate;
+        (errors) => {
+          throw errors;
+        }
+      );
     },
     onSuccess: (updatedCart) => {
       if (!updatedCart || activeCart.computed.isB2B) {

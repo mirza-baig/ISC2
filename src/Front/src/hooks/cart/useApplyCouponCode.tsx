@@ -6,6 +6,7 @@ import { QUERY_KEYS } from 'constants/index';
 import { ServiceLayerError, UpdateCartResponse } from 'types/index';
 
 import useCreateCart from './useCreateCart';
+import useAuthorizedBuyerPricingVoucher from './useAuthorizedBuyerPricingVoucher';
 
 type ApplyCouponCodeProps = {
   discountCode: string;
@@ -15,6 +16,7 @@ export default function useApplyCouponCode() {
   const queryClient = useQueryClient();
   const { cartId, setCartId } = useUserSession();
   const { createCartAsync } = useCreateCart();
+  const { voucher: authorizedBuyerPricingVoucher } = useAuthorizedBuyerPricingVoucher();
 
   const { mutate, isPending, error, isSuccess } = useMutation({
     mutationFn: async ({ discountCode }: ApplyCouponCodeProps) => {
@@ -41,6 +43,7 @@ export default function useApplyCouponCode() {
               },
             },
           ],
+          authorizedBuyerPricingVoucher,
         },
       });
 

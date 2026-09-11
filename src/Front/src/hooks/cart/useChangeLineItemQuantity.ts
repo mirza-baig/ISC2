@@ -5,6 +5,8 @@ import { getServiceLayerAPI, isBundleLineItem } from 'utils/index';
 import { QUERY_KEYS } from 'constants/queryKeys';
 import { Cart, CartLineItem, MutationCallbacks, UpdateCartResponse } from 'types/index';
 
+import useAuthorizedBuyerPricingVoucher from './useAuthorizedBuyerPricingVoucher';
+
 const MUTATION_KEY = 'B2B_CHANGE_LINE_ITEM_QUANTITY';
 
 type ChangeLineItemQuantityProps = {
@@ -28,6 +30,7 @@ const getActions = ({ lineItem, quantity }: ChangeLineItemQuantityProps) => {
 export default function useChangeLineItemQuantity(callbacks?: MutationCallbacks<Cart>) {
   const { cartId, setCartId, userCountry } = useUserSession();
   const queryClient = useQueryClient();
+  const { voucher: authorizedBuyerPricingVoucher } = useAuthorizedBuyerPricingVoucher();
 
   const { mutate, mutateAsync, isPending, error, isSuccess } = useMutation({
     mutationKey: [MUTATION_KEY],
@@ -40,6 +43,7 @@ export default function useChangeLineItemQuantity(callbacks?: MutationCallbacks<
           cartId,
           country: userCountry,
           actions: getActions(payload),
+          authorizedBuyerPricingVoucher,
         },
       });
 

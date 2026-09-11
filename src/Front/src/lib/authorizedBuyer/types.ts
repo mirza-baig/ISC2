@@ -29,10 +29,15 @@ export type AuthorizedBuyerPrepaid = {
   discountPercentage?: number | null;
 };
 
+export type AuthorizedBuyerCategoryPricing = {
+  productCategory: string;
+  discountTier: string;
+  discountPercent: number;
+};
+
 export type AuthorizedBuyerAccount = {
   accountId: string;
   accountName: string;
-  accountOwnerEmail?: string;
   accountType: string;
   currency: string;
   pricingTier: string;

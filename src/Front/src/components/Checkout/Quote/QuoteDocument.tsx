@@ -4,7 +4,6 @@ import { QuoteDocumentData, QuoteDocumentLabels } from 'types/index';
 import { QUOTE_DOCUMENT_DEFAULT_LABELS } from 'constants/index';
 
 import { Isc2LogoPdf } from './Isc2LogoPdf';
-const DISCLAIMER_LINK_URL = 'https://www.isc2.org/policies-procedures/terms-conditions';
 
 const COLORS = {
   green: '#468145',
@@ -75,6 +74,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLORS.rule,
   },
+  lineItemGroup: {},
+  childRow: {
+    flexDirection: 'row',
+    paddingVertical: 3,
+    paddingLeft: 12,
+  },
+  childBullet: { fontSize: 8, color: COLORS.muted, marginRight: 4 },
+  childName: { fontSize: 8, color: COLORS.muted, flex: 1 },
   headCell: { fontSize: 7, color: COLORS.ink, textTransform: 'uppercase', letterSpacing: 0.6 },
   colProduct: { flex: 3 },
   colQty: { width: 30, textAlign: 'center' },
@@ -125,16 +132,6 @@ export type QuoteDocumentProps = {
   labels?: QuoteDocumentLabels;
 };
 
-/**
- * The eCommerce quote PDF, generated client-side from the live cart at checkout's
- * Payment Information step. Replaces the Salesforce CPQ quote look for the eCommerce
- * flow — no quote number, no expiration date (MVP carts are real-time), no "group"
- * labels; totals read Quote Subtotal / Tax Total / Quote Total, all amounts carry an
- * explicit currency-code prefix (e.g. "USD 762.38").
- *
- * Pure presentation: every value arrives already formatted from `buildQuoteData`, so
- * this renders the same way from checkout or a test.
- */
 export const QuoteDocument = ({ data, labels }: QuoteDocumentProps) => {
   const label = <TKey extends keyof typeof QUOTE_DOCUMENT_DEFAULT_LABELS>(key: TKey): string =>
     labels?.[key as keyof QuoteDocumentLabels] || QUOTE_DOCUMENT_DEFAULT_LABELS[key];
@@ -193,15 +190,24 @@ export const QuoteDocument = ({ data, labels }: QuoteDocumentProps) => {
           </View>
 
           {data.lineItems.map((lineItem, index) => (
-            <View key={`${lineItem.name}-${index}`} style={styles.tableRow} wrap={false}>
-              <Text style={[styles.productName, styles.colProduct]}>{lineItem.name}</Text>
-              <Text style={styles.colQty}>{lineItem.quantity}</Text>
-              <Text style={[styles.colMoney, ...(lineItem.hasDiscount ? [styles.strike] : [])]}>
-                {lineItem.listPrice}
-              </Text>
-              <Text style={styles.colMoney}>{lineItem.discountedPrice}</Text>
-              <Text style={styles.colMoney}>{lineItem.tax}</Text>
-              <Text style={styles.colMoneyWide}>{lineItem.subtotal}</Text>
+            <View key={`${lineItem.name}-${index}`} style={styles.lineItemGroup} wrap={false}>
+              <View style={styles.tableRow}>
+                <Text style={[styles.productName, styles.colProduct]}>{lineItem.name}</Text>
+                <Text style={styles.colQty}>{lineItem.quantity}</Text>
+                <Text style={[styles.colMoney, ...(lineItem.hasDiscount ? [styles.strike] : [])]}>
+                  {lineItem.listPrice}
+                </Text>
+                <Text style={styles.colMoney}>{lineItem.discountedPrice}</Text>
+                <Text style={styles.colMoney}>{lineItem.tax}</Text>
+                <Text style={styles.colMoneyWide}>{lineItem.subtotal}</Text>
+              </View>
+
+              {lineItem.children?.map((child) => (
+                <View key={child.sku} style={styles.childRow}>
+                  <Text style={styles.childBullet}>•</Text>
+                  <Text style={styles.childName}>{child.name}</Text>
+                </View>
+              ))}
             </View>
           ))}
         </View>
@@ -222,7 +228,7 @@ export const QuoteDocument = ({ data, labels }: QuoteDocumentProps) => {
         </View>
 
         {Boolean(label('disclaimerText')) && (
-          <Link src={DISCLAIMER_LINK_URL} style={styles.disclaimer}>
+          <Link src={label('disclaimerLinkUrl')} style={styles.disclaimer}>
             {label('disclaimerText')}
           </Link>
         )}
