@@ -55,6 +55,7 @@ const LeadershipCardModal = ({ className, socialProfileLinks, fields }: Leadersh
 
                     return (
                       <Link
+                        prefetch={false}
                         key={link.fields.ctaLink.value.href}
                         field={{
                           value: {

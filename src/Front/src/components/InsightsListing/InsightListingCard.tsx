@@ -50,6 +50,7 @@ export default function InsightListingCard({
         <Text tag="h5" className="text-2xl line-clamp-2" field={heading} />
         {Boolean(link?.value?.href) && (
           <Link
+            prefetch={false}
             onClick={() => {
               track({
                 event: ANALYTICS_EVENTS.GA_EVENT,

@@ -182,6 +182,7 @@ const ContentComponent = (props: ContentComponentProps) => {
 
           return (
             <Link
+              prefetch={false}
               key={index}
               onClick={() => trackCardClicked(card)}
               field={card.fields.primaryCta}

@@ -52,6 +52,7 @@ function LogoGrid({ fields }: LogoGridProps) {
 
           return (
             <Link
+              prefetch={false}
               key={logo.fields.logoImage.value?.src}
               field={logo.fields.logoLink}
               className={LOGO_CLASS}

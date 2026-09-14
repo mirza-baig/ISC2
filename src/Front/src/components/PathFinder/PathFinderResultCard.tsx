@@ -54,6 +54,7 @@ const PathFinderResultCard = forwardRef<HTMLAnchorElement, PathFinderResultCardP
           )}
           {hasLink && (
             <Link
+              prefetch={false}
               className="cta mt-4 md:mt-0 focus-underline-dark-green with-chevron"
               field={fields.link!}
             />

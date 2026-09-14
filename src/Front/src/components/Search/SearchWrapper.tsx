@@ -1175,6 +1175,7 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
       {typeof window !== 'undefined' && window.location.pathname.toLowerCase() === '/insights' && (
         <div className="sm:px-8 lg:pl-16 lg:pr-40 text-right relative">
           <Link
+            prefetch={false}
             href="/api/rss/insights"
             target="_blank"
             className="inline-block absolute -top-10 right-6 sm:top-[-40px] sm:right-[24px]"

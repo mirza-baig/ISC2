@@ -233,6 +233,7 @@ const Slider = ({
             )}
             {linkCta?.value?.text && linkCta?.value?.href && (
               <Link
+                prefetch={false}
                 className="cta mt-4 sm:mt-0 focus-underline-lime key-focus with-chevron border-b-2 border-transparent hover:border-darker-green pb-1"
                 field={linkCta}
                 onClick={trackCardClick}

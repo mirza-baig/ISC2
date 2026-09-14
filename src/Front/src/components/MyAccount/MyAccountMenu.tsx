@@ -75,6 +75,7 @@ const MyAccountMenu = ({ fields }: MyAccountMenuProps) => {
             )}
           >
             <Link
+              prefetch={false}
               key={item.id}
               field={item?.fields?.link?.value}
               className={clsx(

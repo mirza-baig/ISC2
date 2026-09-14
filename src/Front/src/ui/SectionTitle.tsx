@@ -40,6 +40,7 @@ const SectionTitle = ({ title, subtitle, link, className, isLoading }: SectionTi
           {Boolean(subtitle?.value) && <RichTextUI value={subtitle?.value} />}
           {Boolean(link?.value?.href) && (
             <Link
+              prefetch={false}
               field={link!}
               className="cta focus-underline-dark-green key-focus whitespace-nowrap with-chevron border-b-2 border-transparent hover:border-darker-green pb-1"
             />
