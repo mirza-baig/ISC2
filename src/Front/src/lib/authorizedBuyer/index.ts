@@ -50,6 +50,7 @@ export type { LiveAccountContactRelation } from './mapFromAccountContactRelation
 export type { AccountContactRelation } from './accountContactRelations';
 export {
   AUTHORIZED_BUYER_ROLE,
+  findAccountOwnerEmail,
   findAuthorizedBuyerRelations,
   isAuthorizedBuyer,
   parseRoles,

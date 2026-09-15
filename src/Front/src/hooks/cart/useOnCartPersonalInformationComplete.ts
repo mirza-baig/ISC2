@@ -16,6 +16,8 @@ import useIsCpqStyleCheckout from './useIsCpqStyleCheckout';
 import useIsBusinessBuyer from './useIsBusinessBuyer';
 import useGetPaymentIntent from '../checkout/useGetPaymentIntent';
 import useEnsureBusinessCartTax from '../checkout/useEnsureBusinessCartTax';
+import useSetCartAccountOwnerEmail from './useSetCartAccountOwnerEmail';
+import useAuthorizedBuyer from '../user/useAuthorizedBuyer';
 
 const getFieldsForUserUpdate = (data?: PersonalInformation) => {
   if (!data) {
@@ -42,6 +44,8 @@ export default function useOnCartPersonalInformationComplete(payload: MutationPa
   const isBusinessBuyer = useIsBusinessBuyer();
   const { setActiveStep, setErrorState, setHasInventoryError } = useCheckoutProcess();
 
+  const { accountOwnerEmail } = useAuthorizedBuyer();
+  const { setCartAccountOwnerEmailAsync } = useSetCartAccountOwnerEmail();
   const { setCartAddressAsync } = useSetCartAddress({ onError: setErrorState });
   const { updateUserAsync } = useUpdateUserData({ onError: setErrorState });
   const { setTaxesAsync } = useUpdateTax();
@@ -58,6 +62,14 @@ export default function useOnCartPersonalInformationComplete(payload: MutationPa
       const newUserData = getFieldsForUserUpdate(data);
 
       const personalInformationChanged = !isEqual(oldUserData, newUserData);
+
+      if (isBusinessBuyer && accountOwnerEmail) {
+        try {
+          await setCartAccountOwnerEmailAsync({ accountOwnerEmail });
+        } catch (error) {
+          console.error('[ACCOUNT-OWNER-EMAIL] Could not write the owner onto the cart', error);
+        }
+      }
 
       if (isCpqStyleCheckout) {
         if (personalInformationChanged) {

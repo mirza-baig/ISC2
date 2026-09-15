@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useShopperContext } from 'providers/index';
 import {
+  findAccountOwnerEmail,
   isAuthorizedBuyer as matchAuthorizedBuyer,
   toAccountContactRelations,
   type AccountContactRelation,
@@ -24,6 +25,8 @@ export type AuthorizedBuyerState = {
   isAuthorizedBuyer: boolean;
   isResolvingAuthorizedBuyer: boolean;
   relations: AccountContactRelation[];
+  /** Owner of the selected account, for the confirmation-email BCC. Absent when it has none. */
+  accountOwnerEmail?: string;
 };
 
 export type AuthorizedBuyerOptions = {
@@ -67,9 +70,15 @@ export default function useAuthorizedBuyer({
     [relations, selectedAccountId]
   );
 
+  const accountOwnerEmail = useMemo(
+    () => findAccountOwnerEmail(relations, selectedAccountId),
+    [relations, selectedAccountId]
+  );
+
   return {
     isAuthorizedBuyer: hasRole,
     isResolvingAuthorizedBuyer: isQueryEnabled && isLoading,
     relations,
+    accountOwnerEmail,
   };
 }
