@@ -175,6 +175,7 @@ export const authOptions = (req) => ({
     SalesforceProvider({
       clientId: process.env.SALESFORCE_ID || '',
       clientSecret: process.env.SALESFORCE_SECRET || '',
+      client: { token_endpoint_auth_method: 'client_secret_post' },
       wellKnown: process.env.SALESFORCE_AUTHURL
         ? process.env.SALESFORCE_AUTHURL + '/.well-known/openid-configuration'
         : '',
