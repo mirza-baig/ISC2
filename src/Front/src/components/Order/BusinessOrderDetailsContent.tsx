@@ -12,6 +12,7 @@ import {
   formatDate,
   parseFieldsFromURLString,
   parsePrice,
+  readCheckoutBillingAddress,
   resolveBusinessPaymentMethod,
   toReceiptPlainText,
 } from 'utils/index';
@@ -162,6 +163,7 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
       buyerName: user?.fullName || [user?.firstName, user?.lastName].filter(Boolean).join(' '),
       organizationName: shopperContext?.organization?.name,
       paymentMethod: paymentMethodName,
+      enteredBillingAddress: readCheckoutBillingAddress(),
     });
 
     downloadReceipt({ data: receiptData, labels: receiptLabels });

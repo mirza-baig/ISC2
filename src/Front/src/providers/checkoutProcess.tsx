@@ -4,21 +4,33 @@ import {
   CHECKOUT_STEPS,
   type CheckoutPaymentMethod,
 } from 'constants/checkout';
-import { createContext, Dispatch, SetStateAction, useContext, useMemo, useState } from 'react';
+import {
+  createContext,
+  Dispatch,
+  MutableRefObject,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
-import { useIsBusinessBuyer } from 'hooks/index';
+import { useIsBusinessBuyer, useLoggedUser } from 'hooks/index';
 
 import {
   CheckoutFields,
   CheckoutStep,
   ErrorLabels,
+  PersonalInformation,
   QuoteDocumentLabels,
   ServiceLayerError,
   StepOneLabels,
   StepTwoLabels,
   TaxErrorPopupLabels,
 } from 'types/index';
-import { parseFieldsFromURLString } from 'utils/index';
+import { parseFieldsFromURLString, storeCheckoutBillingAddress } from 'utils/index';
 
 type CheckoutContextProps = {
   fields: CheckoutFields;
@@ -40,6 +52,12 @@ type CheckoutContextProps = {
   setHasInventoryError: Dispatch<SetStateAction<boolean>>;
   selectedPaymentMethod?: CheckoutPaymentMethod;
   setSelectedPaymentMethod: Dispatch<SetStateAction<CheckoutPaymentMethod | undefined>>;
+  /** Step one data, completed or seeded from the profile. Lives here so it outlives a
+   * remount of the step components (a refreshed payment intent re-keys their providers). */
+  personalInformation?: PersonalInformation;
+  setPersonalInformation: (data: PersonalInformation) => void;
+  /** Values typed into step one but not submitted yet, snapshotted on unmount. */
+  personalInformationDraft: MutableRefObject<PersonalInformation | undefined>;
 };
 
 const CheckoutProcessContext = createContext<CheckoutContextProps>({
@@ -62,6 +80,9 @@ const CheckoutProcessContext = createContext<CheckoutContextProps>({
   setHasInventoryError: () => {},
   selectedPaymentMethod: undefined,
   setSelectedPaymentMethod: () => {},
+  personalInformation: undefined,
+  setPersonalInformation: () => {},
+  personalInformationDraft: { current: undefined },
 });
 
 type CheckoutProcessProviderProps = {
@@ -71,6 +92,7 @@ type CheckoutProcessProviderProps = {
 
 const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ fields, children }) => {
   const isBusinessBuyer = useIsBusinessBuyer();
+  const { userPersonalInformation } = useLoggedUser();
 
   const [taxErrorLabels, setTaxErrorLabels] = useState<TaxErrorPopupLabels>({
     heading: null,
@@ -115,6 +137,28 @@ const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ field
 
   const [activeStep, setActiveStep] = useState<CheckoutStep['id']>(checkoutSteps[0].id);
   const [errorState, setErrorState] = useState<ServiceLayerError[] | null>(null);
+  const [personalInformation, setPersonalInformationState] = useState<
+    PersonalInformation | undefined
+  >(userPersonalInformation);
+  const personalInformationDraft = useRef<PersonalInformation | undefined>(undefined);
+
+  // The profile lands after this provider mounts, so seed step one when it arrives — but
+  // never overwrite information the buyer has already gone through the step with.
+  useEffect(() => {
+    if (!userPersonalInformation) {
+      return;
+    }
+
+    setPersonalInformationState((current) => current ?? userPersonalInformation);
+  }, [userPersonalInformation]);
+
+  const setPersonalInformation = useCallback((data: PersonalInformation) => {
+    personalInformationDraft.current = data;
+    setPersonalInformationState(data);
+    // Kept for the confirmation screen: the receipt falls back to it when the order comes
+    // back from commercetools without an address.
+    storeCheckoutBillingAddress(data.billingAddress);
+  }, []);
   const [hasPaymentError, setHasPaymentError] = useState<boolean>(false);
   const [hasInventoryError, setHasInventoryError] = useState<boolean>(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
@@ -143,6 +187,9 @@ const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ field
         setHasInventoryError,
         selectedPaymentMethod,
         setSelectedPaymentMethod,
+        personalInformation,
+        setPersonalInformation,
+        personalInformationDraft,
       }}
     >
       {children}

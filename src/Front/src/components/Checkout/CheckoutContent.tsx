@@ -41,8 +41,6 @@ import CheckoutTitle from './CheckoutTitle';
 import CheckoutStepsIndicator from './CheckoutStepsIndicator';
 import CheckoutError from './CheckoutError';
 import { TaxErrorModal } from './TaxErrorModal';
-import PaypalProvider from './PaymentProviders/Paypal';
-import StripeProvider from './PaymentProviders/Stripe';
 import {
   useAnalyticsItems,
   addComputedFieldsToLineItems,
@@ -390,13 +388,7 @@ export default function CheckoutContent({ algoliaSettings, rendering }: Checkout
             !getCartSuccess ||
             (!paymentIntent && !isFreeOrder && <LoadingIndicator className="self-center" />)}
 
-          {user && activeCart.totalPrice && (paymentIntent || isFreeOrder) && (
-            <PaypalProvider>
-              <StripeProvider>
-                <CheckoutProcess />
-              </StripeProvider>
-            </PaypalProvider>
-          )}
+          {user && activeCart.totalPrice && (paymentIntent || isFreeOrder) && <CheckoutProcess />}
         </div>
 
         <LineItemsProvider algoliaSettings={algoliaSettings!}>

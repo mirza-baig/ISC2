@@ -40,7 +40,7 @@ type FormProps = {
 
 export default function PersonalInformationForm({ initialData, onStepComplete }: FormProps) {
   const { user } = useLoggedUser();
-  const { stepOneLabels, fields } = useCheckoutProcess();
+  const { stepOneLabels, fields, personalInformationDraft } = useCheckoutProcess();
   const { activeCart } = useCart();
   const isCpqStyleCheckout = useIsCpqStyleCheckout();
   const isBusinessBuyer = useIsBusinessBuyer();
@@ -88,9 +88,19 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
   } = useConditionalForm<PersonalInformation>({
     mode: 'onSubmit',
     conditions: FORM_CONDITIONS,
-    defaultValues: initialData,
+    // A draft is only present when this step was remounted (a cart refetch, or a payment
+    // intent refresh re-keying the providers above). Restoring it keeps everything the
+    // buyer typed — PO number, order reference, billing address — through that remount.
+    defaultValues: personalInformationDraft.current ?? initialData,
     resolver: zodResolver(PersonalInformationSchema),
   });
+
+  useEffect(
+    () => () => {
+      personalInformationDraft.current = getValues();
+    },
+    [getValues, personalInformationDraft]
+  );
 
   const isSameAddress = watch('isSameAddress');
   const billingCountry = watch('billingAddress.countryCode') ?? '';

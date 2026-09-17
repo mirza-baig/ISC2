@@ -8,7 +8,7 @@ import {
   TypedMoney,
   UserAddress,
 } from 'types/index';
-import { IN_PERSON_MODALITIES } from 'constants/index';
+import { IN_PERSON_MODALITIES, LOCALSTORAGE_KEYS } from 'constants/index';
 
 import { getVariantAttributes } from './cart';
 import { parsePrice } from './price';
@@ -29,6 +29,38 @@ type BuildReceiptInput = {
   taxIdNumber?: string;
   intacctCustomerId?: string;
   paymentMethod?: string;
+  /** What the buyer typed under Billing Address in checkout, read back from storage. */
+  enteredBillingAddress?: Partial<UserAddress>;
+};
+
+/**
+ * The billing address the buyer entered in checkout, kept so the receipt can still print a
+ * Bill To block when commercetools returns the order without one.
+ */
+export const storeCheckoutBillingAddress = (address?: Partial<UserAddress>) => {
+  if (typeof window === 'undefined' || !address?.street) {
+    return;
+  }
+
+  try {
+    localStorage.setItem(LOCALSTORAGE_KEYS.CHECKOUT_BILLING_ADDRESS, JSON.stringify(address));
+  } catch {
+    /* a full or blocked store just means the order address is the only source */
+  }
+};
+
+export const readCheckoutBillingAddress = (): Partial<UserAddress> | undefined => {
+  if (typeof window === 'undefined') {
+    return undefined;
+  }
+
+  try {
+    const stored = localStorage.getItem(LOCALSTORAGE_KEYS.CHECKOUT_BILLING_ADDRESS);
+
+    return stored ? (JSON.parse(stored) as Partial<UserAddress>) : undefined;
+  } catch {
+    return undefined;
+  }
 };
 
 const resolveLocation = (attributes: Record<string, string>): string | undefined => {
@@ -104,7 +136,7 @@ const flattenLineItems = (lineItems: CartLineItem[]): CartLineItem[] =>
   );
 
 const customField = (order: OrderWithComputedData, name: string): string | undefined =>
-  order.custom?.customFieldsRaw?.[name] || undefined;
+  order.custom?.customFieldsRaw?.find((field) => field.name === name)?.value || undefined;
 
 export const buildBusinessReceiptData = ({
   order,
@@ -114,16 +146,23 @@ export const buildBusinessReceiptData = ({
   taxIdNumber,
   intacctCustomerId,
   paymentMethod,
+  enteredBillingAddress,
 }: BuildReceiptInput): BusinessReceiptData => {
   const currencySymbol = order.computed.currencySymbol;
   const address = order.shippingAddress;
 
-  const billingAddressLines = [
+  const orderAddressLines = [
     [address?.streetNumber, address?.streetName].filter(Boolean).join(' '),
     address?.apartment,
     [address?.city, address?.state, address?.postalCode].filter(Boolean).join(', '),
     address?.country,
   ].filter((line) => Boolean(line && line.trim()));
+
+  // "Bill To" is what the buyer entered in checkout to match the card being used. The order
+  // only carries a shipping address — the business account's own — so it stands in when the
+  // entered one is not at hand (a different browser, or storage the viewer has cleared).
+  const enteredAddressLines = addressLines(enteredBillingAddress);
+  const billingAddressLines = enteredAddressLines.length ? enteredAddressLines : orderAddressLines;
 
   return {
     orderNumber: order.orderNumber,
@@ -148,7 +187,7 @@ export const buildBusinessReceiptData = ({
   };
 };
 
-const addressLines = (address?: UserAddress): string[] =>
+const addressLines = (address?: Partial<UserAddress>): string[] =>
   [
     address?.street,
     address?.streetTwo,

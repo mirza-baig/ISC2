@@ -31,7 +31,7 @@ export default function useGetPaymentIntent() {
   const { isFreeOrder } = useCart();
   const { setErrorState } = useCheckoutProcess();
 
-  const { isPending, mutate, mutateAsync, data, isSuccess, error } = useCustomMutation<
+  const { isPending, mutate, mutateAsync, data, error } = useCustomMutation<
     PaymentIntent,
     Error,
     MutationPayload
@@ -212,11 +212,16 @@ export default function useGetPaymentIntent() {
     }
   }, [error]);
 
+  // Gate on the cached intent rather than on the mutation's success flag: that flag drops
+  // back to false while a refreshed intent is in flight, which flipped these two mid-checkout
+  // and made the payment providers mount and unmount around the checkout steps.
+  const hasPaymentIntent = Boolean(data);
+
   return {
     getPaymentIntent: isFreeOrder ? () => null : mutate,
     getPaymentIntentAsync: isFreeOrder ? async () => undefined : mutateAsync,
-    isStripeInfoIncomplete: isSuccess && isStripeInfoIncomplete,
-    isPaypalInfoIncomplete: isSuccess && isPaypalInfoIncomplete,
+    isStripeInfoIncomplete: hasPaymentIntent && isStripeInfoIncomplete,
+    isPaypalInfoIncomplete: hasPaymentIntent && isPaypalInfoIncomplete,
     paymentIntent: data,
     paymentIntentError: error,
     isGettingPaymentIntent: isPending,
