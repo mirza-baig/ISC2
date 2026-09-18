@@ -29,14 +29,9 @@ type BuildReceiptInput = {
   taxIdNumber?: string;
   intacctCustomerId?: string;
   paymentMethod?: string;
-  /** What the buyer typed under Billing Address in checkout, read back from storage. */
   enteredBillingAddress?: Partial<UserAddress>;
 };
 
-/**
- * The billing address the buyer entered in checkout, kept so the receipt can still print a
- * Bill To block when commercetools returns the order without one.
- */
 export const storeCheckoutBillingAddress = (address?: Partial<UserAddress>) => {
   if (typeof window === 'undefined' || !address?.street) {
     return;
@@ -44,9 +39,7 @@ export const storeCheckoutBillingAddress = (address?: Partial<UserAddress>) => {
 
   try {
     localStorage.setItem(LOCALSTORAGE_KEYS.CHECKOUT_BILLING_ADDRESS, JSON.stringify(address));
-  } catch {
-    /* a full or blocked store just means the order address is the only source */
-  }
+  } catch {}
 };
 
 export const readCheckoutBillingAddress = (): Partial<UserAddress> | undefined => {
@@ -136,7 +129,7 @@ const flattenLineItems = (lineItems: CartLineItem[]): CartLineItem[] =>
   );
 
 const customField = (order: OrderWithComputedData, name: string): string | undefined =>
-  order.custom?.customFieldsRaw?.find((field) => field.name === name)?.value || undefined;
+  order.custom?.customFieldsRaw?.[name] || undefined;
 
 export const buildBusinessReceiptData = ({
   order,
@@ -157,10 +150,6 @@ export const buildBusinessReceiptData = ({
     [address?.city, address?.state, address?.postalCode].filter(Boolean).join(', '),
     address?.country,
   ].filter((line) => Boolean(line && line.trim()));
-
-  // "Bill To" is what the buyer entered in checkout to match the card being used. The order
-  // only carries a shipping address — the business account's own — so it stands in when the
-  // entered one is not at hand (a different browser, or storage the viewer has cleared).
   const enteredAddressLines = addressLines(enteredBillingAddress);
   const billingAddressLines = enteredAddressLines.length ? enteredAddressLines : orderAddressLines;
 

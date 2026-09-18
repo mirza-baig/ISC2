@@ -10,8 +10,15 @@ import {
   getComputedFieldsFromCart,
   removeBundleDiscountCodes,
 } from 'utils/index';
+import { isCartContextEnabled } from 'utils/cartIdStore';
 import useLoggedUser from 'hooks/useLoggedUser';
-import { useUserSession } from 'providers/index';
+import { useUserSession, useShopperContext } from 'providers/index';
+
+type ShopperContextPayload = {
+  type: 'myself' | 'organization';
+  businessAccountId?: string;
+  businessAccountName?: string;
+};
 
 type GetCartPayload = {
   enabled: boolean;
@@ -27,27 +34,42 @@ const formatPayload = ({
   userEmailAddress,
   externalID,
   country,
+  shopperContext,
 }: {
   payload: Omit<GetCartPayload, 'enabled'>;
   userEmailAddress?: string;
   externalID?: string;
   country?: string;
+  shopperContext?: ShopperContextPayload;
 }) => {
   const { includeUserEmail, ...cartPayload } = payload;
+  const context = shopperContext ? { shopperContext } : {};
 
   if (includeUserEmail && userEmailAddress && externalID) {
-    return { ...cartPayload, userEmailAddress, userExternalId: externalID, country };
+    return { ...cartPayload, ...context, userEmailAddress, userExternalId: externalID, country };
   }
 
-  return cartPayload;
+  return { ...cartPayload, ...context };
 };
 
 export default function useGetCart({ enabled, onSuccess, ...payload }: GetCartPayload) {
   const { externalID, email, isGettingUser } = useLoggedUser();
   const { userCountry } = useUserSession();
+  const { shopperContext: selection } = useShopperContext();
+
+  const shopperContext: ShopperContextPayload | undefined =
+    selection && isCartContextEnabled()
+      ? {
+          type: selection.type,
+          businessAccountId: selection.organization?.id,
+          businessAccountName: selection.organization?.name,
+        }
+      : undefined;
+
+  const contextKey = shopperContext?.businessAccountId || shopperContext?.type || '';
 
   const { data, isLoading, error, refetch, isSuccess } = useQuery<Cart>({
-    queryKey: [QUERY_KEYS.ACTIVE_CART, payload.cartID],
+    queryKey: [QUERY_KEYS.ACTIVE_CART, payload.cartID || contextKey],
     queryFn: async () => {
       const api = await getServiceLayerAPI();
 
@@ -59,6 +81,7 @@ export default function useGetCart({ enabled, onSuccess, ...payload }: GetCartPa
             userEmailAddress: email,
             externalID,
             country: userCountry,
+            shopperContext,
           }),
         },
       });

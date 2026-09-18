@@ -4,6 +4,7 @@ export const LOCALSTORAGE_KEYS = {
   REFRESH_TOKEN: 'refresh-token-isc2',
   ANONYMOUS_ID: 'anonymous-id-isc2',
   ACTIVE_CART_ID: 'active-cart-id-isc2',
+  ACTIVE_CART_IDS: 'active-cart-ids-isc2',
   CURRENCIES: 'currencies-isc2',
   USER_SESSION: 'user-session-isc2',
   USER_CURRENCY: 'user-currency-isc2',

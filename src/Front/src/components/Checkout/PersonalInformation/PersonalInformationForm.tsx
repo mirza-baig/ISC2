@@ -88,9 +88,6 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
   } = useConditionalForm<PersonalInformation>({
     mode: 'onSubmit',
     conditions: FORM_CONDITIONS,
-    // A draft is only present when this step was remounted (a cart refetch, or a payment
-    // intent refresh re-keying the providers above). Restoring it keeps everything the
-    // buyer typed — PO number, order reference, billing address — through that remount.
     defaultValues: personalInformationDraft.current ?? initialData,
     resolver: zodResolver(PersonalInformationSchema),
   });

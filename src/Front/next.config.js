@@ -29,7 +29,10 @@ const nextConfig = {
     // prefixed path e.g. `/styleguide`.
     defaultLocale: jssConfig.defaultLanguage,
   },
-
+  serverExternalPackages: ['@react-pdf/renderer', 'pdfkit'],
+  outputFileTracingIncludes: {
+    '/api/**/*': ['./node_modules/pdfkit/js/standard-fonts/**'],
+  },
   // Enable React Strict Mode
   reactStrictMode: true,
 

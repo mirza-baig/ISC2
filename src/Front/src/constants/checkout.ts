@@ -96,4 +96,5 @@ export const BUSINESS_STEP_TWO_DEFAULT_LABELS = {
   prepaidAmountDueLabel: 'Amount due with prepaid',
   staleBusinessPaymentMessage:
     'This payment method is no longer available. Please choose another payment method and try again.',
+  incompletePaymentMessage: 'Please complete your card details before confirming purchase.',
 } as const;

@@ -5,7 +5,6 @@ const ROLE_DELIMITERS = /[;,|]/;
 export type AccountContactRelation = {
   accountId?: string | null;
   accountName?: string | null;
-  /** Salesforce Account owner. Optional — an account can have no owner. */
   accountOwnerEmail?: string | null;
   roles?: string | null;
   accountType?: string | null;
@@ -99,15 +98,6 @@ export const isAuthorizedBuyer = (
   return authorized.some(matchesTarget);
 };
 
-/**
- * The Salesforce account owner to copy onto the cart for the organization the buyer picked,
- * so Mule can BCC them on the order confirmation.
- *
- * An exact `accountId` match wins. Mock buyer accounts (`getAuthorizedBuyerAccounts`) carry
- * ids Salesforce has never issued, so on those the selected id matches no relation at all —
- * only then do we fall back, and only when a single relation carries an owner. With several
- * to choose from, no address is better than the wrong person's.
- */
 export const findAccountOwnerEmail = (
   relations: AccountContactRelation[],
   accountId?: string | null
@@ -121,7 +111,6 @@ export const findAccountOwnerEmail = (
     typeof relation.accountId === 'string' &&
     normalize(relation.accountId) === target;
 
-  // The relations know the selected account: its owner, or none. Never a different account's.
   if (relations.some(matchesTarget)) {
     return ownerEmail(relations.find(matchesTarget));
   }

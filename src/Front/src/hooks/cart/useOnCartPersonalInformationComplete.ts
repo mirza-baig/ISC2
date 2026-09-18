@@ -16,8 +16,8 @@ import useIsCpqStyleCheckout from './useIsCpqStyleCheckout';
 import useIsBusinessBuyer from './useIsBusinessBuyer';
 import useGetPaymentIntent from '../checkout/useGetPaymentIntent';
 import useEnsureBusinessCartTax from '../checkout/useEnsureBusinessCartTax';
-import useSetCartAccountOwnerEmail from './useSetCartAccountOwnerEmail';
 import useAuthorizedBuyer from '../user/useAuthorizedBuyer';
+import useSetCartAccountOwnerEmail from './useSetCartAccountOwnerEmail';
 
 const getFieldsForUserUpdate = (data?: PersonalInformation) => {
   if (!data) {

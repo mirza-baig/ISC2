@@ -211,10 +211,6 @@ export default function useGetPaymentIntent() {
       });
     }
   }, [error]);
-
-  // Gate on the cached intent rather than on the mutation's success flag: that flag drops
-  // back to false while a refreshed intent is in flight, which flipped these two mid-checkout
-  // and made the payment providers mount and unmount around the checkout steps.
   const hasPaymentIntent = Boolean(data);
 
   return {

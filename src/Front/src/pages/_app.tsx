@@ -18,6 +18,7 @@ import {
   StandalonePricesProvider,
   IdleTimeoutProvider,
   ShopperContextProvider,
+  CartIdentityProvider,
 } from 'providers/index';
 
 import 'styles/globals.css';
@@ -51,23 +52,25 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps<Sitec
           <IdleTimeoutProvider>
             <UserSessionProvider>
               <ShopperContextProvider>
-                <StandalonePricesProvider>
-                  <HeaderNavigationProvider>
-                    <SearchProvider>
-                      <PersonalizeProvider>
-                        <ModalProvider>
-                          <FeatureFlagsProvider flags={pageProps.featureFlags}>
-                            <I18nProvider lngDict={dictionary} locale={pageProps.locale}>
-                              <div className={`${openSans.variable} font-sans flex flex-col`}>
-                                <Component {...rest} />
-                              </div>
-                            </I18nProvider>
-                          </FeatureFlagsProvider>
-                        </ModalProvider>
-                      </PersonalizeProvider>
-                    </SearchProvider>
-                  </HeaderNavigationProvider>
-                </StandalonePricesProvider>
+                <CartIdentityProvider>
+                  <StandalonePricesProvider>
+                    <HeaderNavigationProvider>
+                      <SearchProvider>
+                        <PersonalizeProvider>
+                          <ModalProvider>
+                            <FeatureFlagsProvider flags={pageProps.featureFlags}>
+                              <I18nProvider lngDict={dictionary} locale={pageProps.locale}>
+                                <div className={`${openSans.variable} font-sans flex flex-col`}>
+                                  <Component {...rest} />
+                                </div>
+                              </I18nProvider>
+                            </FeatureFlagsProvider>
+                          </ModalProvider>
+                        </PersonalizeProvider>
+                      </SearchProvider>
+                    </HeaderNavigationProvider>
+                  </StandalonePricesProvider>
+                </CartIdentityProvider>
               </ShopperContextProvider>
             </UserSessionProvider>
           </IdleTimeoutProvider>

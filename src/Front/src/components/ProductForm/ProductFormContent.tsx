@@ -109,6 +109,7 @@ const ProductFormContent = ({
     isFeatureEnabled: isB2BFeatureEnabled,
     isAuthorizedBuyer,
     isResolvingAccess,
+    buyerContext,
   } = useB2BCartAccess();
 
   const {
@@ -180,7 +181,10 @@ const ProductFormContent = ({
   const viewPricingTitle = fields?.formLabelsAndTooltips?.fields?.viewPricingTitle;
   const viewPricingDescription = fields?.formLabelsAndTooltips?.fields?.viewPricingDescription;
   const showViewPricingCta =
-    isB2BFeatureEnabled && isAuthorizedBuyer && Boolean(viewPricingCta?.value?.href);
+    isB2BFeatureEnabled &&
+    isAuthorizedBuyer &&
+    buyerContext !== 'Myself' &&
+    Boolean(viewPricingCta?.value?.href);
   const viewPricingCtaLabel =
     formLabels?.[formLabelsMap.ViewPricingCta.key] || FormFields.ViewPricingCta.label;
 

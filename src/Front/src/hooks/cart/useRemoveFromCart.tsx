@@ -31,6 +31,8 @@ export default function useRemoveFromCart(callbacks?: MutationCallbacks<Cart>) {
   const { mutate, mutateAsync, isPending, error, isSuccess } = useMutation({
     mutationKey: [QUERY_KEYS.REMOVE_FROM_CART],
     mutationFn: async (payload: RemoveFromCartProps) => {
+      await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.ACTIVE_CART, cartId] });
+
       return postCartUpdate(
         {
           cartId,

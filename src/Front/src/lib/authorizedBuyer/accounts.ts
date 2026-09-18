@@ -250,7 +250,7 @@ export const ACCOUNT_OTP_SF_PARTIAL: AuthorizedBuyerAccount = {
 
 export const ACCOUNT_OTP_SF_HOLD: AuthorizedBuyerAccount = {
   ...ACCOUNT_OTP_SF_PARTIAL,
-  accountId: '001Ek000027j0y5IAA',
+  accountId: '001jI000000CxFfQAK',
   accountName: 'Another Test OTP Business Account',
   creditHold: true,
   credit: {

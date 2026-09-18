@@ -16,3 +16,4 @@ export * from './cartFields';
 export * from './allocationDetails';
 export * from './idleTimeout';
 export * from './shopperContext';
+export * from './cartIdentity';

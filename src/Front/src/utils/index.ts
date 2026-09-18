@@ -10,6 +10,7 @@ export * from './engageCartEvents';
 export * from './userRoles';
 export * from './stripe';
 export * from './apiUtils';
+export * from './apiMemoryCache';
 export * from './validateApiRequest';
 export * from './userUtils';
 export * from './price';

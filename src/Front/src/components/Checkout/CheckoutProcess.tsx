@@ -18,10 +18,6 @@ export default function CheckoutProcess() {
         />
       )}
 
-      {/* The payment providers wrap the payment step only. Stripe's <Elements> is re-keyed
-          on every new client secret and PayPal's script provider comes and goes with the
-          intent, so keeping them above the whole process remounted step one — and wiped
-          what the buyer had typed — each time a refreshed payment intent landed. */}
       {activeStep === CHECKOUT_STEPS.PAYMENT_INFORMATION && (
         <PaypalProvider>
           <StripeProvider>

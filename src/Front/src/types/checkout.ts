@@ -93,6 +93,7 @@ export type StepTwoLabels = {
   prepaidDiscountLabel?: string;
   prepaidAmountDueLabel?: string;
   staleBusinessPaymentMessage?: string;
+  incompletePaymentMessage?: string;
 };
 
 export type ErrorLabels = {

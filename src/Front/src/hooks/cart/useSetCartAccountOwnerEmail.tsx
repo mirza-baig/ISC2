@@ -4,7 +4,6 @@ import { useCart } from 'providers/index';
 import { getServiceLayerAPI } from 'utils/index';
 import { MutationCallbacks, UpdateCartResponse } from 'types/index';
 
-/** Custom field name on the commercetools cart. Must match what Mule reads. */
 export const ACCOUNT_OWNER_EMAIL_FIELD = 'accountOwnerEmail';
 
 type SetCartAccountOwnerEmailProps = {
@@ -17,15 +16,11 @@ export default function useSetCartAccountOwnerEmail(callbacks?: MutationCallback
     mutationFn: async ({ accountOwnerEmail }: SetCartAccountOwnerEmailProps) => {
       const email = accountOwnerEmail?.trim();
 
-      // TEMP debug
       console.log('[ACCOUNT-OWNER-EMAIL-DEBUG] step one', {
         cartId: activeCart?.id,
         accountOwnerEmail: email,
         willSend: Boolean(email && activeCart?.id),
       });
-
-      // Salesforce accounts can have no owner. Mule skips the BCC when the field is absent,
-      // so a missing address is a no-op rather than an empty custom field on the cart.
       if (!email || !activeCart?.id) {
         return;
       }

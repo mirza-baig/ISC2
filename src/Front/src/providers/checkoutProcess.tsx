@@ -52,11 +52,8 @@ type CheckoutContextProps = {
   setHasInventoryError: Dispatch<SetStateAction<boolean>>;
   selectedPaymentMethod?: CheckoutPaymentMethod;
   setSelectedPaymentMethod: Dispatch<SetStateAction<CheckoutPaymentMethod | undefined>>;
-  /** Step one data, completed or seeded from the profile. Lives here so it outlives a
-   * remount of the step components (a refreshed payment intent re-keys their providers). */
   personalInformation?: PersonalInformation;
   setPersonalInformation: (data: PersonalInformation) => void;
-  /** Values typed into step one but not submitted yet, snapshotted on unmount. */
   personalInformationDraft: MutableRefObject<PersonalInformation | undefined>;
 };
 
@@ -142,8 +139,6 @@ const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ field
   >(userPersonalInformation);
   const personalInformationDraft = useRef<PersonalInformation | undefined>(undefined);
 
-  // The profile lands after this provider mounts, so seed step one when it arrives — but
-  // never overwrite information the buyer has already gone through the step with.
   useEffect(() => {
     if (!userPersonalInformation) {
       return;
@@ -155,8 +150,6 @@ const CheckoutProcessProvider: React.FC<CheckoutProcessProviderProps> = ({ field
   const setPersonalInformation = useCallback((data: PersonalInformation) => {
     personalInformationDraft.current = data;
     setPersonalInformationState(data);
-    // Kept for the confirmation screen: the receipt falls back to it when the order comes
-    // back from commercetools without an address.
     storeCheckoutBillingAddress(data.billingAddress);
   }, []);
   const [hasPaymentError, setHasPaymentError] = useState<boolean>(false);

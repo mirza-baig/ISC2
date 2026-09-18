@@ -25,7 +25,6 @@ export type AuthorizedBuyerState = {
   isAuthorizedBuyer: boolean;
   isResolvingAuthorizedBuyer: boolean;
   relations: AccountContactRelation[];
-  /** Owner of the selected account, for the confirmation-email BCC. Absent when it has none. */
   accountOwnerEmail?: string;
 };
 

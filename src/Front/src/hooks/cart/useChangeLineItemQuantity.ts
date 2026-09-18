@@ -35,6 +35,8 @@ export default function useChangeLineItemQuantity(callbacks?: MutationCallbacks<
   const { mutate, mutateAsync, isPending, error, isSuccess } = useMutation({
     mutationKey: [MUTATION_KEY],
     mutationFn: async (payload: ChangeLineItemQuantityProps) => {
+      await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.ACTIVE_CART, cartId] });
+
       const api = await getServiceLayerAPI();
 
       const { data } = await api.post<UpdateCartResponse>('', {

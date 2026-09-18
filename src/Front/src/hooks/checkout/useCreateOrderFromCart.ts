@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
 import { getServiceLayerAPI } from 'utils/index';
+import { forgetCartId } from 'utils/cartIdStore';
 import { LOCALSTORAGE_KEYS } from 'constants/index';
 import { useCart } from 'providers/index';
 import { PaymentConfirmationPayload } from 'types/index';
@@ -41,6 +42,7 @@ export default function useCreateOrderFromCart() {
       // trigger a re-render on the checkout page with an empty cart id
       if (!activeCart.computed.isB2B && placeOrderResult?.order?.orderNumber) {
         localStorage.setItem(LOCALSTORAGE_KEYS.ACTIVE_CART_ID, '');
+        forgetCartId(activeCart.id);
         sessionStorage.removeItem(LOCALSTORAGE_KEYS.STRIPE_RETURN_CART_ID);
       }
     },

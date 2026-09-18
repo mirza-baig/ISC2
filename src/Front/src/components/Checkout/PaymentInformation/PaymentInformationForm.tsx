@@ -94,6 +94,9 @@ const businessPaymentCopy = (stepTwoLabels: StepTwoLabels) => ({
   stalePayment:
     stepTwoLabels.staleBusinessPaymentMessage ||
     BUSINESS_STEP_TWO_DEFAULT_LABELS.staleBusinessPaymentMessage,
+  incompletePayment:
+    stepTwoLabels.incompletePaymentMessage ||
+    BUSINESS_STEP_TWO_DEFAULT_LABELS.incompletePaymentMessage,
 });
 
 type Props = {
@@ -147,7 +150,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
 
   const [isStripeFormComplete, setIsStripeFormComplete] = useState(false);
   const [isOrderSubmitted, setIsOrderSubmitted] = useState<boolean>(false);
-  const [staleBusinessPaymentMessage, setStaleBusinessPaymentMessage] = useState<string>();
+  const [paymentErrorMessage, setPaymentErrorMessage] = useState<string>();
   const [actionsAnchor, setActionsAnchor] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -245,7 +248,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
       }
     ) => {
       setHasPaymentError(false);
-      setStaleBusinessPaymentMessage(undefined);
+      setPaymentErrorMessage(undefined);
       setSelectedPaymentMethod(method);
 
       const previousMethod = lastTaxedPaymentMethodRef.current;
@@ -323,7 +326,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     async (ev: FormEvent) => {
       ev.preventDefault();
       setHasPaymentError(false);
-      setStaleBusinessPaymentMessage(undefined);
+      setPaymentErrorMessage(undefined);
       setSelectedPaymentMethod(PAYMENT_METHODS.FREE);
       setIsOrderSubmitted(true);
 
@@ -336,7 +339,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     async (ev: FormEvent) => {
       ev.preventDefault();
       setHasPaymentError(false);
-      setStaleBusinessPaymentMessage(undefined);
+      setPaymentErrorMessage(undefined);
 
       if (isConfirmingPayment || isFreeOrder || !isBusinessAccountPaymentMethod(paymentMethod)) {
         setHasPaymentError(true);
@@ -350,7 +353,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
 
       if (!stillEligible) {
         setHasPaymentError(true);
-        setStaleBusinessPaymentMessage(copy.stalePayment);
+        setPaymentErrorMessage(copy.stalePayment);
         setIsOrderSubmitted(false);
         setSelectedPaymentMethod(undefined);
         return;
@@ -374,18 +377,30 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     async (ev: FormEvent) => {
       ev.preventDefault();
       setHasPaymentError(false);
-      setStaleBusinessPaymentMessage(undefined);
+      setPaymentErrorMessage(undefined);
       setIsOrderSubmitted(true);
 
       if (isConfirmingPayment || !isStripeFormComplete || isFreeOrder) {
         setHasPaymentError(true);
         setIsOrderSubmitted(false);
+
+        if (!isConfirmingPayment && !isFreeOrder) {
+          setPaymentErrorMessage(copy.incompletePayment);
+        }
+
         return;
       }
 
       validateOrder({ paymentMethod: PAYMENT_METHODS.STRIPE });
     },
-    [isConfirmingPayment, isStripeFormComplete, isFreeOrder, validateOrder, setHasPaymentError]
+    [
+      isConfirmingPayment,
+      isStripeFormComplete,
+      isFreeOrder,
+      validateOrder,
+      setHasPaymentError,
+      copy.incompletePayment,
+    ]
   );
 
   const onPaypalPaymentApprove = useCallback(
@@ -406,7 +421,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
 
   const onPaypalButtonClick = useCallback(async () => {
     setHasPaymentError(false);
-    setStaleBusinessPaymentMessage(undefined);
+    setPaymentErrorMessage(undefined);
     if (isConfirmingPayment) {
       return;
     }
@@ -470,7 +485,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     }
 
     setHasPaymentError(true);
-    setStaleBusinessPaymentMessage(copy.stalePayment);
+    setPaymentErrorMessage(copy.stalePayment);
     setSelectedPaymentMethod(undefined);
   }, [
     copy.stalePayment,
@@ -596,7 +611,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
       className="bg-gray-10 p-5"
       onFocus={() => {
         setHasPaymentError(false);
-        setStaleBusinessPaymentMessage(undefined);
+        setPaymentErrorMessage(undefined);
         setSelectedPaymentMethod(PAYMENT_METHODS.STRIPE);
       }}
       options={{
@@ -642,9 +657,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     <form id={PAYMENT_FORM_ID} className="w-full space-y-5" onSubmit={onFormSubmit}>
       <label className="headline-s">{stepTwoLabels.stepTitle}</label>
 
-      {staleBusinessPaymentMessage && (
-        <p className="body-s text-red-warning m-0">{staleBusinessPaymentMessage}</p>
-      )}
+      {paymentErrorMessage && <p className="body-s text-red-warning m-0">{paymentErrorMessage}</p>}
 
       {showBusinessPaymentDropdown ? (
         <>

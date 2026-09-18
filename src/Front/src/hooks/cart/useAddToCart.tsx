@@ -113,6 +113,8 @@ export default function useAddToCart(callbacks?: MutationCallbacks) {
         }
       }
 
+      await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.ACTIVE_CART, userCartId] });
+
       try {
         const { data } = await api.post<UpdateCartResponse>('', {
           query: 'UPDATE_CART',
@@ -182,6 +184,8 @@ export default function useAddToCart(callbacks?: MutationCallbacks) {
         }
 
         setCartId(newCartId);
+
+        await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.ACTIVE_CART, newCartId] });
 
         const { data: retryData } = await api.post<UpdateCartResponse>('', {
           query: 'UPDATE_CART',
