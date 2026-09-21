@@ -28,7 +28,17 @@ import {
   SearchModalAlgoliaSettings,
   CUSTOMER_PRICING_GROUP_MAP,
 } from 'types/index';
-import { B2B_LISTING_TEMPLATE_NAME, B2B_FEATURE_FLAG } from 'constants/b2b';
+import {
+  B2B_LISTING_TEMPLATE_NAME,
+  B2B_FEATURE_FLAG,
+  PRODUCT_VISIBILITY_FEATURE_FLAG,
+  HIDE_TEST_PRODUCTS_FEATURE_FLAG,
+} from 'constants/b2b';
+import {
+  buildProductVisibilityFilter,
+  buildHideTestProductsFilter,
+  combineFilters,
+} from 'lib/productVisibility';
 import {
   useSearch,
   useLayout,
@@ -36,6 +46,7 @@ import {
   useCart,
   useStandalonePrices,
   useUserSession,
+  useShopperContext,
 } from 'providers/index';
 import { ScrollToTop } from 'ui/index';
 import { useI18n } from 'next-localization';
@@ -483,6 +494,7 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
   // mount lifecycle and the results-column width (which shrinks in sync). Reading the cart here
   // is a cheap global-context subscription; the value is only used for the B2B PLP.
   const { activeCart } = useCart();
+  const { shopperContext } = useShopperContext();
   const cartCount = activeCart?.totalLineItemQuantity ?? 0;
   // Private classes are deferred to a later phase (bug sweep 2026-08-19) — the TEMP demo
   // private-class cart hook/effect are commented out rather than deleted so they can be restored
@@ -811,6 +823,21 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
     };
   }, [isB2BListing]);
 
+  const isProductVisibilityEnabled = useFeatureFlag(PRODUCT_VISIBILITY_FEATURE_FLAG);
+  const productVisibilityFilter = useMemo(
+    () =>
+      isB2BListing && isProductVisibilityEnabled
+        ? buildProductVisibilityFilter(shopperContext?.organization?.accountType)
+        : null,
+    [isB2BListing, isProductVisibilityEnabled, shopperContext?.organization?.accountType]
+  );
+
+  const isHideTestProductsEnabled = useFeatureFlag(HIDE_TEST_PRODUCTS_FEATURE_FLAG);
+  const hideTestProductsFilter = useMemo(
+    () => (isB2BListing && isHideTestProductsEnabled ? buildHideTestProductsFilter() : null),
+    [isB2BListing, isHideTestProductsEnabled]
+  );
+
   // B2B PLP <Configure> params. Always applies the Sitecore-driven scope filter (so the variant
   // index only lists real products). On a price sort OR an active price filter it ALSO bulk-fetches
   // the whole facet-filtered set (hitsPerPage) so the client can price + sort/filter it exactly —
@@ -825,8 +852,13 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
     // so a rendering whose Sitecore datasource is missing or deleted would otherwise throw
     // "Cannot read properties of undefined (reading 'b2bScopeFilter')" and take the whole page down
     // instead of rendering nothing. Every other `fields` read in this component already guards.
-    if (fields?.b2bScopeFilter?.value) {
-      props.filters = fields.b2bScopeFilter.value;
+    const filters = combineFilters(
+      fields?.b2bScopeFilter?.value,
+      productVisibilityFilter,
+      hideTestProductsFilter
+    );
+    if (filters) {
+      props.filters = filters;
     }
     props.hitsPerPage =
       isPriceSort || isPriceFilterActive ? B2B_PRICE_SORT_FETCH_MAX : B2B_BROWSE_HITS_PER_PAGE;
@@ -842,7 +874,14 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
     props.facets = ['startDate'];
     props.maxValuesPerFacet = B2B_STARTDATE_MAX_FACET_VALUES;
     return Object.keys(props).length ? props : null;
-  }, [isB2BListing, fields?.b2bScopeFilter?.value, isPriceSort, isPriceFilterActive]);
+  }, [
+    isB2BListing,
+    fields?.b2bScopeFilter?.value,
+    productVisibilityFilter,
+    hideTestProductsFilter,
+    isPriceSort,
+    isPriceFilterActive,
+  ]);
 
   // B2B PLP uses the filters overlay on ALL breakpoints — tell the provider not to auto-close
   // it on desktop (default behavior keeps the overlay mobile-only).

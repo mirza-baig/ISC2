@@ -5,6 +5,7 @@ export type AuthorizedBuyerPricingVoucherPayload = {
   accountId: string;
   externalID: string;
   categoryPricing: AuthorizedBuyerCategoryPricing[];
+  companyName?: string;
   iat: number;
   exp: number;
 };

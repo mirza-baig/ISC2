@@ -58,6 +58,7 @@ export default async function pricingVoucher(req: NextApiRequest, res: NextApiRe
         accountId,
         externalID,
         categoryPricing,
+        companyName: relation?.accountName || undefined,
         iat,
         exp,
       })
