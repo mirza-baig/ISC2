@@ -58,6 +58,7 @@ export { default as useCartValidity } from './cart/useCartValidity';
 export { default as useOnCartPersonalInformationComplete } from './cart/useOnCartPersonalInformationComplete';
 export { default as useIsCpqStyleCheckout } from './cart/useIsCpqStyleCheckout';
 export { default as useIsBusinessBuyer } from './cart/useIsBusinessBuyer';
+export { useBusinessBuyerStatus } from './cart/useIsBusinessBuyer';
 export { default as useAuthorizedBuyerPricingVoucher } from './cart/useAuthorizedBuyerPricingVoucher';
 export { default as useB2BCartAccess } from './cart/useB2BCartAccess';
 

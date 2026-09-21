@@ -34,6 +34,12 @@ type StoredShopperContext = ShopperContextSelection & {
 
 type ShopperContextProps = {
   shopperContext: ShopperContextSelection | null;
+  /**
+   * `false` until the stored selection has actually been read. `shopperContext` is
+   * `null` both before that read and when nothing is stored, so consumers that must
+   * not act on a premature "no organization" need this to tell the two apart.
+   */
+  isShopperContextResolved: boolean;
   setShopperContext: (selection: ShopperContextSelection) => void;
   clearShopperContext: () => void;
 };
@@ -58,6 +64,7 @@ const removeContextCookie = () => {
 
 const ShopperContext = createContext<ShopperContextProps>({
   shopperContext: null,
+  isShopperContextResolved: false,
   setShopperContext: () => {},
   clearShopperContext: () => {},
 });
@@ -137,12 +144,21 @@ type ShopperContextProviderProps = {
 
 const ShopperContextProvider = ({ children }: ShopperContextProviderProps) => {
   const { session, isSessionLoading } = useSession();
-  const { externalID, isUserLoggedIn } = useLoggedUser();
+  const { externalID, isUserLoggedIn, isGettingUser } = useLoggedUser();
   const [shopperContext, setShopperContextState] = useState<ShopperContextSelection | null>(null);
+  const [isShopperContextResolved, setIsShopperContextResolved] = useState(false);
 
   useEffect(() => {
+    // `isUserLoggedIn` reads false while the session or the Salesforce user query is
+    // still in flight, exactly as it does for a signed-out visitor, so neither it nor
+    // the resulting `null` context can be treated as an answer until both have settled.
+    if (isSessionLoading || isGettingUser) {
+      return;
+    }
+
     if (!isUserLoggedIn) {
       setShopperContextState(null);
+      setIsShopperContextResolved(true);
       return;
     }
 
@@ -164,7 +180,10 @@ const ShopperContextProvider = ({ children }: ShopperContextProviderProps) => {
 
       return stored;
     });
-  }, [isUserLoggedIn, externalID]);
+    // Set in the same commit as the selection above: a separate effect would leave one
+    // painted frame where the context is resolved but still empty.
+    setIsShopperContextResolved(true);
+  }, [isSessionLoading, isGettingUser, isUserLoggedIn, externalID]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -228,10 +247,11 @@ const ShopperContextProvider = ({ children }: ShopperContextProviderProps) => {
   const value = useMemo(
     () => ({
       shopperContext,
+      isShopperContextResolved,
       setShopperContext,
       clearShopperContext,
     }),
-    [shopperContext, setShopperContext, clearShopperContext]
+    [shopperContext, isShopperContextResolved, setShopperContext, clearShopperContext]
   );
 
   return <ShopperContext.Provider value={value}>{children}</ShopperContext.Provider>;
