@@ -180,75 +180,65 @@ export const FOOTER_API_CONTENT_FOR_SALESFORCE_PAGE = `
   }
 `;
 
-export const insightsRssFeedQuery = (first: number, after: string | null): string => {
-  return `
-    fragment Insights on Item {
-      name
-      ... on ArticlePage {
-        fields(ownFields: false) {
-          name
-          value
-        }
-        thumbnailImage {
-          src
-        }
-        showInRSSFeed {
-          value
-        }
+/**
+ * Paged insights articles for the RSS feed. `first` and `after` are GraphQL
+ * variables, never interpolated. A null `after` requests the first page.
+ * See GraphQL-API-Patterns.md §1.
+ */
+export const INSIGHTS_RSS_FEED = /* GraphQL */ `
+  fragment Insights on Item {
+    name
+    ... on ArticlePage {
+      fields(ownFields: false) {
+        name
+        value
       }
-      url {
-        path
+      thumbnailImage {
+        src
       }
-    }
-    query {
-      search(
-        where: {
-          AND: [
-            {
-              name: "_templates"
-              value: "fbd3dc07-032e-46db-b33e-8d08469cbec2"
-              operator: CONTAINS
-            }
-            {
-              name: "_path"
-              value: "cc67ceec-e8fb-4028-906f-57cd2d198376"
-              operator: CONTAINS
-            }
-          ]
-        }
-        first: ${first}
-        ${after ? `after: "${after}"` : ''}
-        orderBy: { name: "articleDate", direction: DESC }
-      ) {
-        results {
-          ...Insights
-        }
-        pageInfo {
-          endCursor
-          hasNext
-        }
-        total
+      showInRSSFeed {
+        value
       }
     }
-  `;
-};
-
-export const getArticleRssFeed = (path: string): string => {
-  const query = `
-  query {
+    url {
+      path
+    }
+  }
+  query InsightsRssFeed($first: Int!, $after: String) {
     search(
       where: {
         AND: [
-          {
-            name: "_templates"
-            value: "fbd3dc07-032e-46db-b33e-8d08469cbec2"
-            operator: CONTAINS
-          }
-          {
-            name: "_name"
-            value: "${path}"
-            operator: CONTAINS
-          }
+          { name: "_templates", value: "fbd3dc07-032e-46db-b33e-8d08469cbec2", operator: CONTAINS }
+          { name: "_path", value: "cc67ceec-e8fb-4028-906f-57cd2d198376", operator: CONTAINS }
+        ]
+      }
+      first: $first
+      after: $after
+      orderBy: { name: "articleDate", direction: DESC }
+    ) {
+      results {
+        ...Insights
+      }
+      pageInfo {
+        endCursor
+        hasNext
+      }
+      total
+    }
+  }
+`;
+
+/**
+ * Single article for the RSS feed, matched by item name. `name` is a GraphQL
+ * variable, never interpolated. See GraphQL-API-Patterns.md §1.
+ */
+export const ARTICLE_RSS_FEED = /* GraphQL */ `
+  query ArticleRssFeed($name: String!) {
+    search(
+      where: {
+        AND: [
+          { name: "_templates", value: "fbd3dc07-032e-46db-b33e-8d08469cbec2", operator: CONTAINS }
+          { name: "_name", value: $name, operator: CONTAINS }
         ]
       }
       first: 1
@@ -280,63 +270,79 @@ export const getArticleRssFeed = (path: string): string => {
       total
     }
   }
-  `;
-  return query;
-};
+`;
 
-export const middlewareApiForLayout = (path: string): string => `
-    query {
-      layout(site: "main", routePath: "${path}", language: "en") {
-        item {
-          membersOnly: field(name: "MembersOnly") {
-            value
-          }
-          candidateOnly: field(name: "CandidateOnly") {
-            value
-          }
-          associateOnly: field(name: "AssociateOnly") {
-            value
-          }
-          b2bAdminOnly: field(name: "B2BAdminOnly") {
-            value
-          }
-          nonMemberOnly: field(name: "NonMembersOnly") {
-            value
-          }
-          b2bAccount: field(name: "b2bAccount") {
-            value
-          }
-          hideForB2B: field(name: "hideForB2B") {
-            value
-          }
+/**
+ * Role flags the access-control middleware reads for a route.
+ *
+ * `routePath` is a GraphQL variable, never interpolated. See GraphQL-API-Patterns.md §1.
+ *
+ * Every field selected here is consumed by AccessControlPlugin, which treats a
+ * missing flag as "not required", i.e. public. Do not drop a field from this
+ * selection without changing the plugin to match.
+ */
+export const MIDDLEWARE_LAYOUT_FIELDS = /* GraphQL */ `
+  query MiddlewareLayoutFields($site: String!, $routePath: String!, $language: String!) {
+    layout(site: $site, routePath: $routePath, language: $language) {
+      item {
+        membersOnly: field(name: "MembersOnly") {
+          value
+        }
+        candidateOnly: field(name: "CandidateOnly") {
+          value
+        }
+        associateOnly: field(name: "AssociateOnly") {
+          value
+        }
+        b2bAdminOnly: field(name: "B2BAdminOnly") {
+          value
+        }
+        nonMemberOnly: field(name: "NonMembersOnly") {
+          value
+        }
+        b2bAccount: field(name: "b2bAccount") {
+          value
+        }
+        hideForB2B: field(name: "hideForB2B") {
+          value
         }
       }
     }
+  }
 `;
 
-export const resolvePublicPathByItemPath = (itemPath: string, language = 'en'): string => {
-  const escaped = itemPath.replace(/"/g, '\\"');
-  return `
-    query {
-      item(path: "${escaped}", language: "${language}") {
-        url { path }
-      }
-    }
-  `;
-};
+export const MIDDLEWARE_LAYOUT_SITE = 'main';
 
-export const resolvePublicPathByItemId = (itemId: string, language = 'en'): string => {
-  const cleanId = itemId.replace(/[{}]/g, '');
-  return `
-    query {
-      item(path: "{${cleanId}}", language: "${language}") {
-        url { path }
-        path: path
-        name: name
+/**
+ * Public URL for an item, addressed by item path. `path` is a GraphQL variable,
+ * never interpolated. See GraphQL-API-Patterns.md §1.
+ */
+export const PUBLIC_PATH_BY_ITEM_PATH = /* GraphQL */ `
+  query PublicPathByItemPath($path: String!, $language: String!) {
+    item(path: $path, language: $language) {
+      url {
+        path
       }
     }
-  `;
-};
+  }
+`;
+
+/**
+ * Public URL for an item, addressed by GUID. `id` is a GraphQL variable, never
+ * interpolated. Callers pass a bare GUID; the braces are added by the query.
+ * See GraphQL-API-Patterns.md §1.
+ */
+export const PUBLIC_PATH_BY_ITEM_ID = /* GraphQL */ `
+  query PublicPathByItemId($id: String!, $language: String!) {
+    item(path: $id, language: $language) {
+      url {
+        path
+      }
+      path: path
+      name: name
+    }
+  }
+`;
 
 // B2B Product List labels — grouped, editable in Sitecore under
 // /sitecore/content/ISC2/Main/Data/B2B Product List Labels. Each child item holds a Name Value
