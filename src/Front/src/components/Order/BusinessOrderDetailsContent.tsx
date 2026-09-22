@@ -73,6 +73,9 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
     `${currencySymbol}${parsePrice(money?.centAmount, money?.fractionDigits)}`;
 
   const businessPaymentMethod = useMemo(() => resolveBusinessPaymentMethod(order), [order]);
+  const cartDiscounts = useMemo(() => {
+    return activeCart.discountOnTotalPrice?.includedDiscounts ?? [];
+  }, [activeCart.discountOnTotalPrice]);
 
   /**
    * The localised `name` is null on real orders more often than not, so fall back to the
@@ -261,6 +264,21 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
                 {activeCart.computed.taxValue}
               </span>
             </div>
+            {cartDiscounts.map((cartDiscount, index) => (
+              <div
+                key={`${cartDiscount.discount?.id || cartDiscount.discount?.name}-${index}`}
+                className="flex justify-between body-m text-isc2-green"
+              >
+                <span>{cartDiscount.discount?.name || label('discountLabel')}</span>
+                <span>
+                  -{currencySymbol}
+                  {parsePrice(
+                    cartDiscount.discountedAmount?.centAmount,
+                    cartDiscount.discountedAmount?.fractionDigits
+                  )}
+                </span>
+              </div>
+            ))}
             <div className="flex justify-between text-xl font-bold pt-2">
               <span>{label('totalLabel')}</span>
               <span className="text-isc2-green">

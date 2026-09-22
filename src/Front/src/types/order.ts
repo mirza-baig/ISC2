@@ -25,8 +25,9 @@ export type Order = {
   };
   custom?: {
     customFieldsRaw?: {
-      [name: string]: string;
-    };
+      name: string;
+      value: string;
+    }[];
   };
   paymentState: string | null;
   shippingAddress: {
@@ -108,6 +109,7 @@ export type BusinessOrderConfirmationLabels = {
   unitPriceLabel?: string;
   subtotalLabel?: string;
   taxLabel?: string;
+  discountLabel?: string;
   totalLabel?: string;
   paymentMethodLabel?: string;
   whatHappensNextTitle?: string;
@@ -163,6 +165,7 @@ export type BusinessReceiptData = {
   taxIdNumber?: string;
   intacctCustomerId?: string;
   lineItems: ReceiptLineItem[];
+  discounts: { name: string; amount: string }[];
   subtotal: string;
   tax: string;
   total: string;
