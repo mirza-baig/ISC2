@@ -60,6 +60,7 @@ export { default as useIsCpqStyleCheckout } from './cart/useIsCpqStyleCheckout';
 export { default as useIsBusinessBuyer } from './cart/useIsBusinessBuyer';
 export { default as useAuthorizedBuyerPricingVoucher } from './cart/useAuthorizedBuyerPricingVoucher';
 export { default as useB2BCartAccess } from './cart/useB2BCartAccess';
+export { default as useSetCartCustomFields } from './cart/useSetCartCustomFields';
 
 // ALLOCATIONS
 export { default as useGetAllocationDetails } from './allocations/useGetAllocationDetails';

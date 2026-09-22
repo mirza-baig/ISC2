@@ -11,7 +11,7 @@ export const B2B_LISTING_TEMPLATE_NAME = 'B2BProductListingPage';
 // serialized, so each env owns its own value; see docs/B2B-EnvLocal-Sitecore-Items.md §5.
 export const B2B_FEATURE_FLAG = 'B2B_Company_Flow';
 
-export const PRODUCT_VISIBILITY_FEATURE_FLAG = 'B2B_Product_Visibility_By_Account_Type';
+export const PRODUCT_VISIBILITY_FEATURE_FLAG = 'B2B_Product_Visibility_By_Account_Type_';
 
 export const HIDE_TEST_PRODUCTS_FEATURE_FLAG = 'B2B_Hide_Test_Products';
 

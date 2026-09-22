@@ -13,6 +13,7 @@ import {
   useIsBusinessBuyer,
   useIsCpqStyleCheckout,
   useOnCartPersonalInformationComplete,
+  useSetCartCustomFields,
 } from 'hooks/index';
 import { FormFieldsProvider, useCart, useCheckoutProcess } from 'providers/index';
 import { Button, FormTextInput, FormDropdown, FormCheckbox, RichTextUI } from 'ui/index';
@@ -77,6 +78,15 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
       },
     }
   );
+
+  // B2B step-1 only: writes Purchase Information custom fields
+  // (poNumber, customerOrderReference, organization, buyer) to the cart via
+  // setCustomType against the `ISCCartOrderModelCustomization` type. The hook
+  // itself is a no-op for non-B2B carts; the outer `isBusinessBuyer` guard in
+  // `onFormSubmitted` avoids the mutation setup cost on the individual path.
+  const { setCartCustomFieldsAsync, isSettingCartCustomFields } = useSetCartCustomFields({
+    onError: (err) => console.error('[B2B-CUSTOM-FIELDS] Write failed', err),
+  });
 
   const {
     handleSubmit,
@@ -226,8 +236,8 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
     ]
   );
 
-  const onFormSubmitted: SubmitHandler<PersonalInformation> = (data) => {
-    if (!isValid || isSettingInfo) {
+  const onFormSubmitted: SubmitHandler<PersonalInformation> = async (data) => {
+    if (!isValid || isSettingInfo || isSettingCartCustomFields) {
       return;
     }
 
@@ -243,6 +253,23 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
         ...(coupon !== undefined && { coupon }),
       },
     });
+
+    // B2B step-1 only: persist Purchase Information custom fields to the cart
+    // before the address/tax/PI cascade fires. Non-blocking — a failure is
+    // logged via the hook's onError; the user is not prevented from advancing
+    // and the values remain in form state for a re-submit.
+    if (isBusinessBuyer) {
+      try {
+        await setCartCustomFieldsAsync({
+          poNumber: getValues('poNumber'),
+          customerOrderReference: getValues('customerOrderReference'),
+          organization: accountName,
+          buyer: [data.firstName, data.lastName].filter(Boolean).join(' '),
+        });
+      } catch {
+        // swallowed — hook's onError already logged it; do not block checkout
+      }
+    }
 
     onCartPersonalInformationComplete({
       ...data,
@@ -267,7 +294,7 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
             billingStates={billingStates}
             mailingStates={mailingStates}
             isSameAddress={isSameAddress}
-            isSubmitting={isSettingInfo}
+            isSubmitting={isSettingInfo || isSettingCartCustomFields}
             isPoRequired={isPoRequired}
             isPoAttachmentRequired={isPoAttachmentRequired}
             isCourseDeliveryDateRequired={isCourseDeliveryDateRequired}
@@ -472,7 +499,7 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
           type="submit"
           variant="primary"
           className="sm:self-end"
-          isLoading={isSettingInfo}
+          isLoading={isSettingInfo || isSettingCartCustomFields}
           label={stepOneLabels.nextStepCtaLabel}
         />
       </form>
