@@ -19,28 +19,22 @@ export type B2BCartCustomFields = {
   buyer?: string;
 };
 
-const CUSTOM_FIELD_NAMES = [
-  'poNumber',
-  'customerOrderReference',
-  'organization',
-  'buyer',
-] as const;
+const CUSTOM_FIELD_NAMES = ['poNumber', 'customerOrderReference', 'organization', 'buyer'] as const;
 
 type KnownFieldName = (typeof CUSTOM_FIELD_NAMES)[number];
 
-const safeParse = (raw: string): string | undefined => {
-  try {
-    const parsed = JSON.parse(raw);
-    // Only strings are valid for these fields. Anything else (number, object,
-    // null from a legacy write) is treated as absent rather than surfacing a
-    // bad type downstream.
-    return typeof parsed === 'string' ? parsed : undefined;
-  } catch {
-    // A non-JSON value in the store (should not happen if writes go through
-    // useSetCartCustomFields) — fall back to the raw string so we don't lose
-    // the value entirely.
-    return raw || undefined;
+export const parseCustomFieldValue = (raw: string): string | undefined => {
+  if (raw.length > 1 && raw.startsWith('"') && raw.endsWith('"')) {
+    try {
+      const parsed = JSON.parse(raw);
+
+      return typeof parsed === 'string' ? parsed || undefined : raw;
+    } catch {
+      return raw;
+    }
   }
+
+  return raw || undefined;
 };
 
 export const readCartCustomFields = (
@@ -53,7 +47,7 @@ export const readCartCustomFields = (
     if (!field || field.value === undefined || field.value === null) {
       return undefined;
     }
-    return safeParse(String(field.value));
+    return parseCustomFieldValue(String(field.value));
   };
 
   return {

@@ -10,6 +10,8 @@ import {
 } from 'types/index';
 import { IN_PERSON_MODALITIES, LOCALSTORAGE_KEYS } from 'constants/index';
 
+import { parseCustomFieldValue } from 'hooks/cart/cartCustomFields';
+
 import { getVariantAttributes } from './cart';
 import { parsePrice } from './price';
 import { getCurrencySymbol } from './currencies';
@@ -128,8 +130,13 @@ const flattenLineItems = (lineItems: CartLineItem[]): CartLineItem[] =>
     'products' in lineItem ? flattenLineItems(lineItem.products) : [lineItem]
   );
 
-const customField = (order: OrderWithComputedData, name: string): string | undefined =>
-  order.custom?.customFieldsRaw?.[name] || undefined;
+const customField = (order: OrderWithComputedData, name: string): string | undefined => {
+  const value = order.custom?.customFieldsRaw?.find((field) => field.name === name)?.value;
+
+  return value === undefined || value === null
+    ? undefined
+    : parseCustomFieldValue(String(value)) || undefined;
+};
 
 export const buildBusinessReceiptData = ({
   order,
@@ -158,8 +165,8 @@ export const buildBusinessReceiptData = ({
     orderDate: formatDate({ value: order.createdAt }),
     orderStatus: order.orderState,
     currencyCode: order.totalPrice?.currencyCode ?? '',
-    organizationName,
-    buyerName,
+    organizationName: customField(order, 'organization') || organizationName,
+    buyerName: customField(order, 'buyer') || buyerName,
     buyerEmail: order.customerEmail,
     billingAddressLines,
     poNumber: customField(order, 'poNumber'),

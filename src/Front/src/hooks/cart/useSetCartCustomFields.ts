@@ -26,9 +26,7 @@ const buildFields = (input: B2BCartCustomFieldsInput) =>
     ] as const
   )
     .filter(([, value]) => value !== undefined && value !== null && String(value).trim() !== '')
-    // commercetools GraphQL custom-field `value` is a Json scalar — strings must be
-    // JSON-encoded, otherwise the platform returns "value must be valid JSON".
-    .map(([name, value]) => ({ name, value: JSON.stringify(value) }));
+    .map(([name, value]) => ({ name, value: String(value) }));
 
 export default function useSetCartCustomFields(callbacks?: MutationCallbacks) {
   const { activeCart } = useCart();
