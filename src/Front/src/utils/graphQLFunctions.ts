@@ -12,11 +12,20 @@ export const getGraphQLRequestClient = (): GraphQLRequestClient => {
   });
 };
 
-export const getGraphQLResult = async <T>(query: string): Promise<T> => {
+/**
+ * Executes a GraphQL document against Experience Edge.
+ *
+ * Caller-supplied values belong in `variables` — never interpolated into `query`.
+ * See GraphQL-API-Patterns.md §1.
+ */
+export const getGraphQLResult = async <T>(
+  query: string,
+  variables?: Record<string, unknown>
+): Promise<T> => {
   const graphQLClient = getGraphQLRequestClient();
 
   try {
-    const result = await graphQLClient.request<T>(query);
+    const result = await graphQLClient.request<T>(query, variables);
 
     return result;
   } catch (err) {
