@@ -13,6 +13,7 @@ import { useFeatureFlag } from 'providers/featureFlags';
 import { getServiceLayerAPI, isTaxAddressDefined } from 'utils/index';
 import { Cart, CartWithComputedData, PersonalInformation, UpdateCartResponse } from 'types/index';
 
+import useAuthorizedBuyerPricingVoucher from '../cart/useAuthorizedBuyerPricingVoucher';
 import useIsBusinessBuyer from '../cart/useIsBusinessBuyer';
 import useSetCartAddress from '../cart/useSetCartAddress';
 import useUpdateTax from '../cart/useUpdateTax';
@@ -37,6 +38,7 @@ export default function useEnsureBusinessCartTax() {
   const { setErrorState } = useCheckoutProcess();
   const { setCartAddressAsync } = useSetCartAddress({ onError: setErrorState });
   const { setTaxesAsync } = useUpdateTax();
+  const { voucher: authorizedBuyerPricingVoucher } = useAuthorizedBuyerPricingVoucher();
   const { getPaymentIntentAsync, paymentIntent } = useGetPaymentIntent();
   const [isEnsuringTax, setIsEnsuringTax] = useState(false);
   const inFlightRef = useRef<Promise<Cart | CartWithComputedData | undefined> | null>(null);
@@ -75,6 +77,7 @@ export default function useEnsureBusinessCartTax() {
           variables: {
             cartId: cart.id,
             actions,
+            authorizedBuyerPricingVoucher,
           },
         });
 
@@ -93,7 +96,7 @@ export default function useEnsureBusinessCartTax() {
         return storeExemptCart(withZeroTaxedPrice(cachedCart || cart));
       }
     },
-    [queryClient]
+    [authorizedBuyerPricingVoucher, queryClient]
   );
 
   const ensureTaxedCart = useCallback(

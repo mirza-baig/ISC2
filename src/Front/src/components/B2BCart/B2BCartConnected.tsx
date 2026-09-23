@@ -61,9 +61,7 @@ const B2BCartConnected = ({
   const labels = useB2BCartLabels();
   const { checkout } = useB2BCartCheckout(isCpq);
   const { canEditQuantity, maxLineQuantity, clampQuantity } = useB2BCartAccess();
-  const { updateQuantity, isUpdatingQuantity } = useUpdateLineItemQuantity({
-    allowCpqCart: canEditQuantity,
-  });
+  const { updateQuantity, isUpdatingQuantity } = useUpdateLineItemQuantity();
   // Private classes held back here (B-15):
   // const { getAnswers, setAnswers, clearAnswers, openLocationModal } = useB2BPrivateClass();
   // const demoCart = useB2BDemoCart(); // TEMP demo private-class line
@@ -177,7 +175,6 @@ const B2BCartConnected = ({
       clampQuantity={clampQuantity}
       quantityLabelAlign="right"
       isCpq={isCpq}
-      allowCpqQuantity={canEditQuantity}
       quote={quote}
       isPreloading={isPreloading}
       onClose={onClose}

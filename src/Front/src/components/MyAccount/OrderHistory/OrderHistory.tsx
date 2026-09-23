@@ -37,6 +37,8 @@ export interface OrderHistoryPageLabels {
   poNumberLabel?: string;
   customerOrderReferenceLabel?: string;
   searchPlaceholder?: string;
+  sortNewestFirstLabel?: string;
+  sortOldestFirstLabel?: string;
   filterBuyerLabel?: string;
   filterProductLabel?: string;
   filterPoNumberLabel?: string;
@@ -221,6 +223,7 @@ const OrderHistory = ({ fields }: OrderHistoryPageProps) => {
   const [filterOrderNumber, setFilterOrderNumber] = useState('');
   const [filterProduct, setFilterProduct] = useState('');
   const [openFilter, setOpenFilter] = useState<FilterKey | null>(null);
+  const [sortNewestFirst, setSortNewestFirst] = useState(true);
 
   const filterOptions = useMemo(() => {
     if (!contextOrders) {
@@ -294,8 +297,19 @@ const OrderHistory = ({ fields }: OrderHistoryPageProps) => {
     setOpenFilter((current) => (current === key ? null : key));
   };
 
+  const sortedOrders = useMemo(() => {
+    const withIndex = filteredOrders.map((order, index) => ({ order, index }));
+    withIndex.sort((a, b) => {
+      const dateDiff =
+        new Date(a.order.orderDate).getTime() - new Date(b.order.orderDate).getTime();
+      const diff = sortNewestFirst ? -dateDiff : dateDiff;
+      return diff !== 0 ? diff : a.index - b.index;
+    });
+    return withIndex.map(({ order }) => order);
+  }, [filteredOrders, sortNewestFirst]);
+
   const ordersElements = useMemo(() => {
-    return filteredOrders?.map((order: PrintableOrder) => {
+    return sortedOrders?.map((order: PrintableOrder) => {
       const lineItems = {
         lineItems: order.products?.map((product: OrderProduct) => {
           const formatedLineItem = {
@@ -333,7 +347,7 @@ const OrderHistory = ({ fields }: OrderHistoryPageProps) => {
         />
       );
     });
-  }, [fields.logo, orderLabels, filteredOrders, printLabels]);
+  }, [fields.logo, orderLabels, sortedOrders, printLabels]);
 
   if (isGettingAllOrders || isGettingUser) {
     return <LoadingIndicator className="self-center" />;
@@ -424,10 +438,40 @@ const OrderHistory = ({ fields }: OrderHistoryPageProps) => {
             {...filterDropdownLabels}
           />
 
+          <button
+            type="button"
+            className="flex items-center gap-1 px-2.5 py-1 rounded text-xs cursor-pointer border border-gray-50 bg-transparent text-gray-70 ml-auto"
+            onClick={() => setSortNewestFirst((current) => !current)}
+            aria-label={
+              sortNewestFirst
+                ? sitecoreOrderHistoryLabel(
+                    orderLabels,
+                    'sortNewestFirstLabel',
+                    'Date: Newest first'
+                  )
+                : sitecoreOrderHistoryLabel(
+                    orderLabels,
+                    'sortOldestFirstLabel',
+                    'Date: Oldest first'
+                  )
+            }
+          >
+            {sortNewestFirst
+              ? sitecoreOrderHistoryLabel(orderLabels, 'sortNewestFirstLabel', 'Date: Newest first')
+              : sitecoreOrderHistoryLabel(
+                  orderLabels,
+                  'sortOldestFirstLabel',
+                  'Date: Oldest first'
+                )}
+            <ChevronDownIcon
+              size={10}
+              className={clsx('text-gray-70', sortNewestFirst && 'rotate-180')}
+            />
+          </button>
+
           <OrderHistoryExportButton
-            orders={filteredOrders}
+            orders={sortedOrders}
             exportExcelCtaLabel={orderLabels.exportExcelCtaLabel}
-            className="ml-auto"
           />
         </div>
       )}

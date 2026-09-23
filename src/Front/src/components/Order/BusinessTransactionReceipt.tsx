@@ -85,7 +85,6 @@ const styles = StyleSheet.create({
   strike: { textDecoration: 'line-through', color: COLORS.muted },
 
   totals: { marginTop: 14, marginLeft: 'auto', width: 220 },
-  discountText: { color: COLORS.green },
   totalsRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 2 },
   grandTotalRow: {
     flexDirection: 'row',
@@ -248,12 +247,6 @@ export const BusinessTransactionReceipt = ({ data, labels }: BusinessTransaction
             <Text>{label('taxLabel')}</Text>
             <Text>{data.tax}</Text>
           </View>
-          {data.discounts.map((discount, index) => (
-            <View key={`${discount.name}-${index}`} style={styles.totalsRow}>
-              <Text style={styles.discountText}>{discount.name || label('discountLabel')}</Text>
-              <Text style={styles.discountText}>-{discount.amount}</Text>
-            </View>
-          ))}
           <View style={styles.grandTotalRow}>
             <Text style={{ fontSize: 13, color: COLORS.ink }}>{label('totalLabel')}</Text>
             <Text style={styles.grandTotalValue}>{data.total}</Text>

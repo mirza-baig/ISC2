@@ -59,9 +59,10 @@ export const toFiniteNumber = (value: unknown): number | null => {
 };
 
 /**
- * Live Mule currently sends `creditLimit` and often leaves `availableCredit` /
- * `creditBalance` null. Prefer the explicit available amount; otherwise
- * `limit - balance`, then the limit alone.
+ * Mule's `creditBalance` is the credit still available to spend (Salesforce
+ * "Available Credit Balance"), not the amount already used. Prefer the explicit
+ * `availableCredit` field when supplied, then Mule's `creditBalance`, and finally
+ * the full limit when neither balance field is populated.
  */
 export const resolveAvailableCredit = (
   credit?: PaymentEligibilityAccount['credit'] | null
@@ -72,15 +73,13 @@ export const resolveAvailableCredit = (
     return available;
   }
 
-  const limit = toFiniteNumber(credit?.creditLimit);
+  const balance = toFiniteNumber(credit?.creditBalance);
 
-  if (limit === null) {
-    return null;
+  if (balance !== null) {
+    return balance;
   }
 
-  const used = toFiniteNumber(credit?.creditBalance);
-
-  return used === null ? limit : limit - used;
+  return toFiniteNumber(credit?.creditLimit);
 };
 
 const DUE_ON_RECEIPT = 'dueonreceipt';

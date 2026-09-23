@@ -63,6 +63,8 @@ export const CartButtons = ({ primaryCta, secondaryCta }: CartButtonsProps) => {
       return setModalContent(
         <ClearNotAvailableProductsModal
           onSuccess={goToCheckoutPage}
+          cartID={activeCart.id!}
+          lineItems={activeCart.lineItems || []}
           fields={{
             heading: labels.clearNotAvailableProductsModalHeading,
             description: labels.clearNotAvailableProductsModalDescription,

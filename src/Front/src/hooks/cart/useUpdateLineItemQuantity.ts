@@ -1,7 +1,6 @@
 import { useCart } from 'providers/index';
 import { getPickedProductFromBundleLine, isBundleLineItem } from 'utils/index';
 import useAddToCart from './useAddToCart';
-import useChangeLineItemQuantity from './useChangeLineItemQuantity';
 import useRemoveFromCart from './useRemoveFromCart';
 import type { AddToCartHit, CartLineItem, ProductHit as AddToCartProductHit } from 'types/index';
 
@@ -18,27 +17,17 @@ import type { AddToCartHit, CartLineItem, ProductHit as AddToCartProductHit } fr
  * active cart, writing here makes both views reflect the change automatically (no local
  * state to keep in sync).
  *
- * CPQ carts are read-only unless the caller opts in with `allowCpqCart` (CTX-5, narrowed
- * 2026-08-17): the cart page and the mini cart let an **Authorized Buyer** change a quoted line's
- * quantity, and nothing else does — the PLP surfaces and `useCartPreload` pass no options and keep
- * refusing outright. A quote takes the single-action path below rather than the add/remove pair,
- * and the write still has to be allowed by the service layer (CT-CART-7).
+ * CPQ carts are read-only everywhere (CTX-5): no surface, including the cart page and the mini
+ * cart, may change a quoted line's quantity.
  * B2B-only (the PLP is gated).
  */
-export type UpdateLineItemQuantityOptions = {
-  allowCpqCart?: boolean;
-};
-
-export default function useUpdateLineItemQuantity({
-  allowCpqCart = false,
-}: UpdateLineItemQuantityOptions = {}) {
+export default function useUpdateLineItemQuantity() {
   const { activeCart } = useCart();
   const { addToCartAsync, isAddingToCart } = useAddToCart();
   const { removeFromCartAsync, isRemovingFromCart } = useRemoveFromCart();
-  const { changeLineItemQuantityAsync, isChangingLineItemQuantity } = useChangeLineItemQuantity();
 
   const isCpqCart = Boolean(activeCart?.computed?.isB2B);
-  const isReadOnly = isCpqCart && !allowCpqCart;
+  const isReadOnly = isCpqCart;
 
   const updateQuantity = async (lineItem: CartLineItem, targetQty: number): Promise<void> => {
     if (isReadOnly) {
@@ -46,11 +35,6 @@ export default function useUpdateLineItemQuantity({
     }
     const current = lineItem.quantity;
     if (targetQty === current) {
-      return;
-    }
-
-    if (isCpqCart) {
-      await changeLineItemQuantityAsync({ lineItem, quantity: targetQty });
       return;
     }
 
@@ -107,7 +91,7 @@ export default function useUpdateLineItemQuantity({
 
   return {
     updateQuantity,
-    isUpdatingQuantity: isAddingToCart || isRemovingFromCart || isChangingLineItemQuantity,
+    isUpdatingQuantity: isAddingToCart || isRemovingFromCart,
     isReadOnly,
   };
 }

@@ -10,6 +10,7 @@ import {
   isPrepaidDiscountType,
   isPrepaidUnexpired,
   prepaidDiscountValue,
+  resolveAvailableCredit,
   resolvePrepaidDiscount,
   type PaymentEligibilityAccount,
 } from './paymentEligibility';
@@ -124,16 +125,17 @@ describe('paymentEligibility', () => {
       expect(isPreapprovedCreditEligible(account, 25001)).toBe(false);
     });
 
-    it('subtracts creditBalance from creditLimit when availableCredit is absent', () => {
+    it('treats Mule creditBalance as available credit when availableCredit is absent', () => {
       const account = eligibleAccount();
       account.credit = {
         paymentTerms: 'Net 30',
         availableCredit: null,
-        creditLimit: 25000,
-        creditBalance: 24000,
+        creditLimit: 80000,
+        creditBalance: 53000,
       };
-      expect(isPreapprovedCreditEligible(account, 1001)).toBe(false);
-      expect(isPreapprovedCreditEligible(account, 1000)).toBe(true);
+      expect(resolveAvailableCredit(account.credit)).toBe(53000);
+      expect(isPreapprovedCreditEligible(account, 53000)).toBe(true);
+      expect(isPreapprovedCreditEligible(account, 53001)).toBe(false);
     });
 
     it('does not fall back to creditLimit when availableCredit is explicitly 0', () => {

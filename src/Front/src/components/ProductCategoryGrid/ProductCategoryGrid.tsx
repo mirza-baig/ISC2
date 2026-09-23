@@ -3,6 +3,8 @@ import {
   Link,
   LinkField,
   NextImage,
+  RichText,
+  RichTextField,
   Text,
   TextField,
   withDatasourceCheck,
@@ -22,6 +24,7 @@ interface ProductCategory {
   fields: {
     image: ImageField;
     title: TextField;
+    Description: RichTextField;
   };
   children?: ProductCategoryLink[];
 }
@@ -65,6 +68,8 @@ const ProductCategoryGrid = ({ fields, params }: ProductCategoryGridProps): JSX.
                 field={category.fields?.title}
                 className="m-0 text-2xl font-normal leading-9 tracking-[0.004375rem] text-black-100"
               />
+
+              <RichText field={category.fields?.Description} />
 
               <ul className="m-0 list-none p-0">
                 {(category.children || []).map((categoryLink) => (

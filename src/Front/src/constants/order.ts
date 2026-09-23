@@ -10,7 +10,6 @@ export const BUSINESS_ORDER_CONFIRMATION_DEFAULT_LABELS = {
   unitPriceLabel: '{price} ea.',
   subtotalLabel: 'Subtotal',
   taxLabel: 'Tax',
-  discountLabel: 'Discount',
   totalLabel: 'Total',
   paymentMethodLabel: 'Payment Method',
   whatHappensNextTitle: 'What Happens Next?',
@@ -66,8 +65,6 @@ export const BUSINESS_RECEIPT_DEFAULT_LABELS = {
   subtotalColumnLabel: 'Line Total',
   subtotalLabel: 'Subtotal',
   taxLabel: 'Tax',
-  /** Only used when commercetools returns a promotion with no name of its own. */
-  discountLabel: 'Discount',
   totalLabel: 'Total',
   paymentMethodLabel: 'Payment Method',
   downloadReceiptCtaLabel: 'Print Your Receipt',

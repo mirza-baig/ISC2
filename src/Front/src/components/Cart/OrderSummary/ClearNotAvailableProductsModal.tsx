@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 
 import { useRemoveFromCart } from 'hooks/index';
-import { useCart, useModal } from 'providers/index';
+import { useModal } from 'providers/index';
+import { CartLineItem } from 'types/index';
 import { LoadingIndicator } from 'ui/index';
 
 export namespace ClearNotAvailableProductsModal {
@@ -14,15 +15,18 @@ export namespace ClearNotAvailableProductsModal {
   export type Props = {
     fields: Fields;
     onSuccess: () => void;
+    cartID: string;
+    lineItems: CartLineItem[];
   };
 }
 
 export const ClearNotAvailableProductsModal = ({
   fields,
   onSuccess,
+  cartID,
+  lineItems,
 }: ClearNotAvailableProductsModal.Props) => {
   const { closeModal } = useModal();
-  const { activeCart } = useCart();
 
   const { removeFromCart, isRemovingFromCart, removeFromCartSuccess } = useRemoveFromCart();
 
@@ -31,7 +35,7 @@ export const ClearNotAvailableProductsModal = ({
       return;
     }
 
-    const lineItems = (activeCart.lineItems || []).reduce((accum, lineItem) => {
+    const linesToRemove = (lineItems || []).reduce((accum, lineItem) => {
       if (lineItem.availableQuantity === 0) {
         return [...accum, lineItem];
       }
@@ -39,8 +43,8 @@ export const ClearNotAvailableProductsModal = ({
       return accum;
     }, []);
 
-    if (lineItems.length) {
-      removeFromCart({ lineItems });
+    if (linesToRemove.length) {
+      removeFromCart({ lineItems: linesToRemove, cartId: cartID });
     }
   };
 

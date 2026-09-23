@@ -75,6 +75,10 @@ export type PrintableOrder = {
   poNumber?: string;
   customerOrderReference?: string;
   orderNumber?: string;
+  organization?: string;
+  buyer?: string;
+  orderReferenceNumber?: string;
+  orderDateTime?: string;
   products: OrderProduct[];
   mailingAddress?: UserAddress;
   billingAddress?: UserAddress;
@@ -109,7 +113,6 @@ export type BusinessOrderConfirmationLabels = {
   unitPriceLabel?: string;
   subtotalLabel?: string;
   taxLabel?: string;
-  discountLabel?: string;
   totalLabel?: string;
   paymentMethodLabel?: string;
   whatHappensNextTitle?: string;
@@ -165,7 +168,6 @@ export type BusinessReceiptData = {
   taxIdNumber?: string;
   intacctCustomerId?: string;
   lineItems: ReceiptLineItem[];
-  discounts: { name: string; amount: string }[];
   subtotal: string;
   tax: string;
   total: string;

@@ -37,7 +37,6 @@ export interface B2BCartPanelProps {
   clampQuantity: NonNullable<B2BCartLineRowProps['clampQuantity']>;
   quantityLabelAlign?: 'left' | 'right';
   isCpq: boolean;
-  allowCpqQuantity?: boolean;
   quote: B2BCartQuote;
   isPreloading?: boolean;
   onClose?: () => void;
@@ -73,7 +72,6 @@ const B2BCartPanel = ({
   clampQuantity,
   quantityLabelAlign,
   isCpq,
-  allowCpqQuantity = false,
   quote,
   isPreloading = false,
   onClose,
@@ -224,7 +222,6 @@ const B2BCartPanel = ({
               startedLabel={labels.sessionStarted}
               readOnly={isCpq}
               canEditQuantity={canEditQuantity}
-              allowQuantityWhenReadOnly={allowCpqQuantity}
               maxQuantity={maxLineQuantity}
               clampQuantity={clampQuantity}
               quantityLabelAlign={quantityLabelAlign}

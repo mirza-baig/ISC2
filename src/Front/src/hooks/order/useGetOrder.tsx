@@ -35,13 +35,7 @@ export default function useGetOrder(orderNumber: string) {
             email,
           },
         });
-        console.log('query: ', QUERY_KEYS.ORDER)
-  console.log('[GET-ORDER-DEBUG] Response', {
-          orderNumber,
-          externalId: externalID,
-          email,
-          response: data,
-        });
+
         if ((data.errors || []).length) {
           throw data.errors[0];
         }

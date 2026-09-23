@@ -23,7 +23,7 @@ const CategoryHeaderBanner = ({ fields, params }: CategoryHeaderBannerProps): JS
   return (
     <section
       id={renderingId || undefined}
-      className={`component category-header-banner flex flex-wrap items-center overflow-hidden rounded-lg bg-gray-90 ${
+      className={`component category-header-banner mt-36 flex flex-wrap items-center overflow-hidden rounded-lg bg-gray-90 ${
         params?.styles || ''
       }`}
     >

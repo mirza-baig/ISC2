@@ -17,7 +17,6 @@ import type { Hit, UiState } from 'instantsearch.js';
 import { history as historyRouter } from 'instantsearch.js/es/lib/routers';
 import Link from 'next/link';
 import { getGraphQLResult } from 'utils/graphQLFunctions';
-import type { CurrencyCodes } from 'utils/index';
 import { useFeatureFlag } from 'providers/featureFlags';
 
 import {
@@ -675,26 +674,10 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
   // the rows — and because bucket ids are currency-agnostic tier ids, an applied filter survives a
   // currency switch and simply re-applies at the new currency's bounds (the provider re-prices the
   // catalog on that switch, so the list re-filters itself).
-  const { currencyCode, setCurrencyCode } = useUserSession();
+  const { currencyCode } = useUserSession();
   const b2bPriceBucketOptions = useMemo(() => getPriceBuckets(currencyCode), [currencyCode]);
 
-  // A CPQ (quoted) cart pins the session to the quote's currency, exactly as the cart page does
-  // (`Cart/ShoppingCart`): the quote was priced in one currency and must never be re-priced, so if
-  // the shopper switched currency before landing here, the switch is undone rather than applied to
-  // the cart. Keeping the session and the cart in agreement is also what makes the mismatch
-  // re-price path (`rebuildCartInSelectedCurrency`, guarded in B2BProductLineHitContainer)
-  // unreachable while a quote is active. B2B listing only, and only for a CPQ cart — everyone else
-  // keeps free currency switching.
   const isCpqCart = Boolean(activeCart?.computed?.isB2B);
-  useEffect(() => {
-    if (!isB2BListing || !isCpqCart) {
-      return;
-    }
-    const cartCurrencyCode = activeCart?.computed?.currencyCode;
-    if (cartCurrencyCode && cartCurrencyCode !== currencyCode) {
-      setCurrencyCode(cartCurrencyCode as CurrencyCodes);
-    }
-  }, [isB2BListing, isCpqCart, activeCart?.computed?.currencyCode, currencyCode, setCurrencyCode]);
 
   // Read by the router's `createURL`, which runs outside React's cycle — a ref so the `?price=` it
   // writes always reflects the buckets as they are right now (mirrors b2bSortRef).

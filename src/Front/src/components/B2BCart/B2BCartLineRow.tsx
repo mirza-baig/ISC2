@@ -36,7 +36,6 @@ export interface B2BCartLineRowProps {
   startedLabel: string;
   readOnly: boolean;
   canEditQuantity?: boolean;
-  allowQuantityWhenReadOnly?: boolean;
   maxQuantity?: number | null;
   clampQuantity?: ClampQuantity;
   quantityLabelAlign?: 'left' | 'right';
@@ -63,7 +62,6 @@ const B2BCartLineRow = ({
   startedLabel,
   readOnly,
   canEditQuantity = true,
-  allowQuantityWhenReadOnly = false,
   maxQuantity = null,
   clampQuantity,
   quantityLabelAlign = 'left',
@@ -124,7 +122,6 @@ const B2BCartLineRow = ({
     : '—';
 
   const showUpdateButton = canEditQuantity || isPrivate;
-  const editableWhenReadOnly = readOnly && allowQuantityWhenReadOnly && canEditQuantity;
 
   const quantityRowClassName = clsx(
     'flex items-center gap-2',
@@ -246,14 +243,7 @@ const B2BCartLineRow = ({
       {readOnly ? (
         <div className={quantityRowClassName}>
           <span className="text-right text-xs text-gray-70">{quantityLabel}</span>
-          {editableWhenReadOnly ? (
-            <div className="flex shrink-0 items-center gap-2">
-              {quantityInput}
-              {updateButton(isBusy || hasStarted || qty === item.quantity)}
-            </div>
-          ) : (
-            staticQuantity
-          )}
+          {staticQuantity}
         </div>
       ) : (
         <>

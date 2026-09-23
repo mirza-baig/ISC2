@@ -43,6 +43,8 @@ export default function useB2BCartCheckout(isCpq: boolean) {
       setModalContent(
         <ClearNotAvailableProductsModal
           onSuccess={goToCheckout}
+          cartID={activeCart.id!}
+          lineItems={activeCart.lineItems || []}
           fields={{
             heading:
               authoredCartLabels?.clearNotAvailableProductsModalHeading ||

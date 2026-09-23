@@ -10,6 +10,7 @@ import postCartUpdate from './postCartUpdate';
 
 type RemoveFromCartProps = {
   lineItems: CartLineItem[];
+  cartId?: string;
 };
 
 const getActions = (payload: RemoveFromCartProps) =>
@@ -24,18 +25,20 @@ const getActions = (payload: RemoveFromCartProps) =>
   });
 
 export default function useRemoveFromCart(callbacks?: MutationCallbacks<Cart>) {
-  const { cartId, setCartId } = useUserSession();
+  const { cartId: sessionCartId, setCartId } = useUserSession();
   const queryClient = useQueryClient();
   const { voucher: authorizedBuyerPricingVoucher } = useAuthorizedBuyerPricingVoucher();
 
   const { mutate, mutateAsync, isPending, error, isSuccess } = useMutation({
     mutationKey: [QUERY_KEYS.REMOVE_FROM_CART],
     mutationFn: async (payload: RemoveFromCartProps) => {
-      await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.ACTIVE_CART, cartId] });
+      const targetCartId = payload.cartId || sessionCartId;
+
+      await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.ACTIVE_CART, targetCartId] });
 
       return postCartUpdate(
         {
-          cartId,
+          cartId: targetCartId,
           actions: getActions(payload),
           authorizedBuyerPricingVoucher,
         },
@@ -44,8 +47,8 @@ export default function useRemoveFromCart(callbacks?: MutationCallbacks<Cart>) {
         }
       );
     },
-    onSuccess: (updatedCart) => {
-      if (updatedCart.id !== cartId) {
+    onSuccess: (updatedCart, variables) => {
+      if (!variables.cartId && updatedCart.id !== sessionCartId) {
         setCartId(updatedCart.id);
       }
 

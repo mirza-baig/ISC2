@@ -9,7 +9,6 @@ import {
   UserAddress,
 } from 'types/index';
 import { IN_PERSON_MODALITIES, LOCALSTORAGE_KEYS } from 'constants/index';
-
 import { parseCustomFieldValue } from 'hooks/cart/cartCustomFields';
 
 import { getVariantAttributes } from './cart';
@@ -176,12 +175,6 @@ export const buildBusinessReceiptData = ({
     lineItems: flattenLineItems(cart.lineItems ?? []).map((lineItem) =>
       buildLineItem(lineItem, currencySymbol)
     ),
-    discounts: (cart.discountOnTotalPrice?.includedDiscounts ?? []).map(
-      ({ discount, discountCode, discountedAmount }) => ({
-        name: discount?.name || discountCode?.name || discountCode?.code || '',
-        amount: formatMoney(currencySymbol, discountedAmount),
-      })
-    ),
     subtotal: `${currencySymbol}${cart.computed.subtotal?.toFixed(2) ?? '0.00'}`,
     tax: `${currencySymbol}${cart.computed.taxValue ?? '0.00'}`,
     total: `${currencySymbol}${cart.computed.totalPrice}`,
@@ -241,7 +234,6 @@ export const buildBusinessReceiptDataFromPrintableOrder = ({
       hasDiscount: false,
       subtotal: formatMoney(currencySymbol, product.productItemPrice),
     })),
-    discounts: [],
     subtotal: formatMoney(currencySymbol, order.subTotal),
     tax: formatMoney(currencySymbol, order.tax),
     total: formatMoney(currencySymbol, order.orderTotal),

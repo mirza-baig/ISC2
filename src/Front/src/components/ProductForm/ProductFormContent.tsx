@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
+import clsx from 'clsx';
 import { Link, RichText, Text } from '@sitecore-jss/sitecore-jss-nextjs';
 
 import {
@@ -546,17 +547,23 @@ const ProductFormContent = ({
   }
 
   if (showViewPricingCta && viewPricingCta) {
+    const hasViewPricingTitle = Boolean(viewPricingTitle?.value);
+    const hasViewPricingDescription = Boolean(viewPricingDescription?.value);
+
     const viewPricingContent = (
       <>
-        {Boolean(viewPricingTitle?.value) && (
+        {hasViewPricingTitle && (
           <Text tag="p" field={viewPricingTitle} className="body-l font-bold w-full" />
         )}
-        {Boolean(viewPricingDescription?.value) && (
+        {hasViewPricingDescription && (
           <RichText field={viewPricingDescription} className="body-m w-full" />
         )}
         <Link
           field={viewPricingCta}
-          className="primary-cta w-full h-full p-4 page-link bold-link text-center inline-block !mt-7"
+          className={clsx(
+            'primary-cta w-full h-full p-4 page-link bold-link text-center inline-block',
+            (hasViewPricingTitle || hasViewPricingDescription) && '!mt-7'
+          )}
         >
           {viewPricingCtaLabel}
         </Link>

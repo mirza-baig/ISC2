@@ -64,8 +64,10 @@ export default function ShopperContextModal() {
   const { setModalContent, closeModal, modalContent } = useModal();
   const { setShopperContext } = useShopperContext();
   const { session, isSessionLoading } = useSession();
-  const { isUserLoggedIn, isGettingUser, externalID, email } = useLoggedUser();
-  const { isAuthorizedBuyer, isResolvingAuthorizedBuyer } = useAuthorizedBuyer();
+  const { isUserLoggedIn, isGettingUser, isB2BAdminUser, externalID, email } = useLoggedUser();
+  const { isAuthorizedBuyer, isResolvingAuthorizedBuyer } = useAuthorizedBuyer({
+    enabled: isB2BAdminUser,
+  });
   const isB2BFlowEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   const hasOpenedRef = useRef(false);
 
@@ -118,7 +120,7 @@ export default function ShopperContextModal() {
       return;
     }
 
-    if (!isAuthorizedBuyer || !email) {
+    if (!isB2BAdminUser || !isAuthorizedBuyer || !email) {
       return;
     }
 
@@ -167,6 +169,7 @@ export default function ShopperContextModal() {
     isSessionLoading,
     isGettingUser,
     isUserLoggedIn,
+    isB2BAdminUser,
     isAuthorizedBuyer,
     isResolvingAuthorizedBuyer,
     isB2BFlowEnabled,

@@ -27,7 +27,7 @@ const CallToActionHero = ({ fields, params }: CallToActionHeroProps): JSX.Elemen
   return (
     <section
       id={renderingId || undefined}
-      className={`component call-to-action-hero relative isolate overflow-hidden rounded-lg bg-cover bg-center px-5 py-10 sm:px-10 ${
+      className={`component call-to-action-hero relative isolate mt-36 overflow-hidden rounded-lg bg-cover bg-center px-5 py-10 sm:px-10 ${
         params?.styles || ''
       }`}
       style={backgroundImage ? { backgroundImage: `url("${backgroundImage}")` } : undefined}

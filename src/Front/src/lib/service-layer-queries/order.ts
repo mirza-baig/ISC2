@@ -7,6 +7,7 @@ query Order($orderNumber: String, $locale: Locale, $externalId: String!, $email:
         ${CART_FIELDS}
       }
       orderNumber
+      createdAt
       customerEmail
       custom {
         customFieldsRaw {
@@ -50,10 +51,16 @@ export const GET_ALL_ORDERS = `
   query SalesforceGetOrders($externalId: String!, $email: String!) {
     salesforceGetOrders(externalId: $externalId, email: $email) {
       orderId
+      orderNumber
       orderDate
       orderStatus
+      organization
+      buyer
       paymentType
+      organization
+      buyer
       poNumber
+      orderReferenceNumber
       customerOrderReference
       orderTotal {
         centAmount

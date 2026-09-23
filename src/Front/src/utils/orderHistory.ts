@@ -34,9 +34,14 @@ const toQuantity = (value: unknown): number => {
 export const normalizePrintableOrder = (order: RawPrintableOrder): PrintableOrder => ({
   ...order,
   accountId: firstText(order.accountId),
-  accountName: firstText(order.accountName, order.businessName, order.companyName),
+  accountName: firstText(
+    order.accountName,
+    order.organization,
+    order.businessName,
+    order.companyName
+  ),
   buyerId: firstText(order.buyerId),
-  buyerFullName: firstText(order.buyerFullName, order.userName),
+  buyerFullName: firstText(order.buyerFullName, order.buyer, order.userName),
   buyerEmail: firstText(order.buyerEmail),
   poNumber: firstText(order.poNumber),
   customerOrderReference: firstText(order.customerOrderReference),

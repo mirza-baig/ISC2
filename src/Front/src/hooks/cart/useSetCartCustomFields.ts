@@ -46,7 +46,6 @@ export default function useSetCartCustomFields(callbacks?: MutationCallbacks) {
 
       const fields = buildFields(input);
 
-      // Nothing to persist — skip the round trip entirely.
       if (!fields.length) {
         return;
       }
@@ -70,10 +69,6 @@ export default function useSetCartCustomFields(callbacks?: MutationCallbacks) {
 
       const updatedCart = data.data?.isc2CartUpdate;
       const persistedFields = updatedCart?.custom?.customFieldsRaw ?? [];
-
-      // Success signal: every field we asked to write is present on the returned
-      // cart's custom fields. If so, ignore any partial-response errors on
-      // unrelated projection fields (see doc block above).
       const writeLanded =
         !!updatedCart &&
         fields.every((target) => persistedFields.some((f) => f.name === target.name));

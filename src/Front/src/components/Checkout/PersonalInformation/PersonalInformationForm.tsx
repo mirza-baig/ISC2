@@ -78,12 +78,6 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
       },
     }
   );
-
-  // B2B step-1 only: writes Purchase Information custom fields
-  // (poNumber, customerOrderReference, organization, buyer) to the cart via
-  // setCustomType against the `ISCCartOrderModelCustomization` type. The hook
-  // itself is a no-op for non-B2B carts; the outer `isBusinessBuyer` guard in
-  // `onFormSubmitted` avoids the mutation setup cost on the individual path.
   const { setCartCustomFieldsAsync, isSettingCartCustomFields } = useSetCartCustomFields({
     onError: (err) => console.error('[B2B-CUSTOM-FIELDS] Write failed', err),
   });
@@ -254,10 +248,6 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
       },
     });
 
-    // B2B step-1 only: persist Purchase Information custom fields to the cart
-    // before the address/tax/PI cascade fires. Non-blocking — a failure is
-    // logged via the hook's onError; the user is not prevented from advancing
-    // and the values remain in form state for a re-submit.
     if (isBusinessBuyer) {
       try {
         await setCartCustomFieldsAsync({
