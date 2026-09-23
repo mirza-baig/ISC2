@@ -1,4 +1,4 @@
-import { SubmitHandler } from 'react-hook-form';
+import { SubmitErrorHandler, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FieldConditions, useConditionalForm } from 'rhf-conditional-logic';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -82,19 +82,13 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
     onError: (err) => console.error('[B2B-CUSTOM-FIELDS] Write failed', err),
   });
 
-  const {
-    handleSubmit,
-    watch,
-    control,
-    setValue,
-    getValues,
-    formState: { isValid },
-  } = useConditionalForm<PersonalInformation>({
-    mode: 'onSubmit',
-    conditions: FORM_CONDITIONS,
-    defaultValues: personalInformationDraft.current ?? initialData,
-    resolver: zodResolver(PersonalInformationSchema),
-  });
+  const { handleSubmit, watch, control, setValue, getValues } =
+    useConditionalForm<PersonalInformation>({
+      mode: 'onSubmit',
+      conditions: FORM_CONDITIONS,
+      defaultValues: personalInformationDraft.current ?? initialData,
+      resolver: zodResolver(PersonalInformationSchema),
+    });
 
   useEffect(
     () => () => {
@@ -231,7 +225,7 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
   );
 
   const onFormSubmitted: SubmitHandler<PersonalInformation> = async (data) => {
-    if (!isValid || isSettingInfo || isSettingCartCustomFields) {
+    if (isSettingInfo || isSettingCartCustomFields) {
       return;
     }
 
@@ -267,6 +261,12 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
     });
   };
 
+  const onFormInvalid: SubmitErrorHandler<PersonalInformation> = (errors) => {
+    if (isBusinessBuyer && errors.billingAddress && getValues('isSameAddress')) {
+      setValue('isSameAddress', false);
+    }
+  };
+
   return (
     <FormFieldsProvider
       requiredText={stepOneLabels.requiredFieldNotice}
@@ -274,7 +274,10 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
       incorrectPostalCodeMessage={stepOneLabels.incorrectPostalCodeMessage}
       emailFormatErrorMessage={stepOneLabels.emailFormatErrorMessage}
     >
-      <form className="flex flex-col gap-y-4" onSubmit={handleSubmit(onFormSubmitted)}>
+      <form
+        className="flex flex-col gap-y-4"
+        onSubmit={handleSubmit(onFormSubmitted, onFormInvalid)}
+      >
         {isBusinessBuyer ? (
           <BusinessPurchaseInformation
             control={control}
