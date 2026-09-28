@@ -106,11 +106,57 @@ const formatPaymentMethod = (value?: string) =>
     .trim()
     .replace(/\b\w/g, (character) => character.toUpperCase()) || undefined;
 
+const getUnitPriceBeforeCartDiscounts = (lineItem: CartLineItem): TypedMoney | undefined =>
+  'price' in lineItem ? lineItem.price.discounted?.value ?? lineItem.price.value : undefined;
+
+const getUnitPriceAfterDiscounts = (lineItem: CartLineItem): TypedMoney | undefined => {
+  const beforeCartDiscounts = getUnitPriceBeforeCartDiscounts(lineItem);
+  const perQuantity =
+    'discountedPricePerQuantity' in lineItem
+      ? lineItem.discountedPricePerQuantity?.[0]?.discountedPrice?.value
+      : undefined;
+
+  if (!perQuantity || !beforeCartDiscounts) {
+    return perQuantity ?? beforeCartDiscounts;
+  }
+
+  return perQuantity.centAmount < beforeCartDiscounts.centAmount
+    ? perQuantity
+    : beforeCartDiscounts;
+};
+
+export const getLineItemTotalBeforeCartDiscounts = (
+  lineItem: CartLineItem
+): TypedMoney | undefined => {
+  const unitPrice = getUnitPriceBeforeCartDiscounts(lineItem);
+
+  return unitPrice && { ...unitPrice, centAmount: unitPrice.centAmount * (lineItem.quantity ?? 1) };
+};
+
+export const getCartDiscountCentAmount = (lineItems: CartLineItem[]): number =>
+  lineItems.reduce((sum, lineItem) => {
+    const before = getLineItemTotalBeforeCartDiscounts(lineItem);
+    const total = 'totalPrice' in lineItem ? lineItem.totalPrice : undefined;
+
+    return before && total ? sum + Math.max(0, before.centAmount - total.centAmount) : sum;
+  }, 0);
+
+export const formatCartDiscount = (lineItems: CartLineItem[], currencySymbol: string) => {
+  const centAmount = getCartDiscountCentAmount(lineItems);
+  const fractionDigits = lineItems.find(
+    (lineItem) => 'totalPrice' in lineItem && lineItem.totalPrice
+  )?.totalPrice?.fractionDigits;
+
+  return centAmount > 0
+    ? `-${formatMoney(currencySymbol, { centAmount, fractionDigits } as TypedMoney)}`
+    : '-';
+};
+
 const buildLineItem = (lineItem: CartLineItem, currencySymbol: string): ReceiptLineItem => {
   const attributes = getVariantAttributes(lineItem.variant, RECEIPT_ATTRIBUTES);
 
   const listPrice = 'price' in lineItem ? lineItem.price.value : undefined;
-  const discounted = 'price' in lineItem ? lineItem.price.discounted?.value : undefined;
+  const yourPrice = getUnitPriceAfterDiscounts(lineItem);
   const total = 'totalPrice' in lineItem ? lineItem.totalPrice : undefined;
 
   return {
@@ -118,9 +164,9 @@ const buildLineItem = (lineItem: CartLineItem, currencySymbol: string): ReceiptL
     location: resolveLocation(attributes),
     quantity: lineItem.quantity ?? 1,
     listPrice: formatMoney(currencySymbol, listPrice),
-    discountedPrice: formatMoney(currencySymbol, discounted ?? listPrice),
-    hasDiscount: Boolean(discounted),
-    subtotal: formatMoney(currencySymbol, total ?? discounted ?? listPrice),
+    discountedPrice: formatMoney(currencySymbol, yourPrice ?? listPrice),
+    hasDiscount: Boolean(yourPrice && listPrice && yourPrice.centAmount < listPrice.centAmount),
+    subtotal: formatMoney(currencySymbol, total ?? yourPrice ?? listPrice),
   };
 };
 
@@ -157,6 +203,7 @@ export const buildBusinessReceiptData = ({
     address?.country,
   ].filter((line) => Boolean(line && line.trim()));
   const enteredAddressLines = addressLines(enteredBillingAddress);
+  const receiptLineItems = flattenLineItems(cart.lineItems ?? []);
   const billingAddressLines = enteredAddressLines.length ? enteredAddressLines : orderAddressLines;
 
   return {
@@ -172,9 +219,8 @@ export const buildBusinessReceiptData = ({
     customerOrderReference: customField(order, 'customerOrderReference'),
     taxIdNumber,
     intacctCustomerId,
-    lineItems: flattenLineItems(cart.lineItems ?? []).map((lineItem) =>
-      buildLineItem(lineItem, currencySymbol)
-    ),
+    lineItems: receiptLineItems.map((lineItem) => buildLineItem(lineItem, currencySymbol)),
+    discount: formatCartDiscount(receiptLineItems, currencySymbol),
     subtotal: `${currencySymbol}${cart.computed.subtotal?.toFixed(2) ?? '0.00'}`,
     tax: `${currencySymbol}${cart.computed.taxValue ?? '0.00'}`,
     total: `${currencySymbol}${cart.computed.totalPrice}`,

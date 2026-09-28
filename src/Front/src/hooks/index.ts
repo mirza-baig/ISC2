@@ -47,6 +47,7 @@ export { default as useUpdateB2BPersonalInformation } from './cart/useUpdateB2BP
 export { default as useGetCart } from './cart/useGetCart';
 export { default as useRemoveFromCart } from './cart/useRemoveFromCart';
 export { default as useApplyCouponCode } from './cart/useApplyCouponCode';
+export { default as useDiscountPercentage } from './cart/useDiscountPercentage';
 export { default as useAddToCart } from './cart/useAddToCart';
 export { default as useCartPreload } from './cart/useCartPreload';
 export { default as useRemoveCouponCode } from './cart/useRemoveCouponCode';

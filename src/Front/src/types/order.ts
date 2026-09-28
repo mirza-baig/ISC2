@@ -111,6 +111,7 @@ export type BusinessOrderConfirmationLabels = {
   quantitySingularLabel?: string;
   /** Supports a `{price}` token, e.g. "{price} ea.". */
   unitPriceLabel?: string;
+  discountLabel?: string;
   subtotalLabel?: string;
   taxLabel?: string;
   totalLabel?: string;
@@ -168,6 +169,8 @@ export type BusinessReceiptData = {
   taxIdNumber?: string;
   intacctCustomerId?: string;
   lineItems: ReceiptLineItem[];
+  /** Cart-level discount (e.g. prepaid), pre-formatted as "-$59.90". Omitted when none. */
+  discount?: string;
   subtotal: string;
   tax: string;
   total: string;
@@ -196,6 +199,7 @@ export type BusinessReceiptLabels = {
   listPriceColumnLabel?: string;
   discountedPriceColumnLabel?: string;
   subtotalColumnLabel?: string;
+  discountLabel?: string;
   subtotalLabel?: string;
   taxLabel?: string;
   totalLabel?: string;

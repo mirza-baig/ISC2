@@ -12,12 +12,18 @@ import {
   useActiveBusinessAccount,
   useBusinessPaymentEligibility,
   useConfirmPayment,
+  useDiscountPercentage,
   useDownloadQuote,
   useEnsureBusinessCartTax,
   useGetPaymentIntent,
   useIsBusinessBuyer,
   useRecalculateCart,
 } from 'hooks/index';
+import {
+  hasDirectDiscount,
+  isDiscountSyncInFlight,
+  trackDiscountSync,
+} from 'hooks/cart/useDiscountPercentage';
 import {
   shouldRecalculateTaxForPaymentMethod,
   shouldRefreshPaymentIntentForPaymentMethod,
@@ -131,6 +137,14 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
   const isBusinessBuyer = useIsBusinessBuyer();
   const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   const { ensureTaxedCart, hasTaxedTotal, isEnsuringTax } = useEnsureBusinessCartTax();
+  const {
+    isDiscountPercentageEnabled,
+    applyDiscountPercentageAsync,
+    removeDiscountPercentageAsync,
+    storeCart,
+    isUpdatingDiscountPercentage,
+  } = useDiscountPercentage();
+  const [isSwitchingPaymentMethod, setIsSwitchingPaymentMethod] = useState(false);
   const lastTaxedPaymentMethodRef = useRef<CheckoutPaymentMethod | undefined>(undefined);
   const stripeBillingCountryRef = useRef<string | undefined>(
     personalInformation?.billingAddress?.countryCode || 'US'
@@ -229,8 +243,48 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
       return;
     }
 
+    // The prepaid discount belongs to this step only; the buyer picks a method again on return.
+    if (isDiscountPercentageEnabled && hasDirectDiscount(activeCart) && !isDiscountSyncInFlight()) {
+      removeDiscountPercentageAsync()
+        .then(storeCart)
+        .catch((error) => console.error('Error removing prepaid discount percentage:', error));
+      setSelectedPaymentMethod(undefined);
+    }
+
     setActiveStep(CHECKOUT_STEPS.PERSONAL_INFORMATION);
-  }, [isConfirmingPayment, setActiveStep]);
+  }, [
+    activeCart,
+    isConfirmingPayment,
+    isDiscountPercentageEnabled,
+    removeDiscountPercentageAsync,
+    setActiveStep,
+    setSelectedPaymentMethod,
+    storeCart,
+  ]);
+
+  const updateDiscountThenTax = useCallback(
+    (
+      updateDiscount: () => Promise<Cart>,
+      taxOptions: { paymentMethodType?: CheckoutPaymentMethod; preservePaymentIntent: boolean }
+    ) =>
+      trackDiscountSync(async () => {
+        let discountedCart: Cart | undefined;
+
+        try {
+          discountedCart = await updateDiscount();
+        } catch (error) {
+          console.error('Error updating prepaid discount percentage:', error);
+        }
+
+        const taxedCart = await ensureTaxedCart(undefined, { ...taxOptions, cart: discountedCart });
+
+        // Tax stores the cart itself; when it could not run, show the discounted cart as is.
+        if (discountedCart && !taxedCart?.taxedPrice) {
+          storeCart(discountedCart);
+        }
+      }),
+    [ensureTaxedCart, storeCart]
+  );
 
   const clearStripeData = useCallback(() => {
     const element = elements?.getElement('payment');
@@ -260,9 +314,15 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
           method
         );
 
+      const isPrepaid = method === BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT;
+      const hasDiscountOnCart = hasDirectDiscount(activeCart);
+      const shouldApplyDiscount =
+        isDiscountPercentageEnabled && isPrepaid && Boolean(prepaidDiscount) && !hasDiscountOnCart;
+      const shouldRemoveDiscount = isDiscountPercentageEnabled && !isPrepaid && hasDiscountOnCart;
+
       lastTaxedPaymentMethodRef.current = method;
 
-      if (!shouldRecalculate) {
+      if (!shouldRecalculate && !shouldApplyDiscount && !shouldRemoveDiscount) {
         return;
       }
 
@@ -271,17 +331,39 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
         method
       );
 
-      void ensureTaxedCart(undefined, {
-        paymentMethodType: method,
-        preservePaymentIntent,
-      });
+      setIsSwitchingPaymentMethod(true);
+
+      const taxOptions = { paymentMethodType: method, preservePaymentIntent };
+
+      void (async () => {
+        try {
+          if (shouldApplyDiscount && prepaidDiscount) {
+            await updateDiscountThenTax(
+              () => applyDiscountPercentageAsync(prepaidDiscount),
+              taxOptions
+            );
+          } else if (shouldRemoveDiscount) {
+            await updateDiscountThenTax(removeDiscountPercentageAsync, taxOptions);
+          } else {
+            await ensureTaxedCart(undefined, taxOptions);
+          }
+        } finally {
+          setIsSwitchingPaymentMethod(false);
+        }
+      })();
     },
     [
+      activeCart,
+      applyDiscountPercentageAsync,
       ensureTaxedCart,
       isB2BFeatureEnabled,
       isBusinessBuyer,
+      isDiscountPercentageEnabled,
+      prepaidDiscount,
+      removeDiscountPercentageAsync,
       setHasPaymentError,
       setSelectedPaymentMethod,
+      updateDiscountThenTax,
     ]
   );
 
@@ -454,10 +536,52 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     ? onBusinessFormSubmit
     : onStripeFormSubmit;
 
-  const isBusy = isRecalculating || isEnsuringTax || isConfirmingPayment || isOrderSubmitted;
+  const isBusy =
+    isRecalculating ||
+    isEnsuringTax ||
+    isUpdatingDiscountPercentage ||
+    isSwitchingPaymentMethod ||
+    isConfirmingPayment ||
+    isOrderSubmitted;
 
   const isConfirmPurchaseBusy =
     isBusy || (!isBusinessMethodSelected && !isFreeOrder && isGettingPaymentIntent);
+  const didClearLeftoverDiscountRef = useRef(false);
+
+  useEffect(() => {
+    if (
+      didClearLeftoverDiscountRef.current ||
+      !isDiscountPercentageEnabled ||
+      !paymentMethod ||
+      paymentMethod === BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT ||
+      isSwitchingPaymentMethod ||
+      isEnsuringTax ||
+      isDiscountSyncInFlight()
+    ) {
+      return;
+    }
+
+    didClearLeftoverDiscountRef.current = true;
+
+    if (!hasDirectDiscount(activeCart)) {
+      return;
+    }
+
+    setIsSwitchingPaymentMethod(true);
+
+    updateDiscountThenTax(removeDiscountPercentageAsync, {
+      paymentMethodType: paymentMethod,
+      preservePaymentIntent: true,
+    }).finally(() => setIsSwitchingPaymentMethod(false));
+  }, [
+    activeCart,
+    isDiscountPercentageEnabled,
+    isEnsuringTax,
+    isSwitchingPaymentMethod,
+    paymentMethod,
+    removeDiscountPercentageAsync,
+    updateDiscountThenTax,
+  ]);
 
   const didEnsureTaxRef = useRef(false);
 
@@ -484,13 +608,20 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
       return;
     }
 
+    if (isSwitchingPaymentMethod || isUpdatingDiscountPercentage || isEnsuringTax) {
+      return;
+    }
+
     setHasPaymentError(true);
     setPaymentErrorMessage(copy.stalePayment);
     setSelectedPaymentMethod(undefined);
   }, [
     copy.stalePayment,
     isCreditEligible,
+    isEnsuringTax,
     isPrepaidEligible,
+    isSwitchingPaymentMethod,
+    isUpdatingDiscountPercentage,
     paymentMethod,
     setHasPaymentError,
     setSelectedPaymentMethod,
@@ -501,6 +632,10 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
       return;
     }
 
+    if (isSwitchingPaymentMethod || isUpdatingDiscountPercentage || isEnsuringTax) {
+      return;
+    }
+
     const isCurrentAvailable = paymentMethodOptions.some(
       (option) => option.value === paymentMethod
     );
@@ -508,7 +643,15 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     if (!isCurrentAvailable) {
       selectPaymentMethod(paymentMethodOptions[0].value);
     }
-  }, [paymentMethod, paymentMethodOptions, selectPaymentMethod, showBusinessPaymentDropdown]);
+  }, [
+    isEnsuringTax,
+    isSwitchingPaymentMethod,
+    isUpdatingDiscountPercentage,
+    paymentMethod,
+    paymentMethodOptions,
+    selectPaymentMethod,
+    showBusinessPaymentDropdown,
+  ]);
 
   useEffect(() => {
     const paymentElement = elements?.getElement('payment');

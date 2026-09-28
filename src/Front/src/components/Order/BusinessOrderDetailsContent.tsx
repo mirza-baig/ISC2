@@ -9,7 +9,9 @@ import {
 } from 'hooks/index';
 import {
   buildBusinessReceiptData,
+  formatCartDiscount,
   formatDate,
+  getLineItemTotalBeforeCartDiscounts,
   parseFieldsFromURLString,
   parsePrice,
   readCheckoutBillingAddress,
@@ -88,6 +90,11 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
   const lineItems = useMemo(
     () => (activeCart.lineItems ?? []) as CartLineItem[],
     [activeCart.lineItems]
+  );
+
+  const cartDiscount = useMemo(
+    () => formatCartDiscount(lineItems, currencySymbol),
+    [currencySymbol, lineItems]
   );
 
   /**
@@ -249,7 +256,10 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
                     </span>
                   </div>
                   <span className="body-m font-bold text-isc2-green whitespace-nowrap">
-                    {formatMoney(lineItem.totalPrice)}
+                    {/* Before the cart discount; the discount shows as its own row below. */}
+                    {formatMoney(
+                      getLineItemTotalBeforeCartDiscounts(lineItem) ?? lineItem.totalPrice
+                    )}
                   </span>
                 </li>
               );
@@ -257,6 +267,12 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
           </ul>
 
           <div className="flex flex-col gap-2 border-t border-gray-50 pt-6">
+            {cartDiscount && (
+              <div className="flex justify-between body-m">
+                <span>{label('discountLabel')}</span>
+                <span>{cartDiscount}</span>
+              </div>
+            )}
             <div className="flex justify-between body-m">
               <span>{label('subtotalLabel')}</span>
               <span>

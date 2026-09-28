@@ -24,6 +24,7 @@ import { usePersonalize } from 'providers/index';
 
 import useCreateCart from './useCreateCart';
 import useAuthorizedBuyerPricingVoucher from './useAuthorizedBuyerPricingVoucher';
+import { clearDirectDiscountActions } from './useDiscountPercentage';
 
 type AddToCartProps = {
   items: (AddToCartHit | ProductHit)[];
@@ -121,7 +122,8 @@ export default function useAddToCart(callbacks?: MutationCallbacks) {
           variables: {
             cartId: userCartId,
             country: userCountry,
-            actions: getActions(payload, currencyCode),
+            // Clears a prepaid discount left from checkout so it never reaches new items.
+            actions: [...getActions(payload, currencyCode), ...clearDirectDiscountActions()],
             authorizedBuyerPricingVoucher,
           },
         });
