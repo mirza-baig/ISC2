@@ -124,6 +124,17 @@ describe('filterOrdersForShopperContext', () => {
 });
 
 describe('normalizePrintableOrder', () => {
+  it('maps and cleans the current order-history organization and buyer fields', () => {
+    const normalized = normalizePrintableOrder({
+      ...order(),
+      organization: '"Meridian Partners LLC"',
+      buyer: '"Test SPcontact"',
+    });
+
+    expect(normalized.accountName).toBe('Meridian Partners LLC');
+    expect(normalized.buyerFullName).toBe('Test SPcontact');
+  });
+
   it('maps placeholder API names onto account and buyer fields', () => {
     const normalized = normalizePrintableOrder({
       ...order(),

@@ -51,6 +51,7 @@ export interface B2BCartPanelProps {
    */
   pendingUpdateLineId?: string | null;
   leadingRows?: ReactNode;
+  trailingContent?: ReactNode;
   className?: string;
 }
 
@@ -82,6 +83,7 @@ const B2BCartPanel = ({
   isBusy,
   pendingUpdateLineId,
   leadingRows,
+  trailingContent,
   className = DOCK_CLASSNAME,
 }: B2BCartPanelProps): JSX.Element => {
   const labels = useB2BCartLabels();
@@ -234,6 +236,8 @@ const B2BCartPanel = ({
           );
         })}
       </div>
+
+      {trailingContent && <div className="p-4">{trailingContent}</div>}
 
       {showFooter && (
         <div className="border-t border-gray-50 px-4 pb-4 pt-3">

@@ -22,16 +22,17 @@ import { formatAnalyticsCouponCodes } from 'utils/analytics';
 import { isPostalCodeRequiredForCountry } from 'utils/cart';
 import BusinessPurchaseInformation from './BusinessPurchaseInformation';
 
-// IMPORTANT ffor the comment below `useConditionalForm` rhf-conditional-logic does not merely skip validation for a field whose condition is
-// false — it deletes the value from the object handed to the submit handler. Every clause
-// below therefore needs the mailing address restored afterwards; see `onFormSubmitted`.
 const FORM_CONDITIONS: FieldConditions<PersonalInformation> = {
-  // A business buyer's mailing address mirrors the account's read-only shipping address,
-  // so it is never validated: an incomplete account record must not block checkout.
-  mailingAddress: (getValues) =>
-    getValues('isSameAddress') === false &&
-    !getValues('isB2Bcart') &&
-    !getValues('isBusinessBuyer'),
+  mailingAddress: (getValues) => {
+    if (getValues('isB2Bcart')) {
+      return false;
+    }
+    if (getValues('isBusinessBuyer')) {
+      return true;
+    }
+    return getValues('isSameAddress') === false;
+  },
+  billingAddress: () => true,
 };
 
 type FormProps = {
@@ -69,6 +70,10 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
 
   const [previousBillingStates, setPreviousBillingStates] = useState<Record<string, string>>({});
   const [previousMailingStates, setPreviousMailingStates] = useState<Record<string, string>>({});
+  const [formError, setFormError] = useState<string | null>(null);
+  const [errorFocusTarget, setErrorFocusTarget] = useState<
+    'billingAddress' | 'mailingAddress' | null
+  >(null);
 
   const { onCartPersonalInformationComplete, isSettingInfo } = useOnCartPersonalInformationComplete(
     {
@@ -163,6 +168,17 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
     }
   }, [isBusinessBuyer, isSameAddress, accountShippingAddress, getValues, setValue]);
 
+  useEffect(() => {
+    if (!formError || !errorFocusTarget) {
+      return;
+    }
+    const selector =
+      errorFocusTarget === 'mailingAddress'
+        ? '[data-mailing-address-section]'
+        : '[data-billing-address-section]';
+    document.querySelector(selector)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [formError, errorFocusTarget]);
+
   const billingStates = useMemo(
     () => allStates?.[billingCountry] ?? [],
     [allStates, billingCountry]
@@ -228,6 +244,8 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
     if (isSettingInfo || isSettingCartCustomFields) {
       return;
     }
+    setFormError(null);
+    setErrorFocusTarget(null);
 
     const coupon = formatAnalyticsCouponCodes(activeCart?.discountCodes);
 
@@ -255,16 +273,45 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
       }
     }
 
-    onCartPersonalInformationComplete({
-      ...data,
-      mailingAddress: data.mailingAddress ?? getValues('mailingAddress'),
-    });
+    try {
+      await onCartPersonalInformationComplete({
+        ...data,
+        mailingAddress: data.mailingAddress ?? getValues('mailingAddress'),
+      });
+    } catch (err) {
+      console.error('[B2B-PERSONAL-INFO] onCartPersonalInformationComplete failed', err);
+      if (isBusinessBuyer && getValues('isSameAddress')) {
+        setValue('isSameAddress', false);
+      }
+
+      setErrorFocusTarget('billingAddress');
+      setFormError(
+        'We could not save your billing address. Please review and complete the billing address fields below, then try again.'
+      );
+    }
   };
 
   const onFormInvalid: SubmitErrorHandler<PersonalInformation> = (errors) => {
+    if (isBusinessBuyer && errors.mailingAddress) {
+      setErrorFocusTarget('mailingAddress');
+      setFormError(
+        "Your account's shipping address on file is missing required information and can't be edited here. Please contact your account administrator or support to update it before continuing."
+      );
+      return;
+    }
     if (isBusinessBuyer && errors.billingAddress && getValues('isSameAddress')) {
       setValue('isSameAddress', false);
+      setErrorFocusTarget('billingAddress');
+      setFormError(
+        'Your billing address is missing required information. Please review and complete it below.'
+      );
+      return;
     }
+
+    setErrorFocusTarget(null);
+    setFormError(
+      stepOneLabels.requiredErrorMessage ?? 'Please complete the required fields highlighted below.'
+    );
   };
 
   return (
@@ -278,6 +325,15 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
         className="flex flex-col gap-y-4"
         onSubmit={handleSubmit(onFormSubmitted, onFormInvalid)}
       >
+        {formError && (
+          <div
+            role="alert"
+            className="rounded-md border border-red-30 bg-red-5 text-red-70 body-s px-4 py-3"
+          >
+            {formError}
+          </div>
+        )}
+
         {isBusinessBuyer ? (
           <BusinessPurchaseInformation
             control={control}

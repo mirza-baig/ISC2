@@ -166,7 +166,7 @@ export default function BusinessPurchaseInformation({
         </div>
       </div>
 
-      <div className="flex flex-col gap-y-4 mt-6">
+      <div className="flex flex-col gap-y-4 mt-6" data-mailing-address-section>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <p className="text-black body-m">{stepOneLabels.mailingAddressTitle}</p>
 
@@ -190,7 +190,7 @@ export default function BusinessPurchaseInformation({
       </div>
 
       {!isSameAddress && (
-        <div className="flex flex-col gap-y-4 mt-6">
+        <div className="flex flex-col gap-y-4 mt-6" data-billing-address-section>
           <p className="text-black body-m">{stepOneLabels.billingAddressTitle}</p>
 
           <BusinessAddressFields

@@ -57,8 +57,6 @@ export const GET_ALL_ORDERS = `
       organization
       buyer
       paymentType
-      organization
-      buyer
       poNumber
       orderReferenceNumber
       customerOrderReference

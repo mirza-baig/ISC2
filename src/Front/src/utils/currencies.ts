@@ -38,13 +38,26 @@ export const DisplayCurrencyCodes: { [name: string]: string } = {
 
 export type CurrencyKey = keyof typeof DisplayCurrencyCodes;
 
+// Currencies we can actually take payment in - mirrors `SUPPORTED_CURRENCIES` in
+// us-ecom-infrastructureComponents/ct-graphql-service-cart/contants.ts (one entry per configured
+// Stripe account). `CurrencyCodes` above is broader on purpose - e.g. JPY has catalog/search-facet
+// pricing (see priceBuckets.ts) without being purchasable - so this list, not that enum, is what
+// gates a currency ever being auto-applied to a session (ITDEV-384: geolocation was applying JPY
+// via the enum-membership check this replaces, with no Stripe account behind it).
+export const SUPPORTED_CURRENCIES: string[] = [
+  CurrencyCodes.USD,
+  CurrencyCodes.GBP,
+  CurrencyCodes.SGD,
+  CurrencyCodes.EUR,
+];
+
 export const getCurrencyByCountryCode = (country: string) => {
   const countryInfo = findCountryByNameOrShortName(country);
 
   if (countryInfo) {
     const [mainCurrency] = countryInfo.currencies;
 
-    if (mainCurrency in CurrencyCodes) {
+    if (SUPPORTED_CURRENCIES.includes(mainCurrency)) {
       return mainCurrency as CurrencyCodes;
     }
   }

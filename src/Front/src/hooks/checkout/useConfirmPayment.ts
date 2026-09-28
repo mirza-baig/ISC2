@@ -227,6 +227,9 @@ export default function useConfirmPayment() {
         await queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.AUTHORIZED_BUYER_ACCOUNTS],
         });
+        await queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.ALL_ORDERS],
+        });
 
         track({ ecommerce: null });
         track({

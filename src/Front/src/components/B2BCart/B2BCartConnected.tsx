@@ -44,6 +44,7 @@ export interface B2BCartConnectedProps {
   summaryPlacement?: 'inline' | 'aside';
   summaryCoupon?: ReactNode;
   summaryFooter?: ReactNode;
+  trailingContent?: ReactNode;
   checkoutCta?: B2BCartCheckoutCta;
 }
 
@@ -54,6 +55,7 @@ const B2BCartConnected = ({
   summaryPlacement = 'inline',
   summaryCoupon,
   summaryFooter,
+  trailingContent,
   checkoutCta,
 }: B2BCartConnectedProps): JSX.Element => {
   const { activeCart } = useCart();
@@ -184,6 +186,7 @@ const B2BCartConnected = ({
       onRemoveLine={(item) => handleUpdateQuantity(item, 0)}
       isBusy={isUpdatingQuantity || Boolean(pendingUpdateLineId)}
       pendingUpdateLineId={pendingUpdateLineId}
+      trailingContent={trailingContent}
       className={className}
       /* Private classes held back on these two surfaces (B-15) — no `leadingRows`, so the panel
          renders the commercetools lines and nothing else. The PLP dock still passes its own.

@@ -40,6 +40,10 @@ export type LiveAccountContactRelation = {
     type?: string | null;
     discountPercentage?: number | string | null;
   } | null;
+  /** Salesforce tax identifier for this account relation, shown on the transaction receipt. */
+  taxId?: string | null;
+  /** Sage Intacct customer id for this account relation, shown on the transaction receipt. */
+  intacctCustomerId?: string | null;
 };
 
 const toNullableFlag = (value?: boolean | string | null): boolean | null => {
@@ -135,6 +139,8 @@ export const mapLiveRelationToAccount = (
       creditBalance: toMoney(relation.credit?.creditBalance),
       availableCredit: toMoney(relation.credit?.availableCredit),
     },
+    taxId: relation.taxId || undefined,
+    intacctCustomerId: relation.intacctCustomerId || undefined,
     ...(hasPrepaidObject
       ? {
           prepaid: {

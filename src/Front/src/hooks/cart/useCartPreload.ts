@@ -385,19 +385,17 @@ const useCartPreload = ({
           if (
             msg.includes('PRICE_NOT_FOUND') ||
             msg.includes('CT_002') ||
-            msg.includes('does not contain a price')
+            msg.includes('does not contain a price') ||
+            msg.includes('UNSUPPORTED-CURRENCY')
           ) {
-            try {
-              await addToCartAsync({
-                items: [item],
-                quantity: effectiveQty,
-                externalPrice: { centAmount: 0, currencyCode },
-              });
-              addedAny = true;
-            } catch (retryErr) {
-              addedSkusRef.current.delete(effectiveCartSku);
-              console.error('[useCartPreload] addToCart error:', retryErr);
-            }
+            // No price exists for this SKU in the cart's currency (or the cart's currency has no
+            // Stripe account behind it - see UNSUPPORTED-CURRENCY in useCreateCart). Previously this
+            // retried the add with `externalPrice: 0`, which silently produced free orders
+            // (ITDEV-384). Surface the same "check your link" warning used for an unknown SKU or
+            // sold-out item instead.
+            setHasPreloadWarning(true);
+            addedSkusRef.current.delete(effectiveCartSku);
+            console.error('[useCartPreload] addToCart error (no price for currency):', err);
           } else {
             addedSkusRef.current.delete(effectiveCartSku);
             console.error('[useCartPreload] addToCart error:', err);

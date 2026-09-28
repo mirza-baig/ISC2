@@ -2,7 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { QUERY_KEYS } from 'constants/index';
 import { PrintableOrder } from 'types/index';
-import { getServiceLayerAPI, normalizePrintableOrder } from 'utils/index';
+import {
+  getServiceLayerAPI,
+  normalizePrintableOrder,
+  collapseSalesforceOrderShells,
+} from 'utils/index';
 import { MOCK_ORDERS } from '../../mocks/orders.mock';
 import { useLoggedUser } from '..';
 
@@ -36,7 +40,9 @@ export default function useGetAllOrders() {
     queryKey: [QUERY_KEYS.ALL_ORDERS, useMocks, externalID, email],
     queryFn: async () => {
       if (useMocks) {
-        return { orders: MOCK_ORDERS.map(normalizePrintableOrder) };
+        return {
+          orders: collapseSalesforceOrderShells(MOCK_ORDERS.map(normalizePrintableOrder)),
+        };
       }
 
       const api = await getServiceLayerAPI();
@@ -54,7 +60,7 @@ export default function useGetAllOrders() {
           orderResponse?.data?.data?.salesforceGetOrders;
 
         return {
-          orders: (ordersData || []).map(normalizePrintableOrder),
+          orders: collapseSalesforceOrderShells((ordersData || []).map(normalizePrintableOrder)),
         };
       } catch (requestError) {
         console.error('Error during get all orders', requestError);
@@ -63,7 +69,7 @@ export default function useGetAllOrders() {
     },
     enabled: isClientReady && (Boolean(externalID) || useMocks),
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
   });
 
   return {

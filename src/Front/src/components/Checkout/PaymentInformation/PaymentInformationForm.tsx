@@ -12,7 +12,6 @@ import {
   useActiveBusinessAccount,
   useBusinessPaymentEligibility,
   useConfirmPayment,
-  useDiscountPercentage,
   useDownloadQuote,
   useEnsureBusinessCartTax,
   useGetPaymentIntent,
@@ -132,11 +131,6 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
   const isBusinessBuyer = useIsBusinessBuyer();
   const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   const { ensureTaxedCart, hasTaxedTotal, isEnsuringTax } = useEnsureBusinessCartTax();
-  const {
-    isDiscountPercentageEnabled,
-    applyDiscountPercentageAsync,
-    isApplyingDiscountPercentage,
-  } = useDiscountPercentage();
   const lastTaxedPaymentMethodRef = useRef<CheckoutPaymentMethod | undefined>(undefined);
   const stripeBillingCountryRef = useRef<string | undefined>(
     personalInformation?.billingAddress?.countryCode || 'US'
@@ -266,16 +260,9 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
           method
         );
 
-      // `prepaidDiscount` is only set when the account's prepaid type carries a discount.
-      const shouldApplyDiscount =
-        isDiscountPercentageEnabled &&
-        method === BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT &&
-        previousMethod !== method &&
-        Boolean(prepaidDiscount);
-
       lastTaxedPaymentMethodRef.current = method;
 
-      if (!shouldRecalculate && !shouldApplyDiscount) {
+      if (!shouldRecalculate) {
         return;
       }
 
@@ -284,39 +271,15 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
         method
       );
 
-      void (async () => {
-        let discountedCart: Cart | undefined;
-
-        // Discount first, then tax: both update the same cart, and tax depends on the
-        // discounted total.
-        if (shouldApplyDiscount && prepaidDiscount) {
-          try {
-            discountedCart = await applyDiscountPercentageAsync({
-              discountPercentage: prepaidDiscount,
-            });
-          } catch (error) {
-            console.error('Error applying prepaid discount percentage:', error);
-          }
-        }
-
-        if (!shouldRecalculate && !discountedCart) {
-          return;
-        }
-
-        await ensureTaxedCart(undefined, {
-          paymentMethodType: method,
-          preservePaymentIntent,
-          cart: discountedCart,
-        });
-      })();
+      void ensureTaxedCart(undefined, {
+        paymentMethodType: method,
+        preservePaymentIntent,
+      });
     },
     [
-      applyDiscountPercentageAsync,
       ensureTaxedCart,
       isB2BFeatureEnabled,
       isBusinessBuyer,
-      isDiscountPercentageEnabled,
-      prepaidDiscount,
       setHasPaymentError,
       setSelectedPaymentMethod,
     ]
@@ -491,12 +454,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     ? onBusinessFormSubmit
     : onStripeFormSubmit;
 
-  const isBusy =
-    isRecalculating ||
-    isEnsuringTax ||
-    isApplyingDiscountPercentage ||
-    isConfirmingPayment ||
-    isOrderSubmitted;
+  const isBusy = isRecalculating || isEnsuringTax || isConfirmingPayment || isOrderSubmitted;
 
   const isConfirmPurchaseBusy =
     isBusy || (!isBusinessMethodSelected && !isFreeOrder && isGettingPaymentIntent);

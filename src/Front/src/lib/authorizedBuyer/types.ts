@@ -47,6 +47,10 @@ export type AuthorizedBuyerAccount = {
   purchaseControls: AuthorizedBuyerPurchaseControls;
   credit: AuthorizedBuyerCredit;
   prepaid?: AuthorizedBuyerPrepaid;
+  /** Salesforce tax identifier for this account, shown on the transaction receipt. */
+  taxId?: string;
+  /** Sage Intacct customer id for this account, shown on the transaction receipt. */
+  intacctCustomerId?: string;
 };
 
 export type AuthorizedBuyerResponse = {

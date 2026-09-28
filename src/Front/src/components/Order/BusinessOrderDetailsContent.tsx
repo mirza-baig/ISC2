@@ -154,6 +154,14 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
    * print dialog the individual confirmation uses.
    */
   const onPrintReceipt = () => {
+    console.log('DEBUG org:', shopperContext?.organization);
+    console.log('DEBUG keys:', Object.keys(shopperContext?.organization ?? {}));
+    console.log(
+      'DEBUG taxId:',
+      shopperContext?.organization?.taxId,
+      'intacctCustomerId:',
+      shopperContext?.organization?.intacctCustomerId
+    );
     const receiptData = buildBusinessReceiptData({
       order,
       cart: activeCart,
@@ -162,6 +170,8 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
       // the logged-in user is the reliable source, same as the order history print path.
       buyerName: user?.fullName || [user?.firstName, user?.lastName].filter(Boolean).join(' '),
       organizationName: shopperContext?.organization?.name,
+      taxIdNumber: shopperContext?.organization?.taxId,
+      intacctCustomerId: shopperContext?.organization?.intacctCustomerId,
       paymentMethod: paymentMethodName,
       enteredBillingAddress: readCheckoutBillingAddress(),
     });

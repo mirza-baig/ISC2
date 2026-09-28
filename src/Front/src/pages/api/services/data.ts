@@ -15,6 +15,8 @@ import { classifyServiceLayerError, ServiceLayerErrorCode } from 'lib/serviceLay
 const CT_ERROR_PRICE = `${GENERIC_ERROR_MESSAGE} CT_002`;
 const CT_ERROR_GENERAL = `${GENERIC_ERROR_MESSAGE} CT_001`;
 
+const isServiceLayerDebugEnabled = process.env.SERVICE_LAYER_DEBUG_LOGS === 'true';
+
 const sanitizeErrorMessage = (message?: string): string => {
   if (!message) return CT_ERROR_GENERAL;
   if (message === 'invalid_token') return message;
@@ -55,11 +57,25 @@ const data = async (req: NextApiRequest, res: NextApiResponse): Promise<void> =>
     return res.status(404).send({ message: 'Invalid query' });
   }
 
+  const graphqlQuery = SERVICE_LAYER_QUERIES[query as keyof typeof SERVICE_LAYER_QUERIES];
+
+  if (isServiceLayerDebugEnabled) {
+    console.log(
+      `[SERVICE_LAYER_DEBUG] request initiated ${JSON.stringify({
+        queryName: query,
+        query: graphqlQuery,
+        variables,
+      })}`
+    );
+  }
+
+  const requestStartedAt = Date.now();
+
   try {
     const axiosResult = await axios.post(
       process.env.SERVICE_LAYER_ENDPOINT!,
       {
-        query: SERVICE_LAYER_QUERIES[query as keyof typeof SERVICE_LAYER_QUERIES],
+        query: graphqlQuery,
         variables,
       },
       {
@@ -72,6 +88,22 @@ const data = async (req: NextApiRequest, res: NextApiResponse): Promise<void> =>
         },
       }
     );
+
+    if (isServiceLayerDebugEnabled) {
+      console.log(
+        `[SERVICE_LAYER_DEBUG] ${JSON.stringify({
+          queryName: query,
+          query: graphqlQuery,
+          variables,
+          status: axiosResult?.status,
+          durationMs: Date.now() - requestStartedAt,
+          correlationId:
+            axiosResult?.headers?.['x-correlation-id'] || axiosResult?.headers?.['x-request-id'],
+          responseHeaders: axiosResult?.headers,
+          response: axiosResult?.data,
+        })}`
+      );
+    }
 
     if (axiosResult?.data?.errors?.length) {
       axiosResult.data.errors = axiosResult.data.errors.map(
@@ -121,6 +153,23 @@ const data = async (req: NextApiRequest, res: NextApiResponse): Promise<void> =>
         }),
       })}`
     );
+
+    if (isServiceLayerDebugEnabled) {
+      const isAxiosError = axios.isAxiosError(err);
+      console.log(
+        `[SERVICE_LAYER_DEBUG] request failed ${JSON.stringify({
+          queryName: query,
+          query: graphqlQuery,
+          variables,
+          durationMs: Date.now() - requestStartedAt,
+          message: err instanceof Error ? err.message : undefined,
+          errorCode: isAxiosError ? err.code : undefined,
+          status: isAxiosError ? err.response?.status : undefined,
+          responseHeaders: isAxiosError ? err.response?.headers : undefined,
+          responseBody: isAxiosError ? err.response?.data : undefined,
+        })}`
+      );
+    }
 
     return res.status(500).send(GENERIC_ERROR_MESSAGE);
   }

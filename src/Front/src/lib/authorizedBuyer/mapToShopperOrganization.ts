@@ -12,6 +12,8 @@ export const mapAccountToShopperOrganization = (
   accountType: account.accountType,
   currency: account.currency,
   pricingTier: account.pricingTier,
+  taxId: account.taxId,
+  intacctCustomerId: account.intacctCustomerId,
 });
 
 export const mapAccountsToShopperOrganizations = (

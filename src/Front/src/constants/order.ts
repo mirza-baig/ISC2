@@ -18,7 +18,7 @@ export const BUSINESS_ORDER_CONFIRMATION_DEFAULT_LABELS = {
     "You'll receive an order confirmation email at {userEmail} within the next few minutes.",
   orderAllocationStepTitle: 'Order Allocation',
   orderAllocationStepCopy: "You can open your dashboard now to allocate products you've purchased.",
-  printReceiptCtaLabel: 'Print Receipt',
+  printReceiptCtaLabel: 'Print your Order',
   openDashboardCtaLabel: 'Open Dashboard',
   supportCopy: 'Questions about your order?',
   /**

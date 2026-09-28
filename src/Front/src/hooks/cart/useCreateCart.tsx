@@ -27,6 +27,11 @@ export default function useCreateCart() {
         },
       });
 
+      if ((data.errors || []).length) {
+        const firstError = data.errors[0];
+        throw firstError.extensions?.code || firstError.message;
+      }
+
       return data.data.createCart.id;
     },
     onSuccess: setCartId,

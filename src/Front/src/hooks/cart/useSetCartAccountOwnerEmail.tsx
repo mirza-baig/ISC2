@@ -35,7 +35,7 @@ export default function useSetCartAccountOwnerEmail(callbacks?: MutationCallback
             {
               setCustomField: {
                 name: ACCOUNT_OWNER_EMAIL_FIELD,
-                value: email,
+                value: JSON.stringify(email),
               },
             },
           ],

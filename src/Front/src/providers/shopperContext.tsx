@@ -21,6 +21,10 @@ export type ShopperOrganization = {
   accountType?: string;
   currency?: string;
   pricingTier?: string;
+  /** Salesforce tax identifier for this account, shown on the transaction receipt. */
+  taxId?: string;
+  /** Sage Intacct customer id for this account, shown on the transaction receipt. */
+  intacctCustomerId?: string;
 };
 
 export type ShopperContextSelection = {

@@ -33,6 +33,8 @@ export default function OrderPrintButton({
         buyerName: user?.fullName || [user?.firstName, user?.lastName].filter(Boolean).join(' '),
         buyerEmail: user?.email || email || '',
         organizationName: shopperContext?.organization?.name,
+        taxIdNumber: shopperContext?.organization?.taxId,
+        intacctCustomerId: shopperContext?.organization?.intacctCustomerId,
       });
 
       downloadReceipt({ data });

@@ -33,8 +33,8 @@ const B2BCartPageBody = ({
         summaryPlacement="aside"
         summaryCoupon={summaryCoupon}
         summaryFooter={summaryFooter}
+        trailingContent={children}
       />
-      {children}
     </div>
   </main>
 );
