@@ -7,6 +7,7 @@ export namespace OrderSummaryItems {
     productNotAvailableLabel: string;
     userPriceLabel: string;
     orderDetailsMode?: boolean;
+    isPrepaidDiscountOnCart?: boolean;
   };
 }
 
@@ -14,6 +15,7 @@ export const OrderSummaryItems = ({
   productNotAvailableLabel,
   userPriceLabel,
   orderDetailsMode,
+  isPrepaidDiscountOnCart,
 }: OrderSummaryItems.Props) => {
   const { activeCart } = useCart();
 
@@ -31,6 +33,7 @@ export const OrderSummaryItems = ({
             userPriceLabel={userPriceLabel}
             productNotAvailableLabel={productNotAvailableLabel}
             orderDetailsMode={orderDetailsMode}
+            isPrepaidDiscountOnCart={isPrepaidDiscountOnCart}
           />
         ))}
       </ul>

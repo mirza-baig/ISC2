@@ -7,6 +7,7 @@ import { Cart, CartLineItem } from 'types/index';
 import { LineItemLoadingIndicator, LineItemPrice, BundleLineItemProducts } from 'ui/index';
 import {
   formatDateRange,
+  getLineItemTotalBeforeCartDiscounts,
   getPriceQuantityFor,
   getUTCTime,
   getVariantAttributes,
@@ -23,6 +24,11 @@ export namespace OrderSummaryLineItem {
     productNotAvailableLabel: string;
     userPriceLabel: string;
     orderDetailsMode?: boolean;
+    /**
+     * The prepaid discount is on the cart and shown as its own summary row, so the line
+     * shows its price before it (no strike-through) rather than taking it off twice.
+     */
+    isPrepaidDiscountOnCart?: boolean;
   };
 }
 
@@ -33,6 +39,7 @@ export const OrderSummaryLineItem = ({
   productNotAvailableLabel,
   userPriceLabel,
   orderDetailsMode,
+  isPrepaidDiscountOnCart,
 }: OrderSummaryLineItem.Props) => {
   const router = useRouter();
 
@@ -52,10 +59,25 @@ export const OrderSummaryLineItem = ({
     onSuccess: onItemRemovedFromCart,
   });
 
-  const hasDiscounts = useMemo(
-    () => lineItemHasDiscounts(lineItem),
-    [lineItemHasDiscounts, lineItem]
+  const totalBeforePrepaidDiscount = useMemo(
+    () => (isPrepaidDiscountOnCart ? getLineItemTotalBeforeCartDiscounts(lineItem) : undefined),
+    [isPrepaidDiscountOnCart, lineItem]
   );
+
+  const hasDiscounts = useMemo(() => {
+    if (!totalBeforePrepaidDiscount) {
+      return lineItemHasDiscounts(lineItem);
+    }
+
+    // Only the product's own sale price is struck through; the prepaid discount has its row.
+    const nonMemberTotal = parsePriceFromMoney(
+      lineItem.nonMemberPrice,
+      getPriceQuantityFor(lineItem)
+    );
+    const beforeTotal = parsePriceFromMoney(totalBeforePrepaidDiscount, 1);
+
+    return Number(nonMemberTotal) > Number(beforeTotal);
+  }, [lineItemHasDiscounts, lineItem, totalBeforePrepaidDiscount]);
 
   const isNotAvailable = useMemo(
     () => lineItem.availableQuantity === 0,
@@ -116,7 +138,11 @@ export const OrderSummaryLineItem = ({
 
   const LineItemContent = useMemo(() => {
     const name = attributes.copy_name || attributes.name || lineItem.name;
-    const totalPrice = parsePriceFromMoney(lineItem.totalPrice, 1, false);
+    const totalPrice = parsePriceFromMoney(
+      totalBeforePrepaidDiscount ?? lineItem.totalPrice,
+      1,
+      false
+    );
 
     if (isBundleLineItem(lineItem)) {
       return (
@@ -165,6 +191,7 @@ export const OrderSummaryLineItem = ({
     lineItem,
     secondLineText,
     secondLineValue,
+    totalBeforePrepaidDiscount,
     userPriceLabel,
     orderDetailsMode,
   ]);

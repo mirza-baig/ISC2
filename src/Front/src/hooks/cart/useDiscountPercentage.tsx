@@ -8,9 +8,6 @@ import { Cart, ServiceLayerError, UpdateCartResponse } from 'types/index';
 
 import useAuthorizedBuyerPricingVoucher from './useAuthorizedBuyerPricingVoucher';
 
-export const isDiscountPercentageEnabled = (): boolean =>
-  process.env.NEXT_PUBLIC_ENABLE_DISCOUNT_PERCENTAGE === 'true';
-
 /** commercetools relative discounts are in permyriad: 20% → 2000. */
 export const toPermyriad = (discountPercentage: number) => Math.round(discountPercentage * 100);
 
@@ -39,30 +36,51 @@ export const buildDirectDiscountActions = (discountPercentage: number | null) =>
 ];
 
 /**
- * The prepaid discount belongs on the cart only while prepaid is selected at checkout.
- * Appended to other cart updates (e.g. add to cart) so one left behind is cleared.
+ * Which cart carries the prepaid discount. Tracked here rather than read off the cart: a
+ * direct discount looks the same whoever set it, so this keeps the clean-up (and every
+ * display that depends on it) to the prepaid discount alone. localStorage, so a reload
+ * mid-checkout still knows to clear it.
  */
-export const clearDirectDiscountActions = () =>
-  isDiscountPercentageEnabled() ? buildDirectDiscountActions(null) : [];
+const PREPAID_DISCOUNT_CART_KEY = 'isc2-prepaid-discount-cart-id';
 
-/**
- * Direct discounts have no discount record, so their line item `includedDiscounts`
- * entries come back with `discount: null`; cart discounts always reference one.
- */
-type DirectDiscountLineItem = {
-  discountedPricePerQuantity?: {
-    discountedPrice?: { includedDiscounts?: { discount?: unknown }[] };
-  }[];
+const rememberPrepaidDiscount = (cartId: string, hasDiscount: boolean) => {
+  try {
+    if (hasDiscount) {
+      localStorage.setItem(PREPAID_DISCOUNT_CART_KEY, cartId);
+    } else if (localStorage.getItem(PREPAID_DISCOUNT_CART_KEY) === cartId) {
+      localStorage.removeItem(PREPAID_DISCOUNT_CART_KEY);
+    }
+  } catch {
+    // No storage (SSR, private mode): the discount is then only cleared from checkout.
+  }
 };
 
-export const hasDirectDiscount = (cart?: { lineItems?: unknown }) =>
-  Boolean(
-    ((cart?.lineItems || []) as DirectDiscountLineItem[]).some((lineItem) =>
-      (lineItem.discountedPricePerQuantity || []).some(({ discountedPrice }) =>
-        (discountedPrice?.includedDiscounts || []).some(({ discount }) => !discount)
-      )
-    )
-  );
+/** True when this cart has the prepaid discount on it. */
+export const hasPrepaidDiscount = (cart?: { id?: string }) => {
+  if (!cart?.id) {
+    return false;
+  }
+
+  try {
+    return localStorage.getItem(PREPAID_DISCOUNT_CART_KEY) === cart.id;
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Appended to other cart updates (e.g. add to cart) so a prepaid discount left behind is
+ * cleared. Empty for every cart that does not carry it, so other discounts are untouched.
+ */
+export const clearPrepaidDiscountActions = (cartId?: string) =>
+  hasPrepaidDiscount({ id: cartId }) ? buildDirectDiscountActions(null) : [];
+
+/** Call once an update carrying `clearPrepaidDiscountActions` has succeeded. */
+export const forgetPrepaidDiscount = (cartId?: string) => {
+  if (cartId) {
+    rememberPrepaidDiscount(cartId, false);
+  }
+};
 
 let discountSyncsInFlight = 0;
 
@@ -108,6 +126,8 @@ export default function useDiscountPercentage() {
         throw data.errors[0];
       }
 
+      rememberPrepaidDiscount(cartId, Boolean(discountPercentage && discountPercentage > 0));
+
       return data.data.isc2CartUpdate;
     },
   });
@@ -134,7 +154,6 @@ export default function useDiscountPercentage() {
   );
 
   return {
-    isDiscountPercentageEnabled: isDiscountPercentageEnabled(),
     applyDiscountPercentageAsync,
     removeDiscountPercentageAsync,
     storeCart,

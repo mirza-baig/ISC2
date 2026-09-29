@@ -239,6 +239,12 @@ export const BusinessTransactionReceipt = ({ data, labels }: BusinessTransaction
         </View>
 
         <View style={styles.totals}>
+          {Boolean(data.discount) && (
+            <View style={styles.totalsRow}>
+              <Text>{label('discountLabel')}</Text>
+              <Text>{data.discount}</Text>
+            </View>
+          )}
           <View style={styles.totalsRow}>
             <Text>{label('subtotalLabel')}</Text>
             <Text>{data.subtotal}</Text>

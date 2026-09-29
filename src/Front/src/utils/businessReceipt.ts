@@ -125,16 +125,42 @@ const getUnitPriceAfterDiscounts = (lineItem: CartLineItem): TypedMoney | undefi
     : beforeCartDiscounts;
 };
 
+const flattenLineItems = (lineItems: CartLineItem[]): CartLineItem[] =>
+  lineItems.flatMap((lineItem) =>
+    'products' in lineItem ? flattenLineItems(lineItem.products) : [lineItem]
+  );
+
+/**
+ * The line at its price before cart-level discounts: unit price x quantity.
+ *
+ * A bundle line is priced from its products: the grouped line `addComputedFieldsToLineItems`
+ * builds carries the bundle's already-discounted total as its price, so it would hide the
+ * discount.
+ */
 export const getLineItemTotalBeforeCartDiscounts = (
   lineItem: CartLineItem
 ): TypedMoney | undefined => {
+  if ('products' in lineItem) {
+    const productTotals = flattenLineItems(lineItem.products)
+      .map(getLineItemTotalBeforeCartDiscounts)
+      .filter((money): money is TypedMoney => Boolean(money));
+
+    return productTotals.length
+      ? {
+          ...productTotals[0],
+          centAmount: productTotals.reduce((sum, money) => sum + money.centAmount, 0),
+        }
+      : undefined;
+  }
+
   const unitPrice = getUnitPriceBeforeCartDiscounts(lineItem);
 
   return unitPrice && { ...unitPrice, centAmount: unitPrice.centAmount * (lineItem.quantity ?? 1) };
 };
 
+/** Bundles are split into their products, whose own prices carry the discount. */
 export const getCartDiscountCentAmount = (lineItems: CartLineItem[]): number =>
-  lineItems.reduce((sum, lineItem) => {
+  flattenLineItems(lineItems).reduce((sum, lineItem) => {
     const before = getLineItemTotalBeforeCartDiscounts(lineItem);
     const total = 'totalPrice' in lineItem ? lineItem.totalPrice : undefined;
 
@@ -169,11 +195,6 @@ const buildLineItem = (lineItem: CartLineItem, currencySymbol: string): ReceiptL
     subtotal: formatMoney(currencySymbol, total ?? yourPrice ?? listPrice),
   };
 };
-
-const flattenLineItems = (lineItems: CartLineItem[]): CartLineItem[] =>
-  lineItems.flatMap((lineItem) =>
-    'products' in lineItem ? flattenLineItems(lineItem.products) : [lineItem]
-  );
 
 const customField = (order: OrderWithComputedData, name: string): string | undefined => {
   const value = order.custom?.customFieldsRaw?.find((field) => field.name === name)?.value;

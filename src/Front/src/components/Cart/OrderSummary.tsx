@@ -147,6 +147,7 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
                 productNotAvailableLabel={labels.productNotAvailableLabel}
                 userPriceLabel={params?.showUserPriceLabel === 'true' ? labels.yourPriceLabel : ''}
                 orderDetailsMode={params?.orderDetailsMode === 'true'}
+                isPrepaidDiscountOnCart={prepaidSummary?.isOnCart}
               />
             )}
 
@@ -156,7 +157,11 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
                 showTaxes={params?.showTaxes === 'true'}
                 prepaidDiscount={
                   prepaidSummary
-                    ? { title: prepaidSummary.title, amount: prepaidSummary.discountAmount }
+                    ? {
+                        title: prepaidSummary.title,
+                        amount: prepaidSummary.discountAmount,
+                        beforeSubtotal: prepaidSummary.isOnCart,
+                      }
                     : undefined
                 }
                 totalOverride={prepaidSummary?.total}

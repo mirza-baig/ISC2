@@ -24,7 +24,7 @@ import { usePersonalize } from 'providers/index';
 
 import useCreateCart from './useCreateCart';
 import useAuthorizedBuyerPricingVoucher from './useAuthorizedBuyerPricingVoucher';
-import { clearDirectDiscountActions } from './useDiscountPercentage';
+import { clearPrepaidDiscountActions, forgetPrepaidDiscount } from './useDiscountPercentage';
 
 type AddToCartProps = {
   items: (AddToCartHit | ProductHit)[];
@@ -123,7 +123,10 @@ export default function useAddToCart(callbacks?: MutationCallbacks) {
             cartId: userCartId,
             country: userCountry,
             // Clears a prepaid discount left from checkout so it never reaches new items.
-            actions: [...getActions(payload, currencyCode), ...clearDirectDiscountActions()],
+            actions: [
+              ...getActions(payload, currencyCode),
+              ...clearPrepaidDiscountActions(userCartId),
+            ],
             authorizedBuyerPricingVoucher,
           },
         });
@@ -166,6 +169,8 @@ export default function useAddToCart(callbacks?: MutationCallbacks) {
             }
           }
         } else {
+          forgetPrepaidDiscount(userCartId);
+
           return data.data.isc2CartUpdate;
         }
       } catch (apiError: unknown) {

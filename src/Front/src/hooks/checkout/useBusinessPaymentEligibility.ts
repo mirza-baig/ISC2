@@ -13,6 +13,7 @@ import {
   type AuthorizedBuyerAccount,
 } from 'lib/authorizedBuyer';
 import { useCart } from 'providers/index';
+import { hasPrepaidDiscount } from 'hooks/cart/useDiscountPercentage';
 import { useFeatureFlag } from 'providers/featureFlags';
 
 import useIsBusinessBuyer from '../cart/useIsBusinessBuyer';
@@ -26,6 +27,17 @@ const toCartTotal = (value: number | string | undefined) => {
 
 const toOptionalAmount = (value: number | null): number | undefined => value ?? undefined;
 
+/**
+ * Once the prepaid discount is on the cart (selecting prepaid applies it), the cart
+ * total is already discounted; the account's percentage must not be taken off it again.
+ */
+const withoutPrepaidDiscount = (
+  account: AuthorizedBuyerAccount | undefined
+): AuthorizedBuyerAccount | undefined =>
+  account?.prepaid
+    ? { ...account, prepaid: { ...account.prepaid, discountPercentage: null } }
+    : account;
+
 export default function useBusinessPaymentEligibility() {
   const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   const isBusinessBuyer = useIsBusinessBuyer();
@@ -37,8 +49,11 @@ export default function useBusinessPaymentEligibility() {
   // because this hook re-reads account data on payment-step mount, window focus, and submit.
   const canOfferBusinessPayment = isB2BFeatureEnabled && isBusinessBuyer && hasTaxedTotal;
   const cartTotal = toCartTotal(activeCart?.computed?.totalPrice);
+  const isDiscountOnCart = hasPrepaidDiscount(activeCart);
+  const fundsAccount = isDiscountOnCart ? withoutPrepaidDiscount(account) : account;
 
-  const isPrepaidEligible = canOfferBusinessPayment && isPrepaidAccountEligible(account, cartTotal);
+  const isPrepaidEligible =
+    canOfferBusinessPayment && isPrepaidAccountEligible(fundsAccount, cartTotal);
 
   const isCreditEligible =
     canOfferBusinessPayment && isPreapprovedCreditEligible(account, cartTotal);
@@ -56,7 +71,7 @@ export default function useBusinessPaymentEligibility() {
     ? toOptionalAmount(resolvePrepaidDiscount(account?.prepaid))
     : undefined;
   const prepaidAmountDue = canOfferBusinessPayment
-    ? amountDueWithPrepaid(cartTotal, account?.prepaid)
+    ? amountDueWithPrepaid(cartTotal, fundsAccount?.prepaid)
     : cartTotal;
 
   const recheckMethod = useCallback(
@@ -77,12 +92,21 @@ export default function useBusinessPaymentEligibility() {
       const latestTotal = toCartTotal(activeCart?.computed?.totalPrice);
 
       if (method === BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT) {
-        return isPrepaidAccountEligible(latest, latestTotal);
+        return isPrepaidAccountEligible(
+          isDiscountOnCart ? withoutPrepaidDiscount(latest) : latest,
+          latestTotal
+        );
       }
 
       return isPreapprovedCreditEligible(latest, latestTotal);
     },
-    [account, activeCart?.computed?.totalPrice, isB2BFeatureEnabled, refetchAccount]
+    [
+      account,
+      activeCart?.computed?.totalPrice,
+      isB2BFeatureEnabled,
+      isDiscountOnCart,
+      refetchAccount,
+    ]
   );
 
   return useMemo(

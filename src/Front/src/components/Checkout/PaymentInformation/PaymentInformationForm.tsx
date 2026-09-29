@@ -20,7 +20,7 @@ import {
   useRecalculateCart,
 } from 'hooks/index';
 import {
-  hasDirectDiscount,
+  hasPrepaidDiscount,
   isDiscountSyncInFlight,
   trackDiscountSync,
 } from 'hooks/cart/useDiscountPercentage';
@@ -138,7 +138,6 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
   const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   const { ensureTaxedCart, hasTaxedTotal, isEnsuringTax } = useEnsureBusinessCartTax();
   const {
-    isDiscountPercentageEnabled,
     applyDiscountPercentageAsync,
     removeDiscountPercentageAsync,
     storeCart,
@@ -244,7 +243,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     }
 
     // The prepaid discount belongs to this step only; the buyer picks a method again on return.
-    if (isDiscountPercentageEnabled && hasDirectDiscount(activeCart) && !isDiscountSyncInFlight()) {
+    if (hasPrepaidDiscount(activeCart) && !isDiscountSyncInFlight()) {
       removeDiscountPercentageAsync()
         .then(storeCart)
         .catch((error) => console.error('Error removing prepaid discount percentage:', error));
@@ -255,7 +254,6 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
   }, [
     activeCart,
     isConfirmingPayment,
-    isDiscountPercentageEnabled,
     removeDiscountPercentageAsync,
     setActiveStep,
     setSelectedPaymentMethod,
@@ -315,10 +313,9 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
         );
 
       const isPrepaid = method === BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT;
-      const hasDiscountOnCart = hasDirectDiscount(activeCart);
-      const shouldApplyDiscount =
-        isDiscountPercentageEnabled && isPrepaid && Boolean(prepaidDiscount) && !hasDiscountOnCart;
-      const shouldRemoveDiscount = isDiscountPercentageEnabled && !isPrepaid && hasDiscountOnCart;
+      const hasDiscountOnCart = hasPrepaidDiscount(activeCart);
+      const shouldApplyDiscount = isPrepaid && Boolean(prepaidDiscount) && !hasDiscountOnCart;
+      const shouldRemoveDiscount = !isPrepaid && hasDiscountOnCart;
 
       lastTaxedPaymentMethodRef.current = method;
 
@@ -358,7 +355,6 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
       ensureTaxedCart,
       isB2BFeatureEnabled,
       isBusinessBuyer,
-      isDiscountPercentageEnabled,
       prepaidDiscount,
       removeDiscountPercentageAsync,
       setHasPaymentError,
@@ -551,7 +547,6 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
   useEffect(() => {
     if (
       didClearLeftoverDiscountRef.current ||
-      !isDiscountPercentageEnabled ||
       !paymentMethod ||
       paymentMethod === BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT ||
       isSwitchingPaymentMethod ||
@@ -563,7 +558,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
 
     didClearLeftoverDiscountRef.current = true;
 
-    if (!hasDirectDiscount(activeCart)) {
+    if (!hasPrepaidDiscount(activeCart)) {
       return;
     }
 
@@ -575,7 +570,6 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     }).finally(() => setIsSwitchingPaymentMethod(false));
   }, [
     activeCart,
-    isDiscountPercentageEnabled,
     isEnsuringTax,
     isSwitchingPaymentMethod,
     paymentMethod,

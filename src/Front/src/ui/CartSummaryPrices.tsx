@@ -18,6 +18,8 @@ export namespace CartSummaryPrices {
     prepaidDiscount?: {
       title: string;
       amount: string;
+      /** Already in the cart's prices: shown above Subtotal instead of after the totals. */
+      beforeSubtotal?: boolean;
     };
     totalOverride?: string;
   };
@@ -43,9 +45,20 @@ export const CartSummaryPrices = ({
     return undefined;
   }, [activeCart.computed.taxValue, activeCart.taxedPrice, isFreeOrder, showTaxes]);
 
+  const prepaidDiscountRow = prepaidDiscount && (
+    <LineItemPrice
+      title={prepaidDiscount.title}
+      value={prepaidDiscount.amount}
+      currency={activeCart.computed.currencySymbol}
+      type="discount"
+    />
+  );
+
   return (
     <>
       <div className="space-y-2 w-full">
+        {prepaidDiscount?.beforeSubtotal && prepaidDiscountRow}
+
         <LineItemPrice
           title={labels?.subtotalLabel.replace('{0}', activeCart.computed.itemsQuantity.toString())}
           value={activeCart.computed.subtotal.toFixed(2)}
@@ -71,14 +84,7 @@ export const CartSummaryPrices = ({
           )
         )}
 
-        {prepaidDiscount && (
-          <LineItemPrice
-            title={prepaidDiscount.title}
-            value={prepaidDiscount.amount}
-            currency={activeCart.computed.currencySymbol}
-            type="discount"
-          />
-        )}
+        {!prepaidDiscount?.beforeSubtotal && prepaidDiscountRow}
       </div>
 
       {labels?.totalLabel && (
