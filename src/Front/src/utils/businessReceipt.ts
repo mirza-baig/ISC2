@@ -175,7 +175,7 @@ export const formatCartDiscount = (lineItems: CartLineItem[], currencySymbol: st
 
   return centAmount > 0
     ? `-${formatMoney(currencySymbol, { centAmount, fractionDigits } as TypedMoney)}`
-    : '-';
+    : undefined;
 };
 
 const buildLineItem = (lineItem: CartLineItem, currencySymbol: string): ReceiptLineItem => {

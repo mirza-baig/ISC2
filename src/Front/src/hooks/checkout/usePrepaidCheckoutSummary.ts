@@ -38,10 +38,16 @@ export default function usePrepaidCheckoutSummary(): PrepaidCheckoutSummaryDispl
       const lineItems = (activeCart.lineItems ?? []) as CartLineItem[];
       const discountPercent = resolvePrepaidDiscount(account?.prepaid);
       const fractionDigits = activeCart.totalPrice?.fractionDigits ?? 2;
+      const discountCentAmount = getCartDiscountCentAmount(lineItems);
+
+      // No row when nothing was taken off.
+      if (discountCentAmount <= 0) {
+        return null;
+      }
 
       return {
         title: discountPercent ? `${label} (${discountPercent}%)` : label,
-        discountAmount: parsePrice(getCartDiscountCentAmount(lineItems), fractionDigits),
+        discountAmount: parsePrice(discountCentAmount, fractionDigits),
         isOnCart: true,
       };
     }
