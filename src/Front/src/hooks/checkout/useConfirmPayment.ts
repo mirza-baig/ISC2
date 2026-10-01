@@ -9,6 +9,8 @@ import useCreateOrderFromCart from './useCreateOrderFromCart';
 import useHandleStripePayment from './useHandleStripePayment';
 import useHandlePaypalPayment from './useHandlePaypalPayment';
 import useGetPaymentIntent from './useGetPaymentIntent';
+import useUploadOrderFiles from './useUploadOrderFiles';
+import useIsBusinessBuyer from '../cart/useIsBusinessBuyer';
 import { PAYMENT_METHODS, isBusinessAccountPaymentMethod } from 'constants/checkout';
 import { B2B_FEATURE_FLAG } from 'constants/b2b';
 import { ANALYTICS_EVENTS } from 'constants/analytics';
@@ -99,8 +101,11 @@ export default function useConfirmPayment() {
   const { engage } = usePersonalize();
   const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
 
-  const { fields } = useCheckoutProcess();
+  const isBusinessBuyer = useIsBusinessBuyer();
+
+  const { fields, personalInformation } = useCheckoutProcess();
   const { createOrderAsync, createOrderError } = useCreateOrderFromCart();
+  const { uploadOrderFilesAsync } = useUploadOrderFiles();
   const { handleStripePayment } = useHandleStripePayment();
   const { handlePaypalPayment } = useHandlePaypalPayment();
   const { getPaymentIntentAsync } = useGetPaymentIntent();
@@ -211,6 +216,24 @@ export default function useConfirmPayment() {
         }
 
         trackPaymentInfo(payload.paymentMethod);
+
+        // The order already exists by now, so a failed upload is logged rather than
+        // turning a placed order into a failed purchase.
+        const poAttachment = isBusinessBuyer ? personalInformation?.poAttachment : undefined;
+
+        if (poAttachment) {
+          try {
+            await uploadOrderFilesAsync({
+              orderNumber: order.orderNumber,
+              files: [poAttachment],
+            });
+          } catch (uploadError) {
+            console.error('[PO-ATTACHMENT] Upload to the placed order failed', {
+              orderNumber: order.orderNumber,
+              uploadError,
+            });
+          }
+        }
 
         localStorage.setItem(LOCALSTORAGE_KEYS.ORDER_NUMBER, order.orderNumber);
         return {
