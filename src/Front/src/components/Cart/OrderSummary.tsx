@@ -5,7 +5,7 @@ import { ComponentParams, Field, ImageField, LinkField } from '@sitecore-jss/sit
 
 import { ChevronSquaredDownIcon } from 'icons/index';
 import { mapQuoteLabelsFromSitecoreFields, parseFieldsFromURLString } from 'utils/index';
-import { useBreakpoint, usePrepaidCheckoutSummary } from 'hooks/index';
+import { useBreakpoint, useIsBusinessBuyer, usePrepaidCheckoutSummary } from 'hooks/index';
 import { useCart, useCheckoutProcess } from 'providers/index';
 import { CartSummaryPrices, LineItemPrice, LoadingIndicator } from 'ui/index';
 import { CHECKOUT_STEP_TWO_ACTIONS_ANCHOR_ID, CHECKOUT_STEPS } from 'constants/index';
@@ -51,6 +51,7 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
   const breakpoint = useBreakpoint();
   const { activeStep, setTaxErrorLabels, setQuoteLabels } = useCheckoutProcess();
   const prepaidSummary = usePrepaidCheckoutSummary();
+  const isBusinessBuyer = useIsBusinessBuyer();
   const [isOpen, setIsOpen] = useState<boolean>(MENU_OPEN_BREAKPOINTS.includes(breakpoint));
 
   const { activeCart, isGettingCart } = useCart();
@@ -203,7 +204,8 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
           className="flex flex-col items-center gap-4 md:gap-2 mt-4 md:mt-8"
         />
       )}
-      {activeStep === CHECKOUT_STEPS.PERSONAL_INFORMATION && (
+      {/* Disabled preview of step two's Download Quote; quotes are business buyers only. */}
+      {activeStep === CHECKOUT_STEPS.PERSONAL_INFORMATION && isBusinessBuyer && (
         <div
           id="checkout-step-two-actions"
           className="flex flex-col items-center gap-4 md:gap-2 mt-4 md:mt-8"
