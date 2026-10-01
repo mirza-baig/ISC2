@@ -82,6 +82,7 @@ const HeroCardText = ({
               field={fields.primaryCTA!}
               className={clsx('primary-cta truncate', ctaColor)}
               onClick={() => trackCtaClick(fields.primaryCTA!)}
+              prefetch={false}
             />
           )}
           {Boolean(fields.secondaryCTA?.value.href) && (
@@ -89,6 +90,7 @@ const HeroCardText = ({
               field={fields.secondaryCTA!}
               className={clsx('secondary-cta truncate', ctaColor)}
               onClick={() => trackCtaClick(fields.secondaryCTA!)}
+              prefetch={false}
             />
           )}
         </footer>

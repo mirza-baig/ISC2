@@ -2,8 +2,6 @@ import { LOCALSTORAGE_KEYS } from 'constants/index';
 
 export const PERSONAL_CONTEXT = 'personal';
 
-export const isCartContextEnabled = () => process.env.NEXT_PUBLIC_CART_CONTEXT_ENABLED === 'true';
-
 type CartIdMap = {
   v: number;
   entries: Record<string, string>;

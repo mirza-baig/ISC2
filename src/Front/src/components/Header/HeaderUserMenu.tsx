@@ -9,6 +9,7 @@ import { useModal } from 'providers/modal';
 import { useShopperContext } from 'providers/shopperContext';
 import { useFeatureFlag } from 'providers/featureFlags';
 import useLoggedUser from 'hooks/useLoggedUser';
+import { useAuthorizedBuyer } from 'hooks/index';
 import { B2B_FEATURE_FLAG } from 'constants/index';
 import { SESSION_STORAGE_KEYS, SESSION_LOCALSTORAGE_KEYS } from 'constants/sessionTimeout';
 import ChangeBuyerModal, { LOG_OUT_CHANGE_BUYER_LABEL } from './ChangeBuyerModal';
@@ -35,6 +36,7 @@ const LINK_CLASS_NAME = 'body-m block relative py-3 sm:py-0';
 
 export default function HeaderUserMenu({ className, setMenuOpen, fields }: HeaderUserMenuProps) {
   const { isUserLoggedIn, isB2BAdminUser } = useLoggedUser();
+  const { isAuthorizedBuyer } = useAuthorizedBuyer();
   const { shopperContext } = useShopperContext();
   const { userRoleMenuLinks, userLinksForRole } = useHeaderNavigation();
   const { setModalContent } = useModal();
@@ -43,7 +45,9 @@ export default function HeaderUserMenu({ className, setMenuOpen, fields }: Heade
 
   const labels = parseFieldsFromURLString<HeaderUserMenuLabels>(fields.labelsTitlesAndMore);
   const showChangeBuyerLogout =
-    isB2BFeatureEnabled && isB2BAdminUser && shopperContext?.type === 'organization';
+    isB2BFeatureEnabled &&
+    (isB2BAdminUser || isAuthorizedBuyer) &&
+    shopperContext?.type === 'organization';
   const signOutLabel = showChangeBuyerLogout ? LOG_OUT_CHANGE_BUYER_LABEL : labels.signOutLabel;
 
   const onSignOut = useCallback(() => {

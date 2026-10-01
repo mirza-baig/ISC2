@@ -94,6 +94,7 @@ const ProductMastHead = ({ fields }: ProductMastHead) => {
               className="primary-cta light w-full text-center md:w-auto mr-6 lg:mr8 px-4 py-2"
               field={fields?.primaryCTA}
               onClick={handleCTAClick}
+              prefetch={false}
             />
           )}
           {fields?.secondaryCTA?.value?.href && fields?.secondaryCTA?.value?.text && (
@@ -101,6 +102,7 @@ const ProductMastHead = ({ fields }: ProductMastHead) => {
               className="secondary-cta light text-center w-full md:w-auto px-4 py-2"
               field={fields?.secondaryCTA}
               onClick={handleCTAClick}
+              prefetch={false}
             />
           )}
         </div>

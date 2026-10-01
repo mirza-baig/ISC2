@@ -66,25 +66,13 @@ export const normalizePrintableOrder = (order: RawPrintableOrder): PrintableOrde
   })),
 });
 
-const orderQuantities = (order: PrintableOrder): number[] => [
-  ...(order.products || []).map((product) => toQuantity(product.productQuantity)),
-  ...(order.lineItems || []).map((lineItem) => toQuantity(lineItem.quantity)),
-];
-
-export const isOrganizationOrder = (order: PrintableOrder): boolean => {
-  if (orderQuantities(order).some((quantity) => quantity > 1)) {
-    return true;
-  }
-
-  return (
-    hasText(order.accountId) ||
-    hasText(order.accountName) ||
-    hasText(order.buyerId) ||
-    hasText(order.buyerFullName) ||
-    hasText(order.poNumber) ||
-    hasText(order.customerOrderReference)
-  );
-};
+export const isOrganizationOrder = (order: PrintableOrder): boolean =>
+  hasText(order.accountId) ||
+  hasText(order.accountName) ||
+  hasText(order.buyerId) ||
+  hasText(order.buyerFullName) ||
+  hasText(order.poNumber) ||
+  hasText(order.customerOrderReference);
 
 const matchesSelectedOrganization = (
   order: PrintableOrder,
@@ -115,21 +103,43 @@ const isSalesforceTemporaryOrderNumber = (orderId?: string): boolean =>
 const isCommercetoolsOrderNumber = (orderId?: string): boolean =>
   COMMERCETOOLS_ORDER_NUMBER.test(orderId?.trim() || '');
 
+const commerceToolsOrderIdFrom = (order: PrintableOrder): string | undefined =>
+  [order.orderNumber, order.orderId, order.orderReferenceNumber, order.customerOrderReference]
+    .map(normalizeText)
+    .find((value) => value && isSalesforceTemporaryOrderNumber(value));
+
+export const preferCommerceToolsOrderId = (order: PrintableOrder): PrintableOrder => {
+  const orderId = commerceToolsOrderIdFrom(order);
+  return orderId && orderId !== order.orderId ? { ...order, orderId } : order;
+};
+
 const isSalesforceOrderShell = (order: PrintableOrder): boolean =>
   isCommercetoolsOrderNumber(order.orderId) && order.origin?.trim().toLowerCase() === 'salesforce';
+
+const normalizeProductName = (value?: string): string =>
+  (value || '')
+    .toLowerCase()
+    .replace(/\(.*?\)/g, ' ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
 
 const productNames = (order: PrintableOrder): Set<string> =>
   new Set(
     (order.products || [])
-      .map((product) => product.productItemName?.trim().toLowerCase())
-      .filter((name): name is string => Boolean(name))
+      .map((product) => normalizeProductName(product.productItemName))
+      .filter(Boolean)
   );
 
 const sharesProduct = (left: PrintableOrder, right: PrintableOrder): boolean => {
-  const rightNames = productNames(right);
+  const rightNames = [...productNames(right)];
 
-  for (const name of productNames(left)) {
-    if (rightNames.has(name)) {
+  for (const leftName of productNames(left)) {
+    if (
+      rightNames.some(
+        (rightName) =>
+          leftName === rightName || leftName.includes(rightName) || rightName.includes(leftName)
+      )
+    ) {
       return true;
     }
   }
@@ -137,25 +147,48 @@ const sharesProduct = (left: PrintableOrder, right: PrintableOrder): boolean => 
   return false;
 };
 
-const withShellAccount = (order: PrintableOrder, shell: PrintableOrder): PrintableOrder => ({
+const withoutOrganizationTags = (order: PrintableOrder): PrintableOrder => ({
   ...order,
-  accountId: firstText(order.accountId, shell.accountId),
-  accountName: firstText(order.accountName, shell.accountName),
-  buyerId: firstText(order.buyerId, shell.buyerId),
-  buyerFullName: firstText(order.buyerFullName, shell.buyerFullName),
-  buyerEmail: firstText(order.buyerEmail, shell.buyerEmail),
-  organization: firstText(order.organization, shell.organization),
-  buyer: firstText(order.buyer, shell.buyer),
-  poNumber: firstText(order.poNumber, shell.poNumber),
-  customerOrderReference: firstText(order.customerOrderReference, shell.customerOrderReference),
+  accountId: undefined,
+  accountName: undefined,
+  buyerId: undefined,
+  buyerFullName: undefined,
+  buyerEmail: undefined,
+  organization: undefined,
+  buyer: undefined,
+  poNumber: undefined,
+  customerOrderReference: undefined,
 });
+
+const isUnpairedSalesforceShell = (
+  order: PrintableOrder,
+  orders: PrintableOrder[],
+  consumedShells: Set<PrintableOrder>
+): boolean => {
+  if (consumedShells.has(order) || !isSalesforceOrderShell(order)) {
+    return false;
+  }
+
+  const total = order.orderTotal?.centAmount;
+  if (typeof total === 'number' && total !== 0) {
+    return orders.some(
+      (candidate) =>
+        candidate !== order &&
+        commerceToolsOrderIdFrom(candidate) &&
+        candidate.orderDate === order.orderDate &&
+        sharesProduct(candidate, order)
+    );
+  }
+
+  return true;
+};
 
 export const collapseSalesforceOrderShells = (orders: PrintableOrder[]): PrintableOrder[] => {
   const consumedShells = new Set<PrintableOrder>();
 
   const paidOrders = orders.map((order) => {
-    if (!isSalesforceTemporaryOrderNumber(order.orderId)) {
-      return order;
+    if (!commerceToolsOrderIdFrom(order)) {
+      return preferCommerceToolsOrderId(order);
     }
 
     const shell = orders.find(
@@ -168,14 +201,30 @@ export const collapseSalesforceOrderShells = (orders: PrintableOrder[]): Printab
     );
 
     if (!shell) {
-      return order;
+      return preferCommerceToolsOrderId(order);
     }
 
     consumedShells.add(shell);
-    return withShellAccount(order, shell);
+    return preferCommerceToolsOrderId(order);
   });
 
-  return paidOrders.filter((order) => !consumedShells.has(order));
+  return paidOrders
+    .filter(
+      (order) =>
+        !consumedShells.has(order) && !isUnpairedSalesforceShell(order, paidOrders, consumedShells)
+    )
+    .map((order) => {
+      const withCommerceToolsId = preferCommerceToolsOrderId(order);
+
+      if (
+        commerceToolsOrderIdFrom(withCommerceToolsId) &&
+        withCommerceToolsId.origin?.trim().toLowerCase() === 'salesforce'
+      ) {
+        return withoutOrganizationTags(withCommerceToolsId);
+      }
+
+      return withCommerceToolsId;
+    });
 };
 
 export const filterOrdersForShopperContext = (

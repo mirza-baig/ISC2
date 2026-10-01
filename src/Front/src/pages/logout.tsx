@@ -5,7 +5,6 @@ import { useUserSession } from 'providers/index';
 import { useQueryClient } from '@tanstack/react-query';
 import { SESSION_STORAGE_KEYS, SESSION_LOCALSTORAGE_KEYS } from 'constants/sessionTimeout';
 
-import { BUYER_MOCK_SCENARIO_SESSION_KEY, clearBuyerMockRaceDeplete } from 'lib/authorizedBuyer';
 import { clearCartIds } from 'utils/cartIdStore';
 import { SHOPPER_CONTEXT_PROMPTED_KEY, SHOPPER_CONTEXT_STORAGE_KEY } from 'constants/index';
 
@@ -26,8 +25,6 @@ export default function Logout() {
       sessionStorage.removeItem(SHOPPER_CONTEXT_PROMPTED_KEY);
       sessionStorage.removeItem('allocation-sort-isc2');
       sessionStorage.removeItem('allocation-sort-dir-isc2');
-      sessionStorage.removeItem(BUYER_MOCK_SCENARIO_SESSION_KEY);
-      clearBuyerMockRaceDeplete();
       sessionStorage.removeItem('allocation-filters-isc2');
       localStorage.removeItem(SESSION_LOCALSTORAGE_KEYS.LAST_ACTIVITY);
       queryClient.clear();

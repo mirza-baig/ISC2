@@ -226,7 +226,7 @@ const ProductFormButton = ({ fields }: ProductFormButtonFields) => {
 
   if (href && !isThirdPartyProvider) {
     return (
-      <Link className={BUTTON_STYLES} href={href}>
+      <Link className={BUTTON_STYLES} href={href} prefetch={false}>
         {label}
       </Link>
     );

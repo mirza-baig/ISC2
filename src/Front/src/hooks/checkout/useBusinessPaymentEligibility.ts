@@ -5,7 +5,6 @@ import { B2B_FEATURE_FLAG } from 'constants/b2b';
 import {
   isPreapprovedCreditEligible,
   isPrepaidAccountEligible,
-  markBuyerMockRaceDeplete,
   resolveAvailableCredit,
   resolvePrepaidDiscount,
   amountDueWithPrepaid,
@@ -27,10 +26,6 @@ const toCartTotal = (value: number | string | undefined) => {
 
 const toOptionalAmount = (value: number | null): number | undefined => value ?? undefined;
 
-/**
- * Once the prepaid discount is on the cart (selecting prepaid applies it), the cart
- * total is already discounted; the account's percentage must not be taken off it again.
- */
 const withoutPrepaidDiscount = (
   account: AuthorizedBuyerAccount | undefined
 ): AuthorizedBuyerAccount | undefined =>
@@ -79,8 +74,6 @@ export default function useBusinessPaymentEligibility() {
       if (!isB2BFeatureEnabled) {
         return false;
       }
-
-      markBuyerMockRaceDeplete();
 
       const { account: freshAccount, ok } = await refetchAccount();
 

@@ -256,7 +256,6 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
                     </span>
                   </div>
                   <span className="body-m font-bold text-isc2-green whitespace-nowrap">
-                    {/* Before the cart discount; the discount shows as its own row below. */}
                     {formatMoney(
                       getLineItemTotalBeforeCartDiscounts(lineItem) ?? lineItem.totalPrice
                     )}

@@ -1,13 +1,10 @@
-import {
-  mapAccountContactRelationsToAccounts,
-  mergeLiveAndMockAccounts,
-} from './mapFromAccountContactRelations';
-import type { AuthorizedBuyerAccount } from './types';
+import { mapAccountContactRelationsToAccounts } from './mapFromAccountContactRelations';
 
 const liveOtp = {
   accountId: '001Ek000027iJTJIA2',
   accountName: 'Test OTP Business Account',
   accountType: 'OTP',
+  roles: 'Authorized Buyer',
   currency: 'USD',
   creditHold: false,
   purchaseControls: { prepaidAuthorized: null, poRequired: true },
@@ -39,8 +36,21 @@ describe('mapAccountContactRelationsToAccounts', () => {
 
   it('skips relations without an id or name', () => {
     expect(
-      mapAccountContactRelationsToAccounts([{ accountId: '001', accountName: '' }, {}])
+      mapAccountContactRelationsToAccounts([
+        { accountId: '001', accountName: '', roles: 'Authorized Buyer' },
+        {},
+      ])
     ).toEqual([]);
+  });
+
+  it('keeps only relations carrying the Authorized Buyer role', () => {
+    const accounts = mapAccountContactRelationsToAccounts([
+      { accountId: '001', accountName: 'Allocator Only', roles: 'Allocator' },
+      { accountId: '002', accountName: 'No Roles At All' },
+      { accountId: '003', accountName: 'Mixed Roles', roles: 'Allocator;Authorized Buyer' },
+    ]);
+
+    expect(accounts.map((account) => account.accountName)).toEqual(['Mixed Roles']);
   });
 
   it('prefers ISO country codes and nested creditHold from live Mule payloads', () => {
@@ -48,6 +58,7 @@ describe('mapAccountContactRelationsToAccounts', () => {
       {
         accountId: '001Ek000027iJTJIA2',
         accountName: 'Test OTP Business Account',
+        roles: 'Authorized Buyer',
         credit: { creditHold: true, paymentTerms: 'Net 60' },
         shippingAddress: {
           street: '1 King Street',
@@ -62,45 +73,5 @@ describe('mapAccountContactRelationsToAccounts', () => {
     expect(account.creditHold).toBe(true);
     expect(account.shippingAddress.country).toBe('GB');
     expect(account.shippingAddress.line1).toBe('1 King Street');
-  });
-});
-
-describe('mergeLiveAndMockAccounts', () => {
-  const mock: AuthorizedBuyerAccount = {
-    accountId: 'org-demo-both',
-    accountName: 'BrightPath Training Inc',
-    accountType: 'B2B',
-    currency: 'USD',
-    pricingTier: 'ENTERPRISE_1',
-    creditHold: false,
-    taxExempt: false,
-    shippingAddress: {
-      line1: '10 Lake Shore Dr',
-      city: 'Chicago',
-      state: 'IL',
-      postalCode: '60601',
-      country: 'US',
-    },
-    purchaseControls: {
-      poRequired: false,
-      poAttachmentRequired: false,
-      prepaidAuthorized: true,
-    },
-    credit: {
-      paymentTerms: 'NET_30',
-      creditLimit: 40000,
-      creditBalance: 0,
-      availableCredit: 40000,
-    },
-  };
-
-  it('puts live orgs first and keeps mocks', () => {
-    const live = mapAccountContactRelationsToAccounts([liveOtp]);
-    const merged = mergeLiveAndMockAccounts(live, [mock]);
-
-    expect(merged.map((account) => account.accountName)).toEqual([
-      'Test OTP Business Account',
-      'BrightPath Training Inc',
-    ]);
   });
 });

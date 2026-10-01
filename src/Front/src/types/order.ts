@@ -169,7 +169,6 @@ export type BusinessReceiptData = {
   taxIdNumber?: string;
   intacctCustomerId?: string;
   lineItems: ReceiptLineItem[];
-  /** Cart-level discount (e.g. prepaid), pre-formatted as "-$59.90". Omitted when none. */
   discount?: string;
   subtotal: string;
   tax: string;

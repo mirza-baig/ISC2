@@ -1,12 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, type ReactNode } from 'react';
 
 import { useLoggedUser } from 'hooks/index';
-import {
-  buildCartContextKey,
-  isCartContextEnabled,
-  readCartId,
-  writeCartId,
-} from 'utils/cartIdStore';
+import { buildCartContextKey, readCartId, writeCartId } from 'utils/cartIdStore';
 
 import { useShopperContext } from './shopperContext';
 import { useUserSession } from './userSession';
@@ -33,9 +28,7 @@ const CartIdentityProvider = ({ children }: CartIdentityProviderProps) => {
   const businessAccountId =
     shopperContext?.type === 'organization' ? shopperContext?.organization?.id : undefined;
 
-  const cartContextKey = isCartContextEnabled()
-    ? buildCartContextKey(externalID, businessAccountId)
-    : '';
+  const cartContextKey = buildCartContextKey(externalID, businessAccountId);
 
   const appliedKeyRef = useRef<string>('');
   const staleCartIdRef = useRef<string>('');

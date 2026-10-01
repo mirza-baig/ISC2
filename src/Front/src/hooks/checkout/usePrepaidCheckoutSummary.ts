@@ -13,9 +13,7 @@ import useBusinessPaymentEligibility from './useBusinessPaymentEligibility';
 export type PrepaidCheckoutSummaryDisplay = {
   title: string;
   discountAmount: string;
-  /** Replaces the cart total; undefined once the discount is on the cart (it is the total). */
   total?: string;
-  /** The discount is already in the cart's prices: show it above Subtotal, like the receipt. */
   isOnCart: boolean;
 };
 
@@ -31,16 +29,12 @@ export default function usePrepaidCheckoutSummary(): PrepaidCheckoutSummaryDispl
 
     const label =
       stepTwoLabels.prepaidDiscountLabel || BUSINESS_STEP_TWO_DEFAULT_LABELS.prepaidDiscountLabel;
-
-    // The discount is in the cart's prices: report what commercetools took off (10% of the
-    // pre-tax price) instead of taking 10% off the already-discounted, taxed total again.
     if (hasPrepaidDiscount(activeCart)) {
       const lineItems = (activeCart.lineItems ?? []) as CartLineItem[];
       const discountPercent = resolvePrepaidDiscount(account?.prepaid);
       const fractionDigits = activeCart.totalPrice?.fractionDigits ?? 2;
       const discountCentAmount = getCartDiscountCentAmount(lineItems);
 
-      // No row when nothing was taken off.
       if (discountCentAmount <= 0) {
         return null;
       }

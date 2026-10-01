@@ -122,7 +122,6 @@ export default function useAddToCart(callbacks?: MutationCallbacks) {
           variables: {
             cartId: userCartId,
             country: userCountry,
-            // Clears a prepaid discount left from checkout so it never reaches new items.
             actions: [
               ...getActions(payload, currencyCode),
               ...clearPrepaidDiscountActions(userCartId),

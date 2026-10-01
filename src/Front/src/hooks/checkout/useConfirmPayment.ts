@@ -9,7 +9,7 @@ import useCreateOrderFromCart from './useCreateOrderFromCart';
 import useHandleStripePayment from './useHandleStripePayment';
 import useHandlePaypalPayment from './useHandlePaypalPayment';
 import useGetPaymentIntent from './useGetPaymentIntent';
-import useUploadOrderFiles from './useUploadOrderFiles';
+import useUploadPOAttachment from './useUploadPOAttachment';
 import useIsBusinessBuyer from '../cart/useIsBusinessBuyer';
 import { PAYMENT_METHODS, isBusinessAccountPaymentMethod } from 'constants/checkout';
 import { B2B_FEATURE_FLAG } from 'constants/b2b';
@@ -105,7 +105,7 @@ export default function useConfirmPayment() {
 
   const { fields, personalInformation } = useCheckoutProcess();
   const { createOrderAsync, createOrderError } = useCreateOrderFromCart();
-  const { uploadOrderFilesAsync } = useUploadOrderFiles();
+  const { uploadOrderFilesAsync } = useUploadPOAttachment();
   const { handleStripePayment } = useHandleStripePayment();
   const { handlePaypalPayment } = useHandlePaypalPayment();
   const { getPaymentIntentAsync } = useGetPaymentIntent();

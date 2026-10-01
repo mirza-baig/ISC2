@@ -6,9 +6,6 @@ import { getServiceLayerAPI } from 'utils/index';
 import { QUERY_KEYS } from 'constants/index';
 import { Cart, ServiceLayerError, UpdateCartResponse } from 'types/index';
 
-import useAuthorizedBuyerPricingVoucher from './useAuthorizedBuyerPricingVoucher';
-
-/** commercetools relative discounts are in permyriad: 20% → 2000. */
 export const toPermyriad = (discountPercentage: number) => Math.round(discountPercentage * 100);
 
 export const buildDirectDiscountActions = (discountPercentage: number | null) => [
@@ -35,12 +32,6 @@ export const buildDirectDiscountActions = (discountPercentage: number | null) =>
   },
 ];
 
-/**
- * Which cart carries the prepaid discount. Tracked here rather than read off the cart: a
- * direct discount looks the same whoever set it, so this keeps the clean-up (and every
- * display that depends on it) to the prepaid discount alone. localStorage, so a reload
- * mid-checkout still knows to clear it.
- */
 const PREPAID_DISCOUNT_CART_KEY = 'isc2-prepaid-discount-cart-id';
 
 const rememberPrepaidDiscount = (cartId: string, hasDiscount: boolean) => {
@@ -50,12 +41,9 @@ const rememberPrepaidDiscount = (cartId: string, hasDiscount: boolean) => {
     } else if (localStorage.getItem(PREPAID_DISCOUNT_CART_KEY) === cartId) {
       localStorage.removeItem(PREPAID_DISCOUNT_CART_KEY);
     }
-  } catch {
-    // No storage (SSR, private mode): the discount is then only cleared from checkout.
-  }
+  } catch {}
 };
 
-/** True when this cart has the prepaid discount on it. */
 export const hasPrepaidDiscount = (cart?: { id?: string }) => {
   if (!cart?.id) {
     return false;
@@ -68,14 +56,9 @@ export const hasPrepaidDiscount = (cart?: { id?: string }) => {
   }
 };
 
-/**
- * Appended to other cart updates (e.g. add to cart) so a prepaid discount left behind is
- * cleared. Empty for every cart that does not carry it, so other discounts are untouched.
- */
 export const clearPrepaidDiscountActions = (cartId?: string) =>
   hasPrepaidDiscount({ id: cartId }) ? buildDirectDiscountActions(null) : [];
 
-/** Call once an update carrying `clearPrepaidDiscountActions` has succeeded. */
 export const forgetPrepaidDiscount = (cartId?: string) => {
   if (cartId) {
     rememberPrepaidDiscount(cartId, false);
@@ -103,7 +86,6 @@ type SetDiscountPercentageProps = {
 export default function useDiscountPercentage() {
   const queryClient = useQueryClient();
   const { cartId, setCartId } = useUserSession();
-  const { voucher: authorizedBuyerPricingVoucher } = useAuthorizedBuyerPricingVoucher();
 
   const { mutateAsync, isPending, error, isSuccess } = useMutation({
     mutationFn: async ({ discountPercentage }: SetDiscountPercentageProps) => {
@@ -118,7 +100,6 @@ export default function useDiscountPercentage() {
         variables: {
           cartId,
           actions: buildDirectDiscountActions(discountPercentage),
-          authorizedBuyerPricingVoucher,
         },
       });
 

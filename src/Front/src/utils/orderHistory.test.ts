@@ -39,7 +39,7 @@ describe('isOrganizationOrder', () => {
     expect(isOrganizationOrder(order({ accountName: 'Business Co. Canada Ltd' }))).toBe(true);
   });
 
-  it('is true when any line quantity is greater than one', () => {
+  it('is false when quantity is greater than one but the order has no account tags', () => {
     expect(
       isOrganizationOrder(
         order({
@@ -48,7 +48,7 @@ describe('isOrganizationOrder', () => {
           ],
         })
       )
-    ).toBe(true);
+    ).toBe(false);
     expect(
       isOrganizationOrder(
         order({
@@ -61,7 +61,7 @@ describe('isOrganizationOrder', () => {
           ],
         })
       )
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('is false for a personal qty-1 purchase', () => {
@@ -103,8 +103,11 @@ describe('filterOrdersForShopperContext', () => {
     expect(filterOrdersForShopperContext([personal, orgA], null)).toEqual([personal, orgA]);
   });
 
-  it('keeps only personal orders when shopping as Myself', () => {
-    expect(filterOrdersForShopperContext([personal, orgA, qtyOnlyOrg], myself)).toEqual([personal]);
+  it('keeps personal and untagged quantity orders when shopping as Myself', () => {
+    expect(filterOrdersForShopperContext([personal, orgA, qtyOnlyOrg], myself)).toEqual([
+      personal,
+      qtyOnlyOrg,
+    ]);
   });
 
   it('keeps only the selected organization when account fields are present', () => {
@@ -116,10 +119,8 @@ describe('filterOrdersForShopperContext', () => {
     expect(filterOrdersForShopperContext([personal, orgA, orgB], orgByName)).toEqual([orgA]);
   });
 
-  it('keeps only organization-like orders when account fields are missing', () => {
-    expect(filterOrdersForShopperContext([personal, qtyOnlyOrg], organization())).toEqual([
-      qtyOnlyOrg,
-    ]);
+  it('does not treat untagged quantity orders as organization purchases', () => {
+    expect(filterOrdersForShopperContext([personal, qtyOnlyOrg], organization())).toEqual([]);
   });
 });
 

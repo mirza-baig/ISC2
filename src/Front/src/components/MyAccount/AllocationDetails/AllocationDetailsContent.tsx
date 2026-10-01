@@ -26,6 +26,7 @@ export default function AllocationDetailsContent({ fields }: { fields?: Allocati
         <Link
           field={fields.backToAllocationsLink}
           className="cta with-chevron-left block mt-5 mb-3"
+          prefetch={false}
         />
       )}
 

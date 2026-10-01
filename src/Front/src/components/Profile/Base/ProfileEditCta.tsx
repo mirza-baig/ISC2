@@ -21,7 +21,7 @@ export const ProfileEditCta = ({ editCta, onButtonClick }: ProfileEditCta.Props)
 
   if (editCta.value.href) {
     return (
-      <Link field={editCta} className={EDIT_CTA_CLASSES}>
+      <Link field={editCta} className={EDIT_CTA_CLASSES} prefetch={false}>
         {CtaContent}
       </Link>
     );

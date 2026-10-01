@@ -18,7 +18,6 @@ export namespace CartSummaryPrices {
     prepaidDiscount?: {
       title: string;
       amount: string;
-      /** Already in the cart's prices: shown above Subtotal instead of after the totals. */
       beforeSubtotal?: boolean;
     };
     totalOverride?: string;

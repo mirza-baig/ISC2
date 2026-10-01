@@ -76,35 +76,55 @@ export default function BusinessAddressFields({
           maxLength={40}
         />
 
-        {states.length > 0 && (
-          <FormDropdown
+        {disabled ? (
+          <FormTextInput
             control={control}
             name={`${prefix}.stateCode`}
-            options={states}
-            valueProp="stateCode"
-            textProp="stateName"
             label={labels.stateLabel}
             tooltipText={labels.stateTooltip}
-            disabled={disabled}
+            disabled
             maxLength={40}
-            isOptional={false}
           />
+        ) : (
+          states.length > 0 && (
+            <FormDropdown
+              control={control}
+              name={`${prefix}.stateCode`}
+              options={states}
+              valueProp="stateCode"
+              textProp="stateName"
+              label={labels.stateLabel}
+              tooltipText={labels.stateTooltip}
+              maxLength={40}
+              isOptional={false}
+            />
+          )
         )}
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
-        <FormDropdown
-          control={control}
-          name={`${prefix}.countryCode`}
-          options={countries}
-          valueProp="countryCode"
-          textProp="countryName"
-          onChange={onCountryChanged}
-          label={labels.countryLabel}
-          tooltipText={labels.countryTooltip}
-          disabled={disabled}
-          maxLength={80}
-        />
+        {disabled ? (
+          <FormTextInput
+            control={control}
+            name={`${prefix}.countryCode`}
+            label={labels.countryLabel}
+            tooltipText={labels.countryTooltip}
+            disabled
+            maxLength={80}
+          />
+        ) : (
+          <FormDropdown
+            control={control}
+            name={`${prefix}.countryCode`}
+            options={countries}
+            valueProp="countryCode"
+            textProp="countryName"
+            onChange={onCountryChanged}
+            label={labels.countryLabel}
+            tooltipText={labels.countryTooltip}
+            maxLength={80}
+          />
+        )}
 
         <FormTextInput
           control={control}

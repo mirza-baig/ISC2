@@ -1,3 +1,4 @@
+import { AUTHORIZED_BUYER_ROLE, rolesContain } from './accountContactRelations';
 import { isAccountFlagSet } from './paymentEligibility';
 import type { AuthorizedBuyerAccount, AuthorizedBuyerAddress } from './types';
 
@@ -6,6 +7,7 @@ export type LiveAccountContactRelation = {
   accountId?: string | null;
   accountName?: string | null;
   accountType?: string | null;
+  roles?: string | null;
   currency?: string | null;
   pricingTier?: string | null;
   taxExempt?: boolean | string | null;
@@ -40,9 +42,7 @@ export type LiveAccountContactRelation = {
     type?: string | null;
     discountPercentage?: number | string | null;
   } | null;
-  /** Salesforce tax identifier for this account relation, shown on the transaction receipt. */
   taxId?: string | null;
-  /** Sage Intacct customer id for this account relation, shown on the transaction receipt. */
   intacctCustomerId?: string | null;
 };
 
@@ -163,24 +163,11 @@ export const mapAccountContactRelationsToAccounts = (
 
   return relations
     .map((relation) =>
-      relation && typeof relation === 'object'
+      relation &&
+      typeof relation === 'object' &&
+      rolesContain((relation as LiveAccountContactRelation).roles, AUTHORIZED_BUYER_ROLE)
         ? mapLiveRelationToAccount(relation as LiveAccountContactRelation)
         : null
     )
     .filter((account): account is AuthorizedBuyerAccount => Boolean(account));
-};
-
-/** Live orgs first so QA sees Salesforce names above the mock playbook. */
-export const mergeLiveAndMockAccounts = (
-  liveAccounts: AuthorizedBuyerAccount[],
-  mockAccounts: AuthorizedBuyerAccount[]
-): AuthorizedBuyerAccount[] => {
-  const liveIds = new Set(liveAccounts.map((account) => account.accountId));
-
-  return [
-    ...liveAccounts.map((account) => ({ ...account })),
-    ...mockAccounts
-      .filter((account) => !liveIds.has(account.accountId))
-      .map((account) => ({ ...account })),
-  ];
 };

@@ -26,7 +26,7 @@ const B2BCartSummaryActions = ({
 }: B2BCartSummaryActionsProps): JSX.Element | null => {
   const router = useRouter();
   const { activeCart } = useCart();
-  const { isAuthorizedBuyer, isResolvingAccess } = useB2BCartAccess();
+  const { isFeatureEnabled, isAuthorizedBuyer, isResolvingAccess } = useB2BCartAccess();
 
   const fields = readB2BCartOrderSummaryFields(rendering);
   const couponTitleAndLabels = fields?.couponTitleAndLabels;
@@ -45,7 +45,13 @@ const B2BCartSummaryActions = ({
   const buyerLabel = labels?.authorizedBuyerSecondaryCtaLabel?.trim() || backLabel;
 
   const showBuyerCta = Boolean(
-    part === 'cta' && cartOnly && isAuthorizedBuyer && !isResolvingAccess && buyerHref && buyerLabel
+    part === 'cta' &&
+      cartOnly &&
+      isFeatureEnabled &&
+      isAuthorizedBuyer &&
+      !isResolvingAccess &&
+      buyerHref &&
+      buyerLabel
   );
   const showStandardCta = Boolean(part === 'cta' && cartOnly && !showBuyerCta && backLabel);
 

@@ -5,7 +5,12 @@ import { ComponentParams, Field, ImageField, LinkField } from '@sitecore-jss/sit
 
 import { ChevronSquaredDownIcon } from 'icons/index';
 import { mapQuoteLabelsFromSitecoreFields, parseFieldsFromURLString } from 'utils/index';
-import { useBreakpoint, useIsBusinessBuyer, usePrepaidCheckoutSummary } from 'hooks/index';
+import {
+  useB2BCartAccess,
+  useBreakpoint,
+  useIsBusinessBuyer,
+  usePrepaidCheckoutSummary,
+} from 'hooks/index';
 import { useCart, useCheckoutProcess } from 'providers/index';
 import { CartSummaryPrices, LineItemPrice, LoadingIndicator } from 'ui/index';
 import { CHECKOUT_STEP_TWO_ACTIONS_ANCHOR_ID, CHECKOUT_STEPS } from 'constants/index';
@@ -15,6 +20,7 @@ import CartCoupon from './CartCoupon';
 import { OrderSummaryItems } from './OrderSummary/OrderSummaryItems';
 import { CartButtons } from './OrderSummary/CartButtons';
 import { TaxErrorPopupLabels } from 'types/checkout';
+import type { B2BCartSecondaryCtaFields } from '../B2BCart/b2bCartOrderSummaryFields';
 
 export type SectionHeadingAndLabels = {
   heading: string;
@@ -51,11 +57,11 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
   const breakpoint = useBreakpoint();
   const { activeStep, setTaxErrorLabels, setQuoteLabels } = useCheckoutProcess();
   const prepaidSummary = usePrepaidCheckoutSummary();
-  const isBusinessBuyer = useIsBusinessBuyer();
   const [isOpen, setIsOpen] = useState<boolean>(MENU_OPEN_BREAKPOINTS.includes(breakpoint));
 
   const { activeCart, isGettingCart } = useCart();
-
+  const { isFeatureEnabled, isAuthorizedBuyer, isResolvingAccess } = useB2BCartAccess();
+  const isBusinessBuyer = useIsBusinessBuyer();
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
     setIsMounted(true);
@@ -66,9 +72,9 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
   // effect (and its setQuoteLabels call) on every render instead of only on real change.
   const labels = useMemo(
     () =>
-      parseFieldsFromURLString<SectionHeadingAndLabels & QuoteSitecoreFields>(
-        fields.sectionHeadingAndLabels
-      ),
+      parseFieldsFromURLString<
+        SectionHeadingAndLabels & QuoteSitecoreFields & B2BCartSecondaryCtaFields
+      >(fields.sectionHeadingAndLabels),
     [fields.sectionHeadingAndLabels]
   );
 
@@ -78,6 +84,16 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
 
   const termsAndConditionsText = fields.quoteTermsAndConditionsLink?.value?.text;
   const termsAndConditionsUrl = fields.quoteTermsAndConditionsLink?.value?.href;
+
+  const showAuthorizedBuyerCta = Boolean(
+    (activeStep === CHECKOUT_STEPS.PAYMENT_INFORMATION ||
+      activeStep === CHECKOUT_STEPS.PERSONAL_INFORMATION) &&
+      isFeatureEnabled &&
+      isAuthorizedBuyer &&
+      !isResolvingAccess &&
+      labels.authorizedBuyerSecondaryCtaLink?.trim() &&
+      (labels.authorizedBuyerSecondaryCtaLabel?.trim() || labels.secondaryCtaLabel?.trim())
+  );
 
   // Quote PDF labels are authored onto this same field (as `Quote`-prefixed keys)
   // rather than a dedicated field on the Checkout component, since that's where content
@@ -204,7 +220,7 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
           className="flex flex-col items-center gap-4 md:gap-2 mt-4 md:mt-8"
         />
       )}
-      {/* Disabled preview of step two's Download Quote; quotes are business buyers only. */}
+
       {activeStep === CHECKOUT_STEPS.PERSONAL_INFORMATION && isBusinessBuyer && (
         <div
           id="checkout-step-two-actions"
@@ -233,6 +249,15 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
             <span>Download Quote</span>
           </button>
         </div>
+      )}
+
+      {showAuthorizedBuyerCta && (
+        <a
+          href={labels.authorizedBuyerSecondaryCtaLink!.trim()}
+          className="secondary-cta with-chevron-left flex justify-center w-full !text-xs !tracking-normal mt-4 md:mt-2"
+        >
+          {labels.authorizedBuyerSecondaryCtaLabel?.trim() || labels.secondaryCtaLabel?.trim()}
+        </a>
       )}
     </section>
   );

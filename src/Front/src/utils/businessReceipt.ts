@@ -130,13 +130,6 @@ const flattenLineItems = (lineItems: CartLineItem[]): CartLineItem[] =>
     'products' in lineItem ? flattenLineItems(lineItem.products) : [lineItem]
   );
 
-/**
- * The line at its price before cart-level discounts: unit price x quantity.
- *
- * A bundle line is priced from its products: the grouped line `addComputedFieldsToLineItems`
- * builds carries the bundle's already-discounted total as its price, so it would hide the
- * discount.
- */
 export const getLineItemTotalBeforeCartDiscounts = (
   lineItem: CartLineItem
 ): TypedMoney | undefined => {

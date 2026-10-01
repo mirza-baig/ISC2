@@ -88,6 +88,7 @@ export const PersonalInformationSchema = z
     isPoRequired: z.boolean().optional(),
     isPoAttachmentRequired: z.boolean().optional(),
     isCourseDeliveryDateRequired: z.boolean().optional(),
+    accountShippingAddressMissing: z.boolean().optional(),
   })
   .superRefine((input, ctx) => {
     if (!input.agreeTerms) {
@@ -113,11 +114,21 @@ export const PersonalInformationSchema = z
     if (input.isCourseDeliveryDateRequired && !input.courseDeliveryDate?.trim()) {
       addRequiredIssue(ctx, 'courseDeliveryDate');
     }
+    if (input.accountShippingAddressMissing) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'account_shipping_address_missing',
+        path: ['mailingAddress'],
+      });
+    }
   });
 
 export type PersonalInformation = z.infer<typeof PersonalInformationSchema>;
 
-export type UpdateUserPayload = Omit<PersonalInformation, 'agreeTerms' | 'isSameAddress'> & {
+export type UpdateUserPayload = Omit<
+  PersonalInformation,
+  'agreeTerms' | 'isSameAddress' | 'accountShippingAddressMissing'
+> & {
   PreferredLanguage?: string;
   /** Salesforce Contact `OtherPhone`, where business buyers' checkout phone edits land. */
   otherPhone?: string;

@@ -132,7 +132,7 @@ function OpportunityDetail(): JSX.Element | null {
       return (
         <div className="pb-4">
           <h2>{TITLES.SIGN_UP}</h2>
-          <Link field={linkField} />
+          <Link field={linkField} prefetch={false} />
         </div>
       );
     }

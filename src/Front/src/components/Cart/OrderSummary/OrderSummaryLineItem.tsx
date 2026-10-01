@@ -24,10 +24,6 @@ export namespace OrderSummaryLineItem {
     productNotAvailableLabel: string;
     userPriceLabel: string;
     orderDetailsMode?: boolean;
-    /**
-     * The prepaid discount is on the cart and shown as its own summary row, so the line
-     * shows its price before it (no strike-through) rather than taking it off twice.
-     */
     isPrepaidDiscountOnCart?: boolean;
   };
 }

@@ -10,7 +10,7 @@ import {
   getComputedFieldsFromCart,
   removeBundleDiscountCodes,
 } from 'utils/index';
-import { isCartContextEnabled } from 'utils/cartIdStore';
+
 import useLoggedUser from 'hooks/useLoggedUser';
 import { useUserSession, useShopperContext } from 'providers/index';
 
@@ -57,14 +57,13 @@ export default function useGetCart({ enabled, onSuccess, ...payload }: GetCartPa
   const { userCountry } = useUserSession();
   const { shopperContext: selection } = useShopperContext();
 
-  const shopperContext: ShopperContextPayload | undefined =
-    selection && isCartContextEnabled()
-      ? {
-          type: selection.type,
-          businessAccountId: selection.organization?.id,
-          businessAccountName: selection.organization?.name,
-        }
-      : undefined;
+  const shopperContext: ShopperContextPayload | undefined = selection
+    ? {
+        type: selection.type,
+        businessAccountId: selection.organization?.id,
+        businessAccountName: selection.organization?.name,
+      }
+    : undefined;
 
   const contextKey = shopperContext?.businessAccountId || shopperContext?.type || '';
 

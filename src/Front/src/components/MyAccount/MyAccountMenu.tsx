@@ -8,7 +8,7 @@ import { useModal } from 'providers/modal';
 import { useFeatureFlag } from 'providers/featureFlags';
 import { parseFieldsFromURLString } from 'utils/index';
 import { ChevronRightIcon } from 'icons/index';
-import { useLoggedUser } from 'hooks/index';
+import { useAuthorizedBuyer, useLoggedUser } from 'hooks/index';
 import { LoadingIndicator } from 'ui/index';
 import { B2B_FEATURE_FLAG } from 'constants/index';
 import { SESSION_STORAGE_KEYS, SESSION_LOCALSTORAGE_KEYS } from 'constants/sessionTimeout';
@@ -30,6 +30,7 @@ const MyAccountMenu = ({ fields }: MyAccountMenuProps) => {
   const router = useRouter();
   const { userRoleMenuLinks } = useHeaderNavigation();
   const { isUserLoggedIn, isB2BAdminUser } = useLoggedUser();
+  const { isAuthorizedBuyer } = useAuthorizedBuyer();
   const { shopperContext } = useShopperContext();
   const { setModalContent } = useModal();
   const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
@@ -39,7 +40,9 @@ const MyAccountMenu = ({ fields }: MyAccountMenuProps) => {
     fields?.props?.profileSummaryDataSource?.fields?.labelsTitlesAndMore
   );
   const showChangeBuyerLogout =
-    isB2BFeatureEnabled && isB2BAdminUser && shopperContext?.type === 'organization';
+    isB2BFeatureEnabled &&
+    (isB2BAdminUser || isAuthorizedBuyer) &&
+    shopperContext?.type === 'organization';
   const signOutLabel = showChangeBuyerLogout ? LOG_OUT_CHANGE_BUYER_LABEL : labels?.signOutLabel;
 
   const onSignOut = useCallback(() => {

@@ -69,8 +69,6 @@ const B2B_ENGAGE_OPTIONS = {
   },
 };
 
-const SHOW_BUSINESS_PAYMENT_TEST_DETAILS = true;
-
 const businessPaymentCopy = (stepTwoLabels: StepTwoLabels) => ({
   prepaidAccount:
     stepTwoLabels.prepaidAccountLabel || BUSINESS_STEP_TWO_DEFAULT_LABELS.prepaidAccountLabel,
@@ -154,7 +152,6 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     isPrepaidEligible,
     isCreditEligible,
     prepaidBalance,
-    creditLimit,
     availableCredit,
     prepaidDiscount,
     prepaidAmountDue,
@@ -241,8 +238,6 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     if (isConfirmingPayment) {
       return;
     }
-
-    // The prepaid discount belongs to this step only; the buyer picks a method again on return.
     if (hasPrepaidDiscount(activeCart) && !isDiscountSyncInFlight()) {
       removeDiscountPercentageAsync()
         .then(storeCart)
@@ -275,8 +270,6 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
         }
 
         const taxedCart = await ensureTaxedCart(undefined, { ...taxOptions, cart: discountedCart });
-
-        // Tax stores the cart itself; when it could not run, show the discounted cart as is.
         if (discountedCart && !taxedCart?.taxedPrice) {
           storeCart(discountedCart);
         }
@@ -826,27 +819,12 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
           {paymentMethod === BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT && isPrepaidEligible && (
             <div className="space-y-2">
               <p className="body-s text-gray-70 m-0">{copy.prepaidAccountDescription}</p>
-              {SHOW_BUSINESS_PAYMENT_TEST_DETAILS && (
-                <BusinessPrepaidTestDetails
-                  balance={prepaidBalance}
-                  currencySymbol={currencySymbol}
-                  discount={prepaidDiscount}
-                  amountDue={prepaidAmountDue}
-                />
-              )}
             </div>
           )}
 
           {paymentMethod === BUSINESS_PAYMENT_METHODS.PREAPPROVED_CREDIT && isCreditEligible && (
             <div className="space-y-2">
               <p className="body-s text-gray-70 m-0">{copy.preapprovedCreditDescription}</p>
-              {SHOW_BUSINESS_PAYMENT_TEST_DETAILS && (
-                <BusinessCreditTestDetails
-                  creditLimit={creditLimit}
-                  availableCredit={availableCredit}
-                  currencySymbol={currencySymbol}
-                />
-              )}
             </div>
           )}
 
@@ -994,56 +972,6 @@ const formatAccountBalance = (balance: number | null | undefined, currencySymbol
 
   return currencySymbol ? `${currencySymbol} ${amount}` : amount;
 };
-
-/** Temporary checkout test block. Hidden when SHOW_BUSINESS_PAYMENT_TEST_DETAILS is false. */
-function BusinessCreditTestDetails({
-  creditLimit,
-  availableCredit,
-  currencySymbol,
-}: Readonly<{
-  creditLimit?: number;
-  availableCredit?: number;
-  currencySymbol?: string;
-}>) {
-  return (
-    <div className="space-y-1">
-      <p className="body-s text-gray-70 m-0">
-        Credit limit: {formatAccountBalance(creditLimit, currencySymbol)}
-      </p>
-      <p className="body-s text-gray-70 m-0">
-        Available credit: {formatAccountBalance(availableCredit, currencySymbol)}
-      </p>
-    </div>
-  );
-}
-
-/** Temporary checkout test block. Hidden when SHOW_BUSINESS_PAYMENT_TEST_DETAILS is false. */
-function BusinessPrepaidTestDetails({
-  balance,
-  currencySymbol,
-  discount,
-  amountDue,
-}: Readonly<{
-  balance?: number;
-  currencySymbol?: string;
-  discount?: number;
-  amountDue?: number;
-}>) {
-  const discountPercent =
-    typeof discount === 'number' && Number.isFinite(discount) && discount > 0 ? discount : 0;
-
-  return (
-    <div className="space-y-1">
-      <p className="body-s text-gray-70 m-0">
-        Available prepaid balance: {formatAccountBalance(balance, currencySymbol)}
-      </p>
-      <p className="body-s text-gray-70 m-0">Discount: {discountPercent}%</p>
-      <p className="body-s text-gray-70 m-0">
-        Amount due with prepaid: {formatAccountBalance(amountDue, currencySymbol)}
-      </p>
-    </div>
-  );
-}
 
 function BusinessAccountPaymentDetails({
   balanceLabel,

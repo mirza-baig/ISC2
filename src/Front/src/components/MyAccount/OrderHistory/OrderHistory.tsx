@@ -6,6 +6,8 @@ import { filterOrdersForShopperContext } from 'utils/orderHistory';
 import { PrintableOrder, OrderProduct } from 'types/index';
 import useGetAllOrders from 'hooks/order/useGetAllOrders';
 import { useLoggedUser, useIsBusinessBuyer, useOnEventOutside } from 'hooks/index';
+import { B2B_FEATURE_FLAG } from 'constants/b2b';
+import { useFeatureFlag } from 'providers/featureFlags';
 import { useShopperContext } from 'providers/shopperContext';
 import ChevronDownIcon from 'icons/ChevronDownIcon';
 import Order from './Order';
@@ -192,9 +194,10 @@ const OrderHistory = ({ fields }: OrderHistoryPageProps) => {
   const { orders, isGettingAllOrders } = useGetAllOrders();
   const { isGettingUser } = useLoggedUser();
   const { shopperContext } = useShopperContext();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   const contextOrders = useMemo(
-    () => filterOrdersForShopperContext(orders, shopperContext),
-    [orders, shopperContext]
+    () => filterOrdersForShopperContext(orders, isB2BFeatureEnabled ? shopperContext : null),
+    [isB2BFeatureEnabled, orders, shopperContext]
   );
 
   const orderLabels = useMemo(

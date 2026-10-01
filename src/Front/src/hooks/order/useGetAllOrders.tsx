@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { QUERY_KEYS } from 'constants/index';
+import { B2B_FEATURE_FLAG, QUERY_KEYS } from 'constants/index';
 import { PrintableOrder } from 'types/index';
+import { useFeatureFlag } from 'providers/featureFlags';
 import {
   getServiceLayerAPI,
   normalizePrintableOrder,
@@ -26,8 +27,12 @@ const isMockOrdersEnabled = () => {
   return window.location.search.includes('useMockOrders=true');
 };
 
+const prepareOrders = (orders: PrintableOrder[], isB2BOrderHistoryEnabled: boolean) =>
+  isB2BOrderHistoryEnabled ? collapseSalesforceOrderShells(orders) : orders;
+
 export default function useGetAllOrders() {
   const { externalID, email } = useLoggedUser();
+  const isB2BOrderHistoryEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   const [useMocks, setUseMocks] = useState(process.env.NEXT_PUBLIC_USE_MOCK_ORDERS === 'true');
   const [isClientReady, setIsClientReady] = useState(false);
 
@@ -37,11 +42,11 @@ export default function useGetAllOrders() {
   }, []);
 
   const { data, isLoading, error } = useQuery<GetAllOrdersResponse>({
-    queryKey: [QUERY_KEYS.ALL_ORDERS, useMocks, externalID, email],
+    queryKey: [QUERY_KEYS.ALL_ORDERS, useMocks, externalID, email, isB2BOrderHistoryEnabled],
     queryFn: async () => {
       if (useMocks) {
         return {
-          orders: collapseSalesforceOrderShells(MOCK_ORDERS.map(normalizePrintableOrder)),
+          orders: prepareOrders(MOCK_ORDERS.map(normalizePrintableOrder), isB2BOrderHistoryEnabled),
         };
       }
 
@@ -60,7 +65,10 @@ export default function useGetAllOrders() {
           orderResponse?.data?.data?.salesforceGetOrders;
 
         return {
-          orders: collapseSalesforceOrderShells((ordersData || []).map(normalizePrintableOrder)),
+          orders: prepareOrders(
+            (ordersData || []).map(normalizePrintableOrder),
+            isB2BOrderHistoryEnabled
+          ),
         };
       } catch (requestError) {
         console.error('Error during get all orders', requestError);
@@ -69,7 +77,7 @@ export default function useGetAllOrders() {
     },
     enabled: isClientReady && (Boolean(externalID) || useMocks),
     refetchOnWindowFocus: false,
-    refetchOnMount: true,
+    refetchOnMount: isB2BOrderHistoryEnabled,
   });
 
   return {

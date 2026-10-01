@@ -7,7 +7,6 @@ import { COURSE_DELIVERY_PRODUCT_TYPES, OTP_ACCOUNT_TYPE, QUERY_KEYS } from 'con
 import {
   getAuthorizedBuyerAccounts,
   isAccountFlagSet,
-  resolveBuyerMockScenario,
   type AuthorizedBuyerAccount,
   type AuthorizedBuyerResponse,
 } from 'lib/authorizedBuyer';
@@ -35,7 +34,7 @@ type ActiveBusinessAccount = {
  * Resolves the business account the current checkout is being made against — the one the
  * buyer picked in the shopper context modal — and the purchase controls derived from it.
  *
- * Accounts are live `getAccountData` relations (first) plus the mock playbook.
+ * Accounts are live `getAccountData` relations.
  * Balances refresh on checkout step mount and window focus. There is no frontend
  * reservation; Salesforce must reject a second debit if two buyers confirm together.
  */
@@ -46,10 +45,8 @@ export default function useActiveBusinessAccount(): ActiveBusinessAccount {
 
   const selectedAccountId = shopperContext?.organization?.id;
 
-  const mockScenario = resolveBuyerMockScenario();
-
   const { data, refetch } = useQuery<AuthorizedBuyerResponse>({
-    queryKey: [QUERY_KEYS.AUTHORIZED_BUYER_ACCOUNTS, externalID, email, mockScenario],
+    queryKey: [QUERY_KEYS.AUTHORIZED_BUYER_ACCOUNTS, externalID, email],
     queryFn: () => getAuthorizedBuyerAccounts(externalID!, { email }),
     enabled: Boolean(externalID) && Boolean(email) && Boolean(selectedAccountId),
     staleTime: 0,

@@ -58,6 +58,7 @@ const ProductFormModal = ({ fields }: ProductFormModalProps) => {
                 }}
                 onClick={onPrimaryCtaClose}
                 className="primary-cta text-xsm leading-20 tracking-link px-8"
+                prefetch={false}
               />
             )}
 

@@ -41,7 +41,7 @@ const PathFinderInsightContent = ({
       {hasAbstract && (
         <RichTextUI className={clsx('body-m', hasLink && 'mb-8')} value={abstract?.value} />
       )}
-      {hasLink && <Link className="secondary-cta mb-8" field={link!} />}
+      {hasLink && <Link className="secondary-cta mb-8" field={link!} prefetch={false} />}
     </>
   );
 };

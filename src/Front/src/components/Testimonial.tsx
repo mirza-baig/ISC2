@@ -56,7 +56,7 @@ const TestimonialCard = ({ fields }: TestimonialCardProps) => {
           tag="h5"
         />
         {Boolean(fields.primaryCTA?.value.href) && (
-          <Link field={fields.primaryCTA!} className="primary-cta truncate" />
+          <Link field={fields.primaryCTA!} className="primary-cta truncate" prefetch={false} />
         )}
       </section>
     </div>

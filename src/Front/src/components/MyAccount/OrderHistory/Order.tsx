@@ -15,6 +15,8 @@ import ChevronDownIcon from 'icons/ChevronDownIcon';
 import clsx from 'clsx';
 import OrderPrintButton from './OrderPrintButton';
 import { useLoggedUser, useIsBusinessBuyer } from 'hooks/index';
+import { B2B_FEATURE_FLAG } from 'constants/b2b';
+import { useFeatureFlag } from 'providers/featureFlags';
 
 type OrderHistoryComponentProps = {
   fields: {
@@ -29,6 +31,7 @@ const Order = ({ fields }: OrderHistoryComponentProps) => {
   const { user } = useLoggedUser();
   const { order, orderLabels, printLabels, logo } = fields;
   const isBusinessBuyer = useIsBusinessBuyer();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   const [isOpen, setIsOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const hasMoreThanOneLineItem = order.lineItems && order.lineItems.length > 1;
@@ -131,32 +134,34 @@ const Order = ({ fields }: OrderHistoryComponentProps) => {
               )}
             </>
           ) : (
-            <div className="text-sm-base space-y-1">
-              {order.accountName && (
-                <div>
-                  <strong>{`${accountNameLabel}: `}</strong>
-                  <span>{order.accountName}</span>
-                </div>
-              )}
-              {order.buyerFullName && (
-                <div>
-                  <strong>{`${buyerNameLabel}: `}</strong>
-                  <span>{order.buyerFullName}</span>
-                </div>
-              )}
-              {order.poNumber && (
-                <div>
-                  <strong>{`${poNumberLabel}: `}</strong>
-                  <span>{order.poNumber}</span>
-                </div>
-              )}
-              {order.customerOrderReference && (
-                <div>
-                  <strong>{`${customerOrderReferenceLabel}: `}</strong>
-                  <span>{order.customerOrderReference}</span>
-                </div>
-              )}
-            </div>
+            isB2BFeatureEnabled && (
+              <div className="text-sm-base space-y-1">
+                {order.accountName && (
+                  <div>
+                    <strong>{`${accountNameLabel}: `}</strong>
+                    <span>{order.accountName}</span>
+                  </div>
+                )}
+                {order.buyerFullName && (
+                  <div>
+                    <strong>{`${buyerNameLabel}: `}</strong>
+                    <span>{order.buyerFullName}</span>
+                  </div>
+                )}
+                {order.poNumber && (
+                  <div>
+                    <strong>{`${poNumberLabel}: `}</strong>
+                    <span>{order.poNumber}</span>
+                  </div>
+                )}
+                {order.customerOrderReference && (
+                  <div>
+                    <strong>{`${customerOrderReferenceLabel}: `}</strong>
+                    <span>{order.customerOrderReference}</span>
+                  </div>
+                )}
+              </div>
+            )
           )}
 
           {/* Non-business/print contact & totals */}

@@ -5,7 +5,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAnalyticsTracking, useLoggedUser } from 'hooks/index';
 import { useAnalyticsItems } from 'utils/cart';
 
-import { PersonalInformationSchema, type PersonalInformation } from 'types/index';
+import {
+  PersonalInformationSchema,
+  COUNTRIES_REQUIRING_STATES,
+  type PersonalInformation,
+} from 'types/index';
 import {
   useActiveBusinessAccount,
   useGetAllCountries,
@@ -114,6 +118,7 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
     if (!isCpqStyleCheckout) {
       return;
     }
+    setValue('isBusinessBuyer', false);
     setValue('isSameAddress', true);
     const billing = getValues('billingAddress');
     if (billing?.street) {
@@ -137,12 +142,27 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
       setValue('employer', accountName);
     }
 
-    if (accountShippingAddress) {
-      setValue('mailingAddress', accountShippingAddress);
-      setIsMailingPostalCodeRequired(
-        isPostalCodeRequiredForCountry(accountShippingAddress.countryCode)
-      );
-    }
+    const isAccountShippingAddressComplete = Boolean(
+      accountShippingAddress?.street?.trim() &&
+        accountShippingAddress?.city?.trim() &&
+        accountShippingAddress?.postalCode?.trim() &&
+        accountShippingAddress?.countryCode?.trim() &&
+        (!COUNTRIES_REQUIRING_STATES.includes(
+          (accountShippingAddress?.countryCode ?? '').toUpperCase()
+        ) ||
+          Boolean(accountShippingAddress?.stateCode?.trim()))
+    );
+
+    setValue('accountShippingAddressMissing', !isAccountShippingAddressComplete);
+    setValue('mailingAddress', {
+      street: accountShippingAddress?.street ?? '',
+      streetTwo: accountShippingAddress?.streetTwo ?? '',
+      city: accountShippingAddress?.city ?? '',
+      countryCode: accountShippingAddress?.countryCode ?? '',
+      stateCode: accountShippingAddress?.stateCode ?? '',
+      postalCode: accountShippingAddress?.postalCode ?? '',
+    });
+    setIsMailingPostalCodeRequired(true);
   }, [
     isBusinessBuyer,
     accountName,
@@ -153,10 +173,12 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
     setValue,
   ]);
 
-  // "Same Billing Address" keeps billing in step with the read-only shipping address, so
-  // tax and payment still see a complete billing address the buyer never had to retype.
   useEffect(() => {
     if (!isBusinessBuyer || !isSameAddress) {
+      return;
+    }
+
+    if (getValues('accountShippingAddressMissing')) {
       return;
     }
 
@@ -246,6 +268,13 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
     }
     setFormError(null);
     setErrorFocusTarget(null);
+    if (isBusinessBuyer && getValues('accountShippingAddressMissing')) {
+      setErrorFocusTarget('mailingAddress');
+      setFormError(
+        "Your account's shipping address on file is missing required information and can't be edited here. Please contact your account administrator or support to update it before continuing."
+      );
+      return;
+    }
 
     const coupon = formatAnalyticsCouponCodes(activeCart?.discountCodes);
 
@@ -292,7 +321,7 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
   };
 
   const onFormInvalid: SubmitErrorHandler<PersonalInformation> = (errors) => {
-    if (isBusinessBuyer && errors.mailingAddress) {
+    if (isBusinessBuyer && (errors.mailingAddress || getValues('accountShippingAddressMissing'))) {
       setErrorFocusTarget('mailingAddress');
       setFormError(
         "Your account's shipping address on file is missing required information and can't be edited here. Please contact your account administrator or support to update it before continuing."
