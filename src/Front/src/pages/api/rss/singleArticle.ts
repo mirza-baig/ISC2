@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getArticleRssFeed } from 'queries/searchSettings';
+import { ARTICLE_RSS_FEED } from 'queries/searchSettings';
 import { Builder } from 'xml2js';
 import sanitizeHtml from 'sanitize-html';
 import { getGraphQLResult } from 'utils/graphQLFunctions';
@@ -162,8 +162,7 @@ const insightsApi = async (req: NextApiRequest, res: NextApiResponse): Promise<v
 
     const slug = urlObj.pathname.split('/').filter(Boolean).pop() as string;
 
-    const query = getArticleRssFeed(slug);
-    const response = await getGraphQLResult<GraphQLResponse>(query);
+    const response = await getGraphQLResult<GraphQLResponse>(ARTICLE_RSS_FEED, { name: slug });
 
     const articleDetails = extractArticleDetails(response);
 

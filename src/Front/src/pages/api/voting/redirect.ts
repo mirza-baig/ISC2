@@ -3,9 +3,11 @@ import type { AuthOptions } from 'next-auth';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../auth/[...nextauth]';
 import { createHash } from 'crypto';
-import { getElectionsVotingUserInfo } from 'queries/votingSettings';
+import { z } from 'zod';
+import { ELECTIONS_VOTING_USER_INFO, VOTING_TYPES_ROOT } from 'queries/votingSettings';
 import { getGraphQLResult } from 'utils/graphQLFunctions';
 import { setAPIRouteHeaders } from 'utils/apiUtils';
+import { isItemName } from 'lib/api/urlPath';
 
 interface VotingFieldValue {
   value: string;
@@ -28,6 +30,22 @@ interface SessionUser {
     user_id?: string;
   };
 }
+
+const MAX_VOTING_KEY_LENGTH = 100;
+
+/**
+ * A voting type item name, resolved beneath VOTING_TYPES_ROOT.
+ *
+ * Permissive by design (see lib/api/urlPath.ts): election items carry names like
+ * "Board & Committee Election (2025)", and rejecting one would break the voting link
+ * for every member who received it. Excluding `/` is what keeps the lookup inside
+ * the Voting Types folder; the query document is parameterized regardless.
+ */
+export const votingKeySchema = z
+  .string()
+  .min(1)
+  .max(MAX_VOTING_KEY_LENGTH)
+  .refine(isItemName, 'voting key is not a valid item name');
 
 const generateVotingToken = (
   memberNumber: string,
@@ -58,18 +76,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(403).json({ error: 'Member ID not found' });
   }
 
-  const { v: votingKey } = req.query;
+  const parsedKey = votingKeySchema.safeParse(req.query.v);
 
-  if (!votingKey || typeof votingKey !== 'string') {
+  if (!parsedKey.success) {
     return res.status(400).json({ error: 'Voting key required' });
   }
 
   try {
-    const graphQLResult = await getGraphQLResult<VotingGraphQLResult>(
-      getElectionsVotingUserInfo(votingKey)
-    );
+    const graphQLResult = await getGraphQLResult<VotingGraphQLResult>(ELECTIONS_VOTING_USER_INFO, {
+      path: `${VOTING_TYPES_ROOT}/${parsedKey.data}`,
+      language: 'en',
+    });
 
-    if (!graphQLResult.votingData) {
+    if (!graphQLResult?.votingData) {
       return res.status(404).json({ error: 'Voting data not found' });
     }
 

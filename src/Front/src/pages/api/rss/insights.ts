@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Builder } from 'xml2js';
 import sanitizeHtml from 'sanitize-html';
-import { insightsRssFeedQuery } from 'queries/searchSettings';
+import { INSIGHTS_RSS_FEED } from 'queries/searchSettings';
 import { RssArticle, RssGraphQLResponse, RSSObject, RssArticleDetails } from 'types/index';
 import { getGraphQLResult } from 'utils/graphQLFunctions';
 
@@ -103,8 +103,12 @@ const Insights = async (_req: NextApiRequest, res: NextApiResponse) => {
       loopCount++;
       console.log(`Fetching Insights page number: ${loopCount}`);
 
-      const query = insightsRssFeedQuery(40, endCursor);
-      const response = await getGraphQLResult<RssGraphQLResponse>(query);
+      // Annotated explicitly: `endCursor` is both an input to this call and assigned
+      // from its result, which makes the inferred type circular (TS7022).
+      const response: RssGraphQLResponse = await getGraphQLResult<RssGraphQLResponse>(
+        INSIGHTS_RSS_FEED,
+        { first: 40, after: endCursor }
+      );
       const results: RssArticle[] = response.search.results;
       const pageInfo = response.search.pageInfo;
 

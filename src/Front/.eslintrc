@@ -15,6 +15,27 @@
     "react"
   ],
   "ignorePatterns": [".generated/**/*", "**/*.d.ts", "**/*.js"],
+  "overrides": [
+    {
+      // Pentest finding #4: query documents must be constants, with caller data passed
+      // as GraphQL variables. A builder function that returns a template literal is how
+      // request data got spliced into the document. See GraphQL-API-Patterns.md.
+      "files": ["src/queries/**/*.ts"],
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "ArrowFunctionExpression > TemplateLiteral",
+            "message": "Query modules must export constant documents. Pass caller data as GraphQL variables instead of interpolating it - see GraphQL-API-Patterns.md section 1."
+          },
+          {
+            "selector": "FunctionDeclaration > BlockStatement TemplateLiteral",
+            "message": "Query modules must export constant documents. Pass caller data as GraphQL variables instead of interpolating it - see GraphQL-API-Patterns.md section 1."
+          }
+        ]
+      }
+    }
+  ],
   "rules": {
     "@next/next/no-img-element": "off", // Don't force next/image
     "jsx-a11y/alt-text": ["warn", { "elements": ["img"] }], // Don't force alt for <Image/> (sourced from Sitecore media)
