@@ -12,5 +12,13 @@ export const SERVICES_DATA_ENDPOINT =
 
 export const INTERNAL_MULESOFT_URL = `${process.env.PUBLIC_URL}/api/salesforce`;
 export const EXTERNAL_MULESOFT_PROFILE_PICTURE_URL = `${process.env.SALESFORCE_CLOUDHUB_URL}/v1/profilePhoto`;
-export const getExternalMulesoftOrderFilesUrl = (orderNumber: string) =>
-  `${process.env.SALESFORCE_CLOUDHUB_URL}/v1/order/${encodeURIComponent(orderNumber)}/files`;
+export const getExternalMulesoftOrderFilesUrl = (
+  orderNumber: string,
+  externalID: string,
+  email: string
+) => {
+  const params = new URLSearchParams({ externalID, email });
+  return `${process.env.SALESFORCE_CLOUDHUB_URL}/v1/order/${encodeURIComponent(
+    orderNumber
+  )}/files?${params.toString()}`;
+};

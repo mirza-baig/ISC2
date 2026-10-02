@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
 import { PoAttachment } from 'types/index';
+import useLoggedUser from '../useLoggedUser';
 
 type UploadOrderFilesPayload = {
   orderNumber: string;
@@ -12,9 +13,17 @@ const stripDataUrlPrefix = (base64: string) => base64.replace(/^data:[^,]*;base6
 
 /** Attaches files to a placed order via Mule (`POST /v1/order/{orderNumber}/files`). */
 export default function useUploadOrderFiles() {
+  const { externalID, email } = useLoggedUser();
+
   const { mutateAsync, isPending, error } = useMutation({
     mutationFn: async ({ orderNumber, files }: UploadOrderFilesPayload) => {
-      const response = await fetch('/api/salesforce/b2b/uploadOrderFiles', {
+      if (!externalID || !email) {
+        throw new Error('Missing externalID or email for order file upload');
+      }
+
+      const query = new URLSearchParams({ externalID, email }).toString();
+
+      const response = await fetch(`/api/salesforce/b2b/uploadOrderFiles?${query}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
