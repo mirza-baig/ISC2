@@ -12,6 +12,8 @@ export type B2BCartCustomFieldsInput = {
   customerOrderReference?: string;
   organization?: string;
   buyer?: string;
+  /** `YYYY-MM-DD`, as reported by the native date input. */
+  courseDeliveryDate?: string;
 };
 
 const CUSTOM_TYPE_KEY = 'ISCCartOrderModelCustomization';
@@ -23,6 +25,7 @@ const buildFields = (input: B2BCartCustomFieldsInput) =>
       ['customerOrderReference', input.customerOrderReference],
       ['organization', input.organization],
       ['buyer', input.buyer],
+      ['courseDeliveryDate', input.courseDeliveryDate],
     ] as const
   )
     .filter(([, value]) => value !== undefined && value !== null && String(value).trim() !== '')

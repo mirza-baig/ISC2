@@ -267,6 +267,9 @@ export default function PersonalInformationForm({ initialData, onStepComplete }:
           customerOrderReference: getValues('customerOrderReference'),
           organization: accountName,
           buyer: [data.firstName, data.lastName].filter(Boolean).join(' '),
+          courseDeliveryDate: isCourseDeliveryDateRequired
+            ? getValues('courseDeliveryDate')
+            : undefined,
         });
       } catch {
         // swallowed — hook's onError already logged it; do not block checkout
