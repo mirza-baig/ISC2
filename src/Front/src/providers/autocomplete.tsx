@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { LinkField } from '@sitecore-jss/sitecore-jss-nextjs';
-import algoliasearch, { SearchClient } from 'algoliasearch';
+import { SearchClient } from 'algoliasearch';
+
+import { createPublicSearchClient } from 'lib/algolia/credentials';
 
 import {
   AutocompleteSuggestions,
@@ -43,8 +45,6 @@ const AutocompleteContext = createContext<AutocompleteContextProps>({
   isLoading: false,
   searchClient: null,
   algoliaDetails: {
-    algoliaApiKey: { value: '' },
-    algoliaAppId: { value: '' },
     algoliaIndexName: { value: '' },
     algoliaAutosuggestIndexName: { value: '' },
     placeholderText: { value: '' },
@@ -91,15 +91,9 @@ const AutocompleteProvider: React.FC<AutocompleteProviderProps> = ({
     query: initialQuery || '',
   });
 
-  const searchClient = useMemo(() => {
-    const { algoliaApiKey, algoliaAppId } = algoliaSettings.algoliaDetails;
-
-    if (!algoliaApiKey?.value || !algoliaAppId?.value) {
-      return null;
-    }
-
-    return algoliasearch(algoliaAppId?.value, algoliaApiKey?.value);
-  }, [algoliaSettings.algoliaDetails]);
+  // Credentials come from the environment, not from the Sitecore item — see
+  // src/lib/algolia/credentials.ts (finding H-04).
+  const searchClient = useMemo(() => createPublicSearchClient(), []);
 
   useEffect(() => {
     const savedItems = localStorage.getItem(RECENT_SEARCHES);

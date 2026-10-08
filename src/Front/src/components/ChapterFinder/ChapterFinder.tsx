@@ -1,5 +1,6 @@
 import { Field, Text } from '@sitecore-jss/sitecore-jss-nextjs';
 import algoliasearch from 'algoliasearch/lite';
+import { getPublicAlgoliaCredentials } from 'lib/algolia/credentials';
 import { InstantSearch, Hits, Configure } from 'react-instantsearch-dom';
 import { CustomMenuSelect } from './MenuSelect';
 import StateResults from './StateResults';
@@ -40,14 +41,19 @@ const ChapterFinder = ({
     useContext(LocationContext);
 
   const {
-    algoliaDetails: { algoliaChapterFilderIndexName, algoliaApiKey, algoliaAppId },
+    algoliaDetails: { algoliaChapterFilderIndexName },
   } = algoliaSettings;
   const searchClient = useMemo(() => {
-    if (!algoliaAppId || !algoliaApiKey || isEditing || !algoliaChapterFilderIndexName) {
+    // Credentials come from the environment, not from the Sitecore item — see
+    // src/lib/algolia/credentials.ts (finding H-04). Built with the `lite` client
+    // here because InstantSearch only ever searches.
+    const credentials = getPublicAlgoliaCredentials();
+
+    if (!credentials || isEditing || !algoliaChapterFilderIndexName) {
       return null;
     }
 
-    const base = algoliasearch(algoliaAppId?.value, algoliaApiKey?.value);
+    const base = algoliasearch(credentials.appId, credentials.searchKey);
     return {
       ...base,
       search(...args: Parameters<typeof base.search>) {
@@ -73,7 +79,7 @@ const ChapterFinder = ({
         return base.search(...args);
       },
     } as typeof base;
-  }, [algoliaApiKey, algoliaAppId, isEditing, algoliaChapterFilderIndexName]);
+  }, [isEditing, algoliaChapterFilderIndexName]);
 
   const locationResultsText = 'Showing results near you';
   const noChaptersText = 'No Chapters found near your location.';

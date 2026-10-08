@@ -31,6 +31,39 @@
           {
             "selector": "FunctionDeclaration > BlockStatement TemplateLiteral",
             "message": "Query modules must export constant documents. Pass caller data as GraphQL variables instead of interpolating it - see GraphQL-API-Patterns.md section 1."
+          },
+          {
+            "selector": "TemplateElement[value.raw=/algolia(ApiKey|AppId)/]",
+            "message": "Pentest finding H-04: do not select credential fields from the content tree. Everything published to Experience Edge is readable by anyone with the public delivery key. Credentials come from the environment - see src/lib/algolia/credentials.ts."
+          }
+        ]
+      }
+    },
+    {
+      // Pentest finding H-04: the privileged Algolia key must never be referenced from
+      // code that can ship to the browser, and credentials must never be read off a
+      // Sitecore item or rendering datasource. Server-side use belongs in
+      // src/pages/api/** or src/lib/algolia/**.
+      "files": [
+        "src/components/**/*.ts",
+        "src/components/**/*.tsx",
+        "src/providers/**/*.ts",
+        "src/providers/**/*.tsx",
+        "src/ui/**/*.ts",
+        "src/ui/**/*.tsx",
+        "src/hooks/**/*.ts",
+        "src/hooks/**/*.tsx"
+      ],
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "MemberExpression[property.name=/^ALGOLIA_(API_KEY|APP_ID|INDEX_NAME)$/]",
+            "message": "The privileged Algolia key is server-only (finding H-04). Use getPublicAlgoliaCredentials()/createPublicSearchClient() from src/lib/algolia/credentials.ts, or go through an /api/algolia route."
+          },
+          {
+            "selector": "Identifier[name=/^algolia(ApiKey|AppId)$/]",
+            "message": "Algolia credentials must not come from Sitecore fields or componentProps - they are published to Experience Edge and inlined into the page (finding H-04). Use src/lib/algolia/credentials.ts."
           }
         ]
       }

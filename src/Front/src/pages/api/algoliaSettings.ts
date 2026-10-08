@@ -113,8 +113,6 @@ const algoliaSettings = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const parsedSettings: FetchedSearchWrapperWithQueryStringFields = {
       QueryString: '',
-      algoliaAppId: '',
-      algoliaApiKey: '',
       algoliaIndexName: '',
       algoliaAutosuggestIndexName: '',
       placeholderText: '',
@@ -141,16 +139,16 @@ const algoliaSettings = async (req: NextApiRequest, res: NextApiResponse) => {
       isSortAvailable: false,
     };
 
+    // SEARCH_WRAPPER_SETTINGS_BY_PATH selects `fields` wholesale, so every field on
+    // the item arrives here — including any credential a content author adds. This
+    // switch is the allowlist that decides what reaches the browser. Do NOT add a case
+    // for algoliaApiKey or algoliaAppId: that is pentest finding H-04, and the client
+    // now reads its search credentials from the environment instead.
+    // See src/lib/algolia/credentials.ts.
     settings.fields.forEach((field) => {
       switch (field.name) {
         case 'QueryString':
           parsedSettings.QueryString = field.jsonValue.value as string;
-          break;
-        case 'algoliaAppId':
-          parsedSettings.algoliaAppId = field.jsonValue.value as string;
-          break;
-        case 'algoliaApiKey':
-          parsedSettings.algoliaApiKey = field.jsonValue.value as string;
           break;
         case 'algoliaIndexName':
           parsedSettings.algoliaIndexName = field.jsonValue.value as string;

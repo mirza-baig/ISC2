@@ -175,8 +175,6 @@ export interface GraphQLResponse<T> {
 
 export interface AlgoliaSettings {
   algoliaDetails: {
-    algoliaApiKey: Field<string>;
-    algoliaAppId: Field<string>;
     algoliaIndexName: Field<string>;
     algoliaAutosuggestIndexName: Field<string>;
     placeholderText: Field<string>;
@@ -185,16 +183,12 @@ export interface AlgoliaSettings {
 
 export interface AlgoliaSettingsForInsightListing {
   algoliaDetails: {
-    algoliaApiKey: Field<string>;
-    algoliaAppId: Field<string>;
     algoliaSortDescByDateIndexName: Field<string>;
   };
 }
 
 export interface AlgoliaSettingsForChapterFinder {
   algoliaDetails: {
-    algoliaApiKey: Field<string>;
-    algoliaAppId: Field<string>;
     algoliaChapterFilderIndexName: Field<string>;
   };
 }

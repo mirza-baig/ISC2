@@ -1,12 +1,14 @@
+/**
+ * Pentest finding H-04: the `algoliaApiKey` and `algoliaAppId` fields are deliberately
+ * NOT selected from the Algolia Search Settings item. Everything published to
+ * Experience Edge is readable by anyone holding the public delivery key, so a
+ * credential selected here ends up world-readable and, via componentProps, inlined
+ * into the page. Credentials come from the environment instead —
+ * see src/lib/algolia/credentials.ts. Index names are content and stay here.
+ */
 export const SEARCH_SETTINGS_QUERY = `
   query {
     algoliaDetails: item(path:"/sitecore/content/ISC2/Main/Settings/Algolia Search Settings", language:"en") {
-      algoliaApiKey :field(name:"algoliaApiKey") {
-        value
-      }
-      algoliaAppId: field(name:"algoliaAppId") {
-        value
-      }
       algoliaIndexName: field(name:"algoliaIndexName") {
         value
       }
@@ -116,12 +118,6 @@ export const SEARCH_SETTINGS_QUERY = `
 export const SEARCH_SETTINGS_QUERY_FOR_ALGOLIA = `
   query {
     algoliaDetails: item(path:"/sitecore/content/ISC2/Main/Settings/Algolia Search Settings", language:"en") {
-      algoliaApiKey :field(name:"algoliaApiKey") {
-        value
-      }
-      algoliaAppId: field(name:"algoliaAppId") {
-        value
-      }
       algoliaIndexName: field(name:"algoliaIndexName") {
         value
       }
@@ -132,12 +128,6 @@ export const SEARCH_SETTINGS_QUERY_FOR_ALGOLIA = `
 export const SEARCH_SETTINGS_QUERY_FOR_INSIGHT_LISTING = `
   query {
     algoliaDetails: item(path:"/sitecore/content/ISC2/Main/Settings/Algolia Search Settings", language:"en") {
-      algoliaApiKey :field(name:"algoliaApiKey") {
-        value
-      }
-      algoliaAppId: field(name:"algoliaAppId") {
-        value
-      }
       algoliaSortDescByDateIndexName: field(name:"algoliaSortDescByDateIndexName") {
         value
       }
@@ -148,12 +138,6 @@ export const SEARCH_SETTINGS_QUERY_FOR_INSIGHT_LISTING = `
 export const SEARCH_SETTINGS_QUERY_FOR_CHAPTER_FINDER = `
   query {
     algoliaDetails: item(path:"/sitecore/content/ISC2/Main/Settings/Algolia Search Settings", language:"en") {
-      algoliaApiKey :field(name:"algoliaApiKey") {
-        value
-      }
-      algoliaAppId: field(name:"algoliaAppId") {
-        value
-      }
       algoliaChapterFilderIndexName: field(name:"algoliaChapterFilderIndexName") {
         value
       }

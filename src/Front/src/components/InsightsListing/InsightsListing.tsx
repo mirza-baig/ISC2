@@ -20,7 +20,7 @@ import { getContrastTextColor } from 'src/utils/colors';
 import clsx from 'clsx';
 import { getGraphQLResult } from 'utils/graphQLFunctions';
 import { SEARCH_SETTINGS_QUERY_FOR_INSIGHT_LISTING } from 'queries/searchSettings';
-import algoliasearch from 'algoliasearch';
+import { createPublicSearchClient } from 'lib/algolia/credentials';
 import { formatDate } from 'utils/date';
 
 type InsightsListingProps = ComponentProps & {
@@ -115,14 +115,16 @@ function InsightsListing({ fields, rendering }: InsightsListingProps) {
     }
 
     const {
-      algoliaDetails: { algoliaSortDescByDateIndexName, algoliaApiKey, algoliaAppId },
+      algoliaDetails: { algoliaSortDescByDateIndexName },
     } = algoliaSettings;
 
-    if (!algoliaApiKey?.value || !algoliaAppId?.value || !algoliaSortDescByDateIndexName?.value) {
+    // Credentials come from the environment, not from the Sitecore item — see
+    // src/lib/algolia/credentials.ts (finding H-04).
+    const client = createPublicSearchClient();
+
+    if (!client || !algoliaSortDescByDateIndexName?.value) {
       return null;
     }
-
-    const client = algoliasearch(algoliaAppId.value, algoliaApiKey.value);
 
     return client.initIndex(algoliaSortDescByDateIndexName.value);
   }, [algoliaSettings]);
