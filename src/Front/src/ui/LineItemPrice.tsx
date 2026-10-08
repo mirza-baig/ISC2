@@ -43,12 +43,14 @@ export const LineItemPrice = ({
   }, [currency, taxTbdLabel, type, userPriceLabel, value]);
 
   return (
-    <div className="flex items-center justify-between w-full">
-      <label className={clsx('body-m text-sm-base', textClassName)}>{title}</label>
+    <div className="flex items-center justify-between w-full gap-2">
+      <label className={clsx('body-m text-sm-base flex-1 min-w-0 break-words', textClassName)}>
+        {title}
+      </label>
       {value !== '' && (
         <label
           className={clsx(
-            'body-m text-sm-base font-bold text-gray-90 whitespace-nowrap',
+            'body-m text-sm-base font-bold text-gray-90 whitespace-nowrap shrink-0',
             type === 'user-specific' && '!text-isc2-green',
             type === 'discount' && '!text-discount before:content-["-"] before:mr-1',
             strikeThrough && 'line-through',

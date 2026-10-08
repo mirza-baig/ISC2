@@ -1,7 +1,8 @@
 import React from 'react';
-import { Link, NextImage, Text } from '@sitecore-jss/sitecore-jss-nextjs';
+import { NextImage, Text } from '@sitecore-jss/sitecore-jss-nextjs';
 
 import { useAnalyticsTracking } from 'hooks/index';
+import { PrefetchLink as Link } from 'utils/index';
 
 import { PromoCard } from 'types/index';
 import { ANALYTICS_EVENTS } from 'constants/index';
@@ -35,14 +36,16 @@ const PromoBanner: React.FC<PromoBannerProps> = ({ promoCard }) => {
     });
   };
 
+  const ctaText = promoCard.promoLinkCTA?.value?.text;
+  const hasCta = Boolean(ctaText && promoCard.promoLinkCTA?.value?.href);
+
   return (
     <Link
-      className="flex relative bg-dark-blue rounded-lg aspect-square w-full max-w-246 max-h-246 overflow-hidden"
-      prefetch={false}
+      className="group flex relative bg-dark-blue rounded-lg aspect-square w-full max-w-246 max-h-246 overflow-hidden"
       field={promoCard.promoLinkCTA}
       onClick={handlePromoClick}
     >
-      {promoCard?.promoImage?.value?.src && (
+      {promoCard.promoImage?.value?.src && (
         <>
           <span className="absolute inset-0 bg-gradient-to-t from-black-100 z-1" />
           <NextImage
@@ -54,20 +57,18 @@ const PromoBanner: React.FC<PromoBannerProps> = ({ promoCard }) => {
         </>
       )}
       <div className="absolute left-4 right-4 bottom-4 z-1 overflow-hidden text-white-00">
-        {Boolean(promoCard?.promoHeading?.value) && (
+        {Boolean(promoCard.promoHeading?.value) && (
           <Text
             tag="h2"
             className="mb-4 body-l tracking-promo-banner-heading font-normal w-214 line-clamp-2"
-            field={promoCard?.promoHeading}
+            field={promoCard.promoHeading}
           />
         )}
-        {promoCard?.promoLinkCTA?.value?.text && promoCard?.promoLinkCTA?.value?.href && (
+        {hasCta && (
           <div className="flex justify-between flex-col sm:flex-row">
-            <Link
-              field={promoCard?.promoLinkCTA}
-              className="cta tracking-promo-banner-link mt-4 sm:mt-0 focus-underline-dark-green with-chevron"
-              prefetch={false}
-            />
+            <span className="cta tracking-promo-banner-link mt-4 sm:mt-0 focus-underline-dark-green with-chevron group-focus-visible:underline">
+              {ctaText}
+            </span>
           </div>
         )}
       </div>

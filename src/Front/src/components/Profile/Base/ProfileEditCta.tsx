@@ -1,4 +1,5 @@
-import { Link, LinkField } from '@sitecore-jss/sitecore-jss-nextjs';
+import { LinkField } from '@sitecore-jss/sitecore-jss-nextjs';
+import { PrefetchLink as Link } from 'utils/index';
 
 import { EditIcon } from 'icons/index';
 
@@ -21,7 +22,7 @@ export const ProfileEditCta = ({ editCta, onButtonClick }: ProfileEditCta.Props)
 
   if (editCta.value.href) {
     return (
-      <Link field={editCta} className={EDIT_CTA_CLASSES} prefetch={false}>
+      <Link field={editCta} className={EDIT_CTA_CLASSES}>
         {CtaContent}
       </Link>
     );

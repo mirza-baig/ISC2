@@ -106,6 +106,7 @@ export default function BusinessPurchaseInformation({
             disabled={isSubmitting}
           />
 
+          {isCourseDeliveryDateRequired && (
             <FormDateInput
               name="courseDeliveryDate"
               control={control}
@@ -119,6 +120,7 @@ export default function BusinessPurchaseInformation({
               }
               disabled={isSubmitting}
             />
+          )}
         </div>
 
         <div className="flex flex-col gap-y-4">

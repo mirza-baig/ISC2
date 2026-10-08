@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 
 import { SERVICES_AUTH_ENDPOINT, SERVICES_DATA_ENDPOINT, LOCALSTORAGE_KEYS } from 'constants/index';
 
-import { clearCartIds } from './cartIdStore';
+import { clearAnonymousCartId } from './cartIdStore';
 
 const PERFORM_REFRESH_TOKEN = false;
 
@@ -86,7 +86,7 @@ const createAPIInstance = async () => {
           localStorage.removeItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN);
           localStorage.removeItem(LOCALSTORAGE_KEYS.REFRESH_TOKEN);
           localStorage.removeItem(LOCALSTORAGE_KEYS.ANONYMOUS_ID);
-          clearCartIds();
+          clearAnonymousCartId();
         }
       }
 
@@ -106,7 +106,7 @@ const createAPIInstance = async () => {
           localStorage.removeItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN);
           localStorage.removeItem(LOCALSTORAGE_KEYS.REFRESH_TOKEN);
           localStorage.removeItem(LOCALSTORAGE_KEYS.ANONYMOUS_ID);
-          clearCartIds();
+          clearAnonymousCartId();
         }
 
         const newApi = await createAPIInstance();

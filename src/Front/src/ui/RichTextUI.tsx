@@ -53,7 +53,7 @@ const RichTextUI = ({ className, value, id, clientOnly }: RichTextUIProps) => {
       {needsClientRender ? (
         <div ref={containerRef} suppressHydrationWarning />
       ) : (
-        <JSSRichText field={{ value }} />
+        <JSSRichText field={{ value }} prefetchLinks={false} />
       )}
     </div>
   );

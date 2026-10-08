@@ -15,7 +15,7 @@ import {
   parsePriceFromMoney,
 } from 'utils/index';
 import { useCart, useLineItems } from 'providers/index';
-import { useRemoveFromCart } from 'hooks/index';
+import { useB2BCartAccess, useRemoveFromCart } from 'hooks/index';
 import { TrashIcon } from 'icons/index';
 
 export namespace OrderSummaryLineItem {
@@ -41,6 +41,7 @@ export const OrderSummaryLineItem = ({
 
   const { lineItemHasDiscounts } = useLineItems();
   const { activeCart } = useCart();
+  const { isAuthorizedBuyer } = useB2BCartAccess();
 
   const onItemRemovedFromCart = useCallback(
     (cart: Cart) => {
@@ -98,7 +99,7 @@ export const OrderSummaryLineItem = ({
   }, [attributes]);
 
   const secondLineText = useMemo(() => {
-    if (activeCart.computed.isB2B) {
+    if (activeCart.computed.isB2B || isAuthorizedBuyer) {
       return `Quantity: ${lineItem.quantity}`;
     }
 
@@ -113,7 +114,7 @@ export const OrderSummaryLineItem = ({
     if (!attributes['modality'] || !dateValue) return undefined;
 
     return `${attributes['modality']} ${dateValue}${time}`;
-  }, [activeCart.computed.isB2B, attributes, date, lineItem.quantity]);
+  }, [activeCart.computed.isB2B, isAuthorizedBuyer, attributes, date, lineItem.quantity]);
 
   const secondLineValue = useMemo(() => {
     if (!hasDiscounts) {
@@ -140,49 +141,108 @@ export const OrderSummaryLineItem = ({
       false
     );
 
-    if (isBundleLineItem(lineItem)) {
-      return (
-        <>
+    const showAuthorizedBuyerPricing = isAuthorizedBuyer && hasDiscounts;
+    const isAuthorizedBuyerView = activeCart.computed.isB2B || isAuthorizedBuyer;
+
+    const PricingStack = (
+      <div className="flex flex-col items-end shrink-0">
+        {showAuthorizedBuyerPricing ? (
           <LineItemPrice
-            strikeThrough={hasDiscounts}
-            textClassName="body-s"
-            valueClassName="body-m"
-            title={name}
+            type="user-specific"
+            userPriceLabel={userPriceLabel}
             value={totalPrice}
             currency={activeCart.computed.currencySymbol}
           />
-          <BundleLineItemProducts lineItem={lineItem} />
+        ) : (
+          <LineItemPrice value={totalPrice} currency={activeCart.computed.currencySymbol} />
+        )}
+        {secondLineValue !== '' && (
+          <LineItemPrice
+            strikeThrough
+            value={secondLineValue}
+            currency={activeCart.computed.currencySymbol}
+          />
+        )}
+      </div>
+    );
+
+    if (isBundleLineItem(lineItem)) {
+      if (!isAuthorizedBuyerView) {
+        return (
+          <>
+            <LineItemPrice
+              strikeThrough={hasDiscounts}
+              textClassName="body-s"
+              valueClassName="body-m"
+              title={name}
+              value={totalPrice}
+              currency={activeCart.computed.currencySymbol}
+            />
+            <BundleLineItemProducts lineItem={lineItem} />
+          </>
+        );
+      }
+
+      return (
+        <div
+          className={clsx(
+            'flex justify-between items-start gap-4',
+            isNotAvailable && !orderDetailsMode && 'opacity-30'
+          )}
+        >
+          <div className="flex flex-col">
+            <label className="body-m">{name}</label>
+            <BundleLineItemProducts lineItem={lineItem} alwaysShowQuantity />
+          </div>
+          {PricingStack}
+        </div>
+      );
+    }
+
+    if (!isAuthorizedBuyerView) {
+      return (
+        <>
+          <div className={clsx(TEXT_CLASSES, isNotAvailable && !orderDetailsMode && 'opacity-30')}>
+            <LineItemPrice
+              title={name}
+              value={totalPrice}
+              currency={activeCart.computed.currencySymbol}
+            />
+          </div>
+          <div className={clsx(TEXT_CLASSES, isNotAvailable && !orderDetailsMode && 'opacity-30')}>
+            <LineItemPrice
+              strikeThrough={hasDiscounts}
+              textClassName="body-s"
+              valueClassName="body-m"
+              title={secondLineText}
+              value={secondLineValue}
+              currency={activeCart.computed.currencySymbol}
+            />
+          </div>
         </>
       );
     }
 
     return (
-      <>
-        <div className={clsx(TEXT_CLASSES, isNotAvailable && !orderDetailsMode && 'opacity-30')}>
-          <LineItemPrice
-            type="user-specific"
-            userPriceLabel={userPriceLabel}
-            title={name}
-            value={totalPrice}
-            currency={activeCart.computed.currencySymbol}
-          />
+      <div
+        className={clsx(
+          'flex justify-between items-start gap-4',
+          isNotAvailable && !orderDetailsMode && 'opacity-30'
+        )}
+      >
+        <div className="flex flex-col">
+          <label className="body-m">{name}</label>
+          <label className="body-s text-gray-90 mt-1">{secondLineText}</label>
         </div>
-        <div className={clsx(TEXT_CLASSES, isNotAvailable && !orderDetailsMode && 'opacity-30')}>
-          <LineItemPrice
-            strikeThrough={hasDiscounts}
-            textClassName="body-s"
-            valueClassName="body-m"
-            title={secondLineText}
-            value={secondLineValue}
-            currency={activeCart.computed.currencySymbol}
-          />
-        </div>
-      </>
+        {PricingStack}
+      </div>
     );
   }, [
     activeCart.computed.currencySymbol,
+    activeCart.computed.isB2B,
     attributes,
     hasDiscounts,
+    isAuthorizedBuyer,
     isNotAvailable,
     lineItem,
     secondLineText,

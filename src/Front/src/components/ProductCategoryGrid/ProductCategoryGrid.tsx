@@ -1,6 +1,5 @@
 import {
   ImageField,
-  Link,
   LinkField,
   NextImage,
   Text,
@@ -9,6 +8,7 @@ import {
 } from '@sitecore-jss/sitecore-jss-nextjs';
 import { ChevronRightIcon } from 'icons/index';
 import { ComponentProps } from 'lib/component-props';
+import { PrefetchLink as Link } from 'utils/index';
 
 interface SubCategory {
   id: string;
@@ -107,7 +107,7 @@ const ProductCategoryGrid = ({ fields, params }: ProductCategoryGridProps): JSX.
                     return (
                       <li key={subCategory.id}>
                         {linkField?.value?.href ? (
-                          <Link prefetch={false} field={linkField} className={rowClassName}>
+                          <Link field={linkField} className={rowClassName}>
                             <Text tag="span" field={labelField} />
                             <span className="shrink-0 text-base leading-none text-[#666] group-hover:text-isc2-green">
                               <ChevronRightIcon size={16} />

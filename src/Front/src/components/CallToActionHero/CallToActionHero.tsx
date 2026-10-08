@@ -1,12 +1,12 @@
 import {
   Field,
   ImageField,
-  Link,
   LinkField,
   Text,
   withDatasourceCheck,
 } from '@sitecore-jss/sitecore-jss-nextjs';
 import { ComponentProps } from 'lib/component-props';
+import { PrefetchLink as Link } from 'utils/index';
 
 interface CallToActionHeroFields {
   backgroundImage: ImageField;

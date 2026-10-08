@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
-
 import { VOLUNTEER_PAGE_FIELDS, VOLUNTEER_PAGE_ROOT } from 'queries/volunteerSettings';
 import { postSitecoreGraphQL } from 'utils/sitecoreApiRoute';
 import { setAPIRouteHeaders } from 'utils/apiUtils';
@@ -12,14 +11,6 @@ import { errorCatching } from 'lib/api/errorCatching';
 
 const MAX_PAGEPATH_LENGTH = 200;
 
-/**
- * The caller is OpportunityDetail, which passes `router.asPath` — a leading slash,
- * and sometimes a campaign query string. Both are normalized away before the path
- * is validated against the URL path charset (see lib/api/urlPath.ts).
- *
- * Anchored to the Home subtree: no traversal segments, bounded length, and no
- * quotes or braces. The query document is parameterized regardless.
- */
 export const schema = z.object({
   pagepath: z
     .string()

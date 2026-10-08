@@ -5,7 +5,7 @@ import { useUserSession } from 'providers/index';
 import { useQueryClient } from '@tanstack/react-query';
 import { SESSION_STORAGE_KEYS, SESSION_LOCALSTORAGE_KEYS } from 'constants/sessionTimeout';
 
-import { clearCartIds } from 'utils/cartIdStore';
+import { clearAnonymousCartId } from 'utils/cartIdStore';
 import { SHOPPER_CONTEXT_PROMPTED_KEY, SHOPPER_CONTEXT_STORAGE_KEY } from 'constants/index';
 
 export default function Logout() {
@@ -15,7 +15,7 @@ export default function Logout() {
   useEffect(() => {
     const clearClientState = () => {
       setCartId('');
-      clearCartIds();
+      clearAnonymousCartId();
       setIsCurrencyManualOverride(false);
       setIsConsentAllocation(false);
       sessionStorage.removeItem(SESSION_STORAGE_KEYS.SESSION_ACTIVE);

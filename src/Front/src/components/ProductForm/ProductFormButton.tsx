@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import Link from 'next/link';
+import { PrefetchLink as Link } from 'utils/index';
 import clsx from 'clsx';
 
 import {
@@ -226,7 +226,7 @@ const ProductFormButton = ({ fields }: ProductFormButtonFields) => {
 
   if (href && !isThirdPartyProvider) {
     return (
-      <Link className={BUTTON_STYLES} href={href} prefetch={false}>
+      <Link className={BUTTON_STYLES} href={href}>
         {label}
       </Link>
     );

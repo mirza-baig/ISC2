@@ -11,15 +11,6 @@ import { wrap } from 'lib/api/wrap';
 import { errorCatching } from 'lib/api/errorCatching';
 
 const MAX_ROUTE_PATH_LENGTH = 400;
-
-/**
- * `page` is a URL pathname handed over by AccessControlPlugin.
- *
- * Kept permissive on purpose — see lib/api/urlPath.ts. A false rejection here
- * returns a non-ok response, which the plugin reads as "no roles required" and
- * serves a members-only page publicly. Legal URL characters like ' ( ) : @ , ; = +
- * must therefore be accepted.
- */
 export const schema = z.object({
   page: z
     .string()

@@ -14,6 +14,7 @@ import { SectionTitle } from 'ui/index';
 
 import { ProductTabContentProps } from './ProductTabContent';
 import ProductTabs from './ProductTabs';
+import CourseListSchema from './CourseListSchema';
 
 type Fields = {
   heading: Field<string>;
@@ -54,6 +55,7 @@ function ProductTabsContainer({ rendering, fields }: ProductTabsProps): JSX.Elem
         />
         <Placeholder name="product-tabs" rendering={rendering} />
         {!isEditing && <ProductTabs tabs={tabsWithContent} />}
+        {!isEditing && <CourseListSchema />}
       </section>
     </>
   );

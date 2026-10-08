@@ -9,12 +9,12 @@ import {
 } from '@sitecore-jss/sitecore-jss-nextjs';
 import { useSearchParams } from 'next/navigation';
 
-import { useGetOrder, useIsBusinessBuyer } from 'hooks/index';
+import { useBusinessBuyerResolution, useGetOrder } from 'hooks/index';
 import { LoadingIndicator, RichTextUI } from 'ui/index';
 import { CartProvider, LineItemsProvider } from 'providers/index';
 import { AlgoliaSettings } from 'types/index';
 import { SEARCH_SETTINGS_QUERY_FOR_ALGOLIA } from 'queries/index';
-import { getGraphQLResult } from 'utils/index';
+import { getGraphQLResult, isBusinessCheckoutOrder } from 'utils/index';
 
 import OrderDetailsContent from './OrderDetailsContent';
 import BusinessOrderDetailsContent from './BusinessOrderDetailsContent';
@@ -44,7 +44,8 @@ const OrderDetails = ({ fields, rendering }: OrderDetailsProps): JSX.Element => 
   // Read outside the CartProvider override below on purpose: the override holds the
   // ordered cart, while the buyer's B2B admin role and selected organization — what
   // actually decides the business variant — come from the session and shopper context.
-  const isBusinessBuyer = useIsBusinessBuyer();
+  const { isBusinessBuyer, isResolvingBusinessBuyer, isB2BConfirmationEnabled } =
+    useBusinessBuyerResolution();
 
   const checkoutErrorMessageHtml = useMemo(
     () => fields.checkoutErrorMessage?.value?.trim() ?? '',
@@ -62,8 +63,14 @@ const OrderDetails = ({ fields, rendering }: OrderDetailsProps): JSX.Element => 
   const status = redirectStatus === 'succeeded' && Boolean(orderNumber) ? 'succeeded' : 'failed';
 
   const { order, orderCart, isGettingOrder } = useGetOrder(orderNumber);
+  const showBusinessConfirmation =
+    isBusinessBuyer || (isB2BConfirmationEnabled && isBusinessCheckoutOrder(order));
 
-  if (isGettingOrder || (searchParams?.size ?? 0) === 0) {
+  if (
+    isGettingOrder ||
+    (searchParams?.size ?? 0) === 0 ||
+    (isResolvingBusinessBuyer && !showBusinessConfirmation)
+  ) {
     return (
       <div className="flex justify-center">
         <LoadingIndicator />
@@ -75,7 +82,7 @@ const OrderDetails = ({ fields, rendering }: OrderDetailsProps): JSX.Element => 
     return (
       <CartProvider overrideWithCart={orderCart}>
         <LineItemsProvider algoliaSettings={algoliaSettings}>
-          {isBusinessBuyer ? (
+          {showBusinessConfirmation ? (
             <BusinessOrderDetailsContent fields={fields} order={order} />
           ) : (
             <OrderDetailsContent fields={fields} rendering={rendering} order={order} />

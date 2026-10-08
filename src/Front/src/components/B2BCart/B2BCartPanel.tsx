@@ -53,6 +53,7 @@ export interface B2BCartPanelProps {
   leadingRows?: ReactNode;
   trailingContent?: ReactNode;
   className?: string;
+  productLinkUrl?: string;
 }
 
 const DOCK_CLASSNAME =
@@ -85,6 +86,7 @@ const B2BCartPanel = ({
   leadingRows,
   trailingContent,
   className = DOCK_CLASSNAME,
+  productLinkUrl,
 }: B2BCartPanelProps): JSX.Element => {
   const labels = useB2BCartLabels();
   // Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out rather
@@ -229,6 +231,7 @@ const B2BCartPanel = ({
               quantityLabelAlign={quantityLabelAlign}
               showThumbnail={showThumbnail(li) && !thumbnailsLoading}
               thumbnailSrc={getThumbnail(li)}
+              productLinkUrl={productLinkUrl}
               // committedAnswers={answers}
               // onCommitAnswers={(a) => setAnswers(lineSku, a)}
               // openLocationModal={openLocationModal}

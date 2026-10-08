@@ -1,4 +1,5 @@
-import { Link, LinkField } from '@sitecore-jss/sitecore-jss-nextjs';
+import { LinkField } from '@sitecore-jss/sitecore-jss-nextjs';
+import { PrefetchLink as Link } from 'utils/index';
 import clsx from 'clsx';
 
 import { useAnalyticsTracking } from 'hooks/index';
@@ -65,9 +66,9 @@ const HeroCardText = ({
     <div className={clsx('z-1 overflow-hidden', padding, color)}>
       {Boolean(fields.eyebrow.value) && <h6 className="eyebrow mb-1">{fields.eyebrow.value}</h6>}
       <section className="space-y-5 xl:space-y-8 w-full">
-        <h1 className="headline-l sm:headline-xl xl:headline-xxl xl:leading-80 line-clamp-2">
+        <p className="headline-l sm:headline-xl xl:headline-xxl xl:leading-80 line-clamp-2 my-[10px] text-[#222]">
           {fields.headline.value}
-        </h1>
+        </p>
 
         {Boolean(fields.description.value) && (
           <RichTextUI
@@ -82,7 +83,6 @@ const HeroCardText = ({
               field={fields.primaryCTA!}
               className={clsx('primary-cta truncate', ctaColor)}
               onClick={() => trackCtaClick(fields.primaryCTA!)}
-              prefetch={false}
             />
           )}
           {Boolean(fields.secondaryCTA?.value.href) && (
@@ -90,7 +90,6 @@ const HeroCardText = ({
               field={fields.secondaryCTA!}
               className={clsx('secondary-cta truncate', ctaColor)}
               onClick={() => trackCtaClick(fields.secondaryCTA!)}
-              prefetch={false}
             />
           )}
         </footer>

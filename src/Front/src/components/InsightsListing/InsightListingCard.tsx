@@ -1,12 +1,6 @@
-import {
-  Field,
-  Text,
-  NextImage,
-  ImageField,
-  Link,
-  LinkField,
-} from '@sitecore-jss/sitecore-jss-nextjs';
+import { Field, Text, NextImage, ImageField, LinkField } from '@sitecore-jss/sitecore-jss-nextjs';
 import { formatDate } from 'utils/date';
+import { PrefetchLink as Link } from 'utils/index';
 import clsx from 'clsx';
 import { useAnalyticsTracking } from 'hooks/index';
 import { ChevronDownIcon } from 'icons/index';
@@ -50,7 +44,6 @@ export default function InsightListingCard({
         <Text tag="h5" className="text-2xl line-clamp-2" field={heading} />
         {Boolean(link?.value?.href) && (
           <Link
-            prefetch={false}
             onClick={() => {
               track({
                 event: ANALYTICS_EVENTS.GA_EVENT,

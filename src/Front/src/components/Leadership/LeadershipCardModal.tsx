@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
-import { Link, NextImage, Text } from '@sitecore-jss/sitecore-jss-nextjs';
+import { NextImage, Text } from '@sitecore-jss/sitecore-jss-nextjs';
+import { PrefetchLink as Link } from 'utils/index';
 
 import { CloseIcon } from 'icons/index';
 import { useAnalyticsTracking } from 'hooks/index';
@@ -55,7 +56,6 @@ const LeadershipCardModal = ({ className, socialProfileLinks, fields }: Leadersh
 
                     return (
                       <Link
-                        prefetch={false}
                         key={link.fields.ctaLink.value.href}
                         field={{
                           value: {

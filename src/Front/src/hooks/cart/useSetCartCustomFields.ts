@@ -12,7 +12,6 @@ export type B2BCartCustomFieldsInput = {
   customerOrderReference?: string;
   organization?: string;
   buyer?: string;
-  /** `YYYY-MM-DD`, as reported by the native date input. */
   courseDeliveryDate?: string;
 };
 

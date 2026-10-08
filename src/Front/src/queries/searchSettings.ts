@@ -180,11 +180,6 @@ export const FOOTER_API_CONTENT_FOR_SALESFORCE_PAGE = `
   }
 `;
 
-/**
- * Paged insights articles for the RSS feed. `first` and `after` are GraphQL
- * variables, never interpolated. A null `after` requests the first page.
- * See GraphQL-API-Patterns.md §1.
- */
 export const INSIGHTS_RSS_FEED = /* GraphQL */ `
   fragment Insights on Item {
     name
@@ -228,10 +223,6 @@ export const INSIGHTS_RSS_FEED = /* GraphQL */ `
   }
 `;
 
-/**
- * Single article for the RSS feed, matched by item name. `name` is a GraphQL
- * variable, never interpolated. See GraphQL-API-Patterns.md §1.
- */
 export const ARTICLE_RSS_FEED = /* GraphQL */ `
   query ArticleRssFeed($name: String!) {
     search(
@@ -272,15 +263,6 @@ export const ARTICLE_RSS_FEED = /* GraphQL */ `
   }
 `;
 
-/**
- * Role flags the access-control middleware reads for a route.
- *
- * `routePath` is a GraphQL variable, never interpolated. See GraphQL-API-Patterns.md §1.
- *
- * Every field selected here is consumed by AccessControlPlugin, which treats a
- * missing flag as "not required", i.e. public. Do not drop a field from this
- * selection without changing the plugin to match.
- */
 export const MIDDLEWARE_LAYOUT_FIELDS = /* GraphQL */ `
   query MiddlewareLayoutFields($site: String!, $routePath: String!, $language: String!) {
     layout(site: $site, routePath: $routePath, language: $language) {
@@ -312,11 +294,6 @@ export const MIDDLEWARE_LAYOUT_FIELDS = /* GraphQL */ `
 `;
 
 export const MIDDLEWARE_LAYOUT_SITE = 'main';
-
-/**
- * Public URL for an item, addressed by item path. `path` is a GraphQL variable,
- * never interpolated. See GraphQL-API-Patterns.md §1.
- */
 export const PUBLIC_PATH_BY_ITEM_PATH = /* GraphQL */ `
   query PublicPathByItemPath($path: String!, $language: String!) {
     item(path: $path, language: $language) {
@@ -327,11 +304,6 @@ export const PUBLIC_PATH_BY_ITEM_PATH = /* GraphQL */ `
   }
 `;
 
-/**
- * Public URL for an item, addressed by GUID. `id` is a GraphQL variable, never
- * interpolated. Callers pass a bare GUID; the braces are added by the query.
- * See GraphQL-API-Patterns.md §1.
- */
 export const PUBLIC_PATH_BY_ITEM_ID = /* GraphQL */ `
   query PublicPathByItemId($id: String!, $language: String!) {
     item(path: $id, language: $language) {

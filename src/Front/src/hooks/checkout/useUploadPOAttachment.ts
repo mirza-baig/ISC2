@@ -8,10 +8,8 @@ type UploadOrderFilesPayload = {
   files: PoAttachment[];
 };
 
-/** `FileReader` hands back a data URL; Mule wants the bare base64 after the comma. */
 const stripDataUrlPrefix = (base64: string) => base64.replace(/^data:[^,]*;base64,/, '');
 
-/** Attaches files to a placed order via Mule (`POST /v1/order/{orderNumber}/files`). */
 export default function useUploadOrderFiles() {
   const { externalID, email } = useLoggedUser();
 

@@ -53,23 +53,23 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps<Sitec
             <UserSessionProvider>
               <ShopperContextProvider>
                 <CartIdentityProvider>
-                  <StandalonePricesProvider>
-                    <HeaderNavigationProvider>
-                      <SearchProvider>
-                        <PersonalizeProvider>
-                          <ModalProvider>
-                            <FeatureFlagsProvider flags={pageProps.featureFlags}>
+                  <FeatureFlagsProvider flags={pageProps.featureFlags}>
+                    <StandalonePricesProvider>
+                      <HeaderNavigationProvider>
+                        <SearchProvider>
+                          <PersonalizeProvider>
+                            <ModalProvider>
                               <I18nProvider lngDict={dictionary} locale={pageProps.locale}>
                                 <div className={`${openSans.variable} font-sans flex flex-col`}>
                                   <Component {...rest} />
                                 </div>
                               </I18nProvider>
-                            </FeatureFlagsProvider>
-                          </ModalProvider>
-                        </PersonalizeProvider>
-                      </SearchProvider>
-                    </HeaderNavigationProvider>
-                  </StandalonePricesProvider>
+                            </ModalProvider>
+                          </PersonalizeProvider>
+                        </SearchProvider>
+                      </HeaderNavigationProvider>
+                    </StandalonePricesProvider>
+                  </FeatureFlagsProvider>
                 </CartIdentityProvider>
               </ShopperContextProvider>
             </UserSessionProvider>

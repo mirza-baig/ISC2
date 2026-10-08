@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import {
+  useB2BCartAccess,
   useGetDistributionChannel,
   useGetStandalonePrices,
   useGetSubscriptions,
@@ -15,7 +16,7 @@ import {
   useState,
 } from 'react';
 import { useRouter } from 'next/router';
-import { StandalonePriceMapping } from 'types/pricing';
+import { CT_DEFAULT_TIER, StandalonePriceMapping } from 'types/pricing';
 import { useUserSession } from './userSession';
 
 export type PriceForRole = {
@@ -67,7 +68,9 @@ type StandalonePricesProviderProps = {
 const PRICING_FETCH_BATCH_SIZE = 250;
 
 const StandalonePricesProvider: React.FC<StandalonePricesProviderProps> = ({ children }) => {
-  const { distributionChannel, isGettingDistributionChannel } = useGetDistributionChannel();
+  const { distributionChannel, distributionChannels, isGettingDistributionChannel } =
+    useGetDistributionChannel();
+  const { isFeatureEnabled, isAuthorizedBuyer, isResolvingAccess } = useB2BCartAccess();
   const { currencyCode } = useUserSession();
   const {
     isRegisterUser,
@@ -78,6 +81,12 @@ const StandalonePricesProvider: React.FC<StandalonePricesProviderProps> = ({ chi
     isB2BAdminUser,
     isGettingUser,
   } = useLoggedUser();
+  const baseTierChannelId = distributionChannels?.find(({ key }) => key === CT_DEFAULT_TIER)?.id;
+  const isAccessUnresolved = isGettingUser || isResolvingAccess;
+  const isAuthorizedBuyerPricing = isFeatureEnabled && isAuthorizedBuyer;
+  const pricingChannelId = isAccessUnresolved
+    ? undefined
+    : (isAuthorizedBuyerPricing && baseTierChannelId) || distributionChannel?.id;
   const { isGettingSubscriptions, isSuspended } = useGetSubscriptions();
 
   const [pendingSkus, setPendingSkus] = useState<string[]>([]);
@@ -110,7 +119,7 @@ const StandalonePricesProvider: React.FC<StandalonePricesProviderProps> = ({ chi
   const { standalonePrices, isGettingStandalonePrices, refetch, standalonePricesError } =
     useGetStandalonePrices({
       skuList: skusToBeFetched,
-      distributionChannelId: distributionChannel?.id,
+      distributionChannelId: pricingChannelId,
       enabled: false,
     });
 
@@ -145,10 +154,10 @@ const StandalonePricesProvider: React.FC<StandalonePricesProviderProps> = ({ chi
   }, []);
 
   useEffect(() => {
-    if (currencyCode && distributionChannel?.id) {
+    if (currencyCode && pricingChannelId) {
       resetPrices();
     }
-  }, [currencyCode, distributionChannel?.id, resetPrices]);
+  }, [currencyCode, pricingChannelId, resetPrices]);
 
   const addSkuToPricingQueue = useCallback((skus: string[]) => {
     setPendingSkus((prev) => {
@@ -158,7 +167,7 @@ const StandalonePricesProvider: React.FC<StandalonePricesProviderProps> = ({ chi
   }, []);
 
   useEffect(() => {
-    if (!isGettingStandalonePrices && !isFetchQueued.current) {
+    if (!isAccessUnresolved && !isGettingStandalonePrices && !isFetchQueued.current) {
       setSkusToBeFetched((prevSkusToBeFetched) => {
         const newSkusToFetch = pendingSkus
           .filter((sku) => !productPrices[sku] && !prevSkusToBeFetched.includes(sku))
@@ -166,15 +175,15 @@ const StandalonePricesProvider: React.FC<StandalonePricesProviderProps> = ({ chi
         return newSkusToFetch.length ? newSkusToFetch : prevSkusToBeFetched;
       });
     }
-  }, [pendingSkus, productPrices, isGettingStandalonePrices]);
+  }, [pendingSkus, productPrices, isGettingStandalonePrices, isAccessUnresolved]);
 
   useEffect(() => {
-    if (skusToBeFetched.length) {
+    if (!isAccessUnresolved && skusToBeFetched.length) {
       lastFetchedSkusRef.current = skusToBeFetched;
       isFetchQueued.current = true;
       refetch();
     }
-  }, [skusToBeFetched, refetch]);
+  }, [skusToBeFetched, refetch, isAccessUnresolved]);
 
   useEffect(() => {
     if (isGettingStandalonePrices) {
@@ -220,7 +229,7 @@ const StandalonePricesProvider: React.FC<StandalonePricesProviderProps> = ({ chi
         addSkuToPricingQueue,
         showPriceForRole,
         isGettingPricesForRole:
-          isGettingUser ||
+          isAccessUnresolved ||
           isGettingSubscriptions ||
           isGettingStandalonePrices ||
           isGettingDistributionChannel,

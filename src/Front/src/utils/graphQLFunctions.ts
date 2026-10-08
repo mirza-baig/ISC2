@@ -12,12 +12,6 @@ export const getGraphQLRequestClient = (): GraphQLRequestClient => {
   });
 };
 
-/**
- * Executes a GraphQL document against Experience Edge.
- *
- * Caller-supplied values belong in `variables` — never interpolated into `query`.
- * See GraphQL-API-Patterns.md §1.
- */
 export const getGraphQLResult = async <T>(
   query: string,
   variables?: Record<string, unknown>

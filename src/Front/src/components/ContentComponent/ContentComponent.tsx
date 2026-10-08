@@ -2,7 +2,6 @@ import {
   ComponentRendering,
   Field,
   ImageField,
-  Link,
   LinkField,
   NextImage,
   TextField,
@@ -15,7 +14,11 @@ import clsx from 'clsx';
 import { ComponentProps } from 'lib/component-props';
 import { useAnalyticsTracking, usePersonalizeComponent } from 'hooks/index';
 import { SectionTitle } from 'ui/index';
-import { formatBackgroundColorCssClassName, getContrastTextColor } from 'utils/index';
+import {
+  formatBackgroundColorCssClassName,
+  getContrastTextColor,
+  PrefetchLink as Link,
+} from 'utils/index';
 import { ANALYTICS_EVENTS } from 'constants/index';
 
 interface ContentCard {
@@ -182,7 +185,6 @@ const ContentComponent = (props: ContentComponentProps) => {
 
           return (
             <Link
-              prefetch={false}
               key={index}
               onClick={() => trackCardClicked(card)}
               field={card.fields.primaryCta}

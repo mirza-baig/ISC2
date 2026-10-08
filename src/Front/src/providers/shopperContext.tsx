@@ -36,6 +36,12 @@ type StoredShopperContext = ShopperContextSelection & {
 
 type ShopperContextProps = {
   shopperContext: ShopperContextSelection | null;
+  /**
+   * False until the stored organization has been read for the current session.
+   * Callers that branch on organization vs individual must wait, or the individual
+   * branch paints first.
+   */
+  isShopperContextReady: boolean;
   setShopperContext: (selection: ShopperContextSelection) => void;
   clearShopperContext: () => void;
 };
@@ -60,6 +66,7 @@ const removeContextCookie = () => {
 
 const ShopperContext = createContext<ShopperContextProps>({
   shopperContext: null,
+  isShopperContextReady: false,
   setShopperContext: () => {},
   clearShopperContext: () => {},
 });
@@ -139,16 +146,24 @@ type ShopperContextProviderProps = {
 
 const ShopperContextProvider = ({ children }: ShopperContextProviderProps) => {
   const { session, isSessionLoading } = useSession();
-  const { externalID, isUserLoggedIn } = useLoggedUser();
+  const { externalID } = useLoggedUser();
   const [shopperContext, setShopperContextState] = useState<ShopperContextSelection | null>(null);
+  // User id whose stored context has been applied. Empty string means a settled logged-out session.
+  const [resolvedUserId, setResolvedUserId] = useState<string | null>(null);
+  const activeUserId = externalID ?? '';
+  const isShopperContextReady = !isSessionLoading && resolvedUserId === activeUserId;
 
   useEffect(() => {
-    if (!isUserLoggedIn) {
-      setShopperContextState(null);
+    if (isSessionLoading) {
       return;
     }
 
+    // Read storage from the session user id. Waiting for the Salesforce profile
+    // (`isUserLoggedIn`) is slower than the order query, and that gap painted the
+    // individual confirmation before the business one.
     if (!externalID) {
+      setShopperContextState(null);
+      setResolvedUserId('');
       return;
     }
 
@@ -166,7 +181,8 @@ const ShopperContextProvider = ({ children }: ShopperContextProviderProps) => {
 
       return stored;
     });
-  }, [isUserLoggedIn, externalID]);
+    setResolvedUserId(externalID);
+  }, [isSessionLoading, externalID]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -230,10 +246,11 @@ const ShopperContextProvider = ({ children }: ShopperContextProviderProps) => {
   const value = useMemo(
     () => ({
       shopperContext,
+      isShopperContextReady,
       setShopperContext,
       clearShopperContext,
     }),
-    [shopperContext, setShopperContext, clearShopperContext]
+    [shopperContext, isShopperContextReady, setShopperContext, clearShopperContext]
   );
 
   return <ShopperContext.Provider value={value}>{children}</ShopperContext.Provider>;

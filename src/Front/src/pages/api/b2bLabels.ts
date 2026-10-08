@@ -27,6 +27,7 @@ interface GraphQLB2BLabelsResponse {
         results: Array<{
           name: string;
           labels: { value: string } | null;
+          productLink: { url: string | null } | null;
         }>;
       };
     } | null;
@@ -61,12 +62,7 @@ const GROUP_KEY_BY_NAME: Record<string, LabelGroupKey> = {
 // "Europe, Middle East & Africa", would be split mid-value. (Do NOT pre-decode the whole string.)
 const parseNameValueList = (encoded: string | undefined | null): Record<string, string> => {
   if (!encoded) return {};
-  const params = new URLSearchParams(encoded);
-  const out: Record<string, string> = {};
-  params.forEach((value, key) => {
-    out[key] = value;
-  });
-  return out;
+  return Object.fromEntries(new URLSearchParams(encoded));
 };
 
 const b2bLabels = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -84,6 +80,9 @@ const b2bLabels = async (req: NextApiRequest, res: NextApiResponse) => {
       const key = GROUP_KEY_BY_NAME[item.name];
       if (key) {
         groups[key] = parseNameValueList(item.labels?.value);
+        if (item.productLink?.url) {
+          groups[key].productLinkUrl = item.productLink.url;
+        }
       }
     });
 

@@ -350,6 +350,7 @@ export const useB2BCartLabels = () => {
     price: c.price || 'Price',
     total: c.total || 'Total',
     checkout: c.checkout || 'Checkout',
+    productLinkUrl: c.productLinkUrl || '',
     update: c.update || 'Update',
     remove: c.remove || 'Remove',
     quantity: c.quantity || 'Quantity',

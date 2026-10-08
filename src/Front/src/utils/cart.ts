@@ -89,6 +89,7 @@ export const addComputedFieldsToLineItems = (cart: Cart): Cart => {
           variant: { sku: bundle.productKey },
           availableQuantity: Math.min(...availableQuantities),
           products: bundleLineItems,
+          originalPrice: bundle.originalPrice,
           price: {
             value: bundle.totalPrice,
             discounted: null,

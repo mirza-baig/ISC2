@@ -40,6 +40,7 @@ export default function useB2BCartAccess(): B2BCartAccess {
 
   const buyerContext = resolveBuyerContext(shopperContext?.type);
   const hasBuyerPrivileges = isFeatureEnabled && isAuthorizedBuyer;
+  const showB2BCart = hasBuyerPrivileges && buyerContext !== 'Myself';
   const canEditQuantity = canEditQuantityForBuyerContext(hasBuyerPrivileges, buyerContext);
 
   const maxLineQuantity = canEditQuantity ? null : DEFAULT_MAX_LINE_QUANTITY;
@@ -58,7 +59,7 @@ export default function useB2BCartAccess(): B2BCartAccess {
       isFeatureEnabled,
       isAuthorizedBuyer,
       isResolvingAccess: isResolvingAuthorizedBuyer,
-      showB2BCart: isFeatureEnabled,
+      showB2BCart,
       buyerContext,
       canEditQuantity,
       maxLineQuantity,
@@ -68,6 +69,7 @@ export default function useB2BCartAccess(): B2BCartAccess {
       isFeatureEnabled,
       isAuthorizedBuyer,
       isResolvingAuthorizedBuyer,
+      showB2BCart,
       buyerContext,
       canEditQuantity,
       maxLineQuantity,

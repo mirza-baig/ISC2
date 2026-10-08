@@ -3,6 +3,7 @@ import clsx from 'clsx';
 
 import { getPriceQuantityFor, parsePriceFromMoney } from 'utils/index';
 import type { ClampQuantity } from 'hooks/cart/b2bLineQuantity';
+import useB2BCartAccess from 'hooks/cart/useB2BCartAccess';
 import { ProductThumbnail } from 'ui/ProductThumbnail';
 import type { CartLineItem } from 'types/index';
 
@@ -41,6 +42,7 @@ export interface B2BCartLineRowProps {
   quantityLabelAlign?: 'left' | 'right';
   showThumbnail?: boolean;
   thumbnailSrc?: string;
+  productLinkUrl?: string;
   // Private classes are deferred to a later phase (bug sweep 2026-08-19) — see the import comment
   // above.
   // committedAnswers: PrivateClassAnswers;
@@ -67,6 +69,7 @@ const B2BCartLineRow = ({
   quantityLabelAlign = 'left',
   showThumbnail = false,
   thumbnailSrc,
+  productLinkUrl,
 }: B2BCartLineRowProps): JSX.Element => {
   const [qty, setQty] = useState(item.quantity);
   // Private classes are deferred to a later phase (bug sweep 2026-08-19) — commented out along with
@@ -77,6 +80,7 @@ const B2BCartLineRow = ({
   // );
   // const L = useB2BPrivateClassLabels();
   const cartLabels = useB2BCartLabels();
+  const { isAuthorizedBuyer } = useB2BCartAccess();
   // const minDate = todayISODate();
   const displayName = getLineDisplayName(item);
 
@@ -107,9 +111,12 @@ const B2BCartLineRow = ({
 
   const discountedPerQuantity =
     'discountedPricePerQuantity' in item ? item.discountedPricePerQuantity : null;
+  const bundleOriginalPrice =
+    isAuthorizedBuyer && 'originalPrice' in item ? item.originalPrice : null;
   const unitMoney =
     item.price?.discounted?.value ??
     discountedPerQuantity?.[0]?.discountedPrice?.value ??
+    bundleOriginalPrice ??
     item.price?.value;
   const unit = unitMoney ? `${currencySymbol}${parsePriceFromMoney(unitMoney, 1, false)}` : '—';
   const totalMoney = item.totalPrice ?? item.price?.value;
@@ -156,23 +163,42 @@ const B2BCartLineRow = ({
     </button>
   );
 
+  const thumbnailClassName =
+    'flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded border border-gray-50 bg-white-00';
+  const nameClassName = clsx(
+    'text-sm font-semibold leading-snug text-black-100',
+    productLinkUrl && 'hover:underline'
+  );
+  const thumbnail = (
+    <ProductThumbnail
+      src={thumbnailSrc}
+      alt={displayName}
+      className={clsx(
+        'h-full w-full object-contain',
+        item.availableQuantity === 0 && 'grayscale opacity-75'
+      )}
+    />
+  );
+
   return (
     <div className="border-b border-gray-50 px-4 py-4">
       <div className="mb-3 flex items-start gap-3">
-        {showThumbnail && (
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded border border-gray-50 bg-white-00">
-            <ProductThumbnail
-              src={thumbnailSrc}
-              alt={displayName}
-              className={clsx(
-                'h-full w-full object-contain',
-                item.availableQuantity === 0 && 'grayscale opacity-75'
-              )}
-            />
-          </span>
-        )}
+        {showThumbnail &&
+          (productLinkUrl ? (
+            <a href={productLinkUrl} className={thumbnailClassName}>
+              {thumbnail}
+            </a>
+          ) : (
+            <span className={thumbnailClassName}>{thumbnail}</span>
+          ))}
         <div className="flex min-w-0 flex-1 items-end justify-between gap-3">
-          <span className="text-sm font-semibold leading-snug text-black-100">{displayName}</span>
+          {productLinkUrl ? (
+            <a href={productLinkUrl} className={nameClassName}>
+              {displayName}
+            </a>
+          ) : (
+            <span className={nameClassName}>{displayName}</span>
+          )}
           <div className="grid shrink-0 grid-cols-[auto_auto] gap-x-2 text-xs text-gray-70">
             <span>{cartLabels.price}</span>
             <span className="font-semibold">{unit}</span>

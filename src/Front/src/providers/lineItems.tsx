@@ -4,6 +4,7 @@ import algoliasearch, { SearchIndex } from 'algoliasearch';
 
 import { AlgoliaSettings, CartLineItem } from 'types/index';
 import { QUERY_KEYS } from 'constants/index';
+import { getPriceQuantityFor } from 'utils/index';
 
 type LineItemsContextProps = {
   isFetchingCart: boolean;
@@ -33,7 +34,7 @@ const LineItemsProvider: React.FC<LineItemsProviderProps> = ({ algoliaSettings, 
       Boolean(
         lineItem.nonMemberPrice?.centAmount &&
           lineItem.totalPrice?.centAmount !==
-            lineItem.nonMemberPrice?.centAmount * lineItem.quantity
+            lineItem.nonMemberPrice?.centAmount * getPriceQuantityFor(lineItem)
       ),
     []
   );

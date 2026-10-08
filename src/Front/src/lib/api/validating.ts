@@ -3,13 +3,6 @@ import type { ZodSchema } from 'zod';
 
 import type { Extractor } from './extractors';
 
-/**
- * Wraps a handler so it only ever runs against input that satisfies `schema`.
- *
- * The point is structural: the handler signature receives the parsed value and has
- * no access to raw request data, so unvalidated input cannot reach a downstream
- * query by omission. See GraphQL-API-Patterns.md §3.
- */
 export type ValidatedHandler<T> = (
   input: T,
   req: NextApiRequest,
@@ -34,7 +27,6 @@ export function validating<T>({
     const parsed = schema.safeParse(extractor(req));
 
     if (!parsed.success) {
-      // RFC 9457 problem+json.
       res.setHeader('Content-Type', 'application/problem+json');
 
       return res.status(400).json({

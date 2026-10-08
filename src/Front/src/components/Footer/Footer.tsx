@@ -2,7 +2,6 @@ import {
   ComponentRendering,
   Field,
   Image,
-  Link,
   LinkField,
   ImageField,
   Placeholder,
@@ -10,6 +9,7 @@ import {
 } from '@sitecore-jss/sitecore-jss-nextjs';
 import { ComponentProps } from 'lib/component-props';
 import { RichTextUI } from 'ui/index';
+import { PrefetchLink as Link } from 'utils/index';
 
 interface Fields {
   logoImage: ImageField;
@@ -41,7 +41,7 @@ const Footer = ({
   const renderSocialIcons = (socialIcons: FooterSocialIconProps[]) => (
     <div className="flex-1 order-first md:order-none flex flex-column md:justify-end pb-10 md:pb-0">
       {socialIcons.map((icon, index) => (
-        <Link key={index} field={icon.fields.url} aria-label={icon.displayName} prefetch={false}>
+        <Link key={index} field={icon.fields.url} aria-label={icon.displayName}>
           <Image field={icon.fields.icon} width={50} height="auto" />
         </Link>
       ))}

@@ -8,7 +8,8 @@ import {
   useSearchBox,
   type UseConfigureProps,
 } from 'react-instantsearch-hooks-web';
-import { Field, Link, LinkField, TextField } from '@sitecore-jss/sitecore-jss-nextjs';
+import { Field, LinkField, TextField } from '@sitecore-jss/sitecore-jss-nextjs';
+import { PrefetchLink as Link } from 'utils/index';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import clsx from 'clsx';
 import type { Hit } from 'instantsearch.js';

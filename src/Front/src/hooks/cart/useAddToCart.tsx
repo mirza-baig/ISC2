@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useMemo } from 'react';
 
-import { useUserSession } from 'providers/index';
+import { useUserSession, useShopperContext } from 'providers/index';
 import {
   addComputedFieldsToLineItems,
   calculateDiscount,
@@ -11,7 +12,7 @@ import {
   sendEngageAddToCartEvents,
 } from 'utils/index';
 import { ANALYTICS_EVENTS, DEFAULT_BRAND, QUERY_KEYS } from 'constants/index';
-import { useAnalyticsTracking } from 'hooks/index';
+import { useAnalyticsTracking, useLoggedUser } from 'hooks/index';
 import {
   AddToCartHit,
   Money,
@@ -95,9 +96,54 @@ export default function useAddToCart(callbacks?: MutationCallbacks) {
   const queryClient = useQueryClient();
   const { cartId, setCartId, currencyCode, userCountry } = useUserSession();
   const { createCartAsync, createCartError } = useCreateCart();
+  const { externalID, email } = useLoggedUser();
+  const { shopperContext: selection } = useShopperContext();
   const { voucher: authorizedBuyerPricingVoucher } = useAuthorizedBuyerPricingVoucher();
   const { track } = useAnalyticsTracking();
   const { engage } = usePersonalize();
+
+  const shopperContext = useMemo(
+    () =>
+      selection
+        ? {
+            type: selection.type,
+            businessAccountId: selection.organization?.id,
+            businessAccountName: selection.organization?.name,
+          }
+        : undefined,
+    [selection]
+  );
+
+  const resolveExistingCartId = useCallback(async () => {
+    if (!email || !externalID) {
+      return '';
+    }
+
+    try {
+      const api = await getServiceLayerAPI();
+
+      const { data } = await api.post('', {
+        query: 'GET_ACTIVE_CART',
+        variables: {
+          cartInfo: {
+            currency: currencyCode,
+            country: userCountry,
+            userEmailAddress: email,
+            userExternalId: externalID,
+            ...(shopperContext ? { shopperContext } : {}),
+          },
+        },
+      });
+
+      if ((data.errors || []).length) {
+        return '';
+      }
+
+      return data.data?.isc2GetCart?.id || '';
+    } catch {
+      return '';
+    }
+  }, [currencyCode, email, externalID, shopperContext, userCountry]);
 
   const { mutate, mutateAsync, isPending, error, isSuccess } = useMutation({
     mutationFn: async (payload: AddToCartProps) => {
@@ -107,11 +153,13 @@ export default function useAddToCart(callbacks?: MutationCallbacks) {
       let shouldRetryWithNewCart = false;
 
       if (!cartId) {
-        userCartId = await createCartAsync();
+        userCartId = (await resolveExistingCartId()) || (await createCartAsync());
         if (!userCartId) {
           console.log(createCartError);
           throw 'CANNOT_CREATE_CART';
         }
+
+        setCartId(userCartId);
       }
 
       await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.ACTIVE_CART, userCartId] });

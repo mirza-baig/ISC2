@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'constants/index';
 import { useUserSession } from 'providers/index';
 import { decodeAuthorizedBuyerPricingVoucher } from 'lib/authorizedBuyer';
+import { CT_DEFAULT_TIER } from 'types/pricing';
 
 import useAuthorizedBuyerPricingVoucher from '../cart/useAuthorizedBuyerPricingVoucher';
 import useGetDistributionChannel from './useGetDistributionChannel';
@@ -21,25 +22,25 @@ export default function useAuthorizedBuyerCompanyPricing(
   const accountId = decodeAuthorizedBuyerPricingVoucher(voucher)?.accountId;
 
   const { currencyCode } = useUserSession();
-  const { distributionChannel } = useGetDistributionChannel();
+  const { distributionChannel, distributionChannels } = useGetDistributionChannel();
+  const channelId =
+    distributionChannels?.find(({ key }) => key === CT_DEFAULT_TIER)?.id ?? distributionChannel?.id;
 
-  const enabled = Boolean(
-    accountId && skuList.length && skuList.every(Boolean) && distributionChannel?.id
-  );
+  const enabled = Boolean(accountId && skuList.length && skuList.every(Boolean) && channelId);
 
   const { data, isPending } = useQuery({
     queryKey: [
       QUERY_KEYS.AUTHORIZED_BUYER_COMPANY_PRICE,
       accountId,
       currencyCode,
-      distributionChannel?.id,
+      channelId,
       ...skuList,
     ],
     queryFn: () =>
       fetchAllStandalonePricePages({
         skuList,
         currencyCode,
-        distributionChannelId: distributionChannel?.id,
+        distributionChannelId: channelId,
         customerGroupKey: accountId,
         limit: 500,
       }),
@@ -55,9 +56,8 @@ export default function useAuthorizedBuyerCompanyPricing(
     }
 
     data.forEach((price) => {
-      const money = price.discounted?.value ?? price.value;
-      if (typeof money?.centAmount === 'number') {
-        map.set(price.sku, money.centAmount);
+      if (typeof price.value?.centAmount === 'number') {
+        map.set(price.sku, price.value.centAmount);
       }
     });
     return map;

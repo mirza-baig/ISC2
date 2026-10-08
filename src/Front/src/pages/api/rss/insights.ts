@@ -103,8 +103,6 @@ const Insights = async (_req: NextApiRequest, res: NextApiResponse) => {
       loopCount++;
       console.log(`Fetching Insights page number: ${loopCount}`);
 
-      // Annotated explicitly: `endCursor` is both an input to this call and assigned
-      // from its result, which makes the inferred type circular (TS7022).
       const response: RssGraphQLResponse = await getGraphQLResult<RssGraphQLResponse>(
         INSIGHTS_RSS_FEED,
         { first: 40, after: endCursor }

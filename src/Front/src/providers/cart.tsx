@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { createContext, useCallback, useContext, useMemo } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
 
 import { useGetCart } from 'hooks/index';
+import { SERVICE_LAYER_ERROR_CODES } from 'lib/serviceLayerErrors';
 import { Cart, CartWithComputedData } from 'types/index';
+import { forgetCartId } from 'utils/cartIdStore';
 import { CurrencyCodes, getCurrencyByCountryCode } from 'utils/currencies';
 
 import { useUserSession } from './userSession';
@@ -144,6 +146,23 @@ const CartProvider: React.FC<CartProviderProps> = ({ id, children, overrideWithC
   ]);
 
   const { activeCart, isGettingCart, cartError, getCartSuccess } = useGetCart(getCartPayload);
+
+  const isSessionCart = !id && !overrideWithCart && Boolean(cartId);
+
+  useEffect(() => {
+    if (!isSessionCart) {
+      return;
+    }
+
+    const errorCode = (cartError as { extensions?: { code?: string } } | null)?.extensions?.code;
+
+    if (errorCode !== SERVICE_LAYER_ERROR_CODES.CART_NOT_FOUND) {
+      return;
+    }
+
+    forgetCartId(cartId);
+    setCartId('');
+  }, [cartError, cartId, isSessionCart, setCartId]);
 
   const isFreeOrder = useMemo(() => {
     return overrideWithCart

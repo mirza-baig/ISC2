@@ -1,7 +1,8 @@
 import clsx from 'clsx';
-import { Link, NextImage, Text } from '@sitecore-jss/sitecore-jss-nextjs';
+import { NextImage, Text } from '@sitecore-jss/sitecore-jss-nextjs';
 
 import { ThumbnailBlockCardFields } from 'types/index';
+import { PrefetchLink as Link } from 'utils/index';
 
 export interface ThumbnailBlockCardProps {
   id: string;
@@ -35,7 +36,6 @@ const ThumbnailBlockCard = ({ className, fields }: ThumbnailBlockCardProps) => {
         <Text tag="h2" className="body-l mt-4 mb-1 line-clamp-2" field={fields?.headline} />
         {hasLink && (
           <Link
-            prefetch={false}
             className="cta mt-4 md:mt-0 focus-underline-dark-green with-chevron"
             field={fields.link!}
           />

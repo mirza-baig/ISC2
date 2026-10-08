@@ -14,7 +14,7 @@ export default function useGetDistributionChannel() {
   const { user } = useLoggedUser();
   const country = user ? userCountry : geolocationCountry;
 
-  const { data, isPending, error } = useQuery<DistributionChannel>({
+  const { data, isPending, error } = useQuery<DistributionChannel & { channels?: Channel[] }>({
     queryKey: [QUERY_KEYS.DISTRIBUTION_CHANNEL, country],
     queryFn: async () => {
       const api = await getServiceLayerAPI();
@@ -38,6 +38,7 @@ export default function useGetDistributionChannel() {
 
   return {
     distributionChannel: data as Channel,
+    distributionChannels: data?.channels,
     distributionChannelError: error,
     isGettingDistributionChannel: isPending,
   };

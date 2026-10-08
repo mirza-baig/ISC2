@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
-import { Text, Link, NextImage, ImageField, TextField } from '@sitecore-jss/sitecore-jss-nextjs';
+import { useRouter } from 'next/router';
+import { Text, NextImage, ImageField, TextField } from '@sitecore-jss/sitecore-jss-nextjs';
 
 import { NavigationLink as INavigationType } from 'types/index';
 
 import { useAnalyticsTracking } from 'hooks/index';
 import { ANALYTICS_EVENTS } from 'constants/index';
+import { hasPrefetched, markPrefetched } from 'utils/index';
 
 type ChevronProps = {
   isActive?: boolean;
@@ -142,6 +144,7 @@ const NavigationLink: React.FC<INavigationType> = ({
 }) => {
   const [isLinkHovered, setLinkIsHovered] = useState(false);
   const { track } = useAnalyticsTracking();
+  const router = useRouter();
 
   const isTextLink = displayAs === 'TextLink';
   const isHeadline = displayAs === 'Headline';
@@ -205,6 +208,16 @@ const NavigationLink: React.FC<INavigationType> = ({
     }
   };
 
+  const handleLinkMouseEnter = (): void => {
+    handleMouseEnter();
+
+    const href = fields?.link?.value?.href;
+    if (href && !hasPrefetched(href)) {
+      markPrefetched(href);
+      router.prefetch(href);
+    }
+  };
+
   const linkClasses = clsx(
     'navigation-type cursor-pointer text-left px-4 py-2 flex justify-center items-center focus:outline-none focus:ring-2 focus:ring-isc2-green',
     {
@@ -227,14 +240,15 @@ const NavigationLink: React.FC<INavigationType> = ({
 
   if (fields?.link?.value?.href) {
     return (
-      <Link
+      <a
         className={linkClasses}
-        prefetch={false}
-        field={fields?.link}
+        href={fields?.link?.value?.href}
+        title={fields?.link?.value?.title}
+        target={fields?.link?.value?.target}
         onClick={handleClick}
-        onMouseEnter={handleMouseEnter}
+        onMouseEnter={handleLinkMouseEnter}
         onMouseLeave={handleMouseLeave}
-        onFocus={handleMouseEnter}
+        onFocus={handleLinkMouseEnter}
         onBlur={handleMouseLeave}
       >
         <NavLinkContent
@@ -251,7 +265,7 @@ const NavigationLink: React.FC<INavigationType> = ({
             isTextLink,
           }}
         />
-      </Link>
+      </a>
     );
   }
 

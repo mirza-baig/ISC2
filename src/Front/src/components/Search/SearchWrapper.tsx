@@ -15,7 +15,7 @@ import algoliasearch, { SearchClient as AlgoliaSearchClient } from 'algoliasearc
 import { KeyValuePair } from 'tailwindcss/types/config';
 import type { Hit, UiState } from 'instantsearch.js';
 import { history as historyRouter } from 'instantsearch.js/es/lib/routers';
-import Link from 'next/link';
+import { PrefetchLink as Link } from 'utils/index';
 import { getGraphQLResult } from 'utils/graphQLFunctions';
 import { useFeatureFlag } from 'providers/featureFlags';
 
@@ -1197,7 +1197,6 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
       {typeof window !== 'undefined' && window.location.pathname.toLowerCase() === '/insights' && (
         <div className="sm:px-8 lg:pl-16 lg:pr-40 text-right relative">
           <Link
-            prefetch={false}
             href="/api/rss/insights"
             target="_blank"
             className="inline-block absolute -top-10 right-6 sm:top-[-40px] sm:right-[24px]"

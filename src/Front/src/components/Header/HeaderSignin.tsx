@@ -1,5 +1,4 @@
 import {
-  Link,
   withDatasourceCheck,
   ComponentRendering,
   RouteData,
@@ -17,6 +16,7 @@ import { useFeatureFlag } from 'providers/featureFlags';
 import { useBreakpoint, useDisableScroll, useLoggedUser, useOnEventOutside } from 'hooks/index';
 import { CartIcon, SearchIcon, UserIcon, ChevronDownIcon } from 'icons/index';
 import { useAnalyticsTracking, useScrollDirection, useToggle } from 'hooks/index';
+import { PrefetchLink as Link } from 'utils/index';
 
 import HeaderUserMenu, { HeaderUserMenuFields } from './HeaderUserMenu';
 import CurrencyDropdown from './HeaderCurrencyDropdown/CurrencyDropdown';
@@ -192,7 +192,6 @@ function HeaderSignin({ fields }: SigninProps): JSX.Element {
         <div className="flex items-center h-full justify-around max-sm:max-w-400 max-sm:mx-auto sm:justify-normal">
           <Link
             className="body-s py-2 rounded-bl-lg px-2"
-            prefetch={false}
             field={fields?.props?.registerForExamLink}
             onClick={handleCtaClick}
           />

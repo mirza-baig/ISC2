@@ -1,4 +1,5 @@
-import { Link, LinkField } from '@sitecore-jss/sitecore-jss-nextjs';
+import { LinkField } from '@sitecore-jss/sitecore-jss-nextjs';
+import { PrefetchLink as Link } from 'utils/index';
 import { format, isBefore, parseISO, startOfToday } from 'date-fns';
 import { useMemo } from 'react';
 import { ProductThumbnail } from './ProductThumbnail';
@@ -142,9 +143,11 @@ export function Allocation({
 
           {allocationsDetailsUrl && (
             <Link
-              field={{ text: allocationDetailsCta?.value.text, href: allocationsDetailsUrl }}
+              href={allocationsDetailsUrl}
               className="primary-cta text-center whitespace-nowrap"
-            />
+            >
+              {allocationDetailsCta?.value.text}
+            </Link>
           )}
         </div>
       </div>

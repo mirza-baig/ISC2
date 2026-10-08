@@ -188,6 +188,7 @@ const B2BCartConnected = ({
       pendingUpdateLineId={pendingUpdateLineId}
       trailingContent={trailingContent}
       className={className}
+      productLinkUrl={labels.productLinkUrl}
       /* Private classes held back on these two surfaces (B-15) — no `leadingRows`, so the panel
          renders the commercetools lines and nothing else. The PLP dock still passes its own.
       leadingRows={

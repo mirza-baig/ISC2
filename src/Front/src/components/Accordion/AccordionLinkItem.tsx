@@ -1,9 +1,10 @@
-import { Link, LinkField } from '@sitecore-jss/sitecore-jss-nextjs';
+import { LinkField } from '@sitecore-jss/sitecore-jss-nextjs';
 import { ComponentProps } from 'lib/component-props';
 import { useCallback } from 'react';
 
 import { useAnalyticsTracking } from 'hooks/index';
 import { getAbsolutePath } from 'utils/location';
+import { PrefetchLink as Link } from 'utils/index';
 import { ANALYTICS_EVENTS } from 'constants/index';
 
 export type AccordionLinkItemProps = ComponentProps & {
@@ -56,7 +57,6 @@ const AccordionLinkItem = (props: AccordionLinkItemProps) => {
       onClick={trackLinkPressed}
       className="text-xsm mt-4 mb-1 text-gray-50 focus-underline-lime"
       field={props.fields.link}
-      prefetch={false}
     />
   );
 };

@@ -5,9 +5,9 @@ import {
   LinkField,
   Image,
   Text,
-  Link,
   Field,
 } from '@sitecore-jss/sitecore-jss-nextjs';
+import { PrefetchLink as Link } from 'utils/index';
 import clsx from 'clsx';
 
 export interface TestimonialCardProps {
@@ -56,7 +56,7 @@ const TestimonialCard = ({ fields }: TestimonialCardProps) => {
           tag="h5"
         />
         {Boolean(fields.primaryCTA?.value.href) && (
-          <Link field={fields.primaryCTA!} className="primary-cta truncate" prefetch={false} />
+          <Link field={fields.primaryCTA!} className="primary-cta truncate" />
         )}
       </section>
     </div>

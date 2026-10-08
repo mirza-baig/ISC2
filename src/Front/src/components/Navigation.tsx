@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import {
-  Link,
+  Link as JssLink,
   LinkField,
   Text,
   TextField,
   useSitecoreContext,
 } from '@sitecore-jss/sitecore-jss-nextjs';
+import { PrefetchLink } from 'utils/index';
 
 interface Fields {
   Id: string;
@@ -126,20 +127,29 @@ const NavigationList = (props: NavigationProps) => {
     ));
   }
 
+  const linkField = getLinkField(props);
+  const isEditing = sitecoreContext.pageEditing;
+
   return (
     <li className={`${classNameList} ${active ? 'active' : ''}`} key={props.fields.Id} tabIndex={0}>
       <div
         className={`navigation-title ${children.length ? 'child' : ''}`}
         onClick={() => setActive(() => !active)}
       >
-        <Link
-          field={getLinkField(props)}
-          editable={sitecoreContext.pageEditing}
-          onClick={props.handleClick}
-          prefetch={false}
-        >
-          {getNavigationText(props)}
-        </Link>
+        {isEditing ? (
+          <JssLink field={linkField} editable={isEditing} onClick={props.handleClick}>
+            {getNavigationText(props)}
+          </JssLink>
+        ) : (
+          // On the live, non-editing site, use the de-duped prefetch wrapper like everywhere else.
+          <PrefetchLink
+            href={linkField.value.href}
+            title={linkField.value.title}
+            onClick={props.handleClick}
+          >
+            {getNavigationText(props)}
+          </PrefetchLink>
+        )}
       </div>
       {children.length > 0 ? <ul className="clearfix">{children}</ul> : null}
     </li>

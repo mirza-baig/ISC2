@@ -32,3 +32,6 @@ export * from './print';
 export * from './voting';
 export * from './accountData';
 export * from './orderHistory';
+export * from './prefetchCache';
+
+export { default as PrefetchLink } from './PrefetchLink';

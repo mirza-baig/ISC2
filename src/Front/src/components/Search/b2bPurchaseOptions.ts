@@ -157,6 +157,7 @@ const buildOptionRow = (
     // focusArea are 0 of 103), so the session's are kept as spread above: a generated row has to
     // stay consistent with the server-side refinement that produced its session, or refining by
     // certification would drop the very rows the class was expanded into.
+    businessPricingCategory: null,
     b2bRecordType: B2B_PURCHASE_OPTION_RECORD_TYPE,
     b2bPickedSku: (session.sku ?? session.objectID) as string,
     b2bPickedProductKey: session.productKey,

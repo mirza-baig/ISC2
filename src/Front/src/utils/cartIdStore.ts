@@ -105,9 +105,8 @@ export const forgetCartId = (cartId?: string) => {
   writeMap({ v: VERSION, entries });
 };
 
-export const clearCartIds = () => {
+export const clearAnonymousCartId = () => {
   try {
-    localStorage.removeItem(LOCALSTORAGE_KEYS.ACTIVE_CART_IDS);
     localStorage.removeItem(LOCALSTORAGE_KEYS.ACTIVE_CART_ID);
   } catch {
     return;

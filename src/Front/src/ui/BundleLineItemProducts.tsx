@@ -6,10 +6,15 @@ import { getVariantAttributes, isBundleLineItem } from 'utils/cart';
 export namespace BundleLineItemProducts {
   export type Props = {
     lineItem: BundleLineItem;
+    /** Authorized-buyer checkout summary: show the seat count even at a single seat. */
+    alwaysShowQuantity?: boolean;
   };
 }
 
-export function BundleLineItemProducts({ lineItem }: BundleLineItemProducts.Props) {
+export function BundleLineItemProducts({
+  lineItem,
+  alwaysShowQuantity,
+}: BundleLineItemProducts.Props) {
   const bundleProductNames = useMemo(() => {
     if (isBundleLineItem(lineItem)) {
       return lineItem.products.map(
@@ -31,11 +36,11 @@ export function BundleLineItemProducts({ lineItem }: BundleLineItemProducts.Prop
           </li>
         ))}
       </ul>
-      {/* Seats. Rendered only above one, so a bundle bought the ordinary way (always a single seat
-          — commercetools carries no quantity through a bundle add unless a caller opts in) looks
-          exactly as it did. A B2B buyer purchasing for a group otherwise sees only a multiplied
-          total with nothing on the row explaining it. */}
-      {lineItem.quantity > 1 && (
+      {/* Seats. A bundle bought the ordinary way is always a single seat (commercetools carries no
+          quantity through a bundle add unless a caller opts in) and looks exactly as it did, unless
+          the caller asks to always show it — the authorized-buyer checkout summary does, since a
+          buyer purchasing for themselves still wants their seat count confirmed on the order. */}
+      {(alwaysShowQuantity || lineItem.quantity > 1) && (
         <span className="body-s ml-2 text-gray-90">Quantity: {lineItem.quantity}</span>
       )}
     </>

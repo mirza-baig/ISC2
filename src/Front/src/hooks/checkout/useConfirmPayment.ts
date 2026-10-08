@@ -216,9 +216,6 @@ export default function useConfirmPayment() {
         }
 
         trackPaymentInfo(payload.paymentMethod);
-
-        // The order already exists by now, so a failed upload is logged rather than
-        // turning a placed order into a failed purchase.
         const poAttachment = isBusinessBuyer ? personalInformation?.poAttachment : undefined;
 
         if (poAttachment) {
@@ -250,9 +247,11 @@ export default function useConfirmPayment() {
         await queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.AUTHORIZED_BUYER_ACCOUNTS],
         });
-        await queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.ALL_ORDERS],
-        });
+        if (isB2BFeatureEnabled) {
+          await queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.ALL_ORDERS],
+          });
+        }
 
         track({ ecommerce: null });
         track({

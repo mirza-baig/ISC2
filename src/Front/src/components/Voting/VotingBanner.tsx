@@ -1,4 +1,5 @@
-import { Field, LinkField, Link } from '@sitecore-jss/sitecore-jss-nextjs';
+import { Field, LinkField } from '@sitecore-jss/sitecore-jss-nextjs';
+import { PrefetchLink as Link } from 'utils/index';
 import {
   useGetAccountData,
   useLocalStorage,
@@ -238,7 +239,6 @@ const VotingBanner = ({ fields }: VotingBannerProps) => {
           field={fields.CTA}
           className="cta relative flex space-x-2 !text-sm !tracking-normal primary-cta w-fit mt-4"
           onClick={handleVotingCtaClick}
-          prefetch={false}
         >
           {fields.CTA.value.text || 'Vote'}
         </Link>

@@ -93,6 +93,9 @@ const uniqueValues = (values: Array<string | undefined>) =>
 const includesFilter = (value: string | undefined, filter: string) =>
   !filter || (value || '').toLowerCase().includes(filter.toLowerCase());
 
+const equalsFilter = (value: string | undefined, filter: string) =>
+  !filter || (value || '').trim().toLowerCase() === filter.trim().toLowerCase();
+
 const FilterDropdown = ({
   label,
   value,
@@ -278,9 +281,9 @@ const OrderHistory = ({ fields }: OrderHistoryPageProps) => {
       return (
         matchesSearch &&
         includesFilter(order.buyerFullName, filterBuyer) &&
-        includesFilter(order.poNumber, filterPo) &&
+        equalsFilter(order.poNumber, filterPo) &&
         includesFilter(order.customerOrderReference, filterCustomerRef) &&
-        includesFilter(order.orderId || order.orderNumber, filterOrderNumber) &&
+        equalsFilter(order.orderId || order.orderNumber, filterOrderNumber) &&
         includesFilter(productNames, filterProduct)
       );
     });

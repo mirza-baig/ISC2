@@ -3,13 +3,13 @@ import {
   ComponentRendering,
   Field,
   ImageField,
-  Link,
   LinkField,
   NextImage,
   RouteData,
   Text,
 } from '@sitecore-jss/sitecore-jss-nextjs';
 import { ComponentProps } from 'lib/component-props';
+import { PrefetchLink as Link } from 'utils/index';
 
 import { useAnalyticsTracking } from 'hooks/index';
 import { ColorSelector } from 'types/index';
@@ -94,7 +94,6 @@ const ProductMastHead = ({ fields }: ProductMastHead) => {
               className="primary-cta light w-full text-center md:w-auto mr-6 lg:mr8 px-4 py-2"
               field={fields?.primaryCTA}
               onClick={handleCTAClick}
-              prefetch={false}
             />
           )}
           {fields?.secondaryCTA?.value?.href && fields?.secondaryCTA?.value?.text && (
@@ -102,7 +101,6 @@ const ProductMastHead = ({ fields }: ProductMastHead) => {
               className="secondary-cta light text-center w-full md:w-auto px-4 py-2"
               field={fields?.secondaryCTA}
               onClick={handleCTAClick}
-              prefetch={false}
             />
           )}
         </div>

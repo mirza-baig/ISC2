@@ -1,7 +1,8 @@
-import { Link, Text } from '@sitecore-jss/sitecore-jss-nextjs';
+import { Text } from '@sitecore-jss/sitecore-jss-nextjs';
 import clsx from 'clsx';
 
 import { PathFinderStep } from 'types/index';
+import { PrefetchLink as Link } from 'utils/index';
 
 import RichTextUI from 'ui/RichTextUI';
 
@@ -41,7 +42,7 @@ const PathFinderInsightContent = ({
       {hasAbstract && (
         <RichTextUI className={clsx('body-m', hasLink && 'mb-8')} value={abstract?.value} />
       )}
-      {hasLink && <Link className="secondary-cta mb-8" field={link!} prefetch={false} />}
+      {hasLink && <Link className="secondary-cta mb-8" field={link!} />}
     </>
   );
 };

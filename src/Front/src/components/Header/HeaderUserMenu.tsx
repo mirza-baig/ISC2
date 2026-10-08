@@ -1,8 +1,8 @@
-import { Field, ImageField, Link } from '@sitecore-jss/sitecore-jss-nextjs';
+import { Field, ImageField } from '@sitecore-jss/sitecore-jss-nextjs';
 import clsx from 'clsx';
 import { useCallback, useState } from 'react';
 import { CloseIcon } from 'icons/index';
-import { parseFieldsFromURLString } from 'utils/index';
+import { parseFieldsFromURLString, PrefetchLink as Link } from 'utils/index';
 import { LoadingIndicator, UserDataSummary } from 'ui/index';
 import { useHeaderNavigation } from 'providers/header';
 import { useModal } from 'providers/modal';
@@ -101,15 +101,18 @@ export default function HeaderUserMenu({ className, setMenuOpen, fields }: Heade
                 <span className="block relative w-full body-m" key={`${index}-${item.id}`}>
                   <Link
                     key={item.id}
-                    field={item?.fields?.link?.value}
-                    prefetch={false}
+                    href={item?.fields?.link?.value?.href}
+                    title={item?.fields?.link?.value?.title}
+                    target={item?.fields?.link?.value?.target}
                     className={LINK_CLASS_NAME}
                     onClick={() => {
                       if (setMenuOpen) {
                         setMenuOpen(false);
                       }
                     }}
-                  />
+                  >
+                    {item?.fields?.link?.value?.text}
+                  </Link>
                 </span>
               );
             }

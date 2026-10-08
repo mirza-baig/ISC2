@@ -1,4 +1,4 @@
-import { Link } from '@sitecore-jss/sitecore-jss-nextjs';
+import { PrefetchLink as Link } from 'utils/index';
 
 import { Allocation, LoadingIndicator } from 'ui/index';
 import { AllocationDetailsFields } from 'types/index';
@@ -26,7 +26,6 @@ export default function AllocationDetailsContent({ fields }: { fields?: Allocati
         <Link
           field={fields.backToAllocationsLink}
           className="cta with-chevron-left block mt-5 mb-3"
-          prefetch={false}
         />
       )}
 

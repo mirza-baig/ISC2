@@ -1,6 +1,5 @@
 import { useModal } from 'providers/index';
 import {
-  Link,
   LinkField,
   RichText,
   RichTextField,
@@ -8,6 +7,7 @@ import {
   TextField,
 } from '@sitecore-jss/sitecore-jss-nextjs';
 import { useCallback } from 'react';
+import { PrefetchLink as Link } from 'utils/index';
 
 export interface ProductFormModalType {
   heading?: TextField;
@@ -51,14 +51,15 @@ const ProductFormModal = ({ fields }: ProductFormModalProps) => {
               <Link
                 type="button"
                 field={{
-                  href: fields?.primaryCTA?.value?.href,
-                  text: fields?.primaryCTA?.value?.text,
-                  target: '_blank',
-                  linktype: 'button',
+                  value: {
+                    href: fields?.primaryCTA?.value?.href,
+                    text: fields?.primaryCTA?.value?.text,
+                    target: '_blank',
+                    linktype: 'button',
+                  },
                 }}
                 onClick={onPrimaryCtaClose}
                 className="primary-cta text-xsm leading-20 tracking-link px-8"
-                prefetch={false}
               />
             )}
 

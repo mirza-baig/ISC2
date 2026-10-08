@@ -1,15 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
- 
+
 import { getExternalMulesoftOrderFilesUrl } from 'constants/urls';
 import { setAPIRouteHeaders, validateApiRequest } from 'utils/index';
- 
-/** Mule has no documented cap on file count yet; 10 per request is the agreed start. */
+
 const MAX_FILES_PER_REQUEST = 10;
- 
+
 const ORDER_NUMBER_PATTERN = /^\d+$/;
- 
-// Files arrive base64-encoded (~4/3 of their raw size), so this allows ~15 MB of files.
-// Mule itself rejects anything over 100 MB.
+
 export const config = {
   api: {
     bodyParser: {
@@ -17,36 +14,29 @@ export const config = {
     },
   },
 };
- 
+
 type OrderFile = { filename: string; data: string };
- 
+
 const isOrderFile = (value: unknown): value is OrderFile =>
   typeof (value as OrderFile)?.filename === 'string' &&
   (value as OrderFile).filename.trim() !== '' &&
   typeof (value as OrderFile)?.data === 'string' &&
   (value as OrderFile).data !== '';
- 
-/**
-* Attaches files (the business buyer's PO attachment) to a placed commercetools order.
-* Mule stores them against the matching Salesforce order and answers 200 with no body.
-*/
+
 export default async function uploadOrderFiles(req: NextApiRequest, res: NextApiResponse) {
   setAPIRouteHeaders(res, 'POST', req);
- 
+
   if (req.method !== 'POST') {
     return res.status(405).send({ error: 'Method not allowed' });
   }
- 
+
   let orderNumber: string | undefined;
   let muleUrl: string | undefined;
- 
+
   try {
     const identity = await validateApiRequest(req, res);
     if (!identity) return;
 
-    // Mule's flow looks up the Salesforce record using these; without them it ends up
-    // trying to validate a null externalId internally and erroring out mid-flow.
-    // Sent by the client as query params, same pattern as /api/salesforce/user/getAccountData.
     const { externalID, email } = req.query ?? {};
 
     if (typeof externalID !== 'string' || !externalID || typeof email !== 'string' || !email) {
@@ -54,18 +44,16 @@ export default async function uploadOrderFiles(req: NextApiRequest, res: NextApi
         hasExternalID: Boolean(externalID),
         hasEmail: Boolean(email),
       });
-      return res
-        .status(400)
-        .send({ error: 'externalID and email query params are required.' });
+      return res.status(400).send({ error: 'externalID and email query params are required.' });
     }
- 
+
     ({ orderNumber } = req.body ?? {});
     const { files } = req.body ?? {};
- 
+
     if (typeof orderNumber !== 'string' || !ORDER_NUMBER_PATTERN.test(orderNumber)) {
       return res.status(400).send({ error: 'A valid orderNumber is required' });
     }
- 
+
     if (
       !Array.isArray(files) ||
       !files.length ||
@@ -76,9 +64,9 @@ export default async function uploadOrderFiles(req: NextApiRequest, res: NextApi
         .status(400)
         .send({ error: `files must be 1-${MAX_FILES_PER_REQUEST} items of { filename, data }` });
     }
- 
+
     muleUrl = getExternalMulesoftOrderFilesUrl(orderNumber, externalID, email);
- 
+
     if (!process.env.SALESFORCE_CLOUDHUB_URL) {
       console.error('[uploadOrderFiles] SALESFORCE_CLOUDHUB_URL is not set', { muleUrl });
       return res.status(500).send({ error: 'Mule endpoint is not configured.' });
@@ -94,12 +82,9 @@ export default async function uploadOrderFiles(req: NextApiRequest, res: NextApi
         files.map(({ filename, data }: OrderFile) => ({ filename: filename.trim(), data }))
       ),
     });
- 
-    // Read as text first: a gateway or APIkit error may not be JSON, and `.json()` would
-    // swallow exactly the body needed to tell where the failure came from.
+
     const rawBody = await response.text().catch(() => '');
- 
-    // File contents and credentials are deliberately left out of the log.
+
     const muleResponseLog = {
       orderNumber,
       url: muleUrl,
@@ -114,29 +99,27 @@ export default async function uploadOrderFiles(req: NextApiRequest, res: NextApi
       })),
       rawBody,
     };
- 
+
     if (!response.ok) {
       console.error('[uploadOrderFiles] Mule rejected the upload', muleResponseLog);
- 
-      // Mule's 4xx/500 bodies are `{ error, description }`; pass them through when present.
+
       let errorBody = null;
       try {
         errorBody = rawBody ? JSON.parse(rawBody) : null;
       } catch {
         errorBody = null;
       }
- 
+
       return res
         .status(response.status)
         .send(errorBody ?? { error: `Request failed with status ${response.status}` });
     }
- 
+
     console.info('[uploadOrderFiles] Mule accepted the upload', muleResponseLog);
- 
+
     return res.status(200).json({});
   } catch (error) {
     console.error('[uploadOrderFiles] Upload request failed', { orderNumber, url: muleUrl, error });
     return res.status(500).send({ error: 'Files could not be uploaded.' });
   }
 }
- 

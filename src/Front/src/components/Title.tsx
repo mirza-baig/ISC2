@@ -1,11 +1,6 @@
-import {
-  Link,
-  LinkField,
-  Text,
-  TextField,
-  useSitecoreContext,
-} from '@sitecore-jss/sitecore-jss-nextjs';
+import { LinkField, Text, TextField, useSitecoreContext } from '@sitecore-jss/sitecore-jss-nextjs';
 import React from 'react';
+import { PrefetchLink as Link } from 'utils/index';
 
 interface Fields {
   data: {
@@ -84,7 +79,7 @@ export const Default = (props: TitleProps): JSX.Element => {
         {sitecoreContext.pageEditing ? (
           <Text field={text} />
         ) : (
-          <Link field={link} prefetch={false}>
+          <Link field={link}>
             <Text field={text} />
           </Link>
         )}

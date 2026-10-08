@@ -33,14 +33,6 @@ interface SessionUser {
 
 const MAX_VOTING_KEY_LENGTH = 100;
 
-/**
- * A voting type item name, resolved beneath VOTING_TYPES_ROOT.
- *
- * Permissive by design (see lib/api/urlPath.ts): election items carry names like
- * "Board & Committee Election (2025)", and rejecting one would break the voting link
- * for every member who received it. Excluding `/` is what keeps the lookup inside
- * the Voting Types folder; the query document is parameterized regardless.
- */
 export const votingKeySchema = z
   .string()
   .min(1)

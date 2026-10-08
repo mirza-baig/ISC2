@@ -114,6 +114,7 @@ export type BundleLineItem = {
   availableQuantity: number;
   totalPrice: TypedMoney;
   nonMemberPrice: TypedMoney;
+  originalPrice: TypedMoney;
   price: {
     value: TypedMoney;
     discounted: null;

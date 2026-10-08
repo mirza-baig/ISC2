@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Link, LinkField, RichTextField, Text, TextField } from '@sitecore-jss/sitecore-jss-nextjs';
+import { LinkField, RichTextField, Text, TextField } from '@sitecore-jss/sitecore-jss-nextjs';
 import clsx from 'clsx';
 
 import ProductCard, { ProductCardProps } from 'components/ProductTabs/ProductCard/ProductCard';
 import { useBreakpoint, useAnalyticsTracking, useGetAlgoliaSearchData } from 'hooks/index';
 import { getAbsolutePath } from 'utils/location';
+import { PrefetchLink as Link } from 'utils/index';
 import { StandalonePriceMapping, TrackingItem } from 'types/index';
 import { useStandalonePrices, useUserSession } from 'providers/index';
 
@@ -233,7 +234,6 @@ const Slider = ({
             )}
             {linkCta?.value?.text && linkCta?.value?.href && (
               <Link
-                prefetch={false}
                 className="cta mt-4 sm:mt-0 focus-underline-lime key-focus with-chevron border-b-2 border-transparent hover:border-darker-green pb-1"
                 field={linkCta}
                 onClick={trackCardClick}

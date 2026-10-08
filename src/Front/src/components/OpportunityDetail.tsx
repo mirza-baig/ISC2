@@ -1,8 +1,9 @@
-import { LinkField, Link } from '@sitecore-jss/sitecore-jss-nextjs';
+import { LinkField } from '@sitecore-jss/sitecore-jss-nextjs';
 import { ComponentRendering, Field, RouteData } from '@sitecore-jss/sitecore-jss-nextjs';
 import { ComponentProps } from 'lib/component-props';
 import { RichText } from '@sitecore-jss/sitecore-jss-nextjs';
 import { useRouter } from 'next/router';
+import { PrefetchLink as Link } from 'utils/index';
 
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
@@ -124,15 +125,17 @@ function OpportunityDetail(): JSX.Element | null {
       'text' in signUpCTA
     ) {
       const linkField = {
-        href: signUpCTA?.href as string,
-        text: signUpCTA?.text as string,
-        class: 'primary-cta truncate',
+        value: {
+          href: signUpCTA?.href as string,
+          text: signUpCTA?.text as string,
+          class: 'primary-cta truncate',
+        },
       };
 
       return (
         <div className="pb-4">
           <h2>{TITLES.SIGN_UP}</h2>
-          <Link field={linkField} prefetch={false} />
+          <Link field={linkField} />
         </div>
       );
     }

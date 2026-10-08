@@ -1,7 +1,6 @@
 import {
   ComponentRendering,
   Field,
-  Link,
   Text,
   RouteData,
   NextImage,
@@ -10,7 +9,7 @@ import {
   ImageField,
 } from '@sitecore-jss/sitecore-jss-nextjs';
 import { ComponentProps } from 'lib/component-props';
-
+import { PrefetchLink as Link } from 'utils/index';
 interface Logo {
   fields: {
     logoImage: ImageField;

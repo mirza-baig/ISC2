@@ -1,7 +1,8 @@
-import { Field, Link, LinkField, Text } from '@sitecore-jss/sitecore-jss-nextjs';
+import { Field, LinkField, Text } from '@sitecore-jss/sitecore-jss-nextjs';
 import clsx from 'clsx';
 
 import { RichTextUI } from 'ui/index';
+import { PrefetchLink as Link } from 'utils/index';
 
 interface SectionTitleProps {
   title?: Field<string>;
@@ -40,7 +41,6 @@ const SectionTitle = ({ title, subtitle, link, className, isLoading }: SectionTi
           {Boolean(subtitle?.value) && <RichTextUI value={subtitle?.value} />}
           {Boolean(link?.value?.href) && (
             <Link
-              prefetch={false}
               field={link!}
               className="cta focus-underline-dark-green key-focus whitespace-nowrap with-chevron border-b-2 border-transparent hover:border-darker-green pb-1"
             />

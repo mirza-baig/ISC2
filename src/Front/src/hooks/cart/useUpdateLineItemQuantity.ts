@@ -1,17 +1,24 @@
-import { useCart } from 'providers/index';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { useCart, useUserSession } from 'providers/index';
+import { QUERY_KEYS } from 'constants/index';
 import { getPickedProductFromBundleLine, isBundleLineItem } from 'utils/index';
 import useAddToCart from './useAddToCart';
+import useAuthorizedBuyerPricingVoucher from './useAuthorizedBuyerPricingVoucher';
 import useRemoveFromCart from './useRemoveFromCart';
-import type { AddToCartHit, CartLineItem, ProductHit as AddToCartProductHit } from 'types/index';
+import postCartUpdate from './postCartUpdate';
+import type { AddToCartHit, CartLineItem } from 'types/index';
 
 /**
- * B2B "set line-item quantity" (QTY-4 interim). A self-serve cart has no set-quantity path of its
- * own — the service layer's `changeLineItemQuantity` action skips the bundle and channel transforms
- * an add goes through — so a self-serve line's quantity is set with the existing add/remove
- * mechanisms:
- *   - increase → add the delta (single mutation, reuses the working add path)
- *   - decrease → remove the line, then re-add at the target quantity
- *   - zero     → remove the line
+ * B2B "set line-item quantity" (QTY-4 interim).
+ *   - increase/decrease on an existing plain line → `changeLineItemQuantity` against that line's
+ *     own id. (The service layer's `formatAddLineItemActions` forces every `addLineItem` onto a
+ *     default custom type, which stops commercetools from merging it into the existing line for
+ *     the same SKU — re-adding a delta instead creates a second, duplicate line item. A direct
+ *     `changeLineItemQuantity` passes straight through that transform untouched.)
+ *   - bundle lines → remove then re-add at the target quantity (commercetools rejects a second add
+ *     of a bundle occurrence already in the cart, so there is no delta path for these)
+ *   - zero → remove the line
  *
  * Because the B2B PLP row AND the on-page cart both read a line's quantity from the same
  * active cart, writing here makes both views reflect the change automatically (no local
@@ -23,8 +30,28 @@ import type { AddToCartHit, CartLineItem, ProductHit as AddToCartProductHit } fr
  */
 export default function useUpdateLineItemQuantity() {
   const { activeCart } = useCart();
+  const { cartId } = useUserSession();
+  const queryClient = useQueryClient();
   const { addToCartAsync, isAddingToCart } = useAddToCart();
   const { removeFromCartAsync, isRemovingFromCart } = useRemoveFromCart();
+  const { voucher: authorizedBuyerPricingVoucher } = useAuthorizedBuyerPricingVoucher();
+
+  const { mutateAsync: changeQuantityAsync, isPending: isChangingQuantity } = useMutation({
+    mutationFn: (payload: { lineItemId: string; quantity: number }) =>
+      postCartUpdate(
+        {
+          cartId,
+          actions: [{ changeLineItemQuantity: payload }],
+          authorizedBuyerPricingVoucher,
+        },
+        (errors) => {
+          throw errors[0].message;
+        }
+      ),
+    onSuccess: (updatedCart) => {
+      queryClient.setQueryData([QUERY_KEYS.ACTIVE_CART, updatedCart.id], updatedCart);
+    },
+  });
 
   const isCpqCart = Boolean(activeCart?.computed?.isB2B);
   const isReadOnly = isCpqCart;
@@ -71,27 +98,12 @@ export default function useUpdateLineItemQuantity() {
       return;
     }
 
-    const sku = lineItem.variant?.sku;
-    if (!sku) {
-      return;
-    }
-
-    const addAtQuantity = (quantity: number) =>
-      addToCartAsync({ items: [{ sku } as unknown as AddToCartProductHit], quantity });
-
-    if (targetQty > current) {
-      await addAtQuantity(targetQty - current);
-      return;
-    }
-
-    // Decrease: no native set/decrement op — remove then re-add at the target.
-    await removeFromCartAsync({ lineItems: [lineItem] });
-    await addAtQuantity(targetQty);
+    await changeQuantityAsync({ lineItemId: lineItem.id, quantity: targetQty });
   };
 
   return {
     updateQuantity,
-    isUpdatingQuantity: isAddingToCart || isRemovingFromCart,
+    isUpdatingQuantity: isAddingToCart || isRemovingFromCart || isChangingQuantity,
     isReadOnly,
   };
 }
