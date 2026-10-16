@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MiddlewarePlugin } from '..';
 import config from 'temp/config';
+import { resolveCorsHeaders } from 'lib/security/cors';
 
 interface CSPResponse {
   data: {
@@ -174,19 +175,9 @@ class CSPPlugin implements MiddlewarePlugin {
       pathname.startsWith('/api/auth/session/')
     ) {
       console.log('CSP Plugin: Applying CORS headers');
-      const origin = req.headers.get('origin') || '';
-      const allowedOrigin = process.env.PUBLIC_URL || '';
-
-      res.headers.set('Access-Control-Allow-Credentials', 'true');
-      res.headers.set(
-        'Access-Control-Allow-Origin',
-        origin && origin === allowedOrigin ? allowedOrigin : ''
-      );
-      res.headers.set('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-      res.headers.set(
-        'Access-Control-Allow-Headers',
-        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-      );
+      Object.entries(
+        resolveCorsHeaders(req.headers.get('origin'), 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
+      ).forEach(([key, value]) => res.headers.set(key, value));
     }
 
     console.log('CSP Plugin: Request processing complete');

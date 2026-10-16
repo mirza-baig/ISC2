@@ -50,7 +50,7 @@ const generateVotingToken = (
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  setAPIRouteHeaders(res, 'GET');
+  setAPIRouteHeaders(res, 'GET', req);
 
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });

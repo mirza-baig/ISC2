@@ -5,7 +5,7 @@ import { GET_CERTIFICATION_DETAILS_QUERY } from 'queries/certificationPages';
 import { setAPIRouteHeaders } from 'utils/apiUtils';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  setAPIRouteHeaders(res, 'POST');
+  setAPIRouteHeaders(res, 'POST', req);
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });

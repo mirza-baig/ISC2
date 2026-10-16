@@ -12,7 +12,7 @@ const searchClient = algoliasearch(algoliaAppId, algoliaApiKey);
 const algoliaIndex = searchClient.initIndex(algoliaIndexName);
 
 export default async function product(req: NextApiRequest, res: NextApiResponse) {
-  setAPIRouteHeaders(res, 'GET');
+  setAPIRouteHeaders(res, 'GET', req);
 
   const { sku } = req.query;
 

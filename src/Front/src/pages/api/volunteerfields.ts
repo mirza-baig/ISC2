@@ -25,13 +25,13 @@ export const schema = z.object({
     ),
 });
 
-export const handler: ValidatedHandler<z.infer<typeof schema>> = async (input, _req, res) => {
+export const handler: ValidatedHandler<z.infer<typeof schema>> = async (input, req, res) => {
   const result = await postSitecoreGraphQL(VOLUNTEER_PAGE_FIELDS, {
     path: `${VOLUNTEER_PAGE_ROOT}/${input.pagepath}`,
     language: 'en',
   });
 
-  setAPIRouteHeaders(res, 'GET,DELETE,PATCH,POST,PUT');
+  setAPIRouteHeaders(res, 'GET,DELETE,PATCH,POST,PUT', req);
 
   return res.status(200).send(result.data);
 };

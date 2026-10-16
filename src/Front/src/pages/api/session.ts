@@ -7,6 +7,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const session = await getServerSession(req, res, authOptions);
-  setAPIRouteHeaders(res, 'GET,DELETE,PATCH,POST,PUT');
+  setAPIRouteHeaders(res, 'GET,DELETE,PATCH,POST,PUT', req);
   return res.status(200).send({ session: session });
 }

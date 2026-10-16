@@ -25,7 +25,17 @@ const sanitizeErrorMessage = (message?: string): string => {
 };
 
 const data = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
-  setAPIRouteHeaders(res, 'POST');
+  setAPIRouteHeaders(res, 'POST', req);
+
+  if (req.method === 'OPTIONS') {
+    res.status(204).end();
+    return;
+  }
+
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+    return res.status(405).send({ message: 'Method not allowed' });
+  }
 
   const { headers, body } = req;
   const { query, variables } = body;

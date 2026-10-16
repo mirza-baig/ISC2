@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { setAPIRouteHeaders } from 'utils/index';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  setAPIRouteHeaders(res, 'POST');
+  setAPIRouteHeaders(res, 'POST', req);
   const { externalID, email } = req.query;
   const preferences = req.body;
 

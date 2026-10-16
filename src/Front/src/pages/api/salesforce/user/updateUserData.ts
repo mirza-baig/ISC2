@@ -143,7 +143,7 @@ function validateAndSanitizeUserData(userData: Record<string, unknown>): {
 }
 
 export default async function updateUserData(req: NextApiRequest, res: NextApiResponse) {
-  setAPIRouteHeaders(res, 'POST');
+  setAPIRouteHeaders(res, 'POST', req);
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });

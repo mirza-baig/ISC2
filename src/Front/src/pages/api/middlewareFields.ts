@@ -20,14 +20,14 @@ export const schema = z.object({
     .refine(isUrlPath, 'page contains characters that are not valid in a url path'),
 });
 
-export const handler: ValidatedHandler<z.infer<typeof schema>> = async (input, _req, res) => {
+export const handler: ValidatedHandler<z.infer<typeof schema>> = async (input, req, res) => {
   const result = await postSitecoreGraphQL(MIDDLEWARE_LAYOUT_FIELDS, {
     site: MIDDLEWARE_LAYOUT_SITE,
     routePath: input.page,
     language: 'en',
   });
 
-  setAPIRouteHeaders(res, 'GET,DELETE,PATCH,POST,PUT');
+  setAPIRouteHeaders(res, 'GET,DELETE,PATCH,POST,PUT', req);
 
   const maxAge = process.env.MIDDLEWARE_FIELDS_CACHE_MAX_AGE || '300';
   const swr = process.env.MIDDLEWARE_FIELDS_CACHE_SWR || '600';

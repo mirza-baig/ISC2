@@ -5,8 +5,8 @@ import { setAPIRouteHeaders } from 'utils/apiUtils';
 import { SERVICE_LAYER_AUTH } from 'lib/service-layer-queries/auth';
 import { APIM_SUBSCRIPTION_KEY } from 'constants/index';
 
-const auth = async (_req: NextApiRequest, res: NextApiResponse): Promise<void> => {
-  setAPIRouteHeaders(res, 'GET');
+const auth = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
+  setAPIRouteHeaders(res, 'GET', req);
 
   if (!process.env.SERVICE_LAYER_ENDPOINT) {
     return res.status(500).send('Invalid GraphQL endpoint');

@@ -150,7 +150,7 @@ const getCachedProductSearch = unstable_cache(
 );
 
 export default async function productFormSearch(req: NextApiRequest, res: NextApiResponse) {
-  setAPIRouteHeaders(res, 'GET,DELETE,PATCH,POST,PUT,OPTIONS');
+  setAPIRouteHeaders(res, 'GET,DELETE,PATCH,POST,PUT,OPTIONS', req);
   const startTime = Date.now();
   const { body } = req;
   const requestId = `product_search_${Date.now()}_${Math.random().toString(36).substring(7)}`;

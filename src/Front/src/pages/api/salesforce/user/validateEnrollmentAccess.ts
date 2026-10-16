@@ -14,7 +14,7 @@ interface EnrollmentValidationResponse {
 }
 
 export default async function validateEnrollmentAccess(req: NextApiRequest, res: NextApiResponse) {
-  setAPIRouteHeaders(res, 'POST');
+  setAPIRouteHeaders(res, 'POST', req);
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
