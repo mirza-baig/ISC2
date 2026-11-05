@@ -117,7 +117,7 @@ const sanitizeFilename = (filename: string): string => {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  setAPIRouteHeaders(res, 'GET', req);
+  setAPIRouteHeaders(res, 'GET');
 
   if (req.method !== 'GET') {
     return res.status(405).end();

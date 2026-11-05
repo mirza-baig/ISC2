@@ -49,10 +49,10 @@ export type CPECredit = {
   certName: string;
   creditsApplied: number;
   creditsNeeded: number;
-  endDate: string | null;
+  endDate: string;
   image: string;
   percentComplete: number;
-  startDate: string | null;
+  startDate: string;
 };
 
 export type AllocationsLabels = {

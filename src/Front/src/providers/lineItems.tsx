@@ -1,11 +1,10 @@
 import { useIsFetching, useIsMutating } from '@tanstack/react-query';
 import { createContext, useCallback, useContext, useMemo } from 'react';
-import { SearchIndex } from 'algoliasearch';
+import algoliasearch, { SearchIndex } from 'algoliasearch';
 
 import { AlgoliaSettings, CartLineItem } from 'types/index';
 import { QUERY_KEYS } from 'constants/index';
 import { getPriceQuantityFor } from 'utils/index';
-import { createPublicSearchClient } from 'lib/algolia/credentials';
 
 type LineItemsContextProps = {
   isFetchingCart: boolean;
@@ -42,18 +41,14 @@ const LineItemsProvider: React.FC<LineItemsProviderProps> = ({ algoliaSettings, 
 
   const algoliaIndex = useMemo(() => {
     const {
-      algoliaDetails: { algoliaIndexName },
+      algoliaDetails: { algoliaApiKey, algoliaAppId, algoliaIndexName },
     } = algoliaSettings;
 
-    // Credentials come from the environment, not from the Sitecore item — see
-    // src/lib/algolia/credentials.ts (finding H-04). The index name is still content.
-    const client = createPublicSearchClient();
-
-    if (!client || !algoliaIndexName?.value) {
+    if (!algoliaApiKey?.value || !algoliaAppId?.value || !algoliaIndexName.value) {
       return null;
     }
 
-    return client.initIndex(algoliaIndexName.value);
+    return algoliasearch(algoliaAppId.value, algoliaApiKey.value).initIndex(algoliaIndexName.value);
   }, [algoliaSettings]);
 
   return (

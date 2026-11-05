@@ -13,22 +13,10 @@ export namespace CPECredit {
   };
 }
 
-const formatDate = (date?: string | null) => {
-  if (!date) {
-    return '';
-  }
-
+const formatDate = (date: string) => {
   const formattedDate = parseISO(date);
 
   return `${format(formattedDate, 'MMM')} ${format(formattedDate, 'yyyy')}`;
-};
-
-const formatDateRange = (startDate: string, endDate: string) => {
-  if (startDate && endDate) {
-    return `${startDate} - ${endDate}`;
-  }
-
-  return startDate || endDate;
 };
 
 const CONTAINER_CLASSES = {
@@ -47,7 +35,6 @@ export const CPECredit = ({
 }: CPECredit.Props) => {
   const startDate = formatDate(cpeCredit.startDate);
   const endDate = formatDate(cpeCredit.endDate);
-  const dateRange = formatDateRange(startDate, endDate);
 
   const getImageSrc = () => {
     const src = extractSrc(cpeCredit.image);
@@ -107,7 +94,9 @@ export const CPECredit = ({
         </div>
 
         <div className="flex flex-col w-full md:flex-1 space-y-2">
-          {dateRange && <label className="text-gray-90 font-semibold body-s">{dateRange}</label>}
+          <label className="text-gray-90 font-semibold body-s">
+            {startDate} - {endDate}
+          </label>
           <span className="bg-gray-30 rounded-lg w-full h-5 relative overflow-hidden">
             <span className="bg-lime absolute left-0 h-full" style={{ width: `${percentage}%` }} />
           </span>

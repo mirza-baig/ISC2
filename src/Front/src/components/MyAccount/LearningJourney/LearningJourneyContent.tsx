@@ -48,40 +48,17 @@ const LearningJourneyContent = ({ fields }: LeaningJourneyProps) => {
         });
       }
 
-      if (productType === EXAM_VALUE) {
-        if (productInfo.dateTime) {
-          productLabels.push({
-            title: labels.date,
-            content: formatDate({ value: productInfo.dateTime }),
-          });
-        }
-
-        if (productInfo.endDate) {
-          productLabels.push({
-            title: labels.expirationDateLabel,
-            content: formatDate({ value: productInfo.endDate }),
-          });
-        }
-
-        if (specialAccommodationsEnabled) {
-          const activeSAs = (specialAccommodations ?? []).filter(
-            (sa) => sa.status.toLowerCase() === 'active'
-          );
-
-          activeSAs.forEach((sa) => {
-            productLabels.push({
-              title: labels.specialAccommodationsTitle,
-              content: sa.expirationDate
-                ? `${sa.name} - ${labels.saExpirationDateLabel}: ${formatDate({
-                    value: sa.expirationDate,
-                  })}`
-                : sa.name,
-            });
-          });
-        }
-      } else if (productInfo.startDate && productInfo.endDate) {
+      // For exams, use dateTime field if available
+      if (productType === EXAM_VALUE && productInfo.dateTime) {
         productLabels.push({
-          title: labels?.accessPeriod,
+          title: labels.date,
+          content: formatDate({ value: productInfo.dateTime }),
+        });
+      }
+      // For non-exam products or exams without dateTime, use existing logic
+      else if (productInfo.startDate && productInfo.endDate) {
+        productLabels.push({
+          title: productType === EXAM_VALUE ? labels?.schedulePeriod : labels?.accessPeriod,
           content: `${formatDate({ value: productInfo.startDate })} - ${formatDate({
             value: productInfo.endDate,
           })}`,
@@ -90,6 +67,23 @@ const LearningJourneyContent = ({ fields }: LeaningJourneyProps) => {
         productLabels.push({
           title: labels.date,
           content: formatDate({ value: productInfo.startDate }),
+        });
+      }
+
+      if (specialAccommodationsEnabled && productType === EXAM_VALUE) {
+        const activeSAs = (specialAccommodations ?? []).filter(
+          (sa) => sa.status.toLowerCase() === 'active'
+        );
+
+        activeSAs.forEach((sa) => {
+          productLabels.push({
+            title: labels.specialAccommodationsTitle,
+            content: sa.expirationDate
+              ? `${sa.name} - ${labels.saExpirationDateLabel}: ${formatDate({
+                  value: sa.expirationDate,
+                })}`
+              : sa.name,
+          });
         });
       }
 
@@ -103,8 +97,8 @@ const LearningJourneyContent = ({ fields }: LeaningJourneyProps) => {
       productStatus: LearningJourneyElement['productStatus'],
       productType: string,
       elementIndex: number,
-      error: LearningJourneyElement['error'],
-      specialAccommodations: LearningJourneyElement['specialAccommodations']
+      specialAccommodations: LearningJourneyElement['specialAccommodations'],
+      error: LearningJourneyElement['error']
     ) => {
       if (!productStatus) {
         return null;
@@ -179,7 +173,7 @@ const LearningJourneyContent = ({ fields }: LeaningJourneyProps) => {
         'enrolled',
         'client revoked',
       ];
-      const grayStatuses = ['no show', 'refused', 'enrolled', 'client revoked'];
+      const grayStatuses = ['no show', 'refused', 'enrolled', 'client revoked', 'taken'];
 
       const pillType =
         status === 'failed'
@@ -212,7 +206,7 @@ const LearningJourneyContent = ({ fields }: LeaningJourneyProps) => {
   const cardsContent = useMemo(
     () =>
       elements.map((learningJourneyElement, index) => {
-        const { productInfo, productStatus, productType, error, specialAccommodations } =
+        const { productInfo, productStatus, productType, specialAccommodations, error } =
           learningJourneyElement;
         const productImage = algoliaBulkData?.find(
           (product) => product.objectID === productInfo.key
@@ -221,7 +215,7 @@ const LearningJourneyContent = ({ fields }: LeaningJourneyProps) => {
         return {
           name: productInfo.name,
           labels: getLabelsForProduct(learningJourneyElement),
-          cta: getCtaForProduct(productStatus, productType, index, error, specialAccommodations),
+          cta: getCtaForProduct(productStatus, productType, index, specialAccommodations, error),
           image: {
             src: productImage?.thumbnailImage,
             alt: productInfo.name,

@@ -52,11 +52,15 @@ describe('paymentEligibility', () => {
       expect(isPrepaidAccountEligible(account, 50, today)).toBe(false);
     });
 
-    it('is true when prepaid expires today', () => {
-      expect(isPrepaidUnexpired('2026-08-18', today)).toBe(true);
+    it('is false when prepaid expires today', () => {
+      expect(isPrepaidUnexpired('2026-08-18', today)).toBe(false);
       const account = eligibleAccount();
       account.prepaid = { expirationDate: '2026-08-18', balance: 50 };
-      expect(isPrepaidAccountEligible(account, 50, today)).toBe(true);
+      expect(isPrepaidAccountEligible(account, 50, today)).toBe(false);
+    });
+
+    it('is true when prepaid expires tomorrow', () => {
+      expect(isPrepaidUnexpired('2026-08-19', today)).toBe(true);
     });
 
     it('is false when balance is below the cart total', () => {

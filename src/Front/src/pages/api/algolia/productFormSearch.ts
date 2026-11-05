@@ -122,8 +122,6 @@ const getProductSearchResults = async ({
     facetFilters,
     facets: PRODUCT_FORM_FACETS,
     attributesToRetrieve: PRODUCT_FORM_ATTRIBUTES,
-    // The query is always empty, so highlighting only adds a duplicate copy of the matched
-    // attributes to every hit.
     attributesToHighlight: [],
     hitsPerPage: resolveHitsPerPage({ facets, productIds, skus, productKeys }),
   });
@@ -138,7 +136,24 @@ const getProductSearchResults = async ({
 const getCachedProductSearch = unstable_cache(
   async (_cacheKey: string, params: SearchParams): Promise<CachedData> => {
     const cachedAt = new Date().toISOString();
+    const fetchStartTime = Date.now();
+
+    console.log('[CACHE] Fetching from Algolia | Product Search', {
+      facets: params.facets,
+      productIds: params.productIds?.length || 0,
+      skus: params.skus?.length || 0,
+      productKeys: params.productKeys?.length || 0,
+    });
+
     const results = await getProductSearchResults(params);
+    const fetchDuration = Date.now() - fetchStartTime;
+
+    const dataSize = JSON.stringify(results).length;
+    const sizeKB = (dataSize / 1024).toFixed(2);
+
+    console.log(
+      `[CACHE] Algolia fetch complete | Product Search | Results: ${results.hits.length} products | Size: ${sizeKB}KB | Time: ${fetchDuration}ms`
+    );
 
     return { results, cachedAt };
   },
@@ -150,7 +165,7 @@ const getCachedProductSearch = unstable_cache(
 );
 
 export default async function productFormSearch(req: NextApiRequest, res: NextApiResponse) {
-  setAPIRouteHeaders(res, 'GET,DELETE,PATCH,POST,PUT,OPTIONS', req);
+  setAPIRouteHeaders(res, 'GET,DELETE,PATCH,POST,PUT,OPTIONS');
   const startTime = Date.now();
   const { body } = req;
   const requestId = `product_search_${Date.now()}_${Math.random().toString(36).substring(7)}`;
@@ -174,6 +189,13 @@ export default async function productFormSearch(req: NextApiRequest, res: NextAp
 
     const isCached = totalDuration < 200;
     const cacheStatus = isCached ? 'CACHED' : 'FRESH';
+
+    const dataSize = JSON.stringify(cachedData.results).length;
+    const sizeKB = (dataSize / 1024).toFixed(2);
+
+    console.log(
+      `[PRODUCT-SEARCH-API] ${cacheStatus} | Request ID: ${requestId} | Results: ${cachedData.results.hits.length} products | Size: ${sizeKB}KB | Time: ${totalDuration}ms`
+    );
 
     const now = new Date();
     const expiresAt = new Date(now.getTime() + CACHE_TTL * 1000);

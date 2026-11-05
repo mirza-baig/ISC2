@@ -2,7 +2,12 @@ import { useMemo } from 'react';
 import { Field, ImageField } from '@sitecore-jss/sitecore-jss-nextjs';
 
 import { useAutocomplete } from 'providers/index';
-import { SearchModalAlgoliaSettings, SearchModalLinks, SearchModalUserSection } from 'types/index';
+import {
+  SearchModalAlgoliaSettings,
+  SearchModalLink,
+  SearchModalLinks,
+  SearchModalUserSection,
+} from 'types/index';
 
 import useLoggedUser from './useLoggedUser';
 
@@ -15,12 +20,18 @@ const DEFAULT_SECTION = {
   links: [],
 };
 
+const filterMapLinks = (items: SearchModalLink[] | undefined) =>
+  (items || []).filter((i) => i.link?.item).map((i) => i.link.item);
+
+const matchesSectionType = (item: SearchModalLinks, sectionType: SectionType) =>
+  item.sectionType?.item?.type?.value === sectionType;
+
 const getSection = (algoliaDetails: AlgoliaDetails, sectionType: SectionType) => {
   const { navigationItemsDataSource } = algoliaDetails.searchModalNavigationItems;
 
   if (navigationItemsDataSource) {
-    const section = navigationItemsDataSource.navigationItemsList.items.find(
-      (item) => item.sectionType?.item?.type?.value === sectionType
+    const section = navigationItemsDataSource.navigationItemsList.items.find((item) =>
+      matchesSectionType(item, sectionType)
     );
 
     return section;
@@ -35,33 +46,32 @@ const getSectionByType = (algoliaDetails: AlgoliaDetails, sectionType: SectionTy
   if (section) {
     return {
       title: section.sectionTitle,
-      links: (section.sectionLinks?.items || [])
-        .filter((items) => items.link?.item)
-        .map((items) => items.link.item),
+      links: filterMapLinks(section.sectionLinks?.items),
     };
   }
 
   return DEFAULT_SECTION;
 };
 
+type ProductSuggestionItem = {
+  url: { path: string };
+  productImage: { item: ImageField };
+  productName: Field<string>;
+  productType: { item: { type: Field<string> } };
+};
+
 type ProductsRecommendationsSection = SearchModalLinks & {
   sectionFallbackProductsList?: {
-    targetItems?: Array<{
-      url: {
-        path: string;
-      };
-      productImage: {
-        item: ImageField;
-      };
-      productName: Field<string>;
-      productType: {
-        item: {
-          type: Field<string>;
-        };
-      };
-    }>;
+    targetItems?: ProductSuggestionItem[];
   };
 };
+
+const mapProductSuggestion = (link: ProductSuggestionItem) => ({
+  title: link.productName.value,
+  thumbnailImage: link.productImage?.item?.value?.src || '',
+  productType: link.productType.item.type.value || '',
+  url: link.url.path,
+});
 
 const getProductRecommendationsDefaultSuggestions = (section: ProductsRecommendationsSection) => {
   if (!section.sectionFallbackProductsList?.targetItems?.length) {
@@ -70,12 +80,7 @@ const getProductRecommendationsDefaultSuggestions = (section: ProductsRecommenda
 
   return section.sectionFallbackProductsList.targetItems
     .filter((link) => link.productType?.item?.type?.value)
-    .map((link) => ({
-      title: link.productName.value,
-      thumbnailImage: link.productImage?.item?.value?.src || '',
-      productType: link.productType.item.type.value || '',
-      url: link.url.path,
-    }));
+    .map(mapProductSuggestion);
 };
 
 const getProductRecommendationsSection = (algoliaDetails: AlgoliaDetails) => {
@@ -87,9 +92,7 @@ const getProductRecommendationsSection = (algoliaDetails: AlgoliaDetails) => {
   if (section) {
     return {
       title: section.sectionTitle,
-      links: (section.sectionLinks?.items || [])
-        .filter((items) => items.link?.item)
-        .map((items) => items.link.item),
+      links: filterMapLinks(section.sectionLinks?.items),
       defaultSuggestions: getProductRecommendationsDefaultSuggestions(section),
     };
   }
@@ -112,9 +115,7 @@ const getSectionByUserRole = (
     if (userRoleSection) {
       return {
         title: userRoleSection.userSectionName,
-        links: (userRoleSection.userSectionLinks?.items || [])
-          .filter((item) => item.link?.item)
-          .map((item) => item.link.item),
+        links: filterMapLinks(userRoleSection.userSectionLinks?.items),
       };
     }
   }

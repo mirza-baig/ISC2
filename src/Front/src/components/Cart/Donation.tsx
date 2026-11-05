@@ -145,17 +145,6 @@ const Donation = () => {
   const [variants, setVariants] = useState<ProductHit[] | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<ProductHit | null>(null);
   const [donationProductKey, setDonationProductKey] = useState<string | null>(null);
-
-  // DEBUG: Log donation component state
-  console.log('[Donation] Component state:', {
-    cartId: activeCart.id,
-    isB2BAdminUser,
-    isB2B: activeCart.computed.isB2B,
-    optionalDonationProductKey: fields?.optionalDonationProductKey?.value,
-    donationProductKey,
-    variantsCount: variants?.length,
-    isGettingStandalonePrices,
-  });
   const priceRoleKey = useMemo(() => {
     return isUserMember
       ? CUSTOMER_PRICING_GROUP_MAP.MEMBERS
@@ -167,71 +156,33 @@ const Donation = () => {
   }, [isUserMember, isUserCandidate, isUserAssociate]);
 
   const getDonationVariantsData = useCallback(
-    async (productKeyToFetch: string) => {
-      console.log('[Donation] Fetching variants for productKey:', productKeyToFetch);
-      console.log(
-        '[Donation] API URL:',
-        `${process.env.PUBLIC_URL}/${process.env.NEXT_PUBLIC_ALGOLIA_API_PATH}/productFormSearch`
-      );
-      try {
-        const response = await getProductSelectorSearchResult({
-          facets: [],
-          productKeys: [productKeyToFetch],
-        });
+    async (donationProductKey: string) => {
+      const response = await getProductSelectorSearchResult({
+        facets: [],
+        productKeys: [donationProductKey],
+      });
 
-        console.log('[Donation] Variants response:', {
-          productKey: productKeyToFetch,
-          response,
-          hitsCount: response?.hits?.length,
-          hits: response?.hits,
-          facets: response?.facets,
-        });
-
-        if (!response?.hits || response?.hits?.length === 0) {
-          console.log('[Donation] No hits found or empty hits array, setting error');
-          console.log(
-            '[Donation] This likely means the product key does not exist in Algolia index'
-          );
-          console.log('[Donation] Product key searched:', productKeyToFetch);
-          setError(labels.donationsFetchErrorMessage);
-          return;
-        }
-
-        console.log('[Donation] Setting variants:', response.hits);
-        setVariants(response.hits);
-      } catch (err) {
-        console.error('[Donation] Error fetching variants:', err);
+      if (!response?.hits) {
         setError(labels.donationsFetchErrorMessage);
+        return;
       }
+
+      setVariants(response?.hits || []);
     },
     [labels]
   );
 
   useEffect(() => {
-    const productKey = fields?.optionalDonationProductKey?.value;
-    console.log('[Donation] useEffect triggered for fetching variants:', {
-      optionalDonationProductKey: productKey,
-      currentDonationProductKey: donationProductKey,
-      hasVariants: Boolean(variants?.length),
-    });
-
-    if (productKey) {
-      // Only fetch if we don't have variants yet OR if the product key changed
-      if (!variants && donationProductKey !== productKey) {
-        console.log('[Donation] Product key changed or no variants, triggering fetch');
-        setDonationProductKey(productKey);
-        getDonationVariantsData(productKey);
-      } else if (!variants && donationProductKey === productKey) {
-        // Key is same but we have no variants - retry fetch
-        console.log('[Donation] No variants loaded yet, retrying fetch for:', productKey);
-        getDonationVariantsData(productKey);
-      } else {
-        console.log('[Donation] Variants already loaded, skipping fetch');
-      }
-    } else {
-      console.log('[Donation] No optionalDonationProductKey value in fields');
+    if (fields?.optionalDonationProductKey?.value) {
+      setDonationProductKey((key) => {
+        if (key === fields?.optionalDonationProductKey?.value) {
+          return key;
+        }
+        getDonationVariantsData(fields?.optionalDonationProductKey?.value);
+        return fields?.optionalDonationProductKey?.value;
+      });
     }
-  }, [fields?.optionalDonationProductKey?.value]);
+  }, [setDonationProductKey, getDonationVariantsData, fields?.optionalDonationProductKey?.value]);
 
   useEffect(() => {
     addSkuToPricingQueue(variants?.map((item) => item.sku) || []);
@@ -284,108 +235,84 @@ const Donation = () => {
   }, [variants?.length]);
 
   if (isB2BAdminUser || activeCart.computed.isB2B || isAlreadyAddedDonation) {
-    // DEBUG: Log why donation is hidden
-    console.log('[Donation] Hidden - early return:', {
-      isB2BAdminUser,
-      isB2B: activeCart.computed.isB2B,
-      isAlreadyAddedDonation,
-    });
     return null;
   }
 
-  // DEBUG: Log render conditions
-  const shouldRenderDonationBox =
-    Boolean(activeCart.id) && fields?.optionalDonationProductKey?.value && donationProductKey;
-
-  console.log('[Donation] Render conditions:', {
-    hasCartId: Boolean(activeCart.id),
-    hasOptionalDonationProductKey: Boolean(fields?.optionalDonationProductKey?.value),
-    hasDonationProductKey: Boolean(donationProductKey),
-    shouldRenderDonationBox,
-  });
-
-  // DEBUG: Log loading indicator conditions
-  const showLoadingIndicator = (!error || isGettingStandalonePrices) && !variants?.length;
-  console.log('[Donation] Loading indicator check:', {
-    error,
-    isGettingStandalonePrices,
-    variantsLength: variants?.length,
-    showLoadingIndicator,
-  });
-
   return (
     <>
-      {shouldRenderDonationBox && (
-        <div className="bg-gray-10 border border-gray-30 px-6 py-7.5 space-y-7.5 text-black-100 body-m rounded-lg">
-          {showLoadingIndicator && (
-            <div className="flex items-center justify-center">
-              <LoadingIndicator />
-            </div>
-          )}
-          {!variants?.length && error && !isGettingStandalonePrices && (
-            <p className="text-red-error body-s">{error}</p>
-          )}
-          {Boolean(variants?.length) && !isGettingStandalonePrices && (
-            <>
-              <div>
-                {labels?.donationsCheckboxLabel && (
-                  <label htmlFor="apply-donation" className="cursor-pointer">
-                    {labels?.donationsCheckboxLabel}
-                  </label>
-                )}
+      {Boolean(activeCart.id) &&
+        fields?.optionalDonationProductKey?.value &&
+        donationProductKey && (
+          <div className="bg-gray-10 border border-gray-30 px-6 py-7.5 space-y-7.5 text-black-100 body-m rounded-lg">
+            {(!error || isGettingStandalonePrices) && !variants?.length && (
+              <div className="flex items-center justify-center">
+                <LoadingIndicator />
               </div>
-              <div>
-                {labels?.donationsOptionsListLabel && (
-                  <p className="mb-5 font-bold">{labels?.donationsOptionsListLabel}</p>
-                )}
-                <ul
-                  className={clsx(
-                    'flex flex-wrap w-full',
-                    isVariantLargeAmount && 'lg:justify-between'
+            )}
+            {!variants?.length && error && !isGettingStandalonePrices && (
+              <p className="text-red-error body-s">{error}</p>
+            )}
+            {Boolean(variants?.length) && !isGettingStandalonePrices && (
+              <>
+                <div>
+                  {labels?.donationsCheckboxLabel && (
+                    <label htmlFor="apply-donation" className="cursor-pointer">
+                      {labels?.donationsCheckboxLabel}
+                    </label>
                   )}
-                >
-                  {variants
-                    ?.sort((a: ProductHit, b: ProductHit) => {
-                      const priceA = productPrices?.[a.sku]?.[priceRoleKey]?.value?.centAmount;
-                      const priceB = productPrices?.[b.sku]?.[priceRoleKey]?.value?.centAmount;
-                      return priceA - priceB;
-                    })
-                    .map((item, index) => (
-                      <DonationOption
-                        key={index}
-                        fields={{
-                          index,
-                          item,
-                          label: labels.donationsCustomAmountLabel,
-                          selectedVariant,
-                          setSelectedVariant,
-                          setSelectedPrice,
-                          price: productPrices?.[item.sku]?.[priceRoleKey]?.value,
-                          widthClass: clsx(
-                            'flex relative space-x-2 items-center',
-                            'w-full sm:w-1/2 md:w-1/3 lg:w-auto',
-                            isVariantLargeAmount ? 'pr-4' : 'pr-6'
-                          ),
-                        }}
-                      />
-                    ))}
-                </ul>
-              </div>
-              {error && <p className="text-red-error body-s">{error}</p>}
-              <div>
-                <button
-                  className="primary-cta min-w-40 p-4 page-link bold-link text-center"
-                  onClick={handleAddDonation}
-                  disabled={isAddingToCart}
-                  aria-label={labels.donationsSubmitButtonLabel}
-                >
-                  {labels.donationsSubmitButtonLabel}
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      )}
+                </div>
+                <div>
+                  {labels?.donationsOptionsListLabel && (
+                    <p className="mb-5 font-bold">{labels?.donationsOptionsListLabel}</p>
+                  )}
+                  <ul
+                    className={clsx(
+                      'flex flex-wrap w-full',
+                      isVariantLargeAmount && 'lg:justify-between'
+                    )}
+                  >
+                    {variants
+                      ?.sort((a: ProductHit, b: ProductHit) => {
+                        const priceA = productPrices?.[a.sku]?.[priceRoleKey]?.value?.centAmount;
+                        const priceB = productPrices?.[b.sku]?.[priceRoleKey]?.value?.centAmount;
+                        return priceA - priceB;
+                      })
+                      .map((item, index) => (
+                        <DonationOption
+                          key={index}
+                          fields={{
+                            index,
+                            item,
+                            label: labels.donationsCustomAmountLabel,
+                            selectedVariant,
+                            setSelectedVariant,
+                            setSelectedPrice,
+                            price: productPrices?.[item.sku]?.[priceRoleKey]?.value,
+                            widthClass: clsx(
+                              'flex relative space-x-2 items-center',
+                              'w-full sm:w-1/2 md:w-1/3 lg:w-auto',
+                              isVariantLargeAmount ? 'pr-4' : 'pr-6'
+                            ),
+                          }}
+                        />
+                      ))}
+                  </ul>
+                </div>
+                {error && <p className="text-red-error body-s">{error}</p>}
+                <div>
+                  <button
+                    className="primary-cta min-w-40 p-4 page-link bold-link text-center"
+                    onClick={handleAddDonation}
+                    disabled={isAddingToCart}
+                    aria-label={labels.donationsSubmitButtonLabel}
+                  >
+                    {labels.donationsSubmitButtonLabel}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
     </>
   );
 };

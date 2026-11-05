@@ -6,7 +6,7 @@ export namespace PaymentMethodSection {
   export type Props = {
     isActive: boolean;
     title: string;
-    children?: ReactNode;
+    children: ReactNode;
   };
 }
 

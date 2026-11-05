@@ -9,7 +9,9 @@ import { CurrencyCodes, getCurrencyByCountryCode } from 'utils/currencies';
 
 import { useUserSession } from './userSession';
 import { useShopperContext } from './shopperContext';
-import { FREE_PRICE } from 'constants/index';
+import { B2B_FEATURE_FLAG, FREE_PRICE } from 'constants/index';
+import { resolveAccountCurrency } from 'lib/authorizedBuyer';
+import { useFeatureFlag } from './featureFlags';
 
 type CartContextProps = {
   activeCart: CartWithComputedData;
@@ -52,7 +54,12 @@ const CartProvider: React.FC<CartProviderProps> = ({ id, children, overrideWithC
     setIsCurrencyManualOverride,
   } = useUserSession();
   const { shopperContext } = useShopperContext();
+  const isB2BFlowEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   const isAuthorizedBuyerSession = shopperContext?.type === 'organization';
+  const accountCurrency =
+    isB2BFlowEnabled && isAuthorizedBuyerSession
+      ? resolveAccountCurrency(shopperContext?.organization?.currency)
+      : undefined;
 
   const getPayloadForUserActiveCart = useCallback(() => {
     if (Boolean(cartId)) {
@@ -124,6 +131,10 @@ const CartProvider: React.FC<CartProviderProps> = ({ id, children, overrideWithC
           return;
         }
 
+        if (accountCurrency) {
+          return;
+        }
+
         const countryCurrency = getCurrencyByCountryCode(userCountry);
         if (countryCurrency !== currencyCode) {
           syncCurrencyCode(countryCurrency);
@@ -132,6 +143,7 @@ const CartProvider: React.FC<CartProviderProps> = ({ id, children, overrideWithC
       },
     };
   }, [
+    accountCurrency,
     cartId,
     currencyCode,
     getPayloadForUserActiveCart,
@@ -146,6 +158,31 @@ const CartProvider: React.FC<CartProviderProps> = ({ id, children, overrideWithC
   ]);
 
   const { activeCart, isGettingCart, cartError, getCartSuccess } = useGetCart(getCartPayload);
+
+  const hasCartLineItems = Boolean(activeCart?.lineItems?.length);
+
+  useEffect(() => {
+    if (
+      !accountCurrency ||
+      id ||
+      overrideWithCart ||
+      !getCartSuccess ||
+      hasCartLineItems ||
+      isCurrencyManualOverride
+    ) {
+      return;
+    }
+
+    syncCurrencyCode(accountCurrency);
+  }, [
+    accountCurrency,
+    getCartSuccess,
+    hasCartLineItems,
+    id,
+    isCurrencyManualOverride,
+    overrideWithCart,
+    syncCurrencyCode,
+  ]);
 
   const isSessionCart = !id && !overrideWithCart && Boolean(cartId);
 

@@ -1,9 +1,12 @@
-import { ChangeEvent, useMemo, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import clsx from 'clsx';
 
 import { useCreditHoldMessage, useLoggedUser } from 'hooks/index';
 import { DangerIcon, QuestionIcon } from 'icons/index';
-import { useShopperContext } from 'providers/index';
+import { useShopperContext, useUserSession } from 'providers/index';
+import { resolveAccountCurrency } from 'lib/authorizedBuyer';
+import { fetchB2BLabels } from 'providers/b2bLabels';
 import type { ShopperOrganization } from 'providers/shopperContext';
 import { Button } from 'ui/index';
 
@@ -17,17 +20,24 @@ const RADIO_CLASS =
 export type ShopperContextModalContentProps = {
   organizations: ShopperOrganization[];
   onConfirm: () => void;
-  onCancel: () => void;
 };
 
 export default function ShopperContextModalContent({
   organizations,
   onConfirm,
-  onCancel,
 }: ShopperContextModalContentProps) {
   const { user } = useLoggedUser();
   const { setShopperContext } = useShopperContext();
+  const { setIsCurrencyManualOverride } = useUserSession();
   const creditHoldMessage = useCreditHoldMessage();
+  const router = useRouter();
+
+  const redirectUrlRef = useRef<Promise<string | undefined> | null>(null);
+  useEffect(() => {
+    redirectUrlRef.current = fetchB2BLabels().then(
+      (groups) => groups.shopperContext?.postSelectionLinkUrl || undefined
+    );
+  }, []);
 
   const userDisplayName = useMemo(() => {
     if (user?.firstName) {
@@ -69,8 +79,18 @@ export default function ShopperContextModalContent({
       return;
     }
 
+    if (resolveAccountCurrency(selectedOrganization?.currency)) {
+      setIsCurrencyManualOverride(false);
+    }
+
     setShopperContext({ type: 'organization', organization: selectedOrganization });
     onConfirm();
+
+    redirectUrlRef.current?.then((url) => {
+      if (url && url !== router.asPath.split(/[?#]/)[0]) {
+        void router.push(url);
+      }
+    });
   };
 
   return (
@@ -166,15 +186,7 @@ export default function ShopperContextModalContent({
             </div>
           )}
 
-          <div className="flex justify-center items-center gap-x-6 mt-2">
-            <button
-              type="button"
-              aria-label="Cancel"
-              className="body-m text-sm text-black-100 hover:underline"
-              onClick={onCancel}
-            >
-              Cancel
-            </button>
+          <div className="flex justify-center items-center mt-2">
             <Button
               variant="primary"
               label="Confirm Shopper"

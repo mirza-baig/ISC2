@@ -10,6 +10,7 @@ import { useStandalonePrices } from 'providers/index';
 import { LoadingIndicator } from 'ui/index';
 
 export type HitComparator = Parameters<Hit<SearchResultHit>[]['sort']>[0];
+// eslint-disable-next-line no-unused-vars -- Codacy runs base no-unused-vars on type-signature params
 export type HitPredicate = (hit: Hit<SearchResultHit>) => boolean;
 
 interface SearchInfiniteHitsProps {
@@ -49,6 +50,7 @@ interface SearchInfiniteHitsProps {
    *  row is queued for pricing under its own bundle SKU, sorts on its own price, and passes through
    *  `rowFilter`/`priceFilter` exactly like a real hit. Omit on every other page and the list stays
    *  one row per hit. */
+  // eslint-disable-next-line no-unused-vars -- Codacy runs base no-unused-vars on type-signature params
   rowExpand?: (_hits: Hit<SearchResultHit>[]) => Hit<SearchResultHit>[];
   /** B2B PLP: reports how many hits actually survive the client-side `priceFilter`, so the results
    *  total can show the filtered figure instead of Algolia's (which cannot know about a filter

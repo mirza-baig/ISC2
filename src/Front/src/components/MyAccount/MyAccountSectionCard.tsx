@@ -17,7 +17,7 @@ export interface MyAccountSectionCardFields {
     supportingLinkLabel?: string;
     supportingLinkPostText?: string;
   };
-  isHalfCard?: boolean;
+  isHalfCard?: boolean; // Half width cards have a slighty different styling
   withBorder?: boolean;
   imagesAreLoading?: boolean;
 }
@@ -102,27 +102,23 @@ const MyAccountSectionCard = ({ fields }: MyAccountSectionCardProps) => {
                   )}
                 </div>
               ) : (
-                <div className="flex flex-col items-center">
-                  <a
-                    href={cta.href}
-                    target={cta.target}
-                    className="block w-max cta primary-cta px-4 sm:px-8 text-sm-base"
-                  >
-                    {cta.label}
-                  </a>
-                  {cta.supportingText && (
-                    <p className="text-xs text-gray-70 mt-1 text-center">{cta.supportingText}</p>
-                  )}
-                </div>
+                <a
+                  href={cta.href}
+                  target={cta.target}
+                  className="block w-max cta primary-cta px-4 sm:px-8 text-sm-base cursor-pointer"
+                >
+                  {cta.label}
+                </a>
               )
             ) : (
-              <div className="flex flex-col items-center">
+              <>
                 <span
                   className={clsx(
                     cta.type?.includes('pill')
                       ? [
                           cta.type,
                           'block w-max py-3 px-8 text-sm-base font-semibold tracking-tighter rounded-button',
+                          cta.disabled && 'disabled',
                         ]
                       : 'block w-max text-sm-base font-bold'
                   )}
@@ -131,9 +127,9 @@ const MyAccountSectionCard = ({ fields }: MyAccountSectionCardProps) => {
                   {cta.label}
                 </span>
                 {cta.supportingText && (
-                  <p className="text-xs text-gray-70 mt-1 text-center">{cta.supportingText}</p>
+                  <p className="text-xs text-gray-70 mt-1">{cta.supportingText}</p>
                 )}
-              </div>
+              </>
             )
           ) : null}
         </div>

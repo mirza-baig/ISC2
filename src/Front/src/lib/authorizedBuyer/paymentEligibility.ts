@@ -199,8 +199,8 @@ export const buildPrepaidOrderSummary = (
 };
 
 /**
- * Prepaid is unexpired through the end of its expiration day.
- * A date of today is still usable.
+ * Prepaid is unexpired only before its expiration day.
+ * A date of today or earlier is expired.
  */
 export const isPrepaidUnexpired = (expirationDate?: string | null, today: Date = new Date()) => {
   if (!expirationDate) {
@@ -213,7 +213,7 @@ export const isPrepaidUnexpired = (expirationDate?: string | null, today: Date =
     return false;
   }
 
-  return expiration >= todayDateOnly(today);
+  return expiration > todayDateOnly(today);
 };
 
 export const isBuyerAuthorizedForPrepaid = (account?: PaymentEligibilityAccount | null) =>

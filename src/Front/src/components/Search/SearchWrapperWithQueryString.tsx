@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Configure, InstantSearch, type UseConfigureProps } from 'react-instantsearch-hooks-web';
-import { createPublicSearchClient } from 'lib/algolia/credentials';
+import algoliasearch from 'algoliasearch';
 import type { Hit } from 'instantsearch.js';
 import { ComponentRendering, Field, RouteData } from '@sitecore-jss/sitecore-jss-nextjs';
 import { ComponentProps } from 'lib/component-props';
@@ -122,10 +122,13 @@ const SearchWrapperWithQueryString = ({ fields }: SearchWrapperWithQueryStringPr
     };
   }, [settingsRef]);
 
-  // Credentials come from the environment, not from /api/algoliaSettings — see
-  // src/lib/algolia/credentials.ts (finding H-04). The route still supplies the
-  // index names and labels.
-  const searchClient = useMemo(() => createPublicSearchClient(), []);
+  const searchClient = useMemo(() => {
+    if (!settings?.algoliaApiKey || !settings?.algoliaAppId) {
+      return null;
+    }
+
+    return algoliasearch(settings.algoliaAppId, settings.algoliaApiKey);
+  }, [settings?.algoliaApiKey, settings?.algoliaAppId]);
 
   const renderSearchHit = useCallback(
     (hit: Hit<SearchResultHit>, index: number, isFeatured: boolean) => {
@@ -241,7 +244,6 @@ const SearchWrapperWithQueryString = ({ fields }: SearchWrapperWithQueryStringPr
                   renderHit={renderSearchHit}
                   loadMoreButtonLabel={settings.showLoadMore ? settings.loadMoreLabel || '' : ''}
                   hideProductSuggestions={true}
-                  disableHitsSessionCache
                 />
               </div>
             </div>

@@ -45,12 +45,6 @@ interface ProfileProps {
       mfaSettingsText?: {
         value: string;
       };
-      mfaTitle?: {
-        value: string;
-      };
-      mfaDescription?: {
-        value: string;
-      };
     };
   };
 }

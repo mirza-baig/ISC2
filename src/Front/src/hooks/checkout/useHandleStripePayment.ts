@@ -9,6 +9,30 @@ import { buildCheckoutReturnUrl } from 'utils/checkoutReturnUrl';
 
 import useGetPaymentIntent from './useGetPaymentIntent';
 
+const isCancelledPaymentIntentError = (error: { code?: string; message?: string }): boolean => {
+  const cancelledCodes = ['payment_intent_unexpected_state', 'resource_missing'];
+
+  const cancelledMessages = [
+    'status of canceled',
+    'status of cancelled',
+    'has been canceled',
+    'has been cancelled',
+    'No such payment_intent',
+    'payment_method could not be updated',
+  ];
+
+  if (error.code && cancelledCodes.includes(error.code)) {
+    return true;
+  }
+
+  if (error.message) {
+    const lowerMessage = error.message.toLowerCase();
+    return cancelledMessages.some((msg) => lowerMessage.includes(msg.toLowerCase()));
+  }
+
+  return false;
+};
+
 export default function useHandleStripePayment() {
   const stripe = useStripe();
   const elements = useElements();
@@ -50,7 +74,15 @@ export default function useHandleStripePayment() {
     });
 
     if (result.error) {
-      return { status: 'failed' };
+      if (isCancelledPaymentIntentError(result.error)) {
+        return {
+          status: 'failed',
+          errorType: 'CANCELLED_PAYMENT_INTENT',
+          requiresNewPaymentIntent: true,
+        };
+      }
+
+      return { status: 'failed', errorType: 'GENERIC_ERROR' };
     }
 
     return {

@@ -13,22 +13,14 @@ export default function useCreateOrderFromCart() {
     mutationFn: async (payload: PaymentConfirmationPayload | null) => {
       const api = await getServiceLayerAPI();
 
-      const cartID = (payload && 'cartID' in payload && payload.cartID) || activeCart.id;
-      const input: { cartID: string; intentPaymentId?: string; paymentMethodNonce?: string } = {
-        cartID: cartID || '',
-      };
-
-      if (payload && 'intentPaymentId' in payload) {
-        input.intentPaymentId = payload.intentPaymentId;
-      }
-
-      if (payload && 'paymentMethodNonce' in payload) {
-        input.paymentMethodNonce = payload.paymentMethodNonce;
-      }
-
       const { data } = await api.post('', {
         query: 'PLACE_ORDER',
-        variables: { input },
+        variables: {
+          input: {
+            cartID: activeCart.id,
+            ...(payload ? payload : {}),
+          },
+        },
       });
 
       if ((data.errors || []).length) {
@@ -37,13 +29,12 @@ export default function useCreateOrderFromCart() {
 
       return data.data.isc2PlaceOrder;
     },
-    onSuccess: (placeOrderResult) => {
+    onSuccess: () => {
       // We clear the cartId directly accessing localstorage so it doesn't
       // trigger a re-render on the checkout page with an empty cart id
-      if (!activeCart.computed.isB2B && placeOrderResult?.order?.orderNumber) {
+      if (!activeCart.computed.isB2B) {
         localStorage.setItem(LOCALSTORAGE_KEYS.ACTIVE_CART_ID, '');
         forgetCartId(activeCart.id);
-        sessionStorage.removeItem(LOCALSTORAGE_KEYS.STRIPE_RETURN_CART_ID);
       }
     },
   });

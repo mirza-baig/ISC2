@@ -8,7 +8,6 @@ import { parsePriceFromMoney } from 'utils/index';
 import useCreateOrderFromCart from './useCreateOrderFromCart';
 import useHandleStripePayment from './useHandleStripePayment';
 import useHandlePaypalPayment from './useHandlePaypalPayment';
-import useGetPaymentIntent from './useGetPaymentIntent';
 import useUploadPOAttachment from './useUploadPOAttachment';
 import useIsBusinessBuyer from '../cart/useIsBusinessBuyer';
 import { PAYMENT_METHODS, isBusinessAccountPaymentMethod } from 'constants/checkout';
@@ -108,7 +107,6 @@ export default function useConfirmPayment() {
   const { uploadOrderFilesAsync } = useUploadPOAttachment();
   const { handleStripePayment } = useHandleStripePayment();
   const { handlePaypalPayment } = useHandlePaypalPayment();
-  const { getPaymentIntentAsync } = useGetPaymentIntent();
 
   const trackPaymentInfo = (paymentMethod: string) => {
     const coupon = formatAnalyticsCouponCodes(activeCart?.discountCodes);
@@ -185,18 +183,9 @@ export default function useConfirmPayment() {
 
       try {
         if (isB2BFeatureEnabled && isBusinessAccountPaymentMethod(payload.paymentMethod)) {
-          const intent = await getPaymentIntentAsync({
-            cart: activeCart,
-            paymentMethodType: payload.paymentMethod,
-          });
-
-          if (!intent?.intentPaymentId) {
-            throw new Error('Business payment intent is missing');
-          }
-
           paymentResult = {
             status: 'succeeded' as const,
-            orderPayload: { intentPaymentId: intent.intentPaymentId },
+            orderPayload: { paymentMethodType: payload.paymentMethod },
           };
         } else if (payload.paymentMethod !== PAYMENT_METHODS.FREE) {
           const isStripe = payload.paymentMethod === PAYMENT_METHODS.STRIPE;
@@ -205,6 +194,11 @@ export default function useConfirmPayment() {
             paymentResult = await handleStripePayment();
           } else {
             paymentResult = await handlePaypalPayment.bind(null, payload)();
+          }
+
+          if (paymentResult?.status === 'failed' && paymentResult?.requiresNewPaymentIntent) {
+            window.location.reload();
+            return { redirectURL: withRedirectStatus(baseRedirectUrl, 'failed'), status: 'failed' };
           }
         }
 

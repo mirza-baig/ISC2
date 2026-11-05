@@ -1,16 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { fetchAccountDataFromMulesoft, setAPIRouteHeaders, validateApiRequest } from 'utils/index';
+import { fetchAccountDataFromMulesoft, setAPIRouteHeaders } from 'utils/index';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  setAPIRouteHeaders(res, 'GET', req);
+  setAPIRouteHeaders(res, 'GET');
+  const { externalID, email } = req.query;
 
-  const identity = await validateApiRequest(req, res);
-  if (!identity) return;
-
-  const { externalID, email } = identity;
+  if (!externalID || !email) {
+    return res.status(500).send({ error: 'Invalid parameters provided' });
+  }
 
   try {
-    const data = await fetchAccountDataFromMulesoft(externalID, email);
+    const data = await fetchAccountDataFromMulesoft(String(externalID), String(email));
 
     return res.status(200).send(data || {});
   } catch (error) {

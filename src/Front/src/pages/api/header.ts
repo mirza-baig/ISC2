@@ -4,7 +4,7 @@ import axios from 'axios';
 import { HEADER_API_CONTENT_FOR_SALESFORCE_PAGE } from 'queries/searchSettings';
 import { setAPIRouteHeaders } from 'utils/apiUtils';
 
-const headerApi = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
+const headerApi = async (_req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   const axiosResult = await axios.post(
     config.graphQLEndpoint,
     {
@@ -17,7 +17,7 @@ const headerApi = async (req: NextApiRequest, res: NextApiResponse): Promise<voi
       },
     }
   );
-  setAPIRouteHeaders(res, 'GET,DELETE,PATCH,POST,PUT', req);
+  setAPIRouteHeaders(res, 'GET,DELETE,PATCH,POST,PUT');
   return res.status(200).send(axiosResult.data);
 };
 

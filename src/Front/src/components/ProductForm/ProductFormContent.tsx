@@ -41,6 +41,7 @@ import useAnalyticsTracking from 'hooks/useAnalyticsTracking';
 import { ProductFormPropsFields } from './ProductForm';
 import { formatAnalyticsPrice } from 'utils/analytics';
 import ProductFormOptionsScheduledModal from './ProductFormOptionsScheduledModal';
+import ProductSchema from './ProductSchema';
 
 interface ProductFormContentProps {
   fields: ProductFormPropsFields;
@@ -608,18 +609,27 @@ const ProductFormContent = ({
     </>
   );
 
-  // If noWrapper, render fields directly without any wrapper (for ProductAllForm visual integration)
   if (noWrapper) {
     return <>{fieldsContent}</>;
   }
 
-  // Default: render with section and styled form wrapper
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
   return (
-    <section id="product-form" className="space-y-8 sm:space-y-10">
-      <form className="w-full flex flex-wrap p-6 bg-transparent rounded-lg border border-gray-500 text-black-100 space-y-4">
-        {fieldsContent}
-      </form>
-    </section>
+    <>
+      {fields.productKey?.value && fields.sku?.value && (
+        <ProductSchema
+          productKey={fields.productKey.value}
+          masterSku={fields.sku.value}
+          productTitle={fields.headline?.value || 'Product'}
+          baseUrl={currentUrl}
+        />
+      )}
+      <section id="product-form" className="space-y-8 sm:space-y-10">
+        <form className="w-full flex flex-wrap p-6 bg-transparent rounded-lg border border-gray-500 text-black-100 space-y-4">
+          {fieldsContent}
+        </form>
+      </section>
+    </>
   );
 };
 

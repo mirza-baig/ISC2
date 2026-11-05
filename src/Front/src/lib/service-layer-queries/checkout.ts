@@ -1,6 +1,6 @@
 export const CREATE_PAYMENT_INTENT = `
-  mutation CreatePaymentIntent($cartId: String!, $cartVersion: Int, $paymentMethodType: String) {
-    isc2CreatePaymentIntent(cartID: $cartId, cartVersion: $cartVersion, paymentMethodType: $paymentMethodType) {
+  mutation CreatePaymentIntent($cartId: String!, $cartVersion: Int) {
+    isc2CreatePaymentIntent(cartID: $cartId, cartVersion: $cartVersion) {
       intentPaymentId
       branintreePaypalClientId
       braintreeClientSecret

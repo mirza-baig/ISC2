@@ -11,8 +11,7 @@ import {
   useSitecoreContext,
 } from '@sitecore-jss/sitecore-jss-nextjs';
 import { ComponentProps } from 'lib/component-props';
-import { SearchClient as AlgoliaSearchClient } from 'algoliasearch';
-import { createPublicSearchClient } from 'lib/algolia/credentials';
+import algoliasearch, { SearchClient as AlgoliaSearchClient } from 'algoliasearch';
 import { KeyValuePair } from 'tailwindcss/types/config';
 import type { Hit, UiState } from 'instantsearch.js';
 import { history as historyRouter } from 'instantsearch.js/es/lib/routers';
@@ -415,10 +414,8 @@ type SearchWrapperProps = ComponentProps & {
     hideProductSuggestions?: Field<boolean>;
   };
   fields: {
-    // No algoliaAppId / algoliaApiKey here on purpose. This rendering's datasource
-    // fields ship inside the layout JSON for every page that carries the rendering,
-    // and Experience Edge publishes that to anyone with the delivery key. Credentials
-    // come from the environment — see src/lib/algolia/credentials.ts (finding H-04).
+    algoliaAppId: Field<string>;
+    algoliaApiKey: Field<string>;
     algoliaIndexName: Field<string>;
     algoliaAutosuggestIndexName: Field<string>;
     placeholderText: Field<string>;
@@ -922,7 +919,13 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
     }
   }, [isB2BListing, setAlgoliaIndexName]);
 
-  const baseSearchClient = useMemo(() => createPublicSearchClient(), []);
+  const baseSearchClient = useMemo(() => {
+    if (!fields.algoliaApiKey || !fields.algoliaAppId) {
+      return null;
+    }
+
+    return algoliasearch(fields.algoliaAppId.value, fields.algoliaApiKey.value);
+  }, [fields.algoliaApiKey, fields.algoliaAppId]);
 
   const searchClient = useMemo(() => {
     if (!baseSearchClient) return null;
@@ -975,7 +978,6 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
             AlgoliaSearchClient['search']
           >;
         }
-
         return baseSearchClient.search(...args);
       },
     } as AlgoliaSearchClient;

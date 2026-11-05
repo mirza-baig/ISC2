@@ -140,10 +140,6 @@ export const authOptions = (req) => ({
         return true;
       } catch (err) {
         console.error('ERROR while logging in:', err);
-
-        if (process.env.SITECORE_ENVIRONMENT === 'local') {
-          return true;
-        }
       }
     },
     session: ({ session, token }) => {
@@ -153,6 +149,7 @@ export const authOptions = (req) => ({
           ...session.user,
           ...token.profile,
           accessToken: token.accessToken ? encrypt(token.accessToken) : null,
+          isAuthorizedBuyer: Boolean(token.isAuthorizedBuyer),
         },
       };
     },
@@ -175,12 +172,10 @@ export const authOptions = (req) => ({
     SalesforceProvider({
       clientId: process.env.SALESFORCE_ID || '',
       clientSecret: process.env.SALESFORCE_SECRET || '',
-      client: { token_endpoint_auth_method: 'client_secret_post' },
       wellKnown: process.env.SALESFORCE_AUTHURL
         ? process.env.SALESFORCE_AUTHURL + '/.well-known/openid-configuration'
         : '',
-      // Force the IdP login page after logout so Salesforce SSO cannot silently re-auth.
-      authorization: { params: { scope: 'openid api refresh_token', prompt: 'login' } },
+      authorization: { params: { scope: 'openid api refresh_token' } },
       token: process.env.SALESFORCE_AUTHURL
         ? process.env.SALESFORCE_AUTHURL + '/services/oauth2/token'
         : '',

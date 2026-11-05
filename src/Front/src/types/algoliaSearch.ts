@@ -50,6 +50,8 @@ export interface SearchDefaultFilter {
 }
 
 export interface SearchWrapperWithQueryStringFields {
+  algoliaAppId: Field<string>;
+  algoliaApiKey: Field<string>;
   algoliaIndexName: Field<string>;
   algoliaAutosuggestIndexName: Field<string>;
   placeholderText: Field<string>;
@@ -78,6 +80,8 @@ export interface SearchWrapperWithQueryStringFields {
 
 export interface FetchedSearchWrapperWithQueryStringFields {
   QueryString: string;
+  algoliaAppId: string;
+  algoliaApiKey: string;
   algoliaIndexName: string;
   algoliaAutosuggestIndexName: string;
   placeholderText: string;

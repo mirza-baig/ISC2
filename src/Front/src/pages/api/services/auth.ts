@@ -1,22 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import axios from 'axios';
 
 import { setAPIRouteHeaders } from 'utils/apiUtils';
 import { SERVICE_LAYER_AUTH } from 'lib/service-layer-queries/auth';
-import { APIM_SUBSCRIPTION_KEY } from 'constants/index';
+import { getServiceLayerClient } from 'utils/serviceLayerClient';
 
-const auth = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
-  setAPIRouteHeaders(res, 'GET', req);
-
-  if (!process.env.SERVICE_LAYER_ENDPOINT) {
-    return res.status(500).send('Invalid GraphQL endpoint');
-  }
-
-  const apimSubscriptionKey = process.env.APIM_SUBSCRIPTION_KEY;
-
-  if (!apimSubscriptionKey) {
-    return res.status(500).send('Internal server error');
-  }
+const auth = async (_req: NextApiRequest, res: NextApiResponse): Promise<void> => {
+  setAPIRouteHeaders(res, 'GET');
 
   try {
     console.log('AUTH API: Starting service layer authentication request:', {
@@ -25,25 +14,28 @@ const auth = async (req: NextApiRequest, res: NextApiResponse): Promise<void> =>
       timestamp: new Date().toISOString(),
     });
 
-    console.log('AUTH API: Making direct POST request to service layer');
-    const axiosResult = await axios.post(
-      process.env.SERVICE_LAYER_ENDPOINT!,
-      {
-        query: SERVICE_LAYER_AUTH,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          [APIM_SUBSCRIPTION_KEY]: apimSubscriptionKey,
-        },
-      }
-    );
+    console.log('AUTH API: Getting service layer client instance');
+    const client = getServiceLayerClient();
+
+    console.log('AUTH API: Making POST request to service layer');
+    const axiosResult = await client.post('', {
+      query: SERVICE_LAYER_AUTH,
+    });
 
     console.log('AUTH API: Service layer request completed successfully:', {
       status: axiosResult.status,
       statusText: axiosResult.statusText,
       hasData: !!axiosResult.data,
       dataKeys: axiosResult.data ? Object.keys(axiosResult.data) : [],
+    });
+
+    console.log('AUTH API: Analyzing service layer response structure:', {
+      status: axiosResult.status,
+      dataExists: !!axiosResult.data,
+      dataDataExists: !!axiosResult.data?.data,
+      obtainAnonymousTokenExists: !!axiosResult.data?.data?.obtainAnonymousToken,
+      fullResponseKeys: axiosResult.data ? Object.keys(axiosResult.data) : [],
+      dataKeys: axiosResult.data?.data ? Object.keys(axiosResult.data.data) : [],
     });
 
     const { obtainAnonymousToken } = axiosResult?.data?.data;

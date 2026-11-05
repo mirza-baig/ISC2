@@ -146,6 +146,7 @@ const EMPTY_LABEL_GROUPS: B2BLabelGroups = {
   region: {},
   toolbar: {},
   currencyModal: {},
+  shopperContext: {},
 };
 
 export interface B2BPrivateClassContextValue {

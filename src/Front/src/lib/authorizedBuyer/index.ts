@@ -7,6 +7,7 @@ export type {
   AuthorizedBuyerPurchaseControls,
   AuthorizedBuyerResponse,
 } from './types';
+export { resolveAccountCurrency } from './accountCurrency';
 export { resolveCategoryDiscount } from './categoryPricing';
 export { resolveDisplayPriceCents } from './companyPricing';
 export { decodeAuthorizedBuyerPricingVoucher } from './pricingVoucher';

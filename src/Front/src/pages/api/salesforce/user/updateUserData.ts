@@ -105,14 +105,14 @@ function validateAndSanitizeUserData(userData: Record<string, unknown>): {
         sanitizedData['mailingAddress'] = userData['mailingAddress'];
       } else if (field === 'photo') {
         sanitizedData['photo'] = userData['photo'];
-      } else if (field === 'nickname') {
-        sanitizedData['nickname'] = userData['nickname'];
-      } else if (field === 'pronouns') {
-        sanitizedData['pronouns'] = userData['pronouns'];
       } else if (field === 'prefix') {
         sanitizedData['prefix'] = userData['prefix'];
       } else if (field === 'suffix') {
         sanitizedData['suffix'] = userData['suffix'];
+      } else if (field === 'nickname') {
+        sanitizedData['nickname'] = userData['nickname'];
+      } else if (field === 'pronouns') {
+        sanitizedData['pronouns'] = userData['pronouns'];
       } else if (field === 'jobTitle') {
         sanitizedData['jobTitle'] = userData['jobTitle'];
       } else if (field === 'workEmail') {
@@ -132,18 +132,14 @@ function validateAndSanitizeUserData(userData: Record<string, unknown>): {
   const extraFields = providedFields.filter((f) => !allowedFieldNames.includes(f));
 
   if (extraFields.length > 0) {
-    console.warn(
-      `[SECURITY WARNING] Attempt to update unauthorized fields: ${extraFields.join(
-        ', '
-      )} by user ${sanitizedData.externalId}`
-    );
+    console.warn('Unauthorized fields in update request');
   }
 
   return { isValid: true, sanitizedData };
 }
 
 export default async function updateUserData(req: NextApiRequest, res: NextApiResponse) {
-  setAPIRouteHeaders(res, 'POST', req);
+  setAPIRouteHeaders(res, 'POST');
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -159,22 +155,9 @@ export default async function updateUserData(req: NextApiRequest, res: NextApiRe
   const validation = validateAndSanitizeUserData(userData);
 
   if (!validation.isValid) {
-    console.error(
-      `[VALIDATION ERROR] ${validation.error} - User: ${userData.externalId || 'unknown'}`
-    );
+    console.error('User data validation failed');
     return res.status(400).json({ error: validation.error });
   }
-
-  const sanitizedData = validation.sanitizedData!;
-
-  const updatedFields = Object.keys(sanitizedData).filter(
-    (k) => k !== 'externalId' && k !== 'email'
-  );
-  console.log(
-    `[UPDATE USER] User ${sanitizedData.externalId} updating fields: ${
-      updatedFields.join(', ') || 'none'
-    }`
-  );
 
   try {
     const response = await fetch(`${process.env.SALESFORCE_CLOUDHUB_URL}/v1/user/updateUserData`, {
@@ -185,24 +168,19 @@ export default async function updateUserData(req: NextApiRequest, res: NextApiRe
         client_secret: process.env.SALESFORCE_CLOUDHUB_SECRET ?? '',
       },
       body: JSON.stringify({
-        userData: sanitizedData,
+        userData: validation.sanitizedData,
       }),
     });
 
     const data = await response.json();
 
     if (data.errors) {
-      console.error(
-        `[MULESOFT ERROR] ${JSON.stringify(data.errors)} - User: ${sanitizedData.externalId}`
-      );
       throw data.errors;
     }
 
     return res.status(200).json(data);
   } catch (errors) {
-    console.error(
-      `[UPDATE USER ERROR] ${JSON.stringify(errors)} - User: ${sanitizedData.externalId}`
-    );
+    console.error('Error updating user data');
     return res.status(500).json({ errors });
   }
 }

@@ -60,18 +60,6 @@ export const ContactInformationSection = (props: ContactInformationSection.Props
         return (
           <div className="flex flex-col space-y-0.5">
             <ProfileInfoLabel>{user?.fullName}</ProfileInfoLabel>
-            {user?.prefix && (
-              <ProfileInfoLabel>{`${labels.prefixLabel}: ${user.prefix}`}</ProfileInfoLabel>
-            )}
-            {user?.suffix && (
-              <ProfileInfoLabel>{`${labels.suffixLabel}: ${user.suffix}`}</ProfileInfoLabel>
-            )}
-            {user?.nickname && (
-              <ProfileInfoLabel>{`${labels.nicknameLabel}: ${user.nickname}`}</ProfileInfoLabel>
-            )}
-            {user?.pronouns && (
-              <ProfileInfoLabel>{`${labels.pronounLabel}: ${user.pronouns}`}</ProfileInfoLabel>
-            )}
             <ProfileInfoLabel>{user?.phoneNumber}</ProfileInfoLabel>
           </div>
         );

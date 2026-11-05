@@ -1,14 +1,12 @@
-/**
- * Pentest finding H-04: the `algoliaApiKey` and `algoliaAppId` fields are deliberately
- * NOT selected from the Algolia Search Settings item. Everything published to
- * Experience Edge is readable by anyone holding the public delivery key, so a
- * credential selected here ends up world-readable and, via componentProps, inlined
- * into the page. Credentials come from the environment instead —
- * see src/lib/algolia/credentials.ts. Index names are content and stay here.
- */
 export const SEARCH_SETTINGS_QUERY = `
   query {
     algoliaDetails: item(path:"/sitecore/content/ISC2/Main/Settings/Algolia Search Settings", language:"en") {
+      algoliaApiKey :field(name:"algoliaApiKey") {
+        value
+      }
+      algoliaAppId: field(name:"algoliaAppId") {
+        value
+      }
       algoliaIndexName: field(name:"algoliaIndexName") {
         value
       }
@@ -118,6 +116,12 @@ export const SEARCH_SETTINGS_QUERY = `
 export const SEARCH_SETTINGS_QUERY_FOR_ALGOLIA = `
   query {
     algoliaDetails: item(path:"/sitecore/content/ISC2/Main/Settings/Algolia Search Settings", language:"en") {
+      algoliaApiKey :field(name:"algoliaApiKey") {
+        value
+      }
+      algoliaAppId: field(name:"algoliaAppId") {
+        value
+      }
       algoliaIndexName: field(name:"algoliaIndexName") {
         value
       }
@@ -128,6 +132,12 @@ export const SEARCH_SETTINGS_QUERY_FOR_ALGOLIA = `
 export const SEARCH_SETTINGS_QUERY_FOR_INSIGHT_LISTING = `
   query {
     algoliaDetails: item(path:"/sitecore/content/ISC2/Main/Settings/Algolia Search Settings", language:"en") {
+      algoliaApiKey :field(name:"algoliaApiKey") {
+        value
+      }
+      algoliaAppId: field(name:"algoliaAppId") {
+        value
+      }
       algoliaSortDescByDateIndexName: field(name:"algoliaSortDescByDateIndexName") {
         value
       }
@@ -138,6 +148,12 @@ export const SEARCH_SETTINGS_QUERY_FOR_INSIGHT_LISTING = `
 export const SEARCH_SETTINGS_QUERY_FOR_CHAPTER_FINDER = `
   query {
     algoliaDetails: item(path:"/sitecore/content/ISC2/Main/Settings/Algolia Search Settings", language:"en") {
+      algoliaApiKey :field(name:"algoliaApiKey") {
+        value
+      }
+      algoliaAppId: field(name:"algoliaAppId") {
+        value
+      }
       algoliaChapterFilderIndexName: field(name:"algoliaChapterFilderIndexName") {
         value
       }
@@ -164,56 +180,75 @@ export const FOOTER_API_CONTENT_FOR_SALESFORCE_PAGE = `
   }
 `;
 
-export const INSIGHTS_RSS_FEED = /* GraphQL */ `
-  fragment Insights on Item {
-    name
-    ... on ArticlePage {
-      fields(ownFields: false) {
-        name
-        value
+export const insightsRssFeedQuery = (first: number, after: string | null): string => {
+  return `
+    fragment Insights on Item {
+      name
+      ... on ArticlePage {
+        fields(ownFields: false) {
+          name
+          value
+        }
+        thumbnailImage {
+          src
+        }
+        showInRSSFeed {
+          value
+        }
       }
-      thumbnailImage {
-        src
-      }
-      showInRSSFeed {
-        value
+      url {
+        path
       }
     }
-    url {
-      path
+    query {
+      search(
+        where: {
+          AND: [
+            {
+              name: "_templates"
+              value: "fbd3dc07-032e-46db-b33e-8d08469cbec2"
+              operator: CONTAINS
+            }
+            {
+              name: "_path"
+              value: "cc67ceec-e8fb-4028-906f-57cd2d198376"
+              operator: CONTAINS
+            }
+          ]
+        }
+        first: ${first}
+        ${after ? `after: "${after}"` : ''}
+        orderBy: { name: "articleDate", direction: DESC }
+      ) {
+        results {
+          ...Insights
+        }
+        pageInfo {
+          endCursor
+          hasNext
+        }
+        total
+      }
     }
-  }
-  query InsightsRssFeed($first: Int!, $after: String) {
-    search(
-      where: {
-        AND: [
-          { name: "_templates", value: "fbd3dc07-032e-46db-b33e-8d08469cbec2", operator: CONTAINS }
-          { name: "_path", value: "cc67ceec-e8fb-4028-906f-57cd2d198376", operator: CONTAINS }
-        ]
-      }
-      first: $first
-      after: $after
-      orderBy: { name: "articleDate", direction: DESC }
-    ) {
-      results {
-        ...Insights
-      }
-      pageInfo {
-        endCursor
-        hasNext
-      }
-      total
-    }
-  }
-`;
+  `;
+};
 
-export const ARTICLE_RSS_FEED = /* GraphQL */ `
-  query ArticleRssFeed($name: String!) {
+export const getArticleRssFeed = (path: string): string => {
+  const query = `
+  query {
     search(
       where: {
         AND: [
-          { name: "_templates", value: "fbd3dc07-032e-46db-b33e-8d08469cbec2", operator: CONTAINS }
-          { name: "_name", value: $name, operator: CONTAINS }
+          {
+            name: "_templates"
+            value: "fbd3dc07-032e-46db-b33e-8d08469cbec2"
+            operator: CONTAINS
+          }
+          {
+            name: "_name"
+            value: "${path}"
+            operator: CONTAINS
+          }
         ]
       }
       first: 1
@@ -245,60 +280,63 @@ export const ARTICLE_RSS_FEED = /* GraphQL */ `
       total
     }
   }
-`;
+  `;
+  return query;
+};
 
-export const MIDDLEWARE_LAYOUT_FIELDS = /* GraphQL */ `
-  query MiddlewareLayoutFields($site: String!, $routePath: String!, $language: String!) {
-    layout(site: $site, routePath: $routePath, language: $language) {
-      item {
-        membersOnly: field(name: "MembersOnly") {
-          value
-        }
-        candidateOnly: field(name: "CandidateOnly") {
-          value
-        }
-        associateOnly: field(name: "AssociateOnly") {
-          value
-        }
-        b2bAdminOnly: field(name: "B2BAdminOnly") {
-          value
-        }
-        nonMemberOnly: field(name: "NonMembersOnly") {
-          value
-        }
-        b2bAccount: field(name: "b2bAccount") {
-          value
-        }
-        hideForB2B: field(name: "hideForB2B") {
-          value
+export const middlewareApiForLayout = (path: string): string => `
+    query {
+      layout(site: "main", routePath: "${path}", language: "en") {
+        item {
+          membersOnly: field(name: "MembersOnly") {
+            value
+          }
+          candidateOnly: field(name: "CandidateOnly") {
+            value
+          }
+          associateOnly: field(name: "AssociateOnly") {
+            value
+          }
+          b2bAdminOnly: field(name: "B2BAdminOnly") {
+            value
+          }
+          nonMemberOnly: field(name: "NonMembersOnly") {
+            value
+          }
+          b2bAccount: field(name: "b2bAccount") {
+            value
+          }
+          hideForB2B: field(name: "hideForB2B") {
+            value
+          }
         }
       }
     }
-  }
 `;
 
-export const MIDDLEWARE_LAYOUT_SITE = 'main';
-export const PUBLIC_PATH_BY_ITEM_PATH = /* GraphQL */ `
-  query PublicPathByItemPath($path: String!, $language: String!) {
-    item(path: $path, language: $language) {
-      url {
-        path
+export const resolvePublicPathByItemPath = (itemPath: string, language = 'en'): string => {
+  const escaped = itemPath.replace(/"/g, '\\"');
+  return `
+    query {
+      item(path: "${escaped}", language: "${language}") {
+        url { path }
       }
     }
-  }
-`;
+  `;
+};
 
-export const PUBLIC_PATH_BY_ITEM_ID = /* GraphQL */ `
-  query PublicPathByItemId($id: String!, $language: String!) {
-    item(path: $id, language: $language) {
-      url {
-        path
+export const resolvePublicPathByItemId = (itemId: string, language = 'en'): string => {
+  const cleanId = itemId.replace(/[{}]/g, '');
+  return `
+    query {
+      item(path: "{${cleanId}}", language: "${language}") {
+        url { path }
+        path: path
+        name: name
       }
-      path: path
-      name: name
     }
-  }
-`;
+  `;
+};
 
 // B2B Product List labels — grouped, editable in Sitecore under
 // /sitecore/content/ISC2/Main/Data/B2B Product List Labels. Each child item holds a Name Value
@@ -315,6 +353,16 @@ export const B2B_PRODUCT_LIST_LABELS = `
           name
           labels: field(name: "labels") {
             value
+          }
+          productLink: field(name: "productLink") {
+            ... on LinkField {
+              url
+            }
+          }
+          postSelectionLink: field(name: "postSelectionLink") {
+            ... on LinkField {
+              url
+            }
           }
         }
       }

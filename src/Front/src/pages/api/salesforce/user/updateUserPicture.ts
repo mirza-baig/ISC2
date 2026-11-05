@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { setAPIRouteHeaders } from 'utils/index';
 
 export default async function updateUserPicture(req: NextApiRequest, res: NextApiResponse) {
-  setAPIRouteHeaders(res, 'PUT', req);
+  setAPIRouteHeaders(res, 'PUT');
   const { body } = req;
   const { externalID, email, pictureData } = body;
 

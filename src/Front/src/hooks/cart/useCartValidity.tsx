@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 
+import { B2B_FEATURE_FLAG } from 'constants/b2b';
 import { useCart } from 'providers/index';
+import { useFeatureFlag } from 'providers/featureFlags';
 import { useLoggedUser } from 'hooks/index';
 
 interface UseCartValidityProps {
@@ -10,6 +12,7 @@ interface UseCartValidityProps {
 export default function useCartValidity({ isCheckout }: UseCartValidityProps) {
   const { activeCart, getCartSuccess, isIdURLParamDefined } = useCart();
   const { user } = useLoggedUser();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
 
   const cartError = useMemo(() => {
     if (!getCartSuccess) {
@@ -37,8 +40,24 @@ export default function useCartValidity({ isCheckout }: UseCartValidityProps) {
       return [{ message: 'CUSTOMER_EMAIL_MISMATCH' }];
     }
 
+    if (
+      !isB2BFeatureEnabled &&
+      isCheckout &&
+      activeCart.computed.isB2B &&
+      activeCart.taxedPrice === null
+    ) {
+      return [{ message: 'CART_INFO_INCOMPLETE' }];
+    }
+
     return null;
-  }, [getCartSuccess, activeCart, isIdURLParamDefined, isCheckout, user?.email]);
+  }, [
+    getCartSuccess,
+    activeCart,
+    isIdURLParamDefined,
+    isCheckout,
+    user?.email,
+    isB2BFeatureEnabled,
+  ]);
 
   return { cartError };
 }

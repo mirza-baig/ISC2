@@ -12,14 +12,11 @@ export const getGraphQLRequestClient = (): GraphQLRequestClient => {
   });
 };
 
-export const getGraphQLResult = async <T>(
-  query: string,
-  variables?: Record<string, unknown>
-): Promise<T> => {
+export const getGraphQLResult = async <T>(query: string): Promise<T> => {
   const graphQLClient = getGraphQLRequestClient();
 
   try {
-    const result = await graphQLClient.request<T>(query, variables);
+    const result = await graphQLClient.request<T>(query);
 
     return result;
   } catch (err) {

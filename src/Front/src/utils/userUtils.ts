@@ -181,29 +181,6 @@ export const getLoggedInUserSalesforceData = async ({
       throw `Error while fetching user data from Service Layer: ${error.message || error}`;
     });
 
-  if (!data?.data) {
-    console.error('Service Layer Response Structure Error:', {
-      responseExists: !!data,
-      responseType: typeof data,
-      responseKeys: data ? Object.keys(data) : 'N/A',
-      dataProperty: data?.data,
-      fullResponse: data,
-      requestMetadata: {
-        externalID,
-        email,
-        includeProduct,
-        query: includeProduct ? 'GET_USER_ACCOUNT' : 'GET_PARTIAL_USER_ACCOUNT',
-        userCountry,
-        currencyCode,
-        sync,
-      },
-      timestamp: new Date().toISOString(),
-    });
-    throw `Error while fetching user data from Service Layer: invalid response structure - Expected 'data.data' property but received: ${JSON.stringify(
-      data
-    )}`;
-  }
-
   const { salesforceGetAccountData } = data.data;
 
   if (!salesforceGetAccountData) {

@@ -55,6 +55,8 @@ export interface SearchModalLinks {
 
 export interface SearchModalAlgoliaSettings {
   algoliaDetails: {
+    algoliaApiKey: Field<string>;
+    algoliaAppId: Field<string>;
     algoliaIndexName: Field<string>;
     algoliaAutosuggestIndexName: Field<string>;
     placeholderText: Field<string>;

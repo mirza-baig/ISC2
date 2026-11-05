@@ -199,19 +199,6 @@ const DynamicPopupContent = ({
   contentColor?: string;
   onClose: () => void;
 }) => {
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (target?.dataset?.action === 'close-popup') {
-        e.preventDefault();
-        onClose();
-      }
-    };
-
-    document.addEventListener('click', handler);
-    return () => document.removeEventListener('click', handler);
-  }, [onClose]);
-
   return (
     <div className="m-auto max-h-full flex justify-center items-center">
       <div

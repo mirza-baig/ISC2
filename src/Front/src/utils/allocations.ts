@@ -164,10 +164,7 @@ export const filterAllocations = (
   filters: AllocationFilterState
 ): Allocation[] => {
   return allocations.filter((a) => {
-    if (
-      filters.productName &&
-      !(a.name ?? '').toLowerCase().includes(filters.productName.toLowerCase())
-    )
+    if (filters.productName && !a.name.toLowerCase().includes(filters.productName.toLowerCase()))
       return false;
     if (
       filters.orderNumber &&
@@ -222,7 +219,7 @@ export const sortAllocations = (
         return orderA.localeCompare(orderB) * dir;
       });
     case 'product':
-      return sorted.sort((a, b) => (a.name ?? '').localeCompare(b.name ?? '') * dir);
+      return sorted.sort((a, b) => a.name.localeCompare(b.name) * dir);
     case 'default':
     default:
       return sorted.sort((a, b) => {

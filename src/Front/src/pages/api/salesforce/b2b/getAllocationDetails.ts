@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { setAPIRouteHeaders, validateApiRequest } from 'utils/index';
 
@@ -17,20 +18,21 @@ export default async function getAllocationDetails(req: NextApiRequest, res: Nex
   }
 
   try {
-    const response = await fetch(
-      `${process.env.SALESFORCE_CLOUDHUB_URL}/v1/b2b/allocations/order?externalID=${externalID}&email=${email}&orderNumber=${orderNumber}&productSku=${productSku}`,
+    const response = await axios.get(
+      `${process.env.SALESFORCE_CLOUDHUB_URL}/v1/b2b/allocations/order`,
       {
-        method: 'GET',
+        params: { externalID, email, orderNumber, productSku },
         headers: {
           client_id: process.env.SALESFORCE_CLOUDHUB_ID ?? '',
           client_secret: process.env.SALESFORCE_CLOUDHUB_SECRET ?? '',
         },
+        validateStatus: () => true,
       }
     );
 
-    const data = await response.json();
+    const data = response.data;
 
-    if (!response.ok || data?.error) {
+    if (!(response.status >= 200 && response.status < 300) || data?.error) {
       console.error(
         'Error while fetching allocation details',
         data.error || data.message || data.Description

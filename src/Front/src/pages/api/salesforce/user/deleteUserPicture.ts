@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { setAPIRouteHeaders } from 'utils/index';
 
 export default async function deleteUserPicture(req: NextApiRequest, res: NextApiResponse) {
-  setAPIRouteHeaders(res, 'DELETE', req);
+  setAPIRouteHeaders(res, 'DELETE');
 
   const { externalID, email } = req.query;
 

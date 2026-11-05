@@ -46,6 +46,8 @@ export function FormFileInput<T extends FieldValues>({
     fieldState: { error },
   } = useController({ control, name });
 
+  const ALLOWED_FILE_EXTENSIONS = ['pdf', 'doc', 'docx', 'xlsx', 'png', 'jpg', 'jpeg', 'tiff'];
+
   const onFileSelected = useCallback(
     async (ev: ChangeEvent<HTMLInputElement>) => {
       if (disabled) {
@@ -56,6 +58,18 @@ export function FormFileInput<T extends FieldValues>({
 
       if (!file) {
         onChange(undefined);
+        return;
+      }
+      const extension = file.name.split('.').pop()?.toLowerCase();
+
+      if (!extension || !ALLOWED_FILE_EXTENSIONS.includes(extension)) {
+        ev.target.value = '';
+        onChange(undefined);
+
+        window.alert(
+          'Invalid file type. Please upload a .pdf, .doc, .docx, .xlsx, .png, .jpg/.jpeg or .tiff file.'
+        );
+
         return;
       }
 

@@ -60,7 +60,6 @@ const ProductSchema = ({
   const { snapshotData } = useProductForm();
   const [isClient, setIsClient] = useState(false);
 
-  // Ensure we only render on client side
   useEffect(() => {
     setIsClient(true);
   }, []);

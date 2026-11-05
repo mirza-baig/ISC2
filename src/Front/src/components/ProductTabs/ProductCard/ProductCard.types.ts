@@ -32,8 +32,6 @@ export interface ProductCardFields {
     isForFreeText: Field<string>;
     loginBtnText: Field<string>;
     promoPills: Field<string>;
-    pageDescription?: Field<string>;
-    noIndex?: Field<boolean>;
     formType?: {
       displayName: string;
       fields: {

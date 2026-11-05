@@ -5,8 +5,10 @@ import { useShopperContext } from 'providers/index';
 import {
   findAccountOwnerEmail,
   isAuthorizedBuyer as matchAuthorizedBuyer,
+  mapAccountContactRelationsToAccounts,
   toAccountContactRelations,
   type AccountContactRelation,
+  type AuthorizedBuyerAccount,
 } from 'lib/authorizedBuyer';
 
 import useLoggedUser from '../useLoggedUser';
@@ -25,6 +27,7 @@ export type AuthorizedBuyerState = {
   isAuthorizedBuyer: boolean;
   isResolvingAuthorizedBuyer: boolean;
   relations: AccountContactRelation[];
+  authorizedBuyerAccounts: AuthorizedBuyerAccount[];
   accountOwnerEmail?: string;
 };
 
@@ -35,7 +38,7 @@ export type AuthorizedBuyerOptions = {
 export default function useAuthorizedBuyer({
   enabled = true,
 }: AuthorizedBuyerOptions = {}): AuthorizedBuyerState {
-  const { externalID } = useLoggedUser();
+  const { externalID, email } = useLoggedUser();
   const { shopperContext } = useShopperContext();
 
   const isQueryEnabled = enabled && Boolean(externalID);
@@ -43,7 +46,11 @@ export default function useAuthorizedBuyer({
   const { data, isLoading } = useQuery<AccountDataResponse>({
     queryKey: [ACCOUNT_DATA_QUERY_KEY, externalID],
     queryFn: async () => {
-      const response = await fetch('/api/salesforce/user/getAccountData');
+      const response = await fetch(
+        `/api/salesforce/user/getAccountData?externalID=${encodeURIComponent(
+          externalID ?? ''
+        )}&email=${encodeURIComponent(email ?? '')}`
+      );
 
       if (!response.ok) {
         throw new Error('Failed to fetch account data');
@@ -57,9 +64,13 @@ export default function useAuthorizedBuyer({
     retry: false,
   });
 
-  const relations = useMemo(
-    () => toAccountContactRelations(data?.data?.salesforceGetAccountData?.accountContactRelations),
-    [data]
+  const rawRelations = data?.data?.salesforceGetAccountData?.accountContactRelations;
+
+  const relations = useMemo(() => toAccountContactRelations(rawRelations), [rawRelations]);
+
+  const authorizedBuyerAccounts = useMemo(
+    () => mapAccountContactRelationsToAccounts(rawRelations),
+    [rawRelations]
   );
 
   const selectedAccountId = shopperContext?.organization?.id;
@@ -78,6 +89,7 @@ export default function useAuthorizedBuyer({
     isAuthorizedBuyer: hasRole,
     isResolvingAuthorizedBuyer: isQueryEnabled && isLoading,
     relations,
+    authorizedBuyerAccounts,
     accountOwnerEmail,
   };
 }

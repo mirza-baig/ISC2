@@ -4,8 +4,8 @@ import { getWithCache, setAPIRouteHeaders } from 'utils/index';
 const CACHE_KEY = 'salesforce-all-states';
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
-export default async function getAllStates(req: NextApiRequest, res: NextApiResponse) {
-  setAPIRouteHeaders(res, 'GET', req);
+export default async function getAllStates(_req: NextApiRequest, res: NextApiResponse) {
+  setAPIRouteHeaders(res, 'GET');
 
   try {
     const states = await getWithCache(CACHE_KEY, CACHE_TTL_MS, async () => {

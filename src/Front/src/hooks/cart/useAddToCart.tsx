@@ -198,7 +198,7 @@ export default function useAddToCart(callbacks?: MutationCallbacks) {
             }
 
             const errorCode = firstError.extensions?.code;
-            if (errorCode === 'INTERNAL_SERVER_ERROR') {
+            if (errorCode === 'INTERNAL_SERVER_ERROR' || errorCode === 'GENERAL_ERROR') {
               const { data: cartCheck } = await api.post('', {
                 query: 'GET_ACTIVE_CART',
                 variables: { cartInfo: { cartID: userCartId } },

@@ -47,19 +47,25 @@ query Order($orderNumber: String, $locale: Locale, $externalId: String!, $email:
   }
 `;
 
-export const GET_ALL_ORDERS = `
+type GetAllOrdersQueryParams = {
+  includeB2BFields: boolean;
+};
+
+const B2B_ORDER_FIELDS = `
+      organization
+      buyer
+      poNumber
+      customerOrderReference`;
+
+export const GET_ALL_ORDERS = ({ includeB2BFields }: GetAllOrdersQueryParams) => `
   query SalesforceGetOrders($externalId: String!, $email: String!) {
     salesforceGetOrders(externalId: $externalId, email: $email) {
       orderId
       orderNumber
       orderDate
       orderStatus
-      organization
-      buyer
       paymentType
-      poNumber
-      orderReferenceNumber
-      customerOrderReference
+      orderReferenceNumber${includeB2BFields ? B2B_ORDER_FIELDS : ''}
       orderTotal {
         centAmount
         currencyCode

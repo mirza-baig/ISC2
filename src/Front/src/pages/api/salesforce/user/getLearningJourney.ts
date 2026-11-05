@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { setAPIRouteHeaders } from 'utils/index';
 
 export default async function getLearningJourney(req: NextApiRequest, res: NextApiResponse) {
-  setAPIRouteHeaders(res, 'GET', req);
+  setAPIRouteHeaders(res, 'GET');
 
   const { externalID, email } = req.query;
 

@@ -18,10 +18,9 @@ type GetOrderResponse = ServiceLayerResponse<{ order: OrderWithCart }>;
 
 export default function useGetOrder(orderNumber: string) {
   const { externalID, email } = useLoggedUser();
-  const canGetOrder = Boolean(orderNumber && externalID && email);
 
   const { data, isLoading, error, isSuccess } = useQuery<OrderWithCart>({
-    queryKey: [QUERY_KEYS.ORDER, orderNumber, externalID, email],
+    queryKey: [QUERY_KEYS.ORDER, orderNumber],
     queryFn: async () => {
       const api = await getServiceLayerAPI();
 
@@ -47,7 +46,7 @@ export default function useGetOrder(orderNumber: string) {
         throw error;
       }
     },
-    enabled: canGetOrder,
+    enabled: Boolean(orderNumber),
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
@@ -70,7 +69,7 @@ export default function useGetOrder(orderNumber: string) {
   const cartComputed = useMemo(() => getComputedFieldsFromCart(cart, isSuccess), [cart, isSuccess]);
 
   return {
-    isGettingOrder: Boolean(orderNumber) && (!canGetOrder || isLoading),
+    isGettingOrder: isLoading,
     getOrderError: error,
     order: data && { ...data, computed: orderComputed },
     orderCart: { ...cart, computed: cartComputed },

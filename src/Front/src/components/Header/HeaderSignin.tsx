@@ -39,15 +39,8 @@ export type SigninProps = ComponentProps & {
 };
 
 function HeaderSignin({ fields }: SigninProps): JSX.Element {
-  const {
-    user,
-    isUserLoggedIn,
-    isUserNotLoggedIn,
-    isUserAssociate,
-    isUserMember,
-    isRegisterUser,
-    sessionStatus,
-  } = useLoggedUser();
+  const { user, isUserLoggedIn, isUserNotLoggedIn, isUserAssociate, isUserMember, isRegisterUser } =
+    useLoggedUser();
   const breakpoint = useBreakpoint();
 
   const { track } = useAnalyticsTracking();
@@ -125,11 +118,11 @@ function HeaderSignin({ fields }: SigninProps): JSX.Element {
       expires.setTime(expires.getTime() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
       setCookie('initialLoginCheck', 'true', { path: '/', expires });
 
-      if (salesforceCookie && !sNameCookie && isUserNotLoggedIn && sessionStatus !== 'loading') {
+      if (salesforceCookie && !sNameCookie && isUserNotLoggedIn) {
         signIn('salesforce');
       }
     }
-  }, [isUserMember, isUserAssociate, isRegisterUser, user, isUserNotLoggedIn, sessionStatus]);
+  }, [isUserMember, isUserAssociate, isRegisterUser, user, isUserNotLoggedIn]);
 
   useEffect(() => {
     if (scrollDirection === 'down') {

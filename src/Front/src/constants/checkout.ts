@@ -20,23 +20,10 @@ export const CUSTOMER_ORDER_REFERENCE_MAX_LENGTH = 75;
 /** Salesforce Account type whose buyers must supply a course delivery date. */
 export const OTP_ACCOUNT_TYPE = 'otp';
 
-/**
- * commercetools product type names that make Course Delivery Date required for an
- * OTP account buyer. Matched lower-cased, like EXAM_PRODUCT_TYPES in constants/cart.
- *
- * Singular and plural are both listed because the naming is not consistent: live cart
- * data reports `Course` (singular, title case) while EXAM_PRODUCT_TYPES in
- * constants/cart uses `exams` / `exam prep`. Confirm the real exam and kit type names
- * against commercetools and trim this list once known.
- */
-export const COURSE_DELIVERY_PRODUCT_TYPES = [
-  'kit',
-  'kits',
-  'exam',
-  'exams',
-  'exam prep',
-  'exam preps',
-];
+export const COURSE_DELIVERY_PRODUCT_TYPES = ['kit', 'kits', 'exam', 'exams'];
+export const COURSE_DELIVERY_SKU_GATED_PRODUCT_TYPES = ['exam prep', 'exam preps'];
+
+export const COURSE_DELIVERY_KIT_SKU_MARKER = 'KIT';
 
 /**
  * Fallbacks for the business buyer step one copy. Sitecore authors override these by

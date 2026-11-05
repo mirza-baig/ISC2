@@ -21,6 +21,7 @@ const getNewAPITokens = async () => {
 };
 
 const getAPITokens = async () => {
+  // This handles requests made from the server side
   if (typeof window === 'undefined') {
     return getNewAPITokens();
   }
@@ -51,16 +52,16 @@ const createAPIInstance = async () => {
     headers: {
       'Content-Type': 'application/json',
     },
-    validateStatus: (status) => status < 500,
+    maxRedirects: 5,
+    validateStatus: (status) => status < 500, // Don't throw on 4xx errors
   });
 
   api.interceptors.request.use(
     async (config) => {
-      if (!config.headers['authorization-isc2']) {
-        const { accessToken, refreshToken } = await getAPITokens();
-        config.headers['authorization-isc2'] = accessToken;
-        config.headers['refresh-token-isc2'] = refreshToken;
-      }
+      const { accessToken, refreshToken } = await getAPITokens();
+
+      config.headers['authorization-isc2'] = accessToken;
+      config.headers['refresh-token-isc2'] = refreshToken;
 
       return config;
     },
@@ -69,69 +70,34 @@ const createAPIInstance = async () => {
     }
   );
 
-  api.interceptors.response.use(
-    (response) => {
-      if (typeof window === 'undefined') {
-        return response;
-      }
-
-      const { data } = response;
-
-      if (data.errors) {
-        const invalidToken = data.errors.some(
-          (error: ApiError) => error.message === 'invalid_token'
-        );
-
-        if (!PERFORM_REFRESH_TOKEN && invalidToken) {
-          localStorage.removeItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN);
-          localStorage.removeItem(LOCALSTORAGE_KEYS.REFRESH_TOKEN);
-          localStorage.removeItem(LOCALSTORAGE_KEYS.ANONYMOUS_ID);
-          clearAnonymousCartId();
-        }
-      }
-
+  api.interceptors.response.use(async (response) => {
+    // This handles requests made from the server side
+    if (typeof window === 'undefined') {
       return response;
-    },
-    async (error) => {
-      const config = error.config;
+    }
 
-      if (
-        config &&
-        !config.__tokenRefreshAttempted &&
-        (error.response?.status === 401 || error.response?.status === 403)
-      ) {
-        config.__tokenRefreshAttempted = true;
+    const { data, config } = response;
+    const retryConfig = config as typeof config & { __invalidTokenRetried?: boolean };
 
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN);
-          localStorage.removeItem(LOCALSTORAGE_KEYS.REFRESH_TOKEN);
-          localStorage.removeItem(LOCALSTORAGE_KEYS.ANONYMOUS_ID);
-          clearAnonymousCartId();
-        }
+    if (data.errors) {
+      const invalidToken = data.errors.some((error: ApiError) => error.message === 'invalid_token');
+
+      if (!PERFORM_REFRESH_TOKEN && invalidToken && !retryConfig.__invalidTokenRetried) {
+        localStorage.removeItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN);
+        localStorage.removeItem(LOCALSTORAGE_KEYS.REFRESH_TOKEN);
+        localStorage.removeItem(LOCALSTORAGE_KEYS.ANONYMOUS_ID);
+        clearAnonymousCartId();
+
+        retryConfig.__invalidTokenRetried = true;
 
         const newApi = await createAPIInstance();
-        return newApi.request(config);
+
+        return newApi(retryConfig);
       }
-
-      if (
-        config &&
-        !config.__retryCount &&
-        (error.code === 'ECONNRESET' ||
-          error.code === 'ETIMEDOUT' ||
-          error.code === 'ECONNABORTED' ||
-          error.code === 'ENOTFOUND' ||
-          error.response?.status >= 500)
-      ) {
-        config.__retryCount = 1;
-
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        return api.request(config);
-      }
-
-      return Promise.reject(error);
     }
-  );
+
+    return response;
+  });
 
   return api;
 };

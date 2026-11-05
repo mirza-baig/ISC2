@@ -38,7 +38,6 @@ export interface LeaningJourneyLabels {
   failed: string;
   availableLabel: string;
   expiredLabel: string;
-  expirationDateLabel: string;
   filterOptionAllLabel: string;
   filterOptionTrainingsLabel: string;
   filterOptionExamsLabel: string;

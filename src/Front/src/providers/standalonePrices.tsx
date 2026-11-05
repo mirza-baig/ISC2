@@ -82,11 +82,10 @@ const StandalonePricesProvider: React.FC<StandalonePricesProviderProps> = ({ chi
     isGettingUser,
   } = useLoggedUser();
   const baseTierChannelId = distributionChannels?.find(({ key }) => key === CT_DEFAULT_TIER)?.id;
-  const isAccessUnresolved = isGettingUser || isResolvingAccess;
+  const isAccessUnresolved = isFeatureEnabled && (isGettingUser || isResolvingAccess);
   const isAuthorizedBuyerPricing = isFeatureEnabled && isAuthorizedBuyer;
-  const pricingChannelId = isAccessUnresolved
-    ? undefined
-    : (isAuthorizedBuyerPricing && baseTierChannelId) || distributionChannel?.id;
+  const pricingChannelId =
+    (isAuthorizedBuyerPricing && baseTierChannelId) || distributionChannel?.id;
   const { isGettingSubscriptions, isSuspended } = useGetSubscriptions();
 
   const [pendingSkus, setPendingSkus] = useState<string[]>([]);
@@ -166,8 +165,12 @@ const StandalonePricesProvider: React.FC<StandalonePricesProviderProps> = ({ chi
     });
   }, []);
 
+  const canFetchPrices = !isAccessUnresolved && Boolean(pricingChannelId);
+  const canFetchPricesRef = useRef(canFetchPrices);
+  canFetchPricesRef.current = canFetchPrices;
+
   useEffect(() => {
-    if (!isAccessUnresolved && !isGettingStandalonePrices && !isFetchQueued.current) {
+    if (canFetchPrices && !isGettingStandalonePrices && !isFetchQueued.current) {
       setSkusToBeFetched((prevSkusToBeFetched) => {
         const newSkusToFetch = pendingSkus
           .filter((sku) => !productPrices[sku] && !prevSkusToBeFetched.includes(sku))
@@ -175,15 +178,15 @@ const StandalonePricesProvider: React.FC<StandalonePricesProviderProps> = ({ chi
         return newSkusToFetch.length ? newSkusToFetch : prevSkusToBeFetched;
       });
     }
-  }, [pendingSkus, productPrices, isGettingStandalonePrices, isAccessUnresolved]);
+  }, [pendingSkus, productPrices, isGettingStandalonePrices, canFetchPrices]);
 
   useEffect(() => {
-    if (!isAccessUnresolved && skusToBeFetched.length) {
+    if (canFetchPricesRef.current && skusToBeFetched.length) {
       lastFetchedSkusRef.current = skusToBeFetched;
       isFetchQueued.current = true;
       refetch();
     }
-  }, [skusToBeFetched, refetch, isAccessUnresolved]);
+  }, [skusToBeFetched, refetch]);
 
   useEffect(() => {
     if (isGettingStandalonePrices) {
@@ -229,6 +232,7 @@ const StandalonePricesProvider: React.FC<StandalonePricesProviderProps> = ({ chi
         addSkuToPricingQueue,
         showPriceForRole,
         isGettingPricesForRole:
+          isGettingUser ||
           isAccessUnresolved ||
           isGettingSubscriptions ||
           isGettingStandalonePrices ||

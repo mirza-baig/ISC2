@@ -1,6 +1,12 @@
-import { Control } from 'react-hook-form';
+import { Control, useWatch } from 'react-hook-form';
 
-import { Country, PersonalInformation, State, StepOneLabels } from 'types/index';
+import {
+  COUNTRIES_REQUIRING_STATES,
+  Country,
+  PersonalInformation,
+  State,
+  StepOneLabels,
+} from 'types/index';
 import { FormDropdown, FormTextInput } from 'ui/index';
 
 type AddressPrefix = 'billingAddress' | 'mailingAddress';
@@ -44,6 +50,9 @@ export default function BusinessAddressFields({
   isPostalCodeRequired,
   onCountryChanged,
 }: BusinessAddressFieldsProps) {
+  const countryCode = useWatch({ control, name: `${prefix}.countryCode` });
+  const isStateRequired = COUNTRIES_REQUIRING_STATES.includes((countryCode || '').toUpperCase());
+
   return (
     <div className="flex flex-col gap-y-4">
       <div className="grid sm:grid-cols-2 gap-4">
@@ -84,6 +93,7 @@ export default function BusinessAddressFields({
             tooltipText={labels.stateTooltip}
             disabled
             maxLength={40}
+            isOptional={!isStateRequired}
           />
         ) : (
           states.length > 0 && (
@@ -96,7 +106,7 @@ export default function BusinessAddressFields({
               label={labels.stateLabel}
               tooltipText={labels.stateTooltip}
               maxLength={40}
-              isOptional={false}
+              isOptional={!isStateRequired}
             />
           )
         )}
