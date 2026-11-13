@@ -62,7 +62,7 @@ const hasStoredSelectionForUser = (userId?: string) => {
 
 export default function ShopperContextModal() {
   const { setModalContent, closeModal, modalContent } = useModal();
-  const { setShopperContext } = useShopperContext();
+  const { setShopperContext, setShopperPromptSettled } = useShopperContext();
   const { session, isSessionLoading } = useSession();
   const { isUserLoggedIn, isGettingUser, externalID, email } = useLoggedUser();
   const { isAuthorizedBuyer, isResolvingAuthorizedBuyer } = useAuthorizedBuyer();
@@ -72,8 +72,9 @@ export default function ShopperContextModal() {
   const dismissModal = useCallback(() => {
     markPromptedForUser(externalID);
     hasOpenedRef.current = true;
+    setShopperPromptSettled(true);
     closeModal();
-  }, [closeModal, externalID]);
+  }, [closeModal, externalID, setShopperPromptSettled]);
 
   const openModalForOrganizations = useCallback(
     (organizations: ShopperOrganization[]) => {
@@ -104,12 +105,14 @@ export default function ShopperContextModal() {
     }
 
     if (!isUserLoggedIn || !externalID) {
+      setShopperPromptSettled(true);
       return;
     }
 
     if (!isB2BFlowEnabled) {
       markPromptedForUser(externalID);
       hasOpenedRef.current = true;
+      setShopperPromptSettled(true);
       setShopperContext({ type: 'myself', organization: null });
       return;
     }
@@ -119,11 +122,13 @@ export default function ShopperContextModal() {
     }
 
     if (!isAuthorizedBuyer || !email) {
+      setShopperPromptSettled(true);
       return;
     }
 
     if (hasPromptedForUser(externalID) || hasStoredSelectionForUser(externalID)) {
       hasOpenedRef.current = true;
+      setShopperPromptSettled(true);
       return;
     }
 
@@ -141,6 +146,7 @@ export default function ShopperContextModal() {
         if (organizations.length === 0) {
           markPromptedForUser(externalID);
           hasOpenedRef.current = true;
+          setShopperPromptSettled(true);
           setShopperContext({ type: 'myself', organization: null });
           return;
         }
@@ -154,6 +160,7 @@ export default function ShopperContextModal() {
 
         markPromptedForUser(externalID);
         hasOpenedRef.current = true;
+        setShopperPromptSettled(true);
         setShopperContext({ type: 'myself', organization: null });
       }
     };
@@ -175,6 +182,7 @@ export default function ShopperContextModal() {
     modalContent,
     openModalForOrganizations,
     setShopperContext,
+    setShopperPromptSettled,
   ]);
 
   useEffect(() => {
