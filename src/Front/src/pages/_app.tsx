@@ -50,10 +50,11 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps<Sitec
       <QueryClientProvider client={queryClient.current}>
         <SessionProvider session={session} refetchInterval={15 * 60}>
           <IdleTimeoutProvider>
-            <UserSessionProvider>
-              <ShopperContextProvider>
-                <CartIdentityProvider>
-                  <FeatureFlagsProvider flags={pageProps.featureFlags}>
+            {/* Flags wrap UserSessionProvider so session currency can honor CAD_Currency. */}
+            <FeatureFlagsProvider flags={pageProps.featureFlags}>
+              <UserSessionProvider>
+                <ShopperContextProvider>
+                  <CartIdentityProvider>
                     <StandalonePricesProvider>
                       <HeaderNavigationProvider>
                         <SearchProvider>
@@ -69,10 +70,10 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps<Sitec
                         </SearchProvider>
                       </HeaderNavigationProvider>
                     </StandalonePricesProvider>
-                  </FeatureFlagsProvider>
-                </CartIdentityProvider>
-              </ShopperContextProvider>
-            </UserSessionProvider>
+                  </CartIdentityProvider>
+                </ShopperContextProvider>
+              </UserSessionProvider>
+            </FeatureFlagsProvider>
           </IdleTimeoutProvider>
         </SessionProvider>
       </QueryClientProvider>

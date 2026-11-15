@@ -123,7 +123,7 @@ export const mapLiveRelationToAccount = (
     accountId,
     accountName,
     accountType: relation.accountType || 'B2B',
-    currency: relation.currency || 'USD',
+    currency: relation.currency?.trim() || undefined,
     pricingTier: relation.pricingTier || 'ENTERPRISE_1',
     creditHold: isAccountFlagSet(relation.creditHold ?? relation.credit?.creditHold),
     taxExempt: isAccountFlagSet(relation.taxExempt),

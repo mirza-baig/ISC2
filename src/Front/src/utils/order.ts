@@ -21,20 +21,8 @@ export const maskPaymentIdentifier = (
 };
 
 /** Lower-cased and stripped of separators, so `Preapproved_Credit` matches `preapproved-credit`. */
-const normalizePaymentMethod = (value: string) => value.toLowerCase().replace(/[^a-z]/g, '');
+export const normalizePaymentMethod = (value: string) => value.toLowerCase().replace(/[^a-z]/g, '');
 
-// ─── Actual flow ──────────────────────────────────────────────────────────────────
-// const BUSINESS_PAYMENT_METHOD_ALIASES: Record<string, BUSINESS_PAYMENT_METHODS> = {
-//   preapprovedcredit: BUSINESS_PAYMENT_METHODS.PREAPPROVED_CREDIT,
-//   preapprovedcreditpayment: BUSINESS_PAYMENT_METHODS.PREAPPROVED_CREDIT,
-//   credit: BUSINESS_PAYMENT_METHODS.PREAPPROVED_CREDIT,
-//   prepaidaccount: BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT,
-//   prepaid: BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT,
-// };
-
-// ─── TEMP-DEMO-ACTIVE ────────────────────────────────────────────────────────────
-// Maps Stripe `card` onto preapproved credit so the conditional "Invoice Processing"
-// step renders before the business payment story lands.
 const BUSINESS_PAYMENT_METHOD_ALIASES: Record<string, BUSINESS_PAYMENT_METHODS> = {
   card: BUSINESS_PAYMENT_METHODS.PREAPPROVED_CREDIT,
   preapprovedcredit: BUSINESS_PAYMENT_METHODS.PREAPPROVED_CREDIT,

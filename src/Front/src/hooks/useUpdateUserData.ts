@@ -3,10 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { MutationCallbacks, UpdateUserPayload, UserData } from 'types/index';
 import { QUERY_KEYS, INTERNAL_MULESOFT_URL } from 'constants/index';
 
-import useLoggedUser from './useLoggedUser';
-
 export default function useUpdateUserData(callbacks?: MutationCallbacks) {
-  const { externalID, email } = useLoggedUser();
   const queryClient = useQueryClient();
 
   const { isPending, error, mutate, mutateAsync } = useMutation({
@@ -17,11 +14,7 @@ export default function useUpdateUserData(callbacks?: MutationCallbacks) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userData: {
-            externalId: externalID,
-            email,
-            ...payload,
-          },
+          userData: payload,
         }),
       });
       const data = await response.json();

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MiddlewarePlugin } from '..';
 import config from 'temp/config';
-import { resolveCorsHeaders } from 'lib/security/cors';
+import { resolveCorsHeaders } from 'lib/cors';
 
 interface CSPResponse {
   data: {

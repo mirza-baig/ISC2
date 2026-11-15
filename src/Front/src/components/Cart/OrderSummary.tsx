@@ -60,7 +60,7 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(MENU_OPEN_BREAKPOINTS.includes(breakpoint));
 
   const { activeCart, isGettingCart } = useCart();
-  const { isFeatureEnabled, isAuthorizedBuyer, isResolvingAccess } = useB2BCartAccess();
+  const { isFeatureEnabled, showB2BCart, isResolvingAccess } = useB2BCartAccess();
   const isBusinessBuyer = useIsBusinessBuyer();
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
@@ -86,10 +86,11 @@ const OrderSummary = ({ fields, params }: OrderSummaryProps) => {
   const termsAndConditionsUrl = fields.quoteTermsAndConditionsLink?.value?.href;
 
   const showAuthorizedBuyerCta = Boolean(
-    (activeStep === CHECKOUT_STEPS.PAYMENT_INFORMATION ||
-      activeStep === CHECKOUT_STEPS.PERSONAL_INFORMATION) &&
+    !fields?.enableCartOnlyFeatures?.value &&
+      (activeStep === CHECKOUT_STEPS.PAYMENT_INFORMATION ||
+        activeStep === CHECKOUT_STEPS.PERSONAL_INFORMATION) &&
       isFeatureEnabled &&
-      isAuthorizedBuyer &&
+      showB2BCart &&
       !isResolvingAccess &&
       labels.authorizedBuyerSecondaryCtaLink?.trim() &&
       (labels.authorizedBuyerSecondaryCtaLabel?.trim() || labels.secondaryCtaLabel?.trim())

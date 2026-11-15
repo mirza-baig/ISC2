@@ -1,11 +1,3 @@
-/**
- * Pentest finding H-04: the `algoliaApiKey` and `algoliaAppId` fields are deliberately
- * NOT selected from the Algolia Search Settings item. Everything published to
- * Experience Edge is readable by anyone holding the public delivery key, so a
- * credential selected here ends up world-readable and, via componentProps, inlined
- * into the page. Credentials come from the environment instead —
- * see src/lib/algolia/credentials.ts. Index names are content and stay here.
- */
 export const SEARCH_SETTINGS_QUERY = `
   query {
     algoliaDetails: item(path:"/sitecore/content/ISC2/Main/Settings/Algolia Search Settings", language:"en") {
@@ -315,6 +307,16 @@ export const B2B_PRODUCT_LIST_LABELS = `
           name
           labels: field(name: "labels") {
             value
+          }
+          productLink: field(name: "productLink") {
+            ... on LinkField {
+              url
+            }
+          }
+          postSelectionLink: field(name: "postSelectionLink") {
+            ... on LinkField {
+              url
+            }
           }
         }
       }

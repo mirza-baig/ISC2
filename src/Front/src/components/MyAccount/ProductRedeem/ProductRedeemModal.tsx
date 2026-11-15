@@ -5,7 +5,7 @@ import {
   useComponentProps,
   withDatasourceCheck,
 } from '@sitecore-jss/sitecore-jss-nextjs';
-import { LineItemsProvider, useModal, useShopperContext } from 'providers/index';
+import { LineItemsProvider, useModal } from 'providers/index';
 import { getGraphQLResult } from 'utils/index';
 import { AlgoliaSettings } from 'types/index';
 import { SEARCH_SETTINGS_QUERY_FOR_ALGOLIA } from 'queries/searchSettings';
@@ -54,7 +54,6 @@ interface ProductRedeemModalProps {
 const ProductRedeemModal = ({ fields, rendering }: ProductRedeemModalProps) => {
   const algoliaSettings = useComponentProps<AlgoliaSettings>(rendering.uid);
   const { setModalContent, closeModal } = useModal();
-  const { isShopperPromptSettled } = useShopperContext();
   const searchParams = useSearchParams();
 
   const [modalStatus, setModalStatus] = useState<PRODUCT_REDEEM_MODAL_STATUS>(
@@ -65,13 +64,6 @@ const ProductRedeemModal = ({ fields, rendering }: ProductRedeemModalProps) => {
     const allocationId = searchParams?.get(ALLOCATION_ID);
 
     if (!allocationId) {
-      return;
-    }
-
-    // The redeem modal accepts the allocation as soon as it mounts and shares the single
-    // modal slot with the "Who are you shopping for?" prompt, so it stays closed until
-    // that prompt has been answered or has decided it does not need to open.
-    if (!isShopperPromptSettled) {
       return;
     }
 
@@ -94,7 +86,7 @@ const ProductRedeemModal = ({ fields, rendering }: ProductRedeemModalProps) => {
       }
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams, modalStatus, isShopperPromptSettled]);
+  }, [searchParams, modalStatus]);
 
   return null;
 };

@@ -147,6 +147,7 @@ export type AllocationUser = {
   isRedeemed?: boolean;
   emailAlreadyAllocated?: boolean;
   progressStatus?: string | null;
+  allocationID?: string | null;
 };
 
 export type AllocationSummary = {

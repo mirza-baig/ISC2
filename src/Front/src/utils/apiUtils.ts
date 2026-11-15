@@ -1,6 +1,5 @@
+import { resolveCorsHeaders } from 'lib/cors';
 import { NextApiRequest, NextApiResponse } from 'next';
-
-import { resolveCorsHeaders } from 'lib/security/cors';
 
 export const setAPIRouteHeaders = (
   res: NextApiResponse,

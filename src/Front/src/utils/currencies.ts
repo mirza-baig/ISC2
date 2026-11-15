@@ -7,6 +7,7 @@ export enum CurrencyCodes {
   SGD = 'SGD',
   JPY = 'JPY',
   EUR = 'EUR',
+  CAD = 'CAD',
 }
 
 // if a new currency is added to Merchant Center, there must be a display mapping added here
@@ -22,6 +23,9 @@ export const getCurrencySymbol = (currencyCode: string) => {
       return '\u00A5';
     case CurrencyCodes.EUR:
       return '\u20AC';
+    // ITDEV-1641: "CA$" (not a bare "$") so CAD prices are never mistaken for USD.
+    case CurrencyCodes.CAD:
+      return 'CA$';
     default:
       return '\u0024';
   }
@@ -34,6 +38,8 @@ export const DisplayCurrencyCodes: { [name: string]: string } = {
   SGD: `${CurrencyCodes.SGD} ${getCurrencySymbol(CurrencyCodes.SGD)}`,
   JPY: `${CurrencyCodes.JPY} ${getCurrencySymbol(CurrencyCodes.JPY)}`,
   EUR: `${CurrencyCodes.EUR} ${getCurrencySymbol(CurrencyCodes.EUR)}`,
+  // The "CAD" code already disambiguates, so the selector shows a plain "$" rather than "CAD CA$".
+  CAD: `${CurrencyCodes.CAD} $`,
 };
 
 export type CurrencyKey = keyof typeof DisplayCurrencyCodes;
@@ -49,15 +55,37 @@ export const SUPPORTED_CURRENCIES: string[] = [
   CurrencyCodes.GBP,
   CurrencyCodes.SGD,
   CurrencyCodes.EUR,
+  // ITDEV-1637: also makes CAD the geolocated default for Canadian visitors (getCurrencyByCountryCode).
+  CurrencyCodes.CAD,
 ];
 
-export const getCurrencyByCountryCode = (country: string) => {
+// CAD stays dormant until this flag is Enabled in the Feature Flags item
+// (/sitecore/content/ISC2/Main/Data/Feature Flags Folder/Feature Flags). The name must match the
+// Sitecore row exactly; a missing or Disabled row reads as false, so CAD is off by default.
+export const CAD_CURRENCY_FEATURE_FLAG = 'CAD_Currency';
+
+// True when the currency may be offered or applied. Only CAD is gated; every other code passes.
+export const isCurrencyEnabled = (currency: string | undefined, isCadEnabled: boolean) =>
+  currency !== CurrencyCodes.CAD || isCadEnabled;
+
+// Swaps a gated-off currency for USD so CAD never reaches a session while the flag is off.
+export const toEnabledCurrency = (
+  currency: CurrencyCodes | undefined,
+  isCadEnabled: boolean
+): CurrencyCodes | undefined =>
+  isCurrencyEnabled(currency, isCadEnabled) ? currency : CurrencyCodes.USD;
+
+// `isCadEnabled` defaults to false so a caller that has no flag access can never default to CAD.
+export const getCurrencyByCountryCode = (country: string, isCadEnabled = false) => {
   const countryInfo = findCountryByNameOrShortName(country);
 
   if (countryInfo) {
     const [mainCurrency] = countryInfo.currencies;
 
-    if (SUPPORTED_CURRENCIES.includes(mainCurrency)) {
+    if (
+      SUPPORTED_CURRENCIES.includes(mainCurrency) &&
+      isCurrencyEnabled(mainCurrency, isCadEnabled)
+    ) {
       return mainCurrency as CurrencyCodes;
     }
   }

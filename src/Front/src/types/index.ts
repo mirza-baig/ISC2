@@ -143,6 +143,7 @@ export interface UserLinksFields {
 
 export interface HeaderUserLinks {
   id: string;
+  name?: string;
   fields: {
     userSectionName: TextField;
   };
@@ -154,6 +155,7 @@ export interface HeaderUserLinkField {
   name: string;
   fields: {
     link: LinkField;
+    IsVisible?: Field<boolean>;
   };
 }
 
@@ -393,6 +395,7 @@ export type UserRole =
 export type UserSession = {
   user: {
     email?: string;
+    isAuthorizedBuyer?: boolean;
     accessToken?: {
       data: string;
       dataKey: string;

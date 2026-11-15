@@ -5,8 +5,10 @@ import { useShopperContext } from 'providers/index';
 import {
   findAccountOwnerEmail,
   isAuthorizedBuyer as matchAuthorizedBuyer,
+  mapAccountContactRelationsToAccounts,
   toAccountContactRelations,
   type AccountContactRelation,
+  type AuthorizedBuyerAccount,
 } from 'lib/authorizedBuyer';
 
 import useLoggedUser from '../useLoggedUser';
@@ -25,6 +27,7 @@ export type AuthorizedBuyerState = {
   isAuthorizedBuyer: boolean;
   isResolvingAuthorizedBuyer: boolean;
   relations: AccountContactRelation[];
+  authorizedBuyerAccounts: AuthorizedBuyerAccount[];
   accountOwnerEmail?: string;
 };
 
@@ -57,9 +60,13 @@ export default function useAuthorizedBuyer({
     retry: false,
   });
 
-  const relations = useMemo(
-    () => toAccountContactRelations(data?.data?.salesforceGetAccountData?.accountContactRelations),
-    [data]
+  const rawRelations = data?.data?.salesforceGetAccountData?.accountContactRelations;
+
+  const relations = useMemo(() => toAccountContactRelations(rawRelations), [rawRelations]);
+
+  const authorizedBuyerAccounts = useMemo(
+    () => mapAccountContactRelationsToAccounts(rawRelations),
+    [rawRelations]
   );
 
   const selectedAccountId = shopperContext?.organization?.id;
@@ -78,6 +85,7 @@ export default function useAuthorizedBuyer({
     isAuthorizedBuyer: hasRole,
     isResolvingAuthorizedBuyer: isQueryEnabled && isLoading,
     relations,
+    authorizedBuyerAccounts,
     accountOwnerEmail,
   };
 }

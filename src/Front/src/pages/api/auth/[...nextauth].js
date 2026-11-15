@@ -12,6 +12,7 @@ import {
   getIsAuthorizedBuyerFromMulesoft,
 } from 'utils/index';
 import encrypt from 'utils/encrypt';
+import { createServerServiceLayerAPI } from 'lib/serviceLayerServer';
 
 const extendGuestData = async (profile) => {
   const Authorization = `Basic ${Buffer.from(
@@ -123,6 +124,7 @@ export const authOptions = (req) => ({
             externalID: profile.custom_attributes?.user_id,
             email: profile.custom_attributes?.email || profile.custom_attributes?.email_address,
             sync: true,
+            api: createServerServiceLayerAPI(),
           }),
           extendGuestData(userData),
           engageServer.identity(
@@ -153,6 +155,7 @@ export const authOptions = (req) => ({
           ...session.user,
           ...token.profile,
           accessToken: token.accessToken ? encrypt(token.accessToken) : null,
+          isAuthorizedBuyer: Boolean(token.isAuthorizedBuyer),
         },
       };
     },
@@ -179,8 +182,7 @@ export const authOptions = (req) => ({
       wellKnown: process.env.SALESFORCE_AUTHURL
         ? process.env.SALESFORCE_AUTHURL + '/.well-known/openid-configuration'
         : '',
-      // Force the IdP login page after logout so Salesforce SSO cannot silently re-auth.
-      authorization: { params: { scope: 'openid api refresh_token', prompt: 'login' } },
+      authorization: { params: { scope: 'openid api refresh_token' } },
       token: process.env.SALESFORCE_AUTHURL
         ? process.env.SALESFORCE_AUTHURL + '/services/oauth2/token'
         : '',

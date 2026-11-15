@@ -39,7 +39,7 @@ export type AuthorizedBuyerAccount = {
   accountId: string;
   accountName: string;
   accountType: string;
-  currency: string;
+  currency?: string;
   pricingTier: string;
   creditHold: boolean;
   taxExempt: boolean;

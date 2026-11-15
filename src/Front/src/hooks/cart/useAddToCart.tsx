@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
 import { useUserSession, useShopperContext } from 'providers/index';
+import { useFeatureFlag } from 'providers/featureFlags';
 import {
   addComputedFieldsToLineItems,
   calculateDiscount,
@@ -12,6 +13,7 @@ import {
   sendEngageAddToCartEvents,
 } from 'utils/index';
 import { ANALYTICS_EVENTS, DEFAULT_BRAND, QUERY_KEYS } from 'constants/index';
+import { B2B_FEATURE_FLAG } from 'constants/b2b';
 import { useAnalyticsTracking, useLoggedUser } from 'hooks/index';
 import {
   AddToCartHit,
@@ -25,12 +27,18 @@ import { usePersonalize } from 'providers/index';
 
 import useCreateCart from './useCreateCart';
 import useAuthorizedBuyerPricingVoucher from './useAuthorizedBuyerPricingVoucher';
-import { clearPrepaidDiscountActions, forgetPrepaidDiscount } from './useDiscountPercentage';
+import {
+  clearPaymentTypeSelection,
+  clearPrepaidDiscountActions,
+  forgetPrepaidDiscount,
+} from './useDiscountPercentage';
 
 type AddToCartProps = {
   items: (AddToCartHit | ProductHit)[];
   quantity?: number;
   externalPrice?: Money;
+  /** Currency rebuilds are not new purchases. */
+  skipAnalytics?: boolean;
 };
 
 const getActions = ({ items, quantity, externalPrice }: AddToCartProps, currency: string) =>
@@ -99,6 +107,7 @@ export default function useAddToCart(callbacks?: MutationCallbacks) {
   const { externalID, email } = useLoggedUser();
   const { shopperContext: selection } = useShopperContext();
   const { voucher: authorizedBuyerPricingVoucher } = useAuthorizedBuyerPricingVoucher();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
   const { track } = useAnalyticsTracking();
   const { engage } = usePersonalize();
 
@@ -172,8 +181,9 @@ export default function useAddToCart(callbacks?: MutationCallbacks) {
             country: userCountry,
             actions: [
               ...getActions(payload, currencyCode),
-              ...clearPrepaidDiscountActions(userCartId),
+              ...(isB2BFeatureEnabled ? [] : clearPrepaidDiscountActions(userCartId)),
             ],
+            ...(isB2BFeatureEnabled ? clearPaymentTypeSelection(userCartId) : {}),
             authorizedBuyerPricingVoucher,
           },
         });
@@ -282,6 +292,10 @@ export default function useAddToCart(callbacks?: MutationCallbacks) {
       }
 
       queryClient.setQueryData([QUERY_KEYS.ACTIVE_CART, updatedCart.id], updatedCart);
+
+      if (variables.skipAnalytics) {
+        return;
+      }
 
       variables.items.forEach((addedItem) => {
         const computedCart = addComputedFieldsToLineItems(updatedCart);

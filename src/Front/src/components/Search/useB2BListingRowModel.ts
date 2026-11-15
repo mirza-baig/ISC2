@@ -30,6 +30,8 @@ const ROW_MODEL_ATTRIBUTES = [
   'modality',
   'startDate',
   'startTime',
+  'endDate',
+  'endTime',
   'timeZone',
   'timeZoneIana',
 ];
@@ -39,6 +41,8 @@ type RowModelHit = SessionScheduleFields & {
   sku?: string;
   productType?: string;
   skuReferencesProduct?: string[];
+  endDate?: string;
+  endTime?: string;
   region?: { key?: string };
   modality?: { key?: string };
 };

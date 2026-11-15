@@ -138,11 +138,13 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
   const {
     applyDiscountPercentageAsync,
     removeDiscountPercentageAsync,
+    setPaymentTypeAsync,
     storeCart,
     isUpdatingDiscountPercentage,
   } = useDiscountPercentage();
   const [isSwitchingPaymentMethod, setIsSwitchingPaymentMethod] = useState(false);
   const lastTaxedPaymentMethodRef = useRef<CheckoutPaymentMethod | undefined>(undefined);
+  const sentPaymentTypeRef = useRef<string | undefined>(undefined);
   const stripeBillingCountryRef = useRef<string | undefined>(
     personalInformation?.billingAddress?.countryCode || 'US'
   );
@@ -239,6 +241,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
       return;
     }
     if (hasPrepaidDiscount(activeCart) && !isDiscountSyncInFlight()) {
+      sentPaymentTypeRef.current = '';
       removeDiscountPercentageAsync()
         .then(storeCart)
         .catch((error) => console.error('Error removing prepaid discount percentage:', error));
@@ -307,13 +310,25 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
 
       const isPrepaid = method === BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT;
       const hasDiscountOnCart = hasPrepaidDiscount(activeCart);
-      const shouldApplyDiscount = isPrepaid && Boolean(prepaidDiscount) && !hasDiscountOnCart;
-      const shouldRemoveDiscount = !isPrepaid && hasDiscountOnCart;
+      const sendsPaymentType = isB2BFeatureEnabled && isBusinessBuyer;
+      const shouldSendPaymentType = sendsPaymentType && sentPaymentTypeRef.current !== method;
+      const shouldApplyDiscount =
+        !sendsPaymentType && isPrepaid && Boolean(prepaidDiscount) && !hasDiscountOnCart;
+      const shouldRemoveDiscount = !sendsPaymentType && !isPrepaid && hasDiscountOnCart;
 
       lastTaxedPaymentMethodRef.current = method;
 
-      if (!shouldRecalculate && !shouldApplyDiscount && !shouldRemoveDiscount) {
+      if (
+        !shouldRecalculate &&
+        !shouldSendPaymentType &&
+        !shouldApplyDiscount &&
+        !shouldRemoveDiscount
+      ) {
         return;
+      }
+
+      if (shouldSendPaymentType) {
+        sentPaymentTypeRef.current = method;
       }
 
       const preservePaymentIntent = !shouldRefreshPaymentIntentForPaymentMethod(
@@ -327,7 +342,9 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
 
       void (async () => {
         try {
-          if (shouldApplyDiscount && prepaidDiscount) {
+          if (shouldSendPaymentType) {
+            await updateDiscountThenTax(() => setPaymentTypeAsync(method), taxOptions);
+          } else if (shouldApplyDiscount && prepaidDiscount) {
             await updateDiscountThenTax(
               () => applyDiscountPercentageAsync(prepaidDiscount),
               taxOptions
@@ -351,6 +368,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
       prepaidDiscount,
       removeDiscountPercentageAsync,
       setHasPaymentError,
+      setPaymentTypeAsync,
       setSelectedPaymentMethod,
       updateDiscountThenTax,
     ]
@@ -556,6 +574,7 @@ export default function PaymentInformationForm({ personalInformation }: Props) {
     }
 
     setIsSwitchingPaymentMethod(true);
+    sentPaymentTypeRef.current = '';
 
     updateDiscountThenTax(removeDiscountPercentageAsync, {
       paymentMethodType: paymentMethod,

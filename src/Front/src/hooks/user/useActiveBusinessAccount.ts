@@ -2,8 +2,16 @@ import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { useCart, useShopperContext } from 'providers/index';
-import { Address } from 'types/index';
-import { COURSE_DELIVERY_PRODUCT_TYPES, OTP_ACCOUNT_TYPE, QUERY_KEYS } from 'constants/index';
+import { Address, CartLineItem, LineItem } from 'types/index';
+import { useFeatureFlag } from 'providers/featureFlags';
+import {
+  B2B_FEATURE_FLAG,
+  COURSE_DELIVERY_KIT_SKU_MARKER,
+  COURSE_DELIVERY_PRODUCT_TYPES,
+  COURSE_DELIVERY_SKU_GATED_PRODUCT_TYPES,
+  OTP_ACCOUNT_TYPE,
+  QUERY_KEYS,
+} from 'constants/index';
 import {
   getAuthorizedBuyerAccounts,
   isAccountFlagSet,
@@ -30,6 +38,28 @@ type ActiveBusinessAccount = {
   }>;
 };
 
+const hasKitMarker = (sku?: string) =>
+  Boolean(sku?.toUpperCase().includes(COURSE_DELIVERY_KIT_SKU_MARKER));
+
+const isCourseDeliveryLine = (lineItem: LineItem, bundleSku?: string): boolean => {
+  const typeName = (lineItem.productType?.name || '').toLowerCase();
+
+  if (COURSE_DELIVERY_PRODUCT_TYPES.includes(typeName)) {
+    return true;
+  }
+
+  return (
+    COURSE_DELIVERY_SKU_GATED_PRODUCT_TYPES.includes(typeName) &&
+    (hasKitMarker(lineItem.variant?.sku) || hasKitMarker(bundleSku))
+  );
+};
+const cartHasCourseDeliveryProduct = (lineItems?: CartLineItem[]): boolean =>
+  (lineItems || []).some((lineItem) =>
+    'products' in lineItem
+      ? lineItem.products.some((product) => isCourseDeliveryLine(product, lineItem.bundleSku))
+      : isCourseDeliveryLine(lineItem)
+  );
+
 /**
  * Resolves the business account the current checkout is being made against — the one the
  * buyer picked in the shopper context modal — and the purchase controls derived from it.
@@ -42,13 +72,15 @@ export default function useActiveBusinessAccount(): ActiveBusinessAccount {
   const { externalID, email } = useLoggedUser();
   const { activeCart } = useCart();
   const { shopperContext } = useShopperContext();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
 
   const selectedAccountId = shopperContext?.organization?.id;
 
   const { data, refetch } = useQuery<AuthorizedBuyerResponse>({
     queryKey: [QUERY_KEYS.AUTHORIZED_BUYER_ACCOUNTS, externalID, email],
-    queryFn: () => getAuthorizedBuyerAccounts(externalID!, { email }),
-    enabled: Boolean(externalID) && Boolean(email) && Boolean(selectedAccountId),
+    queryFn: () => getAuthorizedBuyerAccounts(externalID!),
+    enabled:
+      isB2BFeatureEnabled && Boolean(externalID) && Boolean(email) && Boolean(selectedAccountId),
     staleTime: 0,
     refetchOnMount: 'always',
     refetchOnWindowFocus: true,
@@ -61,12 +93,7 @@ export default function useActiveBusinessAccount(): ActiveBusinessAccount {
   );
 
   const hasCourseDeliveryProduct = useMemo(
-    () =>
-      Boolean(
-        activeCart?.lineItems?.some(({ productType }) =>
-          COURSE_DELIVERY_PRODUCT_TYPES.includes((productType?.name || '').toLowerCase())
-        )
-      ),
+    () => cartHasCourseDeliveryProduct(activeCart?.lineItems),
     [activeCart?.lineItems]
   );
 

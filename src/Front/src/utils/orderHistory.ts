@@ -1,4 +1,4 @@
-import type { OrderProduct, PrintableOrder } from 'types/index';
+import type { OrderProduct, PrintableOrder, TypedMoney } from 'types/index';
 
 type ShopperOrganizationRef = {
   id: string;
@@ -20,6 +20,7 @@ type RawPrintableOrder = Omit<PrintableOrder, 'products'> & {
   userName?: string;
   organization?: string;
   buyer?: string;
+  buyerContactId?: string;
   products?: RawOrderProduct[];
 };
 
@@ -46,8 +47,21 @@ const toQuantity = (value: unknown): number => {
   return Number.isFinite(quantity) ? quantity : 0;
 };
 
+const scaleSalesforceTotal = (order: RawPrintableOrder): TypedMoney => {
+  const { orderTotal, subTotal } = order;
+  const isSalesforceOrder = order.origin?.trim().toLowerCase() === 'salesforce';
+
+  return isSalesforceOrder &&
+    orderTotal &&
+    subTotal &&
+    orderTotal.fractionDigits < subTotal.fractionDigits
+    ? { ...orderTotal, fractionDigits: subTotal.fractionDigits }
+    : orderTotal;
+};
+
 export const normalizePrintableOrder = (order: RawPrintableOrder): PrintableOrder => ({
   ...order,
+  orderTotal: scaleSalesforceTotal(order),
   accountId: firstText(order.accountId),
   accountName: firstText(
     order.accountName,
@@ -55,7 +69,7 @@ export const normalizePrintableOrder = (order: RawPrintableOrder): PrintableOrde
     order.businessName,
     order.companyName
   ),
-  buyerId: firstText(order.buyerId),
+  buyerId: firstText(order.buyerId, order.buyerContactId),
   buyerFullName: firstText(order.buyerFullName, order.buyer, order.userName),
   buyerEmail: firstText(order.buyerEmail),
   poNumber: firstText(order.poNumber),
@@ -113,8 +127,11 @@ export const preferCommerceToolsOrderId = (order: PrintableOrder): PrintableOrde
   return orderId && orderId !== order.orderId ? { ...order, orderId } : order;
 };
 
+const isSalesforceOrder = (order: PrintableOrder): boolean =>
+  order.origin?.trim().toLowerCase() === 'salesforce';
+
 const isSalesforceOrderShell = (order: PrintableOrder): boolean =>
-  isCommercetoolsOrderNumber(order.orderId) && order.origin?.trim().toLowerCase() === 'salesforce';
+  isCommercetoolsOrderNumber(order.orderId) && isSalesforceOrder(order);
 
 const normalizeProductName = (value?: string): string =>
   (value || '')
@@ -147,18 +164,42 @@ const sharesProduct = (left: PrintableOrder, right: PrintableOrder): boolean => 
   return false;
 };
 
-const withoutOrganizationTags = (order: PrintableOrder): PrintableOrder => ({
-  ...order,
-  accountId: undefined,
-  accountName: undefined,
-  buyerId: undefined,
-  buyerFullName: undefined,
-  buyerEmail: undefined,
-  organization: undefined,
-  buyer: undefined,
-  poNumber: undefined,
-  customerOrderReference: undefined,
-});
+const buyerNameTokens = (order: PrintableOrder): Set<string> =>
+  new Set(
+    (order.buyerFullName || '')
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter(Boolean)
+  );
+
+const normalizedEmail = (order: PrintableOrder): string | undefined =>
+  order.buyerEmail?.trim().toLowerCase() || undefined;
+
+const sameBuyer = (left: PrintableOrder, right: PrintableOrder): boolean => {
+  const leftEmail = normalizedEmail(left);
+  const rightEmail = normalizedEmail(right);
+
+  if (leftEmail && rightEmail) {
+    return leftEmail === rightEmail;
+  }
+
+  const leftName = left.buyerFullName?.trim().toLowerCase();
+  const rightName = right.buyerFullName?.trim().toLowerCase();
+
+  if (!leftName || !rightName || leftName === rightName) {
+    return true;
+  }
+
+  const leftTokens = buyerNameTokens(left);
+  const rightTokens = buyerNameTokens(right);
+  const [shorter, longer] =
+    leftTokens.size <= rightTokens.size ? [leftTokens, rightTokens] : [rightTokens, leftTokens];
+
+  return (
+    [...shorter].every((token) => longer.has(token)) &&
+    left.subTotal?.centAmount === right.subTotal?.centAmount
+  );
+};
 
 const isUnpairedSalesforceShell = (
   order: PrintableOrder,
@@ -169,18 +210,14 @@ const isUnpairedSalesforceShell = (
     return false;
   }
 
-  const total = order.orderTotal?.centAmount;
-  if (typeof total === 'number' && total !== 0) {
-    return orders.some(
-      (candidate) =>
-        candidate !== order &&
-        commerceToolsOrderIdFrom(candidate) &&
-        candidate.orderDate === order.orderDate &&
-        sharesProduct(candidate, order)
-    );
-  }
-
-  return true;
+  return orders.some(
+    (candidate) =>
+      candidate !== order &&
+      commerceToolsOrderIdFrom(candidate) &&
+      candidate.orderDate === order.orderDate &&
+      sameBuyer(candidate, order) &&
+      sharesProduct(candidate, order)
+  );
 };
 
 export const collapseSalesforceOrderShells = (orders: PrintableOrder[]): PrintableOrder[] => {
@@ -197,6 +234,7 @@ export const collapseSalesforceOrderShells = (orders: PrintableOrder[]): Printab
         !consumedShells.has(candidate) &&
         isSalesforceOrderShell(candidate) &&
         candidate.orderDate === order.orderDate &&
+        sameBuyer(candidate, order) &&
         sharesProduct(candidate, order)
     );
 
@@ -208,22 +246,28 @@ export const collapseSalesforceOrderShells = (orders: PrintableOrder[]): Printab
     return preferCommerceToolsOrderId(order);
   });
 
+  const commerceToolsOrderIds = new Set(
+    paidOrders.filter((order) => !isSalesforceOrder(order)).map(({ orderId }) => orderId)
+  );
+  const salesforceBuyerNames = new Map(
+    paidOrders
+      .filter((order) => isSalesforceOrder(order) && order.buyerFullName)
+      .map((order) => [order.orderId, order.buyerFullName])
+  );
+
   return paidOrders
     .filter(
       (order) =>
-        !consumedShells.has(order) && !isUnpairedSalesforceShell(order, paidOrders, consumedShells)
+        !consumedShells.has(order) &&
+        !isUnpairedSalesforceShell(order, paidOrders, consumedShells) &&
+        !(isSalesforceOrder(order) && commerceToolsOrderIds.has(order.orderId))
     )
     .map((order) => {
-      const withCommerceToolsId = preferCommerceToolsOrderId(order);
+      const buyerFullName = isSalesforceOrder(order)
+        ? undefined
+        : salesforceBuyerNames.get(order.orderId);
 
-      if (
-        commerceToolsOrderIdFrom(withCommerceToolsId) &&
-        withCommerceToolsId.origin?.trim().toLowerCase() === 'salesforce'
-      ) {
-        return withoutOrganizationTags(withCommerceToolsId);
-      }
-
-      return withCommerceToolsId;
+      return buyerFullName ? { ...order, buyerFullName } : order;
     });
 };
 

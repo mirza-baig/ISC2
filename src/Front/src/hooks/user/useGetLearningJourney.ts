@@ -6,8 +6,8 @@ import { isOldUserExternalId } from 'utils/index';
 
 type GetLearningJourneyResponse = LearningJourneyElement[];
 
-const getLearningJourney = async (externalID?: string, email?: string) => {
-  if (!externalID || !email) {
+const getLearningJourney = async (externalID?: string) => {
+  if (!externalID) {
     throw new Error('Error while fetching learning journey data');
   }
 
@@ -15,15 +15,12 @@ const getLearningJourney = async (externalID?: string, email?: string) => {
     throw new Error(`Invalid externalID while fetching learning journey: ${externalID}`);
   }
 
-  const response = await fetch(
-    `${INTERNAL_MULESOFT_URL}/user/getLearningJourney?externalID=${externalID}&email=${email}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  const response = await fetch(`${INTERNAL_MULESOFT_URL}/user/getLearningJourney`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 
   const data = await response.json();
 
@@ -36,11 +33,11 @@ const getLearningJourney = async (externalID?: string, email?: string) => {
 };
 
 export default function useGetLearningJourney() {
-  const { externalID, email } = useLoggedUser();
+  const { externalID } = useLoggedUser();
 
   const { data, isLoading, error } = useQuery<GetLearningJourneyResponse>({
     queryKey: [QUERY_KEYS.LEARNING_JOURNEY],
-    queryFn: async () => getLearningJourney(externalID, email),
+    queryFn: async () => getLearningJourney(externalID),
     enabled: Boolean(externalID),
     refetchOnWindowFocus: false,
     refetchOnMount: false,

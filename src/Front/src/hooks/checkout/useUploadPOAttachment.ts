@@ -11,17 +11,15 @@ type UploadOrderFilesPayload = {
 const stripDataUrlPrefix = (base64: string) => base64.replace(/^data:[^,]*;base64,/, '');
 
 export default function useUploadOrderFiles() {
-  const { externalID, email } = useLoggedUser();
+  const { externalID } = useLoggedUser();
 
   const { mutateAsync, isPending, error } = useMutation({
     mutationFn: async ({ orderNumber, files }: UploadOrderFilesPayload) => {
-      if (!externalID || !email) {
-        throw new Error('Missing externalID or email for order file upload');
+      if (!externalID) {
+        throw new Error('Missing externalID for order file upload');
       }
 
-      const query = new URLSearchParams({ externalID, email }).toString();
-
-      const response = await fetch(`/api/salesforce/b2b/uploadOrderFiles?${query}`, {
+      const response = await fetch('/api/salesforce/b2b/uploadOrderFiles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

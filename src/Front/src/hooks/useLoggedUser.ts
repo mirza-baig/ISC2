@@ -43,8 +43,6 @@ export default function useLoggedUser() {
     queryKey: [QUERY_KEYS.USER_DATA],
     queryFn: () =>
       getLoggedInUserSalesforceData({
-        externalID: externalID!,
-        email: email!,
         userCountry,
         currencyCode,
         sync: false,
@@ -66,9 +64,7 @@ export default function useLoggedUser() {
   useQuery({
     queryKey: ['accountData', externalID],
     queryFn: async () => {
-      const response = await fetch(
-        `/api/salesforce/user/getAccountData?externalID=${externalID}&email=${email}`
-      );
+      const response = await fetch('/api/salesforce/user/getAccountData');
       if (!response.ok) {
         throw new Error('Failed to prefetch account data');
       }

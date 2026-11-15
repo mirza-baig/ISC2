@@ -1,13 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSearchParams } from 'next/navigation';
 
 import { useLoggedUser } from 'hooks/index';
+import useAllocationDetailParams from './useAllocationDetailParams';
 import { useAllocationDetails } from 'providers/index';
-import {
-  ALLOCATION_DETAIL_ORDER_NUMBER,
-  ALLOCATION_DETAIL_PRODUCT_SKU,
-  INTERNAL_MULESOFT_URL,
-} from 'constants/index';
+import { INTERNAL_MULESOFT_URL } from 'constants/index';
 import {
   MutationCallbacks,
   Allocation,
@@ -45,15 +41,13 @@ const deleteAllocation = async (payload: MutationPayload) => {
 };
 
 export default function useDeleteAllocation(callbacks?: MutationCallbacks) {
-  const searchParams = useSearchParams();
   const queryClient = useQueryClient();
 
   const { externalID, email: userEmail } = useLoggedUser();
   const { allocatedList } = useAllocationDetails();
   const { allocationKey } = useGetAllocationDetails();
 
-  const productSku = searchParams?.get(ALLOCATION_DETAIL_PRODUCT_SKU) || '';
-  const orderNumber = searchParams?.get(ALLOCATION_DETAIL_ORDER_NUMBER) || '';
+  const { productSku, orderNumber } = useAllocationDetailParams();
 
   const { mutate, mutateAsync, isPending } = useMutation({
     mutationFn: async (email: string) => {

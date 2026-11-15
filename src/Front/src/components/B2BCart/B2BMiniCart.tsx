@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useCart, useLayout, useLineItems, useMiniCartFields } from 'providers/index';
 import { useB2BCartAccess } from 'hooks/index';
 import { resolveMiniCartCartHref, shouldMiniCartGoToCheckout } from 'hooks/cart/b2bBuyerContext';
+import useSyncB2BCartCurrency from 'hooks/cart/SyncB2BCartCurrency';
 import { RichTextUI } from 'ui/index';
 
 import EmptyMiniCartHeader from '../MiniCart/EmptyMiniCartHeader';
@@ -22,6 +23,7 @@ const B2BMiniCart = (): JSX.Element => {
   const { isFetchingCart, isRemovingFromCart } = useLineItems();
   const { isAuthorizedBuyer, buyerContext } = useB2BCartAccess();
   const router = useRouter();
+  useSyncB2BCartCurrency();
 
   // Private classes are held back on this surface (B-15), so "empty" is once again exactly what
   // commercetools says. The B-14 rule — "empty" means *nothing to show*, because the private-class

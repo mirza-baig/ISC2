@@ -54,7 +54,7 @@ const OrderLineItem = ({ fields }: OrderLineItemProps) => {
             </div>
           )}
         </div>
-        {showQuantity && quantity >= 1 && (
+        {(showQuantity ? quantity >= 1 : quantity > 1) && (
           <div className="text-xs mt-3 sm:mt-5">{`${quantityLabel}: ${quantity}`}</div>
         )}
       </div>

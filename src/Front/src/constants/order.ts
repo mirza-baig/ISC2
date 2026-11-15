@@ -18,7 +18,7 @@ export const BUSINESS_ORDER_CONFIRMATION_DEFAULT_LABELS = {
   emailConfirmationStepCopy:
     "You'll receive an order confirmation email at {userEmail} within the next few minutes.",
   orderAllocationStepTitle: 'Order Allocation',
-  orderAllocationStepCopy: "You can open your dashboard now to allocate products you've purchased.",
+  orderAllocationStepCopy: "The products you've purchased are now available to allocate.",
   printReceiptCtaLabel: 'Print your Order',
   openDashboardCtaLabel: 'Open Dashboard',
   supportCopy: 'Questions about your order?',
@@ -34,7 +34,7 @@ export const BUSINESS_ORDER_CONFIRMATION_DEFAULT_LABELS = {
 export const BUSINESS_PAYMENT_METHOD_DEFAULT_STEPS = {
   'preapproved-credit': {
     title: 'Invoice Processing',
-    copy: 'Your invoice will be sent to the billing contact within 2 business days with Net 30 payment terms.',
+    copy: 'Your invoice will be sent to the billing contact within 2 business days according to your payment terms.',
   },
   'prepaid-account': {
     title: 'Prepaid Account',

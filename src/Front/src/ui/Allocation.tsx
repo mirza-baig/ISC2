@@ -1,13 +1,13 @@
 import { LinkField } from '@sitecore-jss/sitecore-jss-nextjs';
 import { PrefetchLink as Link } from 'utils/index';
 import { format, isBefore, parseISO, startOfToday } from 'date-fns';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ProductThumbnail } from './ProductThumbnail';
 import clsx from 'clsx';
 
 import { AllocationsLabels, Allocation as TAllocation } from 'types/profile';
-import { ALLOCATION_DETAIL_ORDER_NUMBER, ALLOCATION_DETAIL_PRODUCT_SKU } from 'constants/index';
-import { getNumberOfAllocatedSeats } from 'utils/allocations';
+import { ALLOCATION_DETAIL_PRODUCT_SKU, ALLOCATION_DETAIL_REF } from 'constants/index';
+import { getNumberOfAllocatedSeats, getOrCreateAllocationDetailRef } from 'utils/allocations';
 
 export namespace Allocation {
   export type Props = {
@@ -43,23 +43,26 @@ export function Allocation({
 
   const date = allocation.date ? format(parseISO(allocation?.date), 'MM/dd/yyyy') : '';
 
+  const [detailRef, setDetailRef] = useState('');
+
+  useEffect(() => {
+    setDetailRef(getOrCreateAllocationDetailRef(allocation.orderNumber ?? ''));
+  }, [allocation.orderNumber]);
+
   const allocationsDetailsUrl = useMemo(() => {
-    if (allocationDetailsCta?.value) {
+    if (allocationDetailsCta?.value && detailRef) {
       const allocationsDetailsUrl = new URL(
         `${window.location.origin}${allocationDetailsCta.value.href}`
       );
 
       allocationsDetailsUrl.searchParams.set(ALLOCATION_DETAIL_PRODUCT_SKU, `${allocation.sku}`);
-      allocationsDetailsUrl.searchParams.set(
-        ALLOCATION_DETAIL_ORDER_NUMBER,
-        `${allocation?.orderNumber}`
-      );
+      allocationsDetailsUrl.searchParams.set(ALLOCATION_DETAIL_REF, detailRef);
 
       return allocationsDetailsUrl.toString();
     }
 
     return '';
-  }, [allocation, allocationDetailsCta?.value]);
+  }, [allocation.sku, allocationDetailsCta?.value, detailRef]);
 
   return (
     <li

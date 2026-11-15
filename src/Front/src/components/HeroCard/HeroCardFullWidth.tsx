@@ -13,7 +13,7 @@ export interface HeroCardFullWidthProps extends HeroCardBaseProps {
 
 const HeroCardFullWidth = ({ id, fields, alignment, slidesCount }: HeroCardFullWidthProps) => (
   <HeroBase>
-    <HeroCardImage id={id} fields={fields} withGradient />
+    <HeroCardImage id={id} fields={fields} withGradient={!fields.hideGradient?.value} />
 
     <div
       className={clsx(

@@ -51,7 +51,7 @@ export function FormTextInput<T extends FieldValues>({
 
   const onInput: KeyboardEventHandler<HTMLInputElement> = useCallback(
     (evt) => {
-      if (evt.code === 'Backspace') {
+      if (evt.key.length > 1) {
         return;
       }
 

@@ -11,7 +11,7 @@ import {
 
 import { capitalize } from './string';
 import { getShortIsoDate } from './date';
-import { ALLOCATED_FIELDS, PRODUCT_REDEEM_MODAL_ERRORS } from 'constants/index';
+import { ALLOCATED_FIELDS, LOCALSTORAGE_KEYS, PRODUCT_REDEEM_MODAL_ERRORS } from 'constants/index';
 import { ProductRedeemLabels } from 'components/MyAccount/ProductRedeem/ProductRedeemModal';
 import { ProductScheduledModalLabels } from 'components/ProductForm/ProductForm';
 
@@ -131,6 +131,33 @@ export const isAllocated = (userAllocation: Record<string, unknown>) =>
   !userAllocation['isAvailableToAllocate'] &&
   ALLOCATED_FIELDS.some((field) => userAllocation[`is${capitalize(field)}`]);
 
+export const isAmfAllocation = (allocation?: { name?: string; sku?: string; key?: string }) => {
+  const name = (allocation?.name ?? '').toLowerCase();
+  const sku = (allocation?.sku ?? '').toLowerCase();
+  const key = (allocation?.key ?? '').toLowerCase();
+
+  return name.includes('annual maintenance') || sku.includes('amf') || key.includes('amf');
+};
+
+export const canAllocateAmfAgain = (
+  user: Pick<AllocationUser, 'isRedeemed' | 'isCancelled' | 'isExpired' | 'isFailedToAllocate'>,
+  allocation?: { name?: string; sku?: string; key?: string; expired?: boolean }
+) =>
+  Boolean(
+    allocation &&
+      !allocation.expired &&
+      isAmfAllocation(allocation) &&
+      user.isRedeemed &&
+      !user.isCancelled &&
+      !user.isExpired &&
+      !user.isFailedToAllocate
+  );
+
+export const isRemainingAllocationUser = (
+  user: AllocationUser,
+  allocation?: { name?: string; sku?: string; key?: string; expired?: boolean }
+) => !isAllocated(user) || canAllocateAmfAgain(user, allocation);
+
 export type AllocationSortOption =
   | 'default'
   | 'availability'
@@ -235,4 +262,45 @@ export const sortAllocations = (
         return (new Date(a.expirationDate).getTime() - new Date(b.expirationDate).getTime()) * dir;
       });
   }
+};
+
+const readAllocationDetailRefs = (): Record<string, string> => {
+  try {
+    const stored = localStorage.getItem(LOCALSTORAGE_KEYS.ALLOCATION_DETAIL_REFS);
+    const parsed = stored ? JSON.parse(stored) : {};
+
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
+};
+
+export const getOrCreateAllocationDetailRef = (orderNumber: string): string => {
+  if (!orderNumber || typeof window === 'undefined') return '';
+
+  const refs = readAllocationDetailRefs();
+  const existing = Object.keys(refs).find((token) => refs[token] === orderNumber);
+
+  if (existing) return existing;
+
+  const token = crypto.randomUUID();
+
+  try {
+    localStorage.setItem(
+      LOCALSTORAGE_KEYS.ALLOCATION_DETAIL_REFS,
+      JSON.stringify({ ...refs, [token]: orderNumber })
+    );
+  } catch {
+    return '';
+  }
+
+  return token;
+};
+
+export const getAllocationDetailOrderNumber = (ref: string): string => {
+  if (!ref || typeof window === 'undefined') return '';
+
+  const orderNumber = readAllocationDetailRefs()[ref];
+
+  return typeof orderNumber === 'string' ? orderNumber : '';
 };

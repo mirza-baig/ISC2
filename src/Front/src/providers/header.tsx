@@ -6,12 +6,15 @@ import { HeaderUserLinkField, HeaderUserLinks, MenuItem, Tab, UserLinksFields } 
 import {
   useBreakpoint,
   useEscapeKey,
+  useHasAllocatorRelationship,
   useLoggedUser,
   useToggle,
   useUserRoleValue,
 } from 'hooks/index';
 import { useShopperContext } from 'providers/shopperContext';
-import { B2B_HIDDEN_NAV_LINKS } from 'constants/index';
+import { B2B_AUTHORISED_BUYER_NAV_SECTION } from 'constants/index';
+
+const isSitecoreCheckboxChecked = (value: unknown): boolean => value === true || value === '1';
 
 type HeaderNavigationContextProps = {
   isOpen: boolean;
@@ -93,6 +96,9 @@ const HeaderNavigationProvider: React.FC<HeaderNavigationProviderProps> = ({ chi
 
   const { isUserLoggedIn, isGettingUser, isB2BAdminUser } = useLoggedUser();
   const { shopperContext } = useShopperContext();
+  const { hasAllocatorRelationship } = useHasAllocatorRelationship(
+    shopperContext?.type === 'organization' ? shopperContext.organization?.id : undefined
+  );
   const breakpoint = useBreakpoint();
 
   const setUserHeaderLinks = useCallback(
@@ -213,8 +219,24 @@ const HeaderNavigationProvider: React.FC<HeaderNavigationProviderProps> = ({ chi
     nonMemberValue: userLinks?.registerUserLinksSection.id,
   });
 
+  const isBusinessBuyingSession = shopperContext?.type === 'organization';
+
   const userLinksForRole = useMemo(() => {
-    if (!userLinksSectionId || !headerUserLinks?.length) {
+    if (!headerUserLinks?.length) {
+      return undefined;
+    }
+
+    if (isBusinessBuyingSession) {
+      const authorisedBuyerSection = headerUserLinks.find(
+        (section) => section.name === B2B_AUTHORISED_BUYER_NAV_SECTION
+      );
+
+      if (authorisedBuyerSection) {
+        return authorisedBuyerSection;
+      }
+    }
+
+    if (!userLinksSectionId) {
       return undefined;
     }
 
@@ -239,7 +261,13 @@ const HeaderNavigationProvider: React.FC<HeaderNavigationProviderProps> = ({ chi
     }
 
     return userRoleData;
-  }, [userLinksSectionId, headerUserLinks, isB2BAdminUser, userLinks?.b2bAdminLinksSection.id]);
+  }, [
+    userLinksSectionId,
+    headerUserLinks,
+    isB2BAdminUser,
+    userLinks?.b2bAdminLinksSection.id,
+    isBusinessBuyingSession,
+  ]);
 
   const userRoleMenuLinks = useMemo(() => {
     if (!userLinksForRole) {
@@ -250,18 +278,34 @@ const HeaderNavigationProvider: React.FC<HeaderNavigationProviderProps> = ({ chi
     }
 
     const [linksInfo] = userLinksForRole.children;
-    const isBusinessBuyingSession = shopperContext?.type === 'organization';
+    const usesAuthorisedBuyerMenu = userLinksForRole.name === B2B_AUTHORISED_BUYER_NAV_SECTION;
 
     return {
       sectionTitle: linksInfo?.fields?.userSectionName?.value || '',
-      userLinks: linksInfo?.children.filter(
-        (item) =>
-          item?.fields?.link?.value?.text &&
-          item?.fields?.link?.value?.href &&
-          !(isBusinessBuyingSession && B2B_HIDDEN_NAV_LINKS.includes(item.name))
-      ),
+      userLinks: (linksInfo?.children || []).filter((item) => {
+        if (!item?.fields?.link?.value?.text || !item?.fields?.link?.value?.href) {
+          return false;
+        }
+
+        if (!usesAuthorisedBuyerMenu) {
+          return true;
+        }
+
+        if (!isSitecoreCheckboxChecked(item.fields.IsVisible?.value)) {
+          return false;
+        }
+
+        if (
+          !hasAllocatorRelationship &&
+          item.fields.link.value.href.toLowerCase().includes('/allocations')
+        ) {
+          return false;
+        }
+
+        return true;
+      }),
     };
-  }, [userLinksForRole, shopperContext?.type]);
+  }, [userLinksForRole, hasAllocatorRelationship]);
 
   return (
     <HeaderNavigationContext.Provider

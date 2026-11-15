@@ -14,7 +14,12 @@ export default function AllocationDetailsAllocatedTab() {
     <div className="max-h-[75vh] overflow-y-auto" ref={allocationsContainerRef}>
       {!allocatedList?.length && <p className="body-m px-4 py-5">{messages?.emptyListMessage}</p>}
       <ViewportList viewportRef={allocationsContainerRef} items={allocatedList}>
-        {(item) => <AllocationDetailsListItem key={item.email} allocation={item} />}
+        {(item, index) => (
+          <AllocationDetailsListItem
+            key={item.allocationID ?? `${item.email}-${index}`}
+            allocation={item}
+          />
+        )}
       </ViewportList>
     </div>
   );

@@ -33,6 +33,7 @@ export { default as useGetLearningJourney } from './user/useGetLearningJourney';
 export { default as useActiveBusinessAccount } from './user/useActiveBusinessAccount';
 export { default as useHasAllocatorRelationship } from './user/useHasAllocatorRelationship';
 export { default as useAuthorizedBuyer } from './user/useAuthorizedBuyer';
+export { default as useRefreshShopperOrganizationCurrency } from './user/useRefreshShopperOrganizationCurrency';
 export { default as useValidateEnrollmentAccess } from './user/useValidateEnrollmentAccess';
 export { default as useCustomMutation } from './useCustomMutation';
 export { default as useDebounce } from './useDebounce';
@@ -65,6 +66,7 @@ export { default as useB2BCartAccess } from './cart/useB2BCartAccess';
 export { default as useSetCartCustomFields } from './cart/useSetCartCustomFields';
 
 // ALLOCATIONS
+export { default as useAllocationDetailParams } from './allocations/useAllocationDetailParams';
 export { default as useGetAllocationDetails } from './allocations/useGetAllocationDetails';
 export { default as useAddAllocations } from './allocations/useAddAllocations';
 export { default as useDeleteAllocation } from './allocations/useDeleteAllocation';

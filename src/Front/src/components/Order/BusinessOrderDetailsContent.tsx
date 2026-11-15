@@ -12,6 +12,7 @@ import {
   formatCartDiscount,
   formatDate,
   getLineItemTotalBeforeCartDiscounts,
+  normalizePaymentMethod,
   parseFieldsFromURLString,
   parsePrice,
   readCheckoutBillingAddress,
@@ -22,6 +23,7 @@ import {
   BUSINESS_ORDER_CONFIRMATION_DEFAULT_LABELS,
   BUSINESS_PAYMENT_METHOD_DEFAULT_STEPS,
   BUSINESS_PAYMENT_METHODS,
+  BUSINESS_STEP_TWO_DEFAULT_LABELS,
 } from 'constants/index';
 import {
   BusinessOrderConfirmationLabels,
@@ -46,6 +48,15 @@ type WhatHappensNextStep = {
   copy: string;
 };
 
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  card: BUSINESS_STEP_TWO_DEFAULT_LABELS.creditCardOptionLabel,
+  stripe: BUSINESS_STEP_TWO_DEFAULT_LABELS.creditCardOptionLabel,
+  prepaidaccount: BUSINESS_STEP_TWO_DEFAULT_LABELS.prepaidAccountLabel,
+  prepaid: BUSINESS_STEP_TWO_DEFAULT_LABELS.prepaidAccountLabel,
+  preapprovedcredit: BUSINESS_STEP_TWO_DEFAULT_LABELS.preapprovedCreditLabel,
+  credit: BUSINESS_STEP_TWO_DEFAULT_LABELS.preapprovedCreditLabel,
+};
+
 /**
  * Business order confirmation.
  *
@@ -57,8 +68,10 @@ type WhatHappensNextStep = {
 const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsContentProps) => {
   const router = useRouter();
   const { activeCart } = useCart();
-  const { hasAllocatorRelationship } = useHasAllocatorRelationship();
   const { shopperContext } = useShopperContext();
+  const { hasAllocatorRelationship } = useHasAllocatorRelationship(
+    shopperContext?.organization?.id
+  );
   const { downloadReceipt, isGeneratingReceipt } = useDownloadBusinessReceipt();
   const { user } = useLoggedUser();
 
@@ -76,15 +89,11 @@ const BusinessOrderDetailsContent = ({ fields, order }: BusinessOrderDetailsCont
 
   const businessPaymentMethod = useMemo(() => resolveBusinessPaymentMethod(order), [order]);
 
-  /**
-   * The localised `name` is null on real orders more often than not, so fall back to the
-   * raw `method`. The payment method is a required detail on this screen — dropping the
-   * row when only `name` is missing would silently fail the requirement.
-   */
   const paymentMethodName = useMemo(() => {
     const paymentMethodInfo = order.paymentInfo?.payments?.[0]?.paymentMethodInfo;
+    const rawName = paymentMethodInfo?.name || paymentMethodInfo?.method;
 
-    return paymentMethodInfo?.name || paymentMethodInfo?.method;
+    return rawName && (PAYMENT_METHOD_LABELS[normalizePaymentMethod(rawName)] || rawName);
   }, [order.paymentInfo?.payments]);
 
   const lineItems = useMemo(

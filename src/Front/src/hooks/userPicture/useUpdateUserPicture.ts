@@ -4,12 +4,12 @@ import { UpdateUserPicturePayload } from 'types/index';
 import useLoggedUser from 'hooks/useLoggedUser';
 
 export default function useUpdateUserPicture() {
-  const { externalID, email } = useLoggedUser();
+  const { externalID } = useLoggedUser();
   const queryClient = useQueryClient();
 
   const { isPending, error, mutate, mutateAsync } = useMutation({
     mutationFn: async (payload: Partial<UpdateUserPicturePayload>) => {
-      if (!externalID || !email) {
+      if (!externalID) {
         throw new Error('Error while updating user picture: invalid parameters');
       }
 
@@ -19,8 +19,6 @@ export default function useUpdateUserPicture() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          externalID,
-          email,
           pictureData: payload,
         }),
       });

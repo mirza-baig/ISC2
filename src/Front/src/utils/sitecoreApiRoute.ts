@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import axios, { type AxiosResponse } from 'axios';
 
 import config from 'temp/config';
-import { resolveCorsHeaders } from 'lib/security/cors';
+import { resolveCorsHeaders } from 'lib/cors';
 
 const ALLOWED_HEADERS =
   'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, x-api-key';

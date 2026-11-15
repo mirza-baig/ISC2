@@ -2,7 +2,13 @@ import { useId, useMemo } from 'react';
 import Select from 'react-select';
 
 import { useUserSession, useHeaderNavigation } from 'providers/index';
-import { CurrencyCodes, DisplayCurrencyCodes } from 'utils/currencies';
+import { useFeatureFlag } from 'providers/featureFlags';
+import {
+  CAD_CURRENCY_FEATURE_FLAG,
+  CurrencyCodes,
+  DisplayCurrencyCodes,
+  isCurrencyEnabled,
+} from 'utils/currencies';
 import { useAnalyticsTracking, useGetCurrencies } from 'hooks/index';
 
 import { selectStyles } from './utils';
@@ -26,6 +32,7 @@ export default function CurrencyDropdown({
 }: CurrencyDropdownProps) {
   const { currencyCode, setPendingCurrencyCode, setCurrencyCode } = useUserSession();
   const { currencies, currenciesIsLoading } = useGetCurrencies();
+  const isCadEnabled = useFeatureFlag(CAD_CURRENCY_FEATURE_FLAG);
   const { track } = useAnalyticsTracking();
   const { isCurrencyBannerOnPage } = useHeaderNavigation();
   const currencyDropdownUniqueId = useId();
@@ -42,13 +49,19 @@ export default function CurrencyDropdown({
     }
   };
 
+  // CT lists every project currency; CAD stays hidden until the CAD_Currency flag is on.
+  const enabledCurrencies = useMemo(
+    () => currencies.filter((currency: string) => isCurrencyEnabled(currency, isCadEnabled)),
+    [currencies, isCadEnabled]
+  );
+
   const options = useMemo(
     () =>
-      currencies.map((currency: string) => ({
+      enabledCurrencies.map((currency: string) => ({
         label: DisplayCurrencyCodes[currency] ?? currency,
         value: currency,
       })),
-    [currencies]
+    [enabledCurrencies]
   ) as CurrencyOptions[];
 
   if (currenciesIsLoading) {

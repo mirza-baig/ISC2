@@ -1,15 +1,10 @@
 import { useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 
-import {
-  ALLOCATION_DETAIL_ORDER_NUMBER,
-  ALLOCATION_DETAIL_PRODUCT_SKU,
-  QUERY_KEYS,
-  INTERNAL_MULESOFT_URL,
-} from 'constants/index';
+import { QUERY_KEYS, INTERNAL_MULESOFT_URL } from 'constants/index';
 import { SalesforceAllocationDetailsGetApi } from 'types/index';
 import { useLoggedUser } from 'hooks/index';
+import useAllocationDetailParams from './useAllocationDetailParams';
 import { getAllocationDetailsData } from 'utils/index';
 import { useUserSession } from 'providers/index';
 
@@ -44,12 +39,10 @@ const getAllocationDetails = async ({ orderNumber, externalID, productSku }: Que
 };
 
 export default function useGetAllocationDetails() {
-  const searchParams = useSearchParams();
   const { externalID } = useLoggedUser();
   const { isConsentAllocation } = useUserSession();
 
-  const productSku = searchParams?.get(ALLOCATION_DETAIL_PRODUCT_SKU) || '';
-  const orderNumber = searchParams?.get(ALLOCATION_DETAIL_ORDER_NUMBER) || '';
+  const { productSku, orderNumber } = useAllocationDetailParams();
 
   const allocationKey = useMemo(() => {
     if (externalID && productSku && orderNumber) {

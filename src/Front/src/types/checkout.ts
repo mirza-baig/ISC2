@@ -136,7 +136,13 @@ export type ConfirmPaymentPayload =
 
 export type PaymentConfirmationPayload =
   | { intentPaymentId: string; cartID?: string }
-  | { paymentMethodNonce: string; cartID?: string };
+  | { paymentMethodNonce: string; cartID?: string }
+  | {
+      paymentMethodType:
+        | BUSINESS_PAYMENT_METHODS.PREAPPROVED_CREDIT
+        | BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT;
+      cartID?: string;
+    };
 
 export type PaymentResponse =
   | { status: 'succeeded'; orderPayload: PaymentConfirmationPayload }

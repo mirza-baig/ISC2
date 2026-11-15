@@ -1,3 +1,5 @@
+import { AxiosResponse } from 'axios';
+
 import {
   AddressInformation,
   ContactInformation,
@@ -105,12 +107,20 @@ export const getAddressInformationFromUser = (
   return undefined;
 };
 
+type ServiceLayerPoster = {
+  post(
+    url: string,
+    body: { query: string; variables?: Record<string, unknown> }
+  ): Promise<Pick<AxiosResponse, 'data'>>;
+};
+
 type QueryPayload = {
-  externalID: string;
-  email: string;
+  externalID?: string;
+  email?: string;
   sync: boolean;
   userCountry?: string | undefined;
   currencyCode?: string | undefined;
+  api?: ServiceLayerPoster;
 };
 
 export const getLoggedInUserSalesforceData = async ({
@@ -119,25 +129,27 @@ export const getLoggedInUserSalesforceData = async ({
   sync,
   userCountry,
   currencyCode,
+  api: providedApi,
 }: QueryPayload) => {
   const includeProduct = Boolean(userCountry && currencyCode);
 
-  const api = await getServiceLayerAPI();
+  const api = providedApi ?? (await getServiceLayerAPI());
 
-  if (!externalID) {
-    throw `Error while fetching user data from Service Layer: externalID can't be null`;
-  }
+  if (providedApi) {
+    if (!externalID) {
+      throw `Error while fetching user data from Service Layer: externalID can't be null`;
+    }
 
-  if (!email) {
-    throw `Error while fetching user data from Service Layer: email can't be null`;
+    if (!email) {
+      throw `Error while fetching user data from Service Layer: email can't be null`;
+    }
   }
 
   const { data } = await api
     .post('', {
       query: includeProduct ? 'GET_USER_ACCOUNT' : 'GET_PARTIAL_USER_ACCOUNT',
       variables: {
-        externalId: externalID,
-        email,
+        ...(providedApi && { externalId: externalID, email }),
         syncAccountData: sync,
         ...(includeProduct && {
           input: {
@@ -166,8 +178,6 @@ export const getLoggedInUserSalesforceData = async ({
           data: error.response?.data,
         },
         requestMetadata: {
-          externalID,
-          email,
           includeProduct,
           userCountry,
           currencyCode,
@@ -189,8 +199,6 @@ export const getLoggedInUserSalesforceData = async ({
       dataProperty: data?.data,
       fullResponse: data,
       requestMetadata: {
-        externalID,
-        email,
         includeProduct,
         query: includeProduct ? 'GET_USER_ACCOUNT' : 'GET_PARTIAL_USER_ACCOUNT',
         userCountry,

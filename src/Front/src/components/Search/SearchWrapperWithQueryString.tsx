@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Configure, InstantSearch, type UseConfigureProps } from 'react-instantsearch-hooks-web';
-import { createPublicSearchClient } from 'lib/algolia/credentials';
 import type { Hit } from 'instantsearch.js';
 import { ComponentRendering, Field, RouteData } from '@sitecore-jss/sitecore-jss-nextjs';
 import { ComponentProps } from 'lib/component-props';
@@ -20,6 +19,7 @@ import { buildDefaultFilterGroups } from './searchFilterGroups';
 import { parseAlgoliaSearchState, type AlgoliaSearchState } from './parseAlgoliaSearchState';
 
 import { fetchSearchWrapperSettings } from 'providers/algoliaSettings';
+import { createPublicSearchClient } from 'lib/algolia/credentials';
 
 type SitecoreItemRef =
   | Field<string>
@@ -122,9 +122,6 @@ const SearchWrapperWithQueryString = ({ fields }: SearchWrapperWithQueryStringPr
     };
   }, [settingsRef]);
 
-  // Credentials come from the environment, not from /api/algoliaSettings — see
-  // src/lib/algolia/credentials.ts (finding H-04). The route still supplies the
-  // index names and labels.
   const searchClient = useMemo(() => createPublicSearchClient(), []);
 
   const renderSearchHit = useCallback(

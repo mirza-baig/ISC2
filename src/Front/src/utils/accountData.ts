@@ -5,6 +5,10 @@ import { getIsAuthorizedBuyer } from './userRoles';
 type MulesoftAccountDataResponse = {
   data?: {
     salesforceGetAccountData?: {
+      communicationPreferences?: Record<string, unknown>;
+      PreferredLanguage?: string;
+      boardElectionEligible?: boolean;
+      bodNominationAccess?: boolean;
       accountContactRelations?: AccountContactRelation[];
     };
   };

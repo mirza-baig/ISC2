@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useCart } from 'providers/index';
 import useUpdateLineItemQuantity from 'hooks/cart/useUpdateLineItemQuantity';
+import useSyncB2BCartCurrency from 'hooks/cart/SyncB2BCartCurrency';
 import { clampToAtLeastOne } from 'hooks/cart/b2bLineQuantity';
 import { parsePrice } from 'utils/index';
 import type { CartLineItem } from 'types/index';
@@ -68,6 +69,7 @@ const B2BPlpCart = ({
   // const demoCart = useB2BDemoCart(); // TEMP demo private-class line
   const labels = useB2BCartLabels();
   const { checkout } = useB2BCartCheckout(isCpq);
+  useSyncB2BCartCurrency();
 
   const liveItems: CartLineItem[] = activeCart?.lineItems ?? [];
   // const showDemo = demoCart.inCart; // TEMP
@@ -130,7 +132,16 @@ const B2BPlpCart = ({
   const symbol = currencySymbol || '$';
   const realTotalNumber = parseFloat(String(total).replace(/[^0-9.]/g, '')) || 0;
   const combinedTotal = realTotalNumber; // + DEMO_UNIT_PRICE * demoQty;
-  const totalDisplay = `${symbol}${combinedTotal.toLocaleString('en-US')}`;
+  // Whole totals such as 848 must still show 848.00. Never use fewer than 2 places.
+  const requestedDigits =
+    typeof fractionDigits === 'number' && fractionDigits > 0
+      ? fractionDigits
+      : DEFAULT_FRACTION_DIGITS;
+  const decimalPlaces = Math.max(requestedDigits, DEFAULT_FRACTION_DIGITS);
+  const totalDisplay = `${symbol}${combinedTotal.toLocaleString('en-US', {
+    minimumFractionDigits: decimalPlaces,
+    maximumFractionDigits: decimalPlaces,
+  })}`;
   const displayCount = count; // + demoQty;
 
   const totals = buildB2BCartTotals({

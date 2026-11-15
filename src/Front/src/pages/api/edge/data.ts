@@ -1,11 +1,28 @@
-import { AUTHORIZATION_TOKEN, REFRESH_TOKEN, APIM_SUBSCRIPTION_KEY } from 'constants/index';
+import { getToken } from 'next-auth/jwt';
+
+import {
+  AUTHORIZATION_TOKEN,
+  REFRESH_TOKEN,
+  APIM_SUBSCRIPTION_KEY,
+  GENERIC_ERROR_MESSAGE,
+} from 'constants/index';
+import { IDENTITY_SCOPED_QUERIES, SERVICE_LAYER_QUERIES } from 'lib/service-layer-queries';
 
 export const config = {
   runtime: 'edge',
 };
 
-// This file was created for testing purposes to test Edge Functions on Vercel
+const json = (body: unknown, status: number) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
+
 const edge = async (req: Request) => {
+  if (process.env.NEXT_PUBLIC_USE_EDGE_FUNCTIONS !== 'true') {
+    return json({ message: 'Not found' }, 404);
+  }
+
   const { headers } = req;
   const authorizationToken = headers.get(AUTHORIZATION_TOKEN);
   const refreshToken = headers.get(REFRESH_TOKEN);
@@ -28,6 +45,35 @@ const edge = async (req: Request) => {
   }
 
   try {
+    const { query, variables } = await req.json();
+    const graphqlQuery = SERVICE_LAYER_QUERIES[query as keyof typeof SERVICE_LAYER_QUERIES];
+
+    if (!graphqlQuery) {
+      return json({ message: 'Invalid query' }, 404);
+    }
+
+    let forwardedVariables = variables;
+
+    if (IDENTITY_SCOPED_QUERIES.has(query)) {
+      const token = await getToken({
+        req: req as unknown as Parameters<typeof getToken>[0]['req'],
+        secret: process.env.NEXTAUTH_SECRET,
+      });
+      const attributes = (
+        token?.profile as
+          | { custom_attributes?: { user_id?: string; email?: string; email_address?: string } }
+          | undefined
+      )?.custom_attributes;
+      const externalId = attributes?.user_id;
+      const email = attributes?.email || attributes?.email_address;
+
+      if (!externalId || !email) {
+        return json({ message: 'Not authenticated' }, 401);
+      }
+
+      forwardedVariables = { ...variables, externalId, email };
+    }
+
     const response = await fetch(process.env.SERVICE_LAYER_ENDPOINT, {
       method: 'POST',
       headers: {
@@ -36,7 +82,7 @@ const edge = async (req: Request) => {
         [REFRESH_TOKEN]: refreshToken,
         [APIM_SUBSCRIPTION_KEY]: apimSubscriptionKey,
       },
-      body: JSON.stringify(await req.json()),
+      body: JSON.stringify({ query: graphqlQuery, variables: forwardedVariables }),
     });
 
     const data = await response.json();
@@ -45,11 +91,9 @@ const edge = async (req: Request) => {
   } catch (err: unknown) {
     if (err instanceof Error) {
       return new Response(err.message, { status: 500 });
-    } else if (typeof err === 'string') {
-      return new Response(err, { status: 500 });
-    } else {
-      return new Response('Internal server error', { status: 500 });
     }
+
+    return new Response(GENERIC_ERROR_MESSAGE, { status: 500 });
   }
 };
 

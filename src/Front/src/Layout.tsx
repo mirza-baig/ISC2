@@ -20,12 +20,20 @@ import InPageNavigation from 'components/InPageNavigation';
 import Modal from 'components/Modal/Modal';
 import ShopperContextModal from 'components/ShopperContext/ShopperContextModal';
 import { useScrollDirection, useSession } from 'hooks/index';
-import { LayoutProvider, useHeaderNavigation } from 'providers/index';
+import { LayoutProvider, useHeaderNavigation, useShopperContext } from 'providers/index';
+import { useFeatureFlag } from 'providers/featureFlags';
+import { LoadingIndicator } from 'ui/index';
 import { RouteFields } from 'types/index';
 import { formatUnixDate, isOldUserExternalId } from 'utils/index';
 import { LayoutPropsExtended } from 'types/index';
 import config from 'temp/config';
-import { ACCOUNT_TYPE, ANALYTICS_EVENTS, LOGIN_STATUS, USER_ROLES } from './constants';
+import {
+  ACCOUNT_TYPE,
+  ANALYTICS_EVENTS,
+  B2B_FEATURE_FLAG,
+  LOGIN_STATUS,
+  USER_ROLES,
+} from './constants';
 
 // Prefix public assets with a public URL to enable compatibility with Sitecore Experience Editor.
 // If you're not supporting the Experience Editor, you can remove this.
@@ -40,6 +48,13 @@ const Layout = ({ layoutData, headLinks }: LayoutPropsExtended): JSX.Element => 
   const { session, isSessionLoading } = useSession();
 
   const isPageEditing = layoutData.sitecore.context.pageEditing;
+  const { shopperContext, isShopperContextReady } = useShopperContext();
+  const isB2BFlowEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
+  const isAwaitingShopperSelection =
+    isB2BFlowEnabled &&
+    !isPageEditing &&
+    Boolean(session?.user?.isAuthorizedBuyer) &&
+    (!isShopperContextReady || !shopperContext);
   const sortDate = formatUnixDate(fields?.articleDate);
   const mainClassPageEditing = isPageEditing ? 'editing-mode' : 'prod-mode';
 
@@ -224,52 +239,60 @@ const Layout = ({ layoutData, headLinks }: LayoutPropsExtended): JSX.Element => 
       {route && <Placeholder name="body-scripts" rendering={route} />}
 
       <div className={mainClassPageEditing}>
-        {skipToContentButtonLabel?.value && (
-          <a
-            href="#content"
-            className="absolute left-0 -top-3 rounded-lg primary-cta bpy-2 px-4 z-[9999] transform -translate-y-full focus:translate-y-0 transition focus:top-3"
-          >
-            {skipToContentButtonLabel?.value}
-          </a>
-        )}
-        <div className="alert-notification">
-          {route && <Placeholder name="alert-notification" rendering={route} />}
-        </div>
         <Modal />
         <ShopperContextModal />
-        <header
-          className={clsx(
-            isStickyHeader && 'sticky w-full z-header duration-500 transition-all',
-            // `!isAtVeryTop` guard mirrors SearchBox.tsx's own use of this same hook: right at the
-            // top of a long page, a fling-scroll back up can register a brief spurious 'down' delta
-            // (rubber-band/overscroll bounce), which without this guard flips the header hidden for
-            // a frame before 'up' catches up — visible as a flicker, most noticeable on long,
-            // heavily-scrolled pages like the B2B PLP. Once genuinely scrolled past the top, this
-            // has no effect and the existing hide/show behavior is unchanged.
-            isStickyHeader && scrollDirection === 'down' && !isAtVeryTop ? '!-top-32' : '!top-0'
-          )}
-        >
-          {route && <Placeholder name="header" rendering={route} />}
-        </header>
-        <main id="content">
-          {route && <Placeholder name="main-content-top" rendering={route} />}
-
-          {route && <Placeholder name="main-content" rendering={route} layoutFields={fields} />}
-
-          <div className="md:flex">
-            <section id="left-content" className="relative">
-              {enableInPageNavigation && <InPageNavigation />}
-              {route && <Placeholder name="main-content-left" rendering={route} />}
-            </section>
-
-            <section id="right-content">
-              {route && <Placeholder name="main-content-right" rendering={route} />}
-            </section>
+        {isAwaitingShopperSelection ? (
+          <div className="flex min-h-screen items-center justify-center text-isc2-green">
+            <LoadingIndicator />
           </div>
-        </main>
-        <footer>
-          <div id="footer">{route && <Placeholder name="footer" rendering={route} />}</div>
-        </footer>
+        ) : (
+          <>
+            {skipToContentButtonLabel?.value && (
+              <a
+                href="#content"
+                className="absolute left-0 -top-3 rounded-lg primary-cta bpy-2 px-4 z-[9999] transform -translate-y-full focus:translate-y-0 transition focus:top-3"
+              >
+                {skipToContentButtonLabel?.value}
+              </a>
+            )}
+            <div className="alert-notification">
+              {route && <Placeholder name="alert-notification" rendering={route} />}
+            </div>
+            <header
+              className={clsx(
+                isStickyHeader && 'sticky w-full z-header duration-500 transition-all',
+                // `!isAtVeryTop` guard mirrors SearchBox.tsx's own use of this same hook: right at the
+                // top of a long page, a fling-scroll back up can register a brief spurious 'down' delta
+                // (rubber-band/overscroll bounce), which without this guard flips the header hidden for
+                // a frame before 'up' catches up — visible as a flicker, most noticeable on long,
+                // heavily-scrolled pages like the B2B PLP. Once genuinely scrolled past the top, this
+                // has no effect and the existing hide/show behavior is unchanged.
+                isStickyHeader && scrollDirection === 'down' && !isAtVeryTop ? '!-top-32' : '!top-0'
+              )}
+            >
+              {route && <Placeholder name="header" rendering={route} />}
+            </header>
+            <main id="content">
+              {route && <Placeholder name="main-content-top" rendering={route} />}
+
+              {route && <Placeholder name="main-content" rendering={route} layoutFields={fields} />}
+
+              <div className="md:flex">
+                <section id="left-content" className="relative">
+                  {enableInPageNavigation && <InPageNavigation />}
+                  {route && <Placeholder name="main-content-left" rendering={route} />}
+                </section>
+
+                <section id="right-content">
+                  {route && <Placeholder name="main-content-right" rendering={route} />}
+                </section>
+              </div>
+            </main>
+            <footer>
+              <div id="footer">{route && <Placeholder name="footer" rendering={route} />}</div>
+            </footer>
+          </>
+        )}
       </div>
     </LayoutProvider>
   );

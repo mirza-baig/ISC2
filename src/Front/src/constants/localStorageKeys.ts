@@ -17,4 +17,5 @@ export const LOCALSTORAGE_KEYS = {
   STRIPE_RETURN_CART_ID: 'stripe-return-cart-id-isc2',
   ALLOCATION_FILTERS: 'allocation-filters-isc2',
   CHECKOUT_BILLING_ADDRESS: 'checkout-billing-address-isc2',
+  ALLOCATION_DETAIL_REFS: 'allocation-detail-refs-isc2',
 };

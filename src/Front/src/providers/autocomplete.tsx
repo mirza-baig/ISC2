@@ -3,14 +3,13 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { LinkField } from '@sitecore-jss/sitecore-jss-nextjs';
 import { SearchClient } from 'algoliasearch';
 
-import { createPublicSearchClient } from 'lib/algolia/credentials';
-
 import {
   AutocompleteSuggestions,
   SearchModalProductHit,
   SOURCE_ID,
   SearchModalAlgoliaSettings,
 } from 'types/index';
+import { createPublicSearchClient } from 'lib/algolia/credentials';
 
 type AutocompleteContextProps = {
   initialQuery: string;
@@ -91,8 +90,6 @@ const AutocompleteProvider: React.FC<AutocompleteProviderProps> = ({
     query: initialQuery || '',
   });
 
-  // Credentials come from the environment, not from the Sitecore item — see
-  // src/lib/algolia/credentials.ts (finding H-04).
   const searchClient = useMemo(() => createPublicSearchClient(), []);
 
   useEffect(() => {

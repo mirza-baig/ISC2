@@ -1,19 +1,20 @@
 import { EXTERNAL_MULESOFT_PROFILE_PICTURE_URL } from 'constants/index';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { setAPIRouteHeaders } from 'utils/index';
+import { setAPIRouteHeaders, validateApiRequest } from 'utils/index';
 
 export default async function deleteUserPicture(req: NextApiRequest, res: NextApiResponse) {
   setAPIRouteHeaders(res, 'DELETE', req);
 
-  const { externalID, email } = req.query;
+  const identity = await validateApiRequest(req, res);
+  if (!identity) return;
 
-  if (!externalID || !email) {
-    return res.status(500).send({ error: 'Invalid parameters provided' });
-  }
+  const { externalID, email } = identity;
 
   try {
     const response = await fetch(
-      `${EXTERNAL_MULESOFT_PROFILE_PICTURE_URL}?externalID=${externalID}&email=${email}`,
+      `${EXTERNAL_MULESOFT_PROFILE_PICTURE_URL}?externalID=${encodeURIComponent(
+        externalID
+      )}&email=${encodeURIComponent(email)}`,
       {
         method: 'DELETE',
         headers: {

@@ -2,9 +2,14 @@ import { useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useUserSession } from 'providers/index';
+import { useFeatureFlag } from 'providers/featureFlags';
 import { getServiceLayerAPI } from 'utils/index';
 import { QUERY_KEYS } from 'constants/index';
+import { BUSINESS_PAYMENT_METHODS } from 'constants/checkout';
+import { B2B_FEATURE_FLAG } from 'constants/b2b';
 import { Cart, ServiceLayerError, UpdateCartResponse } from 'types/index';
+
+import useAuthorizedBuyerPricingVoucher from './useAuthorizedBuyerPricingVoucher';
 
 export const toPermyriad = (discountPercentage: number) => Math.round(discountPercentage * 100);
 
@@ -59,6 +64,18 @@ export const hasPrepaidDiscount = (cart?: { id?: string }) => {
 export const clearPrepaidDiscountActions = (cartId?: string) =>
   hasPrepaidDiscount({ id: cartId }) ? buildDirectDiscountActions(null) : [];
 
+export const clearPaymentTypeSelection = (cartId?: string) =>
+  hasPrepaidDiscount({ id: cartId }) ? { paymentType: '' } : {};
+
+export const buildPaymentTypeVariables = (
+  isB2BFeatureEnabled: boolean,
+  discountPercentage: number | null,
+  paymentType = ''
+) =>
+  isB2BFeatureEnabled
+    ? { actions: [{ recalculate: {} }], paymentType }
+    : { actions: buildDirectDiscountActions(discountPercentage) };
+
 export const forgetPrepaidDiscount = (cartId?: string) => {
   if (cartId) {
     rememberPrepaidDiscount(cartId, false);
@@ -81,14 +98,17 @@ export const trackDiscountSync = async <T,>(run: () => Promise<T>): Promise<T> =
 
 type SetDiscountPercentageProps = {
   discountPercentage: number | null;
+  paymentType?: string;
 };
 
 export default function useDiscountPercentage() {
   const queryClient = useQueryClient();
   const { cartId, setCartId } = useUserSession();
+  const { voucher: authorizedBuyerPricingVoucher } = useAuthorizedBuyerPricingVoucher();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
 
   const { mutateAsync, isPending, error, isSuccess } = useMutation({
-    mutationFn: async ({ discountPercentage }: SetDiscountPercentageProps) => {
+    mutationFn: async ({ discountPercentage, paymentType }: SetDiscountPercentageProps) => {
       if (!cartId) {
         throw new Error('There is no active cart to apply the discount percentage to');
       }
@@ -99,7 +119,8 @@ export default function useDiscountPercentage() {
         query: 'UPDATE_CART',
         variables: {
           cartId,
-          actions: buildDirectDiscountActions(discountPercentage),
+          ...buildPaymentTypeVariables(isB2BFeatureEnabled, discountPercentage, paymentType),
+          authorizedBuyerPricingVoucher,
         },
       });
 
@@ -107,7 +128,12 @@ export default function useDiscountPercentage() {
         throw data.errors[0];
       }
 
-      rememberPrepaidDiscount(cartId, Boolean(discountPercentage && discountPercentage > 0));
+      rememberPrepaidDiscount(
+        cartId,
+        isB2BFeatureEnabled
+          ? paymentType === BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT
+          : Boolean(discountPercentage && discountPercentage > 0)
+      );
 
       return data.data.isc2CartUpdate;
     },
@@ -125,7 +151,8 @@ export default function useDiscountPercentage() {
   );
 
   const applyDiscountPercentageAsync = useCallback(
-    (discountPercentage: number) => mutateAsync({ discountPercentage }),
+    (discountPercentage: number) =>
+      mutateAsync({ discountPercentage, paymentType: BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT }),
     [mutateAsync]
   );
 
@@ -134,9 +161,15 @@ export default function useDiscountPercentage() {
     [mutateAsync]
   );
 
+  const setPaymentTypeAsync = useCallback(
+    (paymentType: string) => mutateAsync({ discountPercentage: null, paymentType }),
+    [mutateAsync]
+  );
+
   return {
     applyDiscountPercentageAsync,
     removeDiscountPercentageAsync,
+    setPaymentTypeAsync,
     storeCart,
     isUpdatingDiscountPercentage: isPending,
     discountPercentageError: error as ServiceLayerError,

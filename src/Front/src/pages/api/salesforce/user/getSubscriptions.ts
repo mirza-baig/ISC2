@@ -1,18 +1,19 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { setAPIRouteHeaders } from 'utils/index';
+import { setAPIRouteHeaders, validateApiRequest } from 'utils/index';
 
 export default async function getSubscriptions(req: NextApiRequest, res: NextApiResponse) {
   setAPIRouteHeaders(res, 'GET', req);
 
-  const { externalID, email } = req.query;
+  const identity = await validateApiRequest(req, res);
+  if (!identity) return;
 
-  if (!externalID || !email) {
-    return res.status(500).send({ error: 'Invalid parameters provided' });
-  }
+  const { externalID, email } = identity;
 
   try {
     const response = await fetch(
-      `${process.env.SALESFORCE_CLOUDHUB_URL}/v1/user/subscriptions?externalID=${externalID}&email=${email}`,
+      `${process.env.SALESFORCE_CLOUDHUB_URL}/v1/user/subscriptions?externalID=${encodeURIComponent(
+        externalID
+      )}&email=${encodeURIComponent(email)}`,
       {
         method: 'GET',
         headers: {

@@ -37,9 +37,6 @@ export async function fetchInsightsFromAlgolia(searchTag: string): Promise<Algol
       algoliaDetails: { algoliaSortDescByDateIndexName },
     } = algoliaSettings;
 
-    // Only ever reached server-side, from /api/insights/[tag], so this uses the
-    // privileged key from the environment. Credentials are never read off the
-    // Sitecore item — see src/lib/algolia/credentials.ts (finding H-04).
     const credentials = getServerAlgoliaCredentials();
 
     if (!credentials || !algoliaSortDescByDateIndexName?.value) {

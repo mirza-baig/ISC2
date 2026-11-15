@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { parsePrice } from 'utils/index';
 import { useCart } from 'providers/index';
+import { TypedMoney } from 'types/index';
 
 import { LineItemPrice } from './LineItemPrice';
 import { FREE_PRICE } from 'constants/index';
@@ -24,6 +25,10 @@ export namespace CartSummaryPrices {
   };
 }
 
+// No currency symbol here: LineItemPrice already prefixes it.
+const formatMoney = (money?: TypedMoney) =>
+  Number(parsePrice(money?.centAmount, money?.fractionDigits)).toFixed(2);
+
 export const CartSummaryPrices = ({
   labels,
   showTaxes,
@@ -31,6 +36,9 @@ export const CartSummaryPrices = ({
   totalOverride,
 }: CartSummaryPrices.Props) => {
   const { activeCart, isFreeOrder } = useCart();
+
+  const totalValue =
+    totalOverride ?? formatMoney(activeCart.taxedPrice?.totalGross ?? activeCart.totalPrice);
 
   const taxes = useMemo(() => {
     if (isFreeOrder) {
@@ -91,7 +99,7 @@ export const CartSummaryPrices = ({
           <LineItemPrice
             textClassName="body-l font-bold text-gray-90"
             title={labels?.totalLabel}
-            value={totalOverride ?? activeCart.computed.totalPrice!}
+            value={totalValue}
             currency={activeCart.computed.currencySymbol}
           />
         </div>

@@ -60,6 +60,8 @@ const CURRENCY_TIER_BOUNDS: Record<string, readonly [number, number, number]> = 
   [CurrencyCodes.EUR]: [200, 500, 1500],
   [CurrencyCodes.GBP]: [150, 400, 1200],
   [CurrencyCodes.SGD]: [250, 700, 2000],
+  // ~USD ×1.378 (the CT conversion rate, ITDEV-1446), rounded to clean figures.
+  [CurrencyCodes.CAD]: [275, 700, 2000],
   // Zero-decimal currency; thresholds are whole yen (~USD ×150), rounded to clean figures.
   [CurrencyCodes.JPY]: [30000, 75000, 225000],
 };

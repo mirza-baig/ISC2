@@ -1,6 +1,5 @@
 import { Field, Text } from '@sitecore-jss/sitecore-jss-nextjs';
 import algoliasearch from 'algoliasearch/lite';
-import { getPublicAlgoliaCredentials } from 'lib/algolia/credentials';
 import { InstantSearch, Hits, Configure } from 'react-instantsearch-dom';
 import { CustomMenuSelect } from './MenuSelect';
 import StateResults from './StateResults';
@@ -9,6 +8,7 @@ import { useMemo, useState, useContext, useEffect } from 'react';
 import { useLayout } from 'providers/index';
 import LocationDetector from './LocationDetector';
 import { LocationContext } from 'providers/userLocation';
+import { getPublicAlgoliaCredentials } from 'lib/algolia/credentials';
 
 interface ChapterFinderProps {
   fields: Fields;
@@ -44,9 +44,6 @@ const ChapterFinder = ({
     algoliaDetails: { algoliaChapterFilderIndexName },
   } = algoliaSettings;
   const searchClient = useMemo(() => {
-    // Credentials come from the environment, not from the Sitecore item — see
-    // src/lib/algolia/credentials.ts (finding H-04). Built with the `lite` client
-    // here because InstantSearch only ever searches.
     const credentials = getPublicAlgoliaCredentials();
 
     if (!credentials || isEditing || !algoliaChapterFilderIndexName) {

@@ -16,12 +16,16 @@ type AllocationDetailsItemProps = {
   allocation: AllocationUser;
   isSelected?: boolean;
   allocationCapacityReached?: boolean;
+  onAllocateAgain?: () => void;
+  isAllocatingAgain?: boolean;
 };
 
 export default function AllocationDetailsListItem({
   allocation,
   isSelected,
   allocationCapacityReached,
+  onAllocateAgain,
+  isAllocatingAgain,
 }: AllocationDetailsItemProps) {
   const { setModalContent, closeModal } = useModal();
   const { addFlashAlert } = useLayout();
@@ -223,7 +227,7 @@ export default function AllocationDetailsListItem({
           <CloseIcon size={16} />
         </button>
       )}
-      {canReAllocate && (
+      {canReAllocate && !onAllocateAgain && (
         <button
           className="absolute right-0 top-1/2 -translate-y-1/2 primary-cta text-xsm leading-20 tracking-link px-4 py-2"
           onClick={onReAllocate}
@@ -231,6 +235,16 @@ export default function AllocationDetailsListItem({
           aria-label="Re-Allocate"
         >
           {labels?.reallocateCtaLabel || 'Re-Allocate'}
+        </button>
+      )}
+      {onAllocateAgain && (
+        <button
+          className="absolute right-0 top-1/2 -translate-y-1/2 primary-cta text-xsm leading-20 tracking-link px-4 py-2"
+          onClick={onAllocateAgain}
+          disabled={isAllocatingAgain}
+          aria-label="Allocate"
+        >
+          Allocate
         </button>
       )}
     </div>

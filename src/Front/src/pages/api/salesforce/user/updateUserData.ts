@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { setAPIRouteHeaders } from 'utils/index';
+import { setAPIRouteHeaders, validateApiRequest } from 'utils/index';
 import { LanguagePreferenceSchema } from 'types/languagePreference';
 import { ContactInformationSchema, EmploymentInformationSchema } from 'types/profile';
 import { z } from 'zod';
@@ -7,7 +7,6 @@ import { z } from 'zod';
 const ALLOWED_UPDATE_FIELDS: readonly string[] = [
   ...Object.keys(ContactInformationSchema.shape),
   ...Object.keys(EmploymentInformationSchema.shape),
-  'email',
   'billingAddress',
   'mailingAddress',
   'photo',
@@ -15,22 +14,17 @@ const ALLOWED_UPDATE_FIELDS: readonly string[] = [
   'otherPhone',
 ];
 
-function validateAndSanitizeUserData(userData: Record<string, unknown>): {
+function validateAndSanitizeUserData(
+  userData: Record<string, unknown>,
+  identity: { externalID: string; email: string }
+): {
   isValid: boolean;
   sanitizedData?: Record<string, unknown>;
   error?: string;
 } {
-  if (!userData.externalId || typeof userData.externalId !== 'string') {
-    return { isValid: false, error: 'Missing or invalid externalId' };
-  }
-
-  if (!userData.email || typeof userData.email !== 'string') {
-    return { isValid: false, error: 'Missing or invalid email' };
-  }
-
   const sanitizedData: Record<string, unknown> = {
-    externalId: (userData.externalId as string).trim(),
-    email: (userData.email as string).trim().toLowerCase(),
+    externalId: identity.externalID.trim(),
+    email: identity.email.trim().toLowerCase(),
   };
 
   const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/;
@@ -149,6 +143,9 @@ export default async function updateUserData(req: NextApiRequest, res: NextApiRe
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const identity = await validateApiRequest(req, res);
+  if (!identity) return;
+
   const { body } = req;
   const { userData } = body;
 
@@ -156,12 +153,10 @@ export default async function updateUserData(req: NextApiRequest, res: NextApiRe
     return res.status(400).json({ error: 'Missing or invalid userData in request body' });
   }
 
-  const validation = validateAndSanitizeUserData(userData);
+  const validation = validateAndSanitizeUserData(userData, identity);
 
   if (!validation.isValid) {
-    console.error(
-      `[VALIDATION ERROR] ${validation.error} - User: ${userData.externalId || 'unknown'}`
-    );
+    console.error(`[VALIDATION ERROR] ${validation.error} - User: ${identity.externalID}`);
     return res.status(400).json({ error: validation.error });
   }
 

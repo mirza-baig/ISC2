@@ -37,6 +37,7 @@ export interface B2BLabelGroups {
    * datasource to read that from, hence its own group here.
    */
   currencyModal: Record<string, string>;
+  shopperContext: Record<string, string>;
   /**
    * NOT a label group — the popup content above, carried on the same response so the PLP needs one
    * fetch rather than two. Optional/nullable: absent whenever the item can't be resolved, and the
@@ -61,4 +62,5 @@ export const emptyB2BLabelGroups = (): B2BLabelGroups => ({
   region: {},
   toolbar: {},
   currencyModal: {},
+  shopperContext: {},
 });

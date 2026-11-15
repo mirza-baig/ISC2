@@ -66,6 +66,7 @@ const ProductFormRadioGroup = ({ fields }: ProductFormRadioGroupFields) => {
     bundlePdpData,
     isProductSetMode,
     bundleProductKeyItemSkusMap,
+    allocationId,
   } = useProductForm();
 
   const { productPrices } = useStandalonePrices();
@@ -88,7 +89,7 @@ const ProductFormRadioGroup = ({ fields }: ProductFormRadioGroupFields) => {
   const preservedOptions = facetListSnapshot?.[name];
 
   const bundleOptionList = useMemo(() => {
-    if (name !== FormFields.PurchaseOptions.key) {
+    if (name !== FormFields.PurchaseOptions.key || allocationId) {
       return [];
     }
 
@@ -101,7 +102,7 @@ const ProductFormRadioGroup = ({ fields }: ProductFormRadioGroupFields) => {
         productPrices?.[item.sku]?.[priceRoleKey]?.discounted?.value ||
         productPrices?.[item.sku]?.[priceRoleKey]?.value,
     }));
-  }, [name, bundleOptions, productPrices, priceRoleKey]);
+  }, [name, bundleOptions, productPrices, priceRoleKey, allocationId]);
 
   const selectOptions = useMemo(() => {
     if (name === FormFields.PurchaseOptions.key) {

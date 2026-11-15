@@ -135,12 +135,14 @@ export const UPDATE_CART = `
     $country: String
     $actions: [ISC2_CartUpdateAction!]!
     $authorizedBuyerPricingVoucher: String
+    $paymentType: String
   ) {
     isc2CartUpdate (
       cartID: $cartId
       country: $country
       actions: $actions
       authorizedBuyerPricingVoucher: $authorizedBuyerPricingVoucher
+      paymentType: $paymentType
     ) {
       ${CART_FIELDS}
     }

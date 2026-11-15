@@ -6,6 +6,8 @@ import { DangerIcon } from 'icons/index';
 import { useAddAllocations, useDebounce } from 'hooks/index';
 import { ALLOCATION_SEARCH_LENGTH } from 'constants/account';
 import { useLayout, useAllocationDetails } from 'providers/index';
+import { canAllocateAmfAgain } from 'utils/index';
+import { AllocationUser } from 'types/index';
 
 import AllocationDetailsSearch from './AllocationDetailsSearch';
 import AllocationDetailsListItem from '../AllocationDetailsItem';
@@ -104,6 +106,24 @@ export default function AllocationDetailsRemainingList() {
     }
   }, [addAllocation, allocation, filteredList, selectedEmails]);
 
+  const onAllocateAgain = useCallback(
+    (user: AllocationUser) => {
+      if (!allocation || allocation.allocationSummary.available < 1) {
+        return;
+      }
+
+      addAllocation([
+        {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          isAvailableToAllocate: true,
+        },
+      ]);
+    },
+    [addAllocation, allocation]
+  );
+
   return (
     <div className="mb-7.5">
       <div className="flex w-full flex-col-reverse gap-6 sm:flex-row sm:items-center sm:justify-between pb-5 border-b border-gray-30">
@@ -120,6 +140,13 @@ export default function AllocationDetailsRemainingList() {
               allocation={item}
               isSelected={!isAllocationExpired && selectedEmails.has(item.email)}
               allocationCapacityReached={isAllocationExpired || allocationCapacityReached}
+              onAllocateAgain={
+                canAllocateAmfAgain(item, allocation) &&
+                (allocation?.allocationSummary.available ?? 0) > 0
+                  ? () => onAllocateAgain(item)
+                  : undefined
+              }
+              isAllocatingAgain={isAddingAllocation}
             />
           )}
         </ViewportList>

@@ -24,8 +24,8 @@ type Subscription = {
   cpeStatus: string | null;
 };
 
-const getSubscriptions = async (externalID?: string, email?: string) => {
-  if (!externalID || !email) {
+const getSubscriptions = async (externalID?: string) => {
+  if (!externalID) {
     throw new Error('Error while fetching subscriptions data');
   }
 
@@ -33,15 +33,12 @@ const getSubscriptions = async (externalID?: string, email?: string) => {
     throw new Error(`Invalid externalID while fetching subscriptions: ${externalID}`);
   }
 
-  const response = await fetch(
-    `${INTERNAL_MULESOFT_URL}/user/getSubscriptions?externalID=${externalID}&email=${email}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  const response = await fetch(`${INTERNAL_MULESOFT_URL}/user/getSubscriptions`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 
   const data = await response.json();
 
@@ -60,11 +57,11 @@ const getSubscriptions = async (externalID?: string, email?: string) => {
 };
 
 export default function useGetSubscriptions() {
-  const { externalID, email } = useLoggedUser();
+  const { externalID } = useLoggedUser();
 
   const { data, isLoading, error } = useQuery<Subscription>({
     queryKey: [QUERY_KEYS.SUBSCRIPTIONS],
-    queryFn: () => getSubscriptions(externalID, email),
+    queryFn: () => getSubscriptions(externalID),
     enabled: Boolean(externalID),
     refetchOnWindowFocus: false,
     refetchOnMount: false,

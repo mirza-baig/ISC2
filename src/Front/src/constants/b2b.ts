@@ -19,11 +19,6 @@ export const SHOPPER_CONTEXT_COOKIE = 'b2b-shopper-context-type';
 
 export const SHOPPER_CONTEXT_STORAGE_KEY = 'b2b-shopper-context';
 export const SHOPPER_CONTEXT_PROMPTED_KEY = 'b2b-shopper-context-prompted';
+export const SHOPPER_CONTEXT_PENDING_KEY = 'b2b-shopper-context-pending';
 
-export const B2B_HIDDEN_NAV_LINKS = [
-  'Benefits',
-  'My Certifications',
-  'Courses and Exams',
-  'CPE Credits',
-  'My Learning Journey',
-];
+export const B2B_AUTHORISED_BUYER_NAV_SECTION = 'B2B Authorised Buyer';

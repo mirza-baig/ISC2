@@ -7,6 +7,7 @@ export interface HeroCardBaseProps {
     contentOnLeft: Field<boolean>;
     description: RichTextField;
     eyebrow: Field<string>;
+    hideGradient?: Field<boolean>;
     headline: Field<string>;
     image: ImageField;
     imageFullWidth: Field<boolean>;

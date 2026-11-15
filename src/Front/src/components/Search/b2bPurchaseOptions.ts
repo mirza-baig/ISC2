@@ -100,6 +100,24 @@ export const resolvableBundleRefs = (
   }, []);
 };
 
+export type OilSessionFields = {
+  startDate?: string | null;
+  startTime?: string | null;
+  endDate?: string | null;
+  endTime?: string | null;
+  modality?: { key?: string };
+  region?: { key?: string };
+};
+
+const isBlank = (value?: string | null): boolean => !value?.trim();
+
+export const isHoldPlaceholderSession = (hit: OilSessionFields): boolean =>
+  hit?.modality?.key === 'liveonline' &&
+  isBlank(hit?.startDate) &&
+  isBlank(hit?.startTime) &&
+  isBlank(hit?.endDate) &&
+  isBlank(hit?.endTime);
+
 /**
  * An instructor-led session that is not a real, dated, regioned instance must not be listed at all,
  * and must not be used as the class half of a purchase-option row: no region (user decision,
@@ -114,11 +132,10 @@ export const resolvableBundleRefs = (
  * Region coverage on OIL is the limiting factor on how much this listing shows: only 64 of 244 dated
  * live-online records had one on 2026-08-06.
  */
-export const isInvalidOilSession = (hit: {
-  startDate?: string;
-  modality?: { key?: string };
-  region?: { key?: string };
-}): boolean => hit?.modality?.key === 'liveonline' && (!hit?.startDate || !hit?.region?.key);
+export const isInvalidOilSession = (hit: OilSessionFields): boolean =>
+  hit?.modality?.key === 'liveonline' &&
+  !isHoldPlaceholderSession(hit) &&
+  (isBlank(hit?.startDate) || !hit?.region?.key);
 
 /**
  * One generated row: the **bundle's** identity and money (it is what gets priced and added to the

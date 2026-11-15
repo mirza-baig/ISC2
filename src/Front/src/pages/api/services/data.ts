@@ -3,13 +3,14 @@ import axios from 'axios';
 import { getToken } from 'next-auth/jwt';
 
 import { setAPIRouteHeaders } from 'utils/apiUtils';
+import { validateApiRequest } from 'utils/validateApiRequest';
 import {
   AUTHORIZATION_TOKEN,
   REFRESH_TOKEN,
   APIM_SUBSCRIPTION_KEY,
   GENERIC_ERROR_MESSAGE,
 } from 'constants/index';
-import { SERVICE_LAYER_QUERIES } from 'lib/service-layer-queries';
+import { IDENTITY_SCOPED_QUERIES, SERVICE_LAYER_QUERIES } from 'lib/service-layer-queries';
 import { classifyServiceLayerError, ServiceLayerErrorCode } from 'lib/serviceLayerErrors';
 
 const CT_ERROR_PRICE = `${GENERIC_ERROR_MESSAGE} CT_002`;
@@ -38,7 +39,8 @@ const data = async (req: NextApiRequest, res: NextApiResponse): Promise<void> =>
   }
 
   const { headers, body } = req;
-  const { query, variables } = body;
+  const { query } = body;
+  let { variables } = body;
 
   const authorizationToken = headers[AUTHORIZATION_TOKEN];
   const refreshToken = headers[REFRESH_TOKEN];
@@ -65,6 +67,12 @@ const data = async (req: NextApiRequest, res: NextApiResponse): Promise<void> =>
 
   if (!SERVICE_LAYER_QUERIES[query as keyof typeof SERVICE_LAYER_QUERIES]) {
     return res.status(404).send({ message: 'Invalid query' });
+  }
+
+  if (IDENTITY_SCOPED_QUERIES.has(query)) {
+    const identity = await validateApiRequest(req, res);
+    if (!identity) return;
+    variables = { ...variables, externalId: identity.externalID, email: identity.email };
   }
 
   const graphqlQuery = SERVICE_LAYER_QUERIES[query as keyof typeof SERVICE_LAYER_QUERIES];

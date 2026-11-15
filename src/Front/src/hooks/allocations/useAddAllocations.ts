@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSearchParams } from 'next/navigation';
 
 import { useLoggedUser } from 'hooks/index';
+import useAllocationDetailParams from './useAllocationDetailParams';
 import { MutationCallbacks } from 'types/index';
 import {
   Allocation,
@@ -9,11 +9,7 @@ import {
   AllocationUser,
   SalesforceAllocationDetailsGetApi,
 } from 'types/index';
-import {
-  ALLOCATION_DETAIL_ORDER_NUMBER,
-  ALLOCATION_DETAIL_PRODUCT_SKU,
-  INTERNAL_MULESOFT_URL,
-} from 'constants/index';
+import { INTERNAL_MULESOFT_URL } from 'constants/index';
 import { getShortIsoDate } from 'utils/index';
 
 import useGetAllocationDetails from './useGetAllocationDetails';
@@ -44,14 +40,12 @@ const addAllocation = async (payload: MutationPayload) => {
 };
 
 export default function useAddAllocations(callbacks?: MutationCallbacks<number, Error>) {
-  const searchParams = useSearchParams();
   const queryClient = useQueryClient();
 
   const { externalID } = useLoggedUser();
   const { allocationKey } = useGetAllocationDetails();
 
-  const productSku = searchParams?.get(ALLOCATION_DETAIL_PRODUCT_SKU) || '';
-  const orderNumber = searchParams?.get(ALLOCATION_DETAIL_ORDER_NUMBER) || '';
+  const { productSku, orderNumber } = useAllocationDetailParams();
 
   const { mutate, mutateAsync, isPending } = useMutation({
     mutationKey: [productSku, orderNumber, externalID],

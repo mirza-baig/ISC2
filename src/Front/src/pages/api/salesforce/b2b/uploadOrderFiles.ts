@@ -37,15 +37,7 @@ export default async function uploadOrderFiles(req: NextApiRequest, res: NextApi
     const identity = await validateApiRequest(req, res);
     if (!identity) return;
 
-    const { externalID, email } = req.query ?? {};
-
-    if (typeof externalID !== 'string' || !externalID || typeof email !== 'string' || !email) {
-      console.error('[uploadOrderFiles] Missing externalID or email query params', {
-        hasExternalID: Boolean(externalID),
-        hasEmail: Boolean(email),
-      });
-      return res.status(400).send({ error: 'externalID and email query params are required.' });
-    }
+    const { externalID, email } = identity;
 
     ({ orderNumber } = req.body ?? {});
     const { files } = req.body ?? {};

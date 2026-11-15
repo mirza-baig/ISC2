@@ -20,6 +20,8 @@ export async function validateApiRequest(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<ValidatedIdentity | null> {
+  res.setHeader('Cache-Control', 'private, no-store');
+
   const origin = req.headers.origin || req.headers.referer;
   const allowedOrigin = process.env.PUBLIC_URL;
 

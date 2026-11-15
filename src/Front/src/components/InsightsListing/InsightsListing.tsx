@@ -20,8 +20,8 @@ import { getContrastTextColor } from 'src/utils/colors';
 import clsx from 'clsx';
 import { getGraphQLResult } from 'utils/graphQLFunctions';
 import { SEARCH_SETTINGS_QUERY_FOR_INSIGHT_LISTING } from 'queries/searchSettings';
-import { createPublicSearchClient } from 'lib/algolia/credentials';
 import { formatDate } from 'utils/date';
+import { createPublicSearchClient } from 'lib/algolia/credentials';
 
 type InsightsListingProps = ComponentProps & {
   rendering: ComponentRendering | RouteData;
@@ -118,8 +118,6 @@ function InsightsListing({ fields, rendering }: InsightsListingProps) {
       algoliaDetails: { algoliaSortDescByDateIndexName },
     } = algoliaSettings;
 
-    // Credentials come from the environment, not from the Sitecore item — see
-    // src/lib/algolia/credentials.ts (finding H-04).
     const client = createPublicSearchClient();
 
     if (!client || !algoliaSortDescByDateIndexName?.value) {

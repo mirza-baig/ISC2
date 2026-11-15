@@ -12,7 +12,6 @@ import {
 } from '@sitecore-jss/sitecore-jss-nextjs';
 import { ComponentProps } from 'lib/component-props';
 import { SearchClient as AlgoliaSearchClient } from 'algoliasearch';
-import { createPublicSearchClient } from 'lib/algolia/credentials';
 import { KeyValuePair } from 'tailwindcss/types/config';
 import type { Hit, UiState } from 'instantsearch.js';
 import { history as historyRouter } from 'instantsearch.js/es/lib/routers';
@@ -408,6 +407,7 @@ import SearchNonEditableNotice from './SearchNonEditableNotice';
 import { buildDefaultFilterGroups } from './searchFilterGroups';
 import FeatureFlagConfigure from './FeatureFlagConfigure';
 import { SEARCH_SETTINGS_QUERY } from 'queries/index';
+import { createPublicSearchClient } from 'lib/algolia/credentials';
 
 type SearchWrapperProps = ComponentProps & {
   rendering: ComponentRendering | RouteData;
@@ -415,10 +415,6 @@ type SearchWrapperProps = ComponentProps & {
     hideProductSuggestions?: Field<boolean>;
   };
   fields: {
-    // No algoliaAppId / algoliaApiKey here on purpose. This rendering's datasource
-    // fields ship inside the layout JSON for every page that carries the rendering,
-    // and Experience Edge publishes that to anyone with the delivery key. Credentials
-    // come from the environment — see src/lib/algolia/credentials.ts (finding H-04).
     algoliaIndexName: Field<string>;
     algoliaAutosuggestIndexName: Field<string>;
     placeholderText: Field<string>;
@@ -796,6 +792,8 @@ const SearchWrapper = ({ fields, rendering, layoutFields }: SearchWrapperProps) 
     // `hit.startDate as string` cast was here).
     return (hit: AlgoliaHit<SearchResultHit>): boolean => {
       const record = hit as unknown as SessionScheduleFields & {
+        endDate?: string;
+        endTime?: string;
         modality?: { key?: string };
         region?: { key?: string };
       };

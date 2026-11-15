@@ -14,7 +14,12 @@ export default function useCreateOrderFromCart() {
       const api = await getServiceLayerAPI();
 
       const cartID = (payload && 'cartID' in payload && payload.cartID) || activeCart.id;
-      const input: { cartID: string; intentPaymentId?: string; paymentMethodNonce?: string } = {
+      const input: {
+        cartID: string;
+        intentPaymentId?: string;
+        paymentMethodNonce?: string;
+        paymentMethodType?: string;
+      } = {
         cartID: cartID || '',
       };
 
@@ -24,6 +29,10 @@ export default function useCreateOrderFromCart() {
 
       if (payload && 'paymentMethodNonce' in payload) {
         input.paymentMethodNonce = payload.paymentMethodNonce;
+      }
+
+      if (payload && 'paymentMethodType' in payload) {
+        input.paymentMethodType = payload.paymentMethodType;
       }
 
       const { data } = await api.post('', {

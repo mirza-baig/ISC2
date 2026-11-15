@@ -1,25 +1,15 @@
 import { mapAccountContactRelationsToAccounts } from './mapFromAccountContactRelations';
 import type { AuthorizedBuyerAccount, AuthorizedBuyerResponse } from './types';
 
-export type GetAuthorizedBuyerAccountsOptions = {
-  /** Contact email for live `getAccountData`. Required to resolve Salesforce orgs. */
-  email?: string;
-};
-
 const fetchLiveAuthorizedBuyerAccounts = async (
-  buyerId: string,
-  email?: string
+  buyerId: string
 ): Promise<AuthorizedBuyerAccount[]> => {
-  if (typeof window === 'undefined' || !buyerId || !email) {
+  if (typeof window === 'undefined' || !buyerId) {
     return [];
   }
 
   try {
-    const response = await fetch(
-      `/api/salesforce/user/getAccountData?externalID=${encodeURIComponent(
-        buyerId
-      )}&email=${encodeURIComponent(email)}`
-    );
+    const response = await fetch('/api/salesforce/user/getAccountData');
 
     if (!response.ok) {
       return [];
@@ -37,10 +27,9 @@ const fetchLiveAuthorizedBuyerAccounts = async (
 };
 
 export const getAuthorizedBuyerAccounts = async (
-  buyerId: string,
-  options?: GetAuthorizedBuyerAccountsOptions
+  buyerId: string
 ): Promise<AuthorizedBuyerResponse> => {
-  const accounts = await fetchLiveAuthorizedBuyerAccounts(buyerId, options?.email);
+  const accounts = await fetchLiveAuthorizedBuyerAccounts(buyerId);
 
   return {
     buyerId,

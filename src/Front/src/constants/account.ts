@@ -79,7 +79,7 @@ export enum AWARD_CARD_TYPES {
 export const ALLOCATION_ID = 'allocationId';
 export const ALLOCATION_DETAIL_PRODUCT_SKU = 'productSku';
 
-export const ALLOCATION_DETAIL_ORDER_NUMBER = 'orderNumber';
+export const ALLOCATION_DETAIL_REF = 'ref';
 
 export const ALLOCATION_USER_STATUSES = [
   'isCancelled',

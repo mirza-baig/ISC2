@@ -1,19 +1,25 @@
 import { EXTERNAL_MULESOFT_PROFILE_PICTURE_URL } from 'constants/index';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { setAPIRouteHeaders } from 'utils/index';
+import { setAPIRouteHeaders, validateApiRequest } from 'utils/index';
 
 export default async function updateUserPicture(req: NextApiRequest, res: NextApiResponse) {
   setAPIRouteHeaders(res, 'PUT', req);
-  const { body } = req;
-  const { externalID, email, pictureData } = body;
 
-  if (!externalID || !email || !pictureData) {
+  const identity = await validateApiRequest(req, res);
+  if (!identity) return;
+
+  const { externalID, email } = identity;
+  const { pictureData } = req.body;
+
+  if (!pictureData) {
     return res.status(500).send({ error: 'Invalid parameters provided' });
   }
 
   try {
     const response = await fetch(
-      `${EXTERNAL_MULESOFT_PROFILE_PICTURE_URL}?externalID=${externalID}&email=${email}`,
+      `${EXTERNAL_MULESOFT_PROFILE_PICTURE_URL}?externalID=${encodeURIComponent(
+        externalID
+      )}&email=${encodeURIComponent(email)}`,
       {
         method: 'PUT',
         headers: {

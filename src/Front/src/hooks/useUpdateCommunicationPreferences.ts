@@ -11,21 +11,18 @@ interface CommunicationPreferences {
 }
 
 export default function useUpdateCommunicationPreferences() {
-  const { externalID, email } = useLoggedUser();
+  const { externalID } = useLoggedUser();
   const queryClient = useQueryClient();
 
   const { mutate, mutateAsync, isPending, error } = useMutation({
     mutationFn: async (preferences: CommunicationPreferences) => {
-      const response = await fetch(
-        `${INTERNAL_MULESOFT_URL}/user/updateCommunicationPreferences?externalID=${externalID}&email=${email}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(preferences),
-        }
-      );
+      const response = await fetch(`${INTERNAL_MULESOFT_URL}/user/updateCommunicationPreferences`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(preferences),
+      });
 
       if (!response.ok) {
         throw new Error('Failed to update preferences');

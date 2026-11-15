@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useMemo } from 'react';
 
-import { QUERY_KEYS } from 'constants/index';
+import { B2B_FEATURE_FLAG, QUERY_KEYS } from 'constants/index';
 import { Cart, CartWithComputedData, PaymentIntent } from 'types/index';
 import { getServiceLayerAPI } from 'utils/getServiceLayerAPI';
 import { CurrencyCodes } from 'utils/currencies';
 import { useCustomMutation } from 'hooks/index';
 import { useCart, useCheckoutProcess } from 'providers/index';
+import { useFeatureFlag } from 'providers/featureFlags';
 
 type MutationPayload = {
   cart: Cart | CartWithComputedData;
@@ -30,6 +31,7 @@ const removePaypalInfo = (paymentIntent: PaymentIntent) => {
 export default function useGetPaymentIntent() {
   const { isFreeOrder } = useCart();
   const { setErrorState } = useCheckoutProcess();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
 
   const { isPending, mutate, mutateAsync, data, error } = useCustomMutation<
     PaymentIntent,
@@ -73,20 +75,20 @@ export default function useGetPaymentIntent() {
 
         const requestEndTime = performance.now();
         const duration = requestEndTime - requestStartTime;
-        const paymentIntent = data.data?.isc2CreatePaymentIntent;
-
-        if (data.errors?.length || !paymentIntent) {
+        if (isB2BFeatureEnabled && (data.errors?.length || !data.data?.isc2CreatePaymentIntent)) {
           throw data.errors?.[0] || new Error('Payment intent response was empty');
         }
+
+        const paymentIntent = data.data.isc2CreatePaymentIntent;
 
         console.log(`[PAYMENT-INTENT-DEBUG] ${requestId} - Payment intent request successful`, {
           duration: `${duration.toFixed(2)}ms`,
           responseData: {
-            hasStripeClientSecret: !!paymentIntent.stripeClientSecret,
-            hasStripePublishableKey: !!paymentIntent.stripePublishableKey,
-            hasBraintreeClientSecret: !!paymentIntent.braintreeClientSecret,
-            hasBraintreePaypalClientId: !!paymentIntent.branintreePaypalClientId,
-            intentPaymentId: paymentIntent.intentPaymentId,
+            hasStripeClientSecret: !!paymentIntent?.stripeClientSecret,
+            hasStripePublishableKey: !!paymentIntent?.stripePublishableKey,
+            hasBraintreeClientSecret: !!paymentIntent?.braintreeClientSecret,
+            hasBraintreePaypalClientId: !!paymentIntent?.branintreePaypalClientId,
+            intentPaymentId: paymentIntent?.intentPaymentId,
           },
           timestamp: new Date().toISOString(),
         });
@@ -166,7 +168,7 @@ export default function useGetPaymentIntent() {
       isStripeInfoIncomplete &&
       isPaypalInfoIncomplete &&
       !isFreeOrder &&
-      !data.intentPaymentId
+      !(isB2BFeatureEnabled && data.intentPaymentId)
     ) {
       console.error('[PAYMENT-INTENT-DEBUG] Payment information incomplete - setting error state', {
         paymentIntentData: {
@@ -191,7 +193,14 @@ export default function useGetPaymentIntent() {
 
       setErrorState([{ message: 'PAYMENT_INFORMATION_INCOMPLETE' }]);
     }
-  }, [data, isFreeOrder, isPaypalInfoIncomplete, isStripeInfoIncomplete, setErrorState]);
+  }, [
+    data,
+    isB2BFeatureEnabled,
+    isFreeOrder,
+    isPaypalInfoIncomplete,
+    isStripeInfoIncomplete,
+    setErrorState,
+  ]);
 
   useEffect(() => {
     if (error) {

@@ -31,8 +31,6 @@ export default function useGetOrder(orderNumber: string) {
           variables: {
             orderNumber,
             locale: 'en',
-            externalId: externalID,
-            email,
           },
         });
 

@@ -15,7 +15,12 @@ import {
   AllocationDetailsMessages,
   AllocationUser,
 } from 'types/profile';
-import { getNumberOfAllocatedSeats, isAllocated, parseFieldsFromURLString } from 'utils/index';
+import {
+  getNumberOfAllocatedSeats,
+  isAllocated,
+  isRemainingAllocationUser,
+  parseFieldsFromURLString,
+} from 'utils/index';
 import { Allocation as AllocationType } from 'types/profile';
 import { ACTION_NEED_ERRORS, ACTION_NOT_NEED_ERRORS, NO_ACTIONS_ALLOWED } from 'constants/account';
 import {
@@ -167,8 +172,11 @@ const AllocationDetailsProvider: React.FC<AllocationDetailsProviderProps> = ({
   );
 
   const remainingList = useMemo(
-    () => sortAllocationsList((allocation?.users || []).filter((item) => !isAllocated(item))),
-    [allocation?.users, sortAllocationsList]
+    () =>
+      sortAllocationsList(
+        (allocation?.users || []).filter((item) => isRemainingAllocationUser(item, allocation))
+      ),
+    [allocation, sortAllocationsList]
   );
 
   const allocatedList = useMemo(

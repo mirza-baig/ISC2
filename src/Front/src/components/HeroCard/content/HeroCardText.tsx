@@ -1,4 +1,4 @@
-import { LinkField } from '@sitecore-jss/sitecore-jss-nextjs';
+import { LinkField, Text } from '@sitecore-jss/sitecore-jss-nextjs';
 import { PrefetchLink as Link } from 'utils/index';
 import clsx from 'clsx';
 
@@ -66,9 +66,12 @@ const HeroCardText = ({
     <div className={clsx('z-1 overflow-hidden', padding, color)}>
       {Boolean(fields.eyebrow.value) && <h6 className="eyebrow mb-1">{fields.eyebrow.value}</h6>}
       <section className="space-y-5 xl:space-y-8 w-full">
-        <p className="headline-l sm:headline-xl xl:headline-xxl xl:leading-80 line-clamp-2 my-[10px] text-[#222]">
-          {fields.headline.value}
-        </p>
+        <Text
+          tag="p"
+          field={fields.headline}
+          encode={false}
+          className="headline-l sm:headline-xl xl:headline-xxl xl:leading-80 line-clamp-2"
+        />
 
         {Boolean(fields.description.value) && (
           <RichTextUI

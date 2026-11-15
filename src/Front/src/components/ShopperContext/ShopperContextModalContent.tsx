@@ -1,9 +1,14 @@
-import { ChangeEvent, useMemo, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import clsx from 'clsx';
 
 import { useCreditHoldMessage, useLoggedUser } from 'hooks/index';
 import { DangerIcon, QuestionIcon } from 'icons/index';
-import { useShopperContext } from 'providers/index';
+import { useShopperContext, useUserSession } from 'providers/index';
+import { resolveAccountCurrency } from 'lib/authorizedBuyer';
+import { fetchB2BLabels } from 'providers/b2bLabels';
+import { useFeatureFlag } from 'providers/featureFlags';
+import { CAD_CURRENCY_FEATURE_FLAG } from 'utils/currencies';
 import type { ShopperOrganization } from 'providers/shopperContext';
 import { Button } from 'ui/index';
 
@@ -27,7 +32,17 @@ export default function ShopperContextModalContent({
 }: ShopperContextModalContentProps) {
   const { user } = useLoggedUser();
   const { setShopperContext } = useShopperContext();
+  const { setIsCurrencyManualOverride } = useUserSession();
   const creditHoldMessage = useCreditHoldMessage();
+  const isCadEnabled = useFeatureFlag(CAD_CURRENCY_FEATURE_FLAG);
+  const router = useRouter();
+
+  const redirectUrlRef = useRef<Promise<string | undefined> | null>(null);
+  useEffect(() => {
+    redirectUrlRef.current = fetchB2BLabels().then(
+      (groups) => groups.shopperContext?.postSelectionLinkUrl || undefined
+    );
+  }, []);
 
   const userDisplayName = useMemo(() => {
     if (user?.firstName) {
@@ -69,8 +84,18 @@ export default function ShopperContextModalContent({
       return;
     }
 
+    if (resolveAccountCurrency(selectedOrganization?.currency, isCadEnabled)) {
+      setIsCurrencyManualOverride(false);
+    }
+
     setShopperContext({ type: 'organization', organization: selectedOrganization });
     onConfirm();
+
+    redirectUrlRef.current?.then((url) => {
+      if (url && url !== router.asPath.split(/[?#]/)[0]) {
+        void router.push(url);
+      }
+    });
   };
 
   return (

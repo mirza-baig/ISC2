@@ -160,6 +160,28 @@ export const getCartDiscountCentAmount = (lineItems: CartLineItem[]): number =>
     return before && total ? sum + Math.max(0, before.centAmount - total.centAmount) : sum;
   }, 0);
 
+export const getPrepaidDiscountCentAmount = (
+  lineItems: CartLineItem[],
+  discountPercent: number
+): number =>
+  flattenLineItems(lineItems).reduce((sum, lineItem) => {
+    const unitPrice = getUnitPriceBeforeCartDiscounts(lineItem);
+    const before = getLineItemTotalBeforeCartDiscounts(lineItem);
+    const total = 'totalPrice' in lineItem ? lineItem.totalPrice : undefined;
+
+    if (!unitPrice || !before || !total) {
+      return sum;
+    }
+
+    const quantity = lineItem.quantity ?? 1;
+    const lineDiscount = before.centAmount - total.centAmount;
+    const prepaidDiscount = Math.round((unitPrice.centAmount * discountPercent) / 100) * quantity;
+
+    return lineDiscount > 0 && Math.abs(lineDiscount - prepaidDiscount) <= quantity
+      ? sum + lineDiscount
+      : sum;
+  }, 0);
+
 export const formatCartDiscount = (lineItems: CartLineItem[], currencySymbol: string) => {
   const centAmount = getCartDiscountCentAmount(lineItems);
   const fractionDigits = lineItems.find(

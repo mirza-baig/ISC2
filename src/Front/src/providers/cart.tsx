@@ -5,11 +5,17 @@ import { useGetCart } from 'hooks/index';
 import { SERVICE_LAYER_ERROR_CODES } from 'lib/serviceLayerErrors';
 import { Cart, CartWithComputedData } from 'types/index';
 import { forgetCartId } from 'utils/cartIdStore';
-import { CurrencyCodes, getCurrencyByCountryCode } from 'utils/currencies';
+import {
+  CAD_CURRENCY_FEATURE_FLAG,
+  CurrencyCodes,
+  getCurrencyByCountryCode,
+} from 'utils/currencies';
 
 import { useUserSession } from './userSession';
 import { useShopperContext } from './shopperContext';
-import { FREE_PRICE } from 'constants/index';
+import { B2B_FEATURE_FLAG, FREE_PRICE } from 'constants/index';
+import { resolveAccountCurrency } from 'lib/authorizedBuyer';
+import { useFeatureFlag } from './featureFlags';
 
 type CartContextProps = {
   activeCart: CartWithComputedData;
@@ -52,7 +58,13 @@ const CartProvider: React.FC<CartProviderProps> = ({ id, children, overrideWithC
     setIsCurrencyManualOverride,
   } = useUserSession();
   const { shopperContext } = useShopperContext();
+  const isB2BFlowEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
+  const isCadEnabled = useFeatureFlag(CAD_CURRENCY_FEATURE_FLAG);
   const isAuthorizedBuyerSession = shopperContext?.type === 'organization';
+  const accountCurrency =
+    isB2BFlowEnabled && isAuthorizedBuyerSession
+      ? resolveAccountCurrency(shopperContext?.organization?.currency, isCadEnabled)
+      : undefined;
 
   const getPayloadForUserActiveCart = useCallback(() => {
     if (Boolean(cartId)) {
@@ -124,7 +136,11 @@ const CartProvider: React.FC<CartProviderProps> = ({ id, children, overrideWithC
           return;
         }
 
-        const countryCurrency = getCurrencyByCountryCode(userCountry);
+        if (accountCurrency) {
+          return;
+        }
+
+        const countryCurrency = getCurrencyByCountryCode(userCountry, isCadEnabled);
         if (countryCurrency !== currencyCode) {
           syncCurrencyCode(countryCurrency);
           setIsCurrencyManualOverride(false);
@@ -132,11 +148,13 @@ const CartProvider: React.FC<CartProviderProps> = ({ id, children, overrideWithC
       },
     };
   }, [
+    accountCurrency,
     cartId,
     currencyCode,
     getPayloadForUserActiveCart,
     id,
     isAuthorizedBuyerSession,
+    isCadEnabled,
     isCurrencyManualOverride,
     overrideWithCart,
     setCartId,
@@ -146,6 +164,31 @@ const CartProvider: React.FC<CartProviderProps> = ({ id, children, overrideWithC
   ]);
 
   const { activeCart, isGettingCart, cartError, getCartSuccess } = useGetCart(getCartPayload);
+
+  const hasCartLineItems = Boolean(activeCart?.lineItems?.length);
+
+  useEffect(() => {
+    if (
+      !accountCurrency ||
+      id ||
+      overrideWithCart ||
+      !getCartSuccess ||
+      hasCartLineItems ||
+      isCurrencyManualOverride
+    ) {
+      return;
+    }
+
+    syncCurrencyCode(accountCurrency);
+  }, [
+    accountCurrency,
+    getCartSuccess,
+    hasCartLineItems,
+    id,
+    isCurrencyManualOverride,
+    overrideWithCart,
+    syncCurrencyCode,
+  ]);
 
   const isSessionCart = !id && !overrideWithCart && Boolean(cartId);
 

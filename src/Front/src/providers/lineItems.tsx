@@ -45,8 +45,6 @@ const LineItemsProvider: React.FC<LineItemsProviderProps> = ({ algoliaSettings, 
       algoliaDetails: { algoliaIndexName },
     } = algoliaSettings;
 
-    // Credentials come from the environment, not from the Sitecore item — see
-    // src/lib/algolia/credentials.ts (finding H-04). The index name is still content.
     const client = createPublicSearchClient();
 
     if (!client || !algoliaIndexName?.value) {

@@ -14,6 +14,8 @@ import {
 import useLoggedUser from 'hooks/useLoggedUser';
 import { useUserSession, useShopperContext } from 'providers/index';
 
+import { fetchActiveCart } from './fetchActiveCart';
+
 type ShopperContextPayload = {
   type: 'myself' | 'organization';
   businessAccountId?: string;
@@ -72,24 +74,23 @@ export default function useGetCart({ enabled, onSuccess, ...payload }: GetCartPa
     queryFn: async () => {
       const api = await getServiceLayerAPI();
 
-      const { data } = await api.post('', {
-        query: 'GET_ACTIVE_CART',
-        variables: {
-          cartInfo: formatPayload({
-            payload,
-            userEmailAddress: email,
-            externalID,
-            country: userCountry,
-            shopperContext,
-          }),
+      const cart = await fetchActiveCart(
+        async (cartInfo) => {
+          const { data } = await api.post('', {
+            query: 'GET_ACTIVE_CART',
+            variables: { cartInfo },
+          });
+
+          return data;
         },
-      });
-
-      if ((data.errors || []).length) {
-        throw data.errors[0];
-      }
-
-      const { isc2GetCart: cart } = data.data;
+        formatPayload({
+          payload,
+          userEmailAddress: email,
+          externalID,
+          country: userCountry,
+          shopperContext,
+        })
+      );
 
       if (onSuccess) {
         onSuccess(cart);

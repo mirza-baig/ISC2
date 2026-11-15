@@ -28,6 +28,7 @@ interface GraphQLB2BLabelsResponse {
           name: string;
           labels: { value: string } | null;
           productLink: { url: string | null } | null;
+          postSelectionLink: { url: string | null } | null;
         }>;
       };
     } | null;
@@ -54,6 +55,7 @@ const GROUP_KEY_BY_NAME: Record<string, LabelGroupKey> = {
   'Region Labels': 'region',
   Toolbar: 'toolbar',
   'Currency Modal': 'currencyModal',
+  'Shopper Context': 'shopperContext',
 };
 
 // Name Value List raw value ("key=value&key=value", values URL-encoded) -> { key: value }.
@@ -79,10 +81,14 @@ const b2bLabels = async (req: NextApiRequest, res: NextApiResponse) => {
     results.forEach((item) => {
       const key = GROUP_KEY_BY_NAME[item.name];
       if (key) {
-        groups[key] = parseNameValueList(item.labels?.value);
+        const group = parseNameValueList(item.labels?.value);
         if (item.productLink?.url) {
-          groups[key].productLinkUrl = item.productLink.url;
+          group.productLinkUrl = item.productLink.url;
         }
+        if (item.postSelectionLink?.url) {
+          group.postSelectionLinkUrl = item.postSelectionLink.url;
+        }
+        groups[key] = group;
       }
     });
 

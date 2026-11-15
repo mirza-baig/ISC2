@@ -1,10 +1,12 @@
 import { useMemo } from 'react';
 
+import { B2B_FEATURE_FLAG } from 'constants/b2b';
 import { BUSINESS_PAYMENT_METHODS, BUSINESS_STEP_TWO_DEFAULT_LABELS } from 'constants/checkout';
 import { buildPrepaidOrderSummary, resolvePrepaidDiscount } from 'lib/authorizedBuyer';
+import { useFeatureFlag } from 'providers/featureFlags';
 import { useCart, useCheckoutProcess } from 'providers/index';
 import { CartLineItem } from 'types/index';
-import { getCartDiscountCentAmount, parsePrice } from 'utils/index';
+import { getCartDiscountCentAmount, getPrepaidDiscountCentAmount, parsePrice } from 'utils/index';
 
 import { hasPrepaidDiscount } from '../cart/useDiscountPercentage';
 
@@ -21,6 +23,7 @@ export default function usePrepaidCheckoutSummary(): PrepaidCheckoutSummaryDispl
   const { selectedPaymentMethod, stepTwoLabels } = useCheckoutProcess();
   const { account, cartTotal } = useBusinessPaymentEligibility();
   const { activeCart } = useCart();
+  const isB2BFeatureEnabled = useFeatureFlag(B2B_FEATURE_FLAG);
 
   return useMemo(() => {
     if (selectedPaymentMethod !== BUSINESS_PAYMENT_METHODS.PREPAID_ACCOUNT) {
@@ -33,7 +36,10 @@ export default function usePrepaidCheckoutSummary(): PrepaidCheckoutSummaryDispl
       const lineItems = (activeCart.lineItems ?? []) as CartLineItem[];
       const discountPercent = resolvePrepaidDiscount(account?.prepaid);
       const fractionDigits = activeCart.totalPrice?.fractionDigits ?? 2;
-      const discountCentAmount = getCartDiscountCentAmount(lineItems);
+      const discountCentAmount =
+        isB2BFeatureEnabled && discountPercent
+          ? getPrepaidDiscountCentAmount(lineItems, discountPercent)
+          : getCartDiscountCentAmount(lineItems);
 
       if (discountCentAmount <= 0) {
         return null;
@@ -44,6 +50,10 @@ export default function usePrepaidCheckoutSummary(): PrepaidCheckoutSummaryDispl
         discountAmount: parsePrice(discountCentAmount, fractionDigits),
         isOnCart: true,
       };
+    }
+
+    if (isB2BFeatureEnabled) {
+      return null;
     }
 
     const summary = buildPrepaidOrderSummary(cartTotal, account?.prepaid);
@@ -62,6 +72,7 @@ export default function usePrepaidCheckoutSummary(): PrepaidCheckoutSummaryDispl
     account?.prepaid,
     activeCart,
     cartTotal,
+    isB2BFeatureEnabled,
     selectedPaymentMethod,
     stepTwoLabels.prepaidDiscountLabel,
   ]);

@@ -5,8 +5,8 @@ import useLoggedUser from '../useLoggedUser';
 import { buildBase64Image } from 'utils/image';
 import { isOldUserExternalId } from 'utils/index';
 
-const query = async (externalID?: string, email?: string) => {
-  if (!externalID || !email) {
+const query = async (externalID?: string) => {
+  if (!externalID) {
     throw new Error('Error while fetching user picture: invalid parameters');
   }
 
@@ -14,15 +14,12 @@ const query = async (externalID?: string, email?: string) => {
     throw new Error(`Invalid externalID while fetching user picture: ${externalID}`);
   }
 
-  const response = await fetch(
-    `${INTERNAL_MULESOFT_URL}/user/getUserPicture?externalID=${externalID}&email=${email}`,
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  );
+  const response = await fetch(`${INTERNAL_MULESOFT_URL}/user/getUserPicture`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 
   const data = await response.json();
 
@@ -35,11 +32,11 @@ const query = async (externalID?: string, email?: string) => {
 };
 
 export default function useUserPicture() {
-  const { user, externalID, email } = useLoggedUser();
+  const { user, externalID } = useLoggedUser();
 
   const { data, isLoading, error, isRefetching } = useQuery<UserPicture>({
     queryKey: [QUERY_KEYS.USER_PICTURE],
-    queryFn: () => query(externalID, email),
+    queryFn: () => query(externalID),
     enabled: Boolean(externalID),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
