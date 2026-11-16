@@ -20,7 +20,8 @@ const signOutBuyer = () => {
 
 export default function ShopperContextModal() {
   const { setModalContent, closeModal, modalContent } = useModal();
-  const { shopperContext, isShopperContextReady, setShopperContext } = useShopperContext();
+  const { shopperContext, isShopperContextReady, setShopperContext, setShopperPromptSettled } =
+    useShopperContext();
   const { session, isSessionLoading } = useSession();
   const isSessionAuthorizedBuyer = Boolean(session?.user?.isAuthorizedBuyer);
   const { externalID } = useLoggedUser();
@@ -49,6 +50,8 @@ export default function ShopperContextModal() {
         shopperModalRef.current = null;
         closeModal();
       }
+      // Logged out, or the shopper has a context (chosen, stored, or defaulted to myself).
+      setShopperPromptSettled(true);
       return;
     }
 
@@ -57,7 +60,13 @@ export default function ShopperContextModal() {
       return;
     }
 
-    if (isResolvingAuthorizedBuyer || (!isAuthorizedBuyer && !isSessionAuthorizedBuyer)) {
+    if (isResolvingAuthorizedBuyer) {
+      return;
+    }
+
+    if (!isAuthorizedBuyer && !isSessionAuthorizedBuyer) {
+      // Not a B2B buyer: the prompt never opens, so nothing is left to wait for.
+      setShopperPromptSettled(true);
       return;
     }
 
@@ -107,6 +116,7 @@ export default function ShopperContextModal() {
     closeModal,
     setModalContent,
     setShopperContext,
+    setShopperPromptSettled,
   ]);
 
   return null;

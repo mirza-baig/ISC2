@@ -42,6 +42,14 @@ type ShopperContextProps = {
    * branch paints first.
    */
   isShopperContextReady: boolean;
+  /**
+   * True once the "Who are you shopping for?" prompt has nothing left to ask in this
+   * page load: the shopper has a context, or the prompt never needed to open.
+   * Flows that act on the shopper's behalf as soon as a page loads (allocation
+   * redemption) wait for this so they do not run underneath the prompt.
+   */
+  isShopperPromptSettled: boolean;
+  setShopperPromptSettled: (isSettled: boolean) => void;
   setShopperContext: (selection: ShopperContextSelection) => void;
   clearShopperContext: () => void;
 };
@@ -67,6 +75,8 @@ const removeContextCookie = () => {
 const ShopperContext = createContext<ShopperContextProps>({
   shopperContext: null,
   isShopperContextReady: false,
+  isShopperPromptSettled: false,
+  setShopperPromptSettled: () => {},
   setShopperContext: () => {},
   clearShopperContext: () => {},
 });
@@ -150,6 +160,7 @@ const ShopperContextProvider = ({ children }: ShopperContextProviderProps) => {
   const [shopperContext, setShopperContextState] = useState<ShopperContextSelection | null>(null);
   // User id whose stored context has been applied. Empty string means a settled logged-out session.
   const [resolvedUserId, setResolvedUserId] = useState<string | null>(null);
+  const [isShopperPromptSettled, setShopperPromptSettled] = useState(false);
   const activeUserId = externalID ?? '';
   const isShopperContextReady = !isSessionLoading && resolvedUserId === activeUserId;
 
@@ -247,10 +258,18 @@ const ShopperContextProvider = ({ children }: ShopperContextProviderProps) => {
     () => ({
       shopperContext,
       isShopperContextReady,
+      isShopperPromptSettled,
+      setShopperPromptSettled,
       setShopperContext,
       clearShopperContext,
     }),
-    [shopperContext, isShopperContextReady, setShopperContext, clearShopperContext]
+    [
+      shopperContext,
+      isShopperContextReady,
+      isShopperPromptSettled,
+      setShopperContext,
+      clearShopperContext,
+    ]
   );
 
   return <ShopperContext.Provider value={value}>{children}</ShopperContext.Provider>;
