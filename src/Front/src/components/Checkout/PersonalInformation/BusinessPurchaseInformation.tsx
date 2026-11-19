@@ -155,7 +155,6 @@ export default function BusinessPurchaseInformation({
           />
 
           <FormTextInput
-            isOptional
             type="number"
             name="phoneNumber"
             control={control}

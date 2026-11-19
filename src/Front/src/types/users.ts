@@ -103,6 +103,10 @@ export const PersonalInformationSchema = z
       return;
     }
 
+    if (!input.phoneNumber?.trim()) {
+      addRequiredIssue(ctx, 'phoneNumber');
+    }
+
     if (input.isPoRequired && !input.poNumber?.trim()) {
       addRequiredIssue(ctx, 'poNumber');
     }
